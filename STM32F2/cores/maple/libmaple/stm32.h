@@ -192,7 +192,7 @@
     #define DELAY_US_MULT               STM32_DELAY_US_MULT
 
 #elif defined(MCU_STM32F205VE)
-	#define STM32_TICKS_PER_US          120
+	  #define STM32_TICKS_PER_US          120
     #define STM32_NR_GPIO_PORTS          5
     #define STM32_DELAY_US_MULT         (STM32_TICKS_PER_US/3)
     #define STM32_SRAM_END              ((void*)0x20010000)
@@ -200,8 +200,8 @@
     #define NR_GPIO_PORTS               STM32_NR_GPIO_PORTS
     #define DELAY_US_MULT               STM32_DELAY_US_MULT
 
-#elif defined(MCU_STM32F406VG)
-	#define STM32_TICKS_PER_US          168
+#elif defined(MCU_STM32F205RG)
+    #define STM32_TICKS_PER_US          168
     #define STM32_NR_GPIO_PORTS          5
     #define STM32_DELAY_US_MULT         (STM32_TICKS_PER_US/3)
     #define STM32_SRAM_END              ((void*)0x20010000)
