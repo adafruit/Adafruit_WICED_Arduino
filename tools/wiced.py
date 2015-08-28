@@ -8,7 +8,11 @@ import subprocess
 import sys
 import time
 
+# add /usr/local/bin to PATH, required for OSX to execute dfu-util
+os.environ["PATH"] = os.environ["PATH"] + ':/usr/local/bin'
+
 ###### CONFIGURATION
+
 usb_vid = 0x239A
 usb_pid = 0x0009
 usb_dfu_pid = 0x0008
@@ -25,7 +29,6 @@ reset_sec = 2
 dfu_util = { 'Windows' : 'dfu-util.exe',
              'Darwin'  : 'dfu-util',
              'Linux'   : 'dfu-util' }
-use_shell = True if platform.system() != 'Windows' else False
 
 sdep_cmd_dict = { 'reboot' : 1, 'factory_reset' : 2, 'enter_dfu' : 3 }
 ######
@@ -83,7 +86,7 @@ def firmware_upgrade(binfile):
     else:
         time.sleep(reset_sec)
         force_dfu_mode()
-        subprocess.call( dfu_util[platform.system()] + ' -a 0 -s 0x%08X:leave -D %s' % (wicedlib_addr, binfile), shell=use_shell )
+        subprocess.call( ('dfu-util -d 0x%04X:0x%04X -a 0 -s 0x%08X:leave -D %s' % (usb_vid, usb_dfu_pid, wicedlib_addr, binfile)).split() )
 
 @cli.command()
 @click.argument('binfile')
@@ -93,7 +96,7 @@ def arduino_upgrade(binfile):
     else:
         time.sleep(reset_sec)
         force_dfu_mode()
-        subprocess.call( dfu_util[platform.system()] + ' -a 0 -s 0x%08X:leave -D %s' % (arduino_addr, binfile), shell=use_shell )
+        subprocess.call( ('dfu-util -d 0x%04X:0x%04X -a 0 -s 0x%08X:leave -D %s' % (usb_vid, usb_dfu_pid, arduino_addr, binfile)).split() )
 
 if __name__ == '__main__':
     cli()
