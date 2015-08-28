@@ -16,7 +16,6 @@ adafidev.upload.maximum_size=1048576
 adafidev.upload.usbID=239a:0008
 adafidev.upload.altID=0
 adafidev.upload.auto_reset=true
-adafidev.upload.dfuse_addr=0x8010000
 
 adafidev.build.mcu=cortex-m3
 adafidev.build.f_cpu=120000000L

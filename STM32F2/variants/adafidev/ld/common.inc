@@ -60,6 +60,9 @@ SECTIONS
          * STM32 vector table.  Leave this here.  Yes, really.
          */
         *(.stm32.interrupt_vector)
+        
+        . = ORIGIN( rom ) + FIRMWARE_MAGIC_OFFSET;
+        KEEP(*(.rodata.*firmware_magic_number))
 
         /*
          * Program code and vague linking

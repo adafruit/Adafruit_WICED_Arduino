@@ -34,6 +34,9 @@ extern void init(void);
     init();
 }
 
+#define CFG_BOOTLOADER_FIRMWARE_MAGIC               0xADAFFADA
+__attribute__ ((used)) unsigned int const firmware_magic_number = CFG_BOOTLOADER_FIRMWARE_MAGIC;
+
 int main(void) {
     setup();
 
