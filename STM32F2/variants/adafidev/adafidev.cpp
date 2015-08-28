@@ -25,14 +25,13 @@
  *****************************************************************************/
 
 /**
- * @file   discovery_f4.cpp
- * @author ala42
- * @brief  discovery_f4 board file.
+ * @file   adafidev.cpp
+ * @brief  adafidev board file.
  */
 
-#ifdef BOARD_discovery_f4
+#ifdef BOARD_adafidev
 
-#include "discovery_f4.h"
+#include "adafidev.h"
 
 //#include "fsmc.h"
 #include "gpio.h"

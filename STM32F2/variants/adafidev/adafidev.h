@@ -25,15 +25,12 @@
  *****************************************************************************/
 
 /**
- * @file   aeroquad32.h
- * @author Marti Bolivar <mbolivar@leaflabs.com>
- * @brief  Private include file for Maple Native in boards.h
- *
- * See maple.h for more information on these definitions.
+ * @file   adafidev.h
+ * @brief  Pin description
  */
 
-#ifndef _BOARD_DISCOVERY_F4_H_
-#define _BOARD_DISCOVERY_F4_H_
+#ifndef _BOARD_ADAFIDEV_H_
+#define _BOARD_ADAFIDEV_H_
 
 #define Port2Pin(port, bit) ((port-'A')*16+bit)
 
@@ -47,7 +44,7 @@
 
 #define SYSTICK_RELOAD_VAL      (CYCLES_PER_MICROSECOND*1000-1)
 
-#define BOARD_LED_PIN           Port2Pin('D', 12)
+#define BOARD_LED_PIN           Port2Pin('A', 1)
 #define BOARD_BUTTON_PIN        Port2Pin('A', 0)
 
 #define BOARD_NR_USARTS         5
@@ -63,7 +60,7 @@
 #define BOARD_UART5_RX_PIN      Port2Pin('D', 2)
 
 #define BOARD_NR_SPI            3
-#ifdef ARDUINO_STM32F4_NETDUINO2PLUS
+#ifdef ARDUINO_STM32F2_NETDUINO2PLUS
 #define BOARD_SPI1_NSS_PIN      Port2Pin('C', 8)
 #else
 #define BOARD_SPI1_NSS_PIN      Port2Pin('A', 4)

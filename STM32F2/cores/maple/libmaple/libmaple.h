@@ -42,7 +42,7 @@
  *
  * FIXME this has no business being here
  */
-#if defined(MCU_STM32F103VE) || defined(MCU_STM32F205VE) || defined(MCU_STM32F406VG)
+#if defined(MCU_STM32F103VE) || defined(MCU_STM32F205VE) || defined(MCU_STM32F205RG)
     /* e.g., Aeroquad32 */
     #define USER_ADDR_ROM 0x08010000    /* ala42 */
     #define USER_ADDR_RAM 0x20000C00
