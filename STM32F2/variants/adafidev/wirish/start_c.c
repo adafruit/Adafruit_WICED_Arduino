@@ -103,7 +103,7 @@ void __attribute__((noreturn)) start_c(void) {
 typedef struct ATTR_ALIGNED(512)
 {
   uint32_t arduino_magic;
-  uint8_t  reserverd[60];
+  uint8_t  reserved[60];
 
   void (*startup)(void);
 //  void (*setup)(void);
