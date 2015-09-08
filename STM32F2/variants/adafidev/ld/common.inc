@@ -62,7 +62,7 @@ SECTIONS
         *(.stm32.interrupt_vector)
         
         . = ORIGIN( rom ) + FIRMWARE_MAGIC_OFFSET;
-        KEEP(*(.rodata.*firmware_magic_number))
+        KEEP(*(.rodata.*adafruit_arduino))
 
         /*
          * Program code and vague linking

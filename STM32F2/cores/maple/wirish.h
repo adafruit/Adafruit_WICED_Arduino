@@ -39,6 +39,7 @@
 #include "wirish_types.h"
 #include "boards.h"
 #include "io.h"
+#include "compiler.h"
 #include "bits.h"
 #include "pwm.h"
 #include "ext_interrupts.h"

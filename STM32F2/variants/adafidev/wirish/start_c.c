@@ -43,6 +43,10 @@
  */
 
 #include <stddef.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include "compiler.h"
+
 
 extern void __libc_init_array(void);
 
@@ -93,3 +97,21 @@ void __attribute__((noreturn)) start_c(void) {
     for (;;)
         continue;
 }
+
+#define CFG_ARDUINO_CODE_MAGIC                      0x01ADD1E5 // Laddies
+
+typedef struct ATTR_ALIGNED(512)
+{
+  uint32_t arduino_magic;
+  uint8_t  reserverd[60];
+
+  void (*startup)(void);
+//  void (*setup)(void);
+//  void (*loop)(void);
+}adafruit_arduino_t;
+
+ATTR_USED adafruit_arduino_t const adafruit_arduino =
+{
+    .arduino_magic = CFG_ARDUINO_CODE_MAGIC,
+    .startup       = start_c
+};

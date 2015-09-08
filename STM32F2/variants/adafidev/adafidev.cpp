@@ -32,7 +32,6 @@
 #ifdef BOARD_adafidev
 
 #include "adafidev.h"
-
 //#include "fsmc.h"
 #include "gpio.h"
 #include "rcc.h"

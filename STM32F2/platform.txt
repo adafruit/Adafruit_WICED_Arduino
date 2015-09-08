@@ -3,7 +3,7 @@
 # For more info:
 # https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5---3rd-party-Hardware-specification
 
-name=Adafruit boards
+name=Adafruit WiFi boards
 version=0.1.0
 
 # compiler variables
@@ -108,7 +108,7 @@ tools.adafruit_upload.path={runtime.hardware.path}/tools
 
 tools.adafruit_upload.upload.params.verbose=-d
 tools.adafruit_upload.upload.params.quiet=
-tools.adafruit_upload.upload.pattern=python "{path}/{cmd}" firmware_upgrade "{build.path}/{build.project_name}.bin"
+tools.adafruit_upload.upload.pattern=python "{path}/{cmd}" arduino_upgrade "{build.path}/{build.project_name}.bin"
 
 # Upload using Maple bootloader over DFU
 tools.maple_upload.cmd=maple_upload

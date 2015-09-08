@@ -24,6 +24,8 @@
  * SOFTWARE.
  *****************************************************************************/
 
+#include "adafidev.h"
+
 extern void setup(void);
 extern void loop(void);
 extern void init(void);
@@ -34,14 +36,12 @@ extern void init(void);
     init();
 }
 
-#define CFG_BOOTLOADER_FIRMWARE_MAGIC               0xADAFFADA
-__attribute__ ((used)) unsigned int const firmware_magic_number = CFG_BOOTLOADER_FIRMWARE_MAGIC;
-
 int main(void) {
     setup();
 
     while (1) {
         loop();
+        ADAFRUIT_WICEDLIB->rtos_delay_ms(1);
     }
     return 0;
 }

@@ -1,12 +1,12 @@
 /*
- * Discovery F4 (STM32F407VGT6, high density) linker script for
+ * Adafruit WICED (STM32F205RG, high density) linker script for
  * Flash builds.
  */
 
 MEMORY
 {
-  ram (rwx) : ORIGIN = 0x20000C00, LENGTH = 125K
-  rom (rx)  : ORIGIN = 0x08010000, LENGTH = 960K  /* ala42 */
+  ram (rwx) : ORIGIN = 0x2001C000, LENGTH = 16K
+  rom (rx)  : ORIGIN = 0x080E0000, LENGTH = 128K
 }
 
 /* GROUP(libcs4_stm32_high_density.a) */

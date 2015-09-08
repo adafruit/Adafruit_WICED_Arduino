@@ -1,6 +1,6 @@
 # 
 ##############################################################
-adafidev.name=Adafidev Wiced
+adafidev.name=Adafruit Wiced
 adafidev.vid.1=0x239A
 adafidev.pid.1=0x0009
 

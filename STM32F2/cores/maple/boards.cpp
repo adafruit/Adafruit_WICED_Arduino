@@ -52,6 +52,7 @@ static void setupADC(void);
 static void setupTimers(void);
 
 void init(void) {
+#if 0
 	setupFlash();
 
 	setupClocks();
@@ -70,6 +71,7 @@ void init(void) {
     setupTimers();
 
     //setupUSB();
+#endif
 }
 
 /* You could farm this out to the files in boards/ if e.g. it takes
