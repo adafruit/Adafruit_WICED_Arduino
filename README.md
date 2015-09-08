@@ -25,7 +25,7 @@ brew install dfu-util
 ```
 - Install python-pip, pyusb, click
 
-## Using this Repo
+## Building a Project
 
 - In the "Tools > Board" menu select **Adafruit WICED** as the hardware target
 - Click the "File > Open ..." menu item and load the **blink.ino** sketch in the hardware folder created above (`Adafruit_WICED_Arduino/examples/Digital/Blink/Blink.ino`)
