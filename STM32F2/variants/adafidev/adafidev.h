@@ -123,7 +123,7 @@ typedef struct ATTR_ALIGNED(512)
 
   // RTOS API
   uint32_t (*rtos_delay_ms) (uint32_t ms);
-  uint32_t (*rtos_delay_us) (uint32_t ms);
+  uint32_t (*rtos_delay_us) (uint32_t us);
 
   uint32_t (*gpio_toggle)   (uint32_t gpio);
 }adafruit_wicedlib_t;
