@@ -6,7 +6,9 @@ These files will eventually end up in the /hardware folder of the Arduino IDE.
 
 ## Preparing the Hardware
 
-This library will require that the WICED firmware and USB DFU bootloader has already been flashed to the device via the [Adafruit_BroadcomWiFi_Core](https://github.com/adafruit/Adafruit_BroadcomWiFi_Core) repo, running `make clean all flash-all` in the `projects/adafruittest` folder with a Segger J-Link connected.
+This library will require that the WICED firmware and USB DFU bootloader has already been flashed to the device via the [Adafruit_BroadcomWiFi_Core](https://github.com/adafruit/Adafruit_BroadcomWiFi_Core) repo.
+
+From the **development** branch, run `make clean all flash-all` in the `projects/adafruittest` folder with a Segger J-Link connected.  Be sure to connect VTRef to 3.3V on the WICED development board in addition to the SWDIO, SWCLK and Reset pins.
 
 ## Arduino Setup
 
