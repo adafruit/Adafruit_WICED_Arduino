@@ -80,7 +80,7 @@ def factory_reset():
 
 @cli.command()
 @click.argument('binfile')
-def firmware_upgrade(binfile):
+def wicedlib_upgrade(binfile):
     if not (binfile.endswith('.bin') and os.path.isfile(binfile)):
         click.echo('File not found or not a binary')
     else:

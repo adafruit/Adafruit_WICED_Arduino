@@ -1,21 +1,41 @@
-# 
+# See: http://code.google.com/p/arduino/wiki/Platforms
+# See: http://www.adafruit.com/????????
+
+menu.section=Section
+
 ##############################################################
+
 adafidev.name=Adafruit Wiced
-adafidev.vid.1=0x239A
-adafidev.pid.1=0x0009
+adafidev.vid.0=0x239A
+adafidev.pid.0=0x0009
 
 adafidev.upload.tool=adafruit_upload
 adafidev.upload.protocol=adafruit_dfu
-
 adafidev.upload.use_1200bps_touch=true
 adafidev.upload.file_type=bin
-adafidev.upload.ram.maximum_size=196608
-adafidev.upload.flash.maximum_size=1048576
-adafidev.upload.maximum_size=1048576
 
-adafidev.upload.usbID=239a:0008
-adafidev.upload.altID=0
-adafidev.upload.auto_reset=true
+## Firmware section
+## -------------------------
+adafidev.menu.section.firmware=Firmware
+adafidev.menu.section.firmware.upload.region=arduino_upgrade
+adafidev.menu.section.firmware.upload.binfile={build.path}/{build.project_name}.bin
+adafidev.menu.section.firmware.upload.ram.maximum_size=16384
+adafidev.menu.section.firmware.upload.flash.maximum_size=1048576
+adafidev.menu.section.firmware.upload.maximum_size=131072
+
+## Wicedlib section
+## -------------------------
+adafidev.menu.section.wicdelib=Wiced Lib
+adafidev.menu.section.wicdelib.upload.region=wicedlib_upgrade
+adafidev.menu.section.wicdelib.upload.binfile={runtime.hardware.path}/STM32F2/wicedlib/wicedlib.bin
+adafidev.menu.section.wicdelib.upload.ram.maximum_size=114688
+adafidev.menu.section.wicdelib.upload.flash.maximum_size=1048576
+adafidev.menu.section.wicdelib.upload.maximum_size=851968
+
+## Bootloader
+## -------------------------
+#adafidev.bootloader.tool=wicelib_upload
+
 
 adafidev.build.mcu=cortex-m3
 adafidev.build.f_cpu=120000000L
