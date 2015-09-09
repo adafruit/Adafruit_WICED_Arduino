@@ -24,7 +24,7 @@
  * SOFTWARE.
  *****************************************************************************/
 
-#include "adafidev.h"
+#include "adafruit_wicedlib.h"
 
 extern void setup(void);
 extern void loop(void);

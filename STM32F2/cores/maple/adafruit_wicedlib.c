@@ -1,7 +1,7 @@
 /**************************************************************************/
 /*!
-    @file     wirish_time.cpp
-    @author   huynguyen
+    @file     adafruit_wicedlib.c
+    @author   hathach
 
     @section LICENSE
 
@@ -35,14 +35,21 @@
 /**************************************************************************/
 
 #include "adafruit_wicedlib.h"
-#include "wirish_time.h"
 
-void delay(unsigned long ms)
-{
-  ADAFRUIT_WICEDLIB->rtos_delay_ms(ms);
-}
+//--------------------------------------------------------------------+
+// MACRO CONSTANT TYPEDEF
+//--------------------------------------------------------------------+
 
-void delayMicroseconds(uint32 us)
+//--------------------------------------------------------------------+
+// INTERNAL OBJECT & FUNCTION DECLARATION
+//--------------------------------------------------------------------+
+extern void __attribute__((noreturn)) start_c(void);
+
+//--------------------------------------------------------------------+
+// IMPLEMENTATION
+//--------------------------------------------------------------------+
+ATTR_USED adafruit_arduino_t const adafruit_arduino =
 {
-  ADAFRUIT_WICEDLIB->rtos_delay_us(us);
-}
+    .arduino_magic = CFG_ARDUINO_CODE_MAGIC,
+    .startup       = start_c
+};

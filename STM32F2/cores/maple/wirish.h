@@ -51,6 +51,7 @@
 #include "HardwareSerial.h"
 #include "HardwareTimer.h"
 #include "usb_serial.h"
+#include "adafruit_wicedlib.h"
 
 /* Arduino wiring macros and bit defines  */
 #define HIGH 0x1

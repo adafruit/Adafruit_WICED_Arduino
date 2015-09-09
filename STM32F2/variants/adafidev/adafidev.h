@@ -32,9 +32,6 @@
 #ifndef _BOARD_ADAFIDEV_H_
 #define _BOARD_ADAFIDEV_H_
 
-#include <stdint.h>
-#include "compiler.h"
-
 #define Port2Pin(port, bit) ((port-'A')*16+bit)
 
 #define CYCLES_PER_MICROSECOND  168
@@ -113,22 +110,5 @@ PE0,PE1,PE2,PE3,PE4,PE5,PE6,PE7,PE8,PE9,PE10,PE11,PE12,PE13,PE14,PE15,
 PF0,PF1,PF2,PF3,PF4,PF5,PF6,PF7,PF8,PF9,PF10,PF11,PF12,PF13,PF14,PF15,
 PG0,PG1,PG2,PG3,PG4,PG5,PG6,PG7,PG8,PG9,PG10,PG11,PG12,PG13,PG14,PG15
 };
-
-typedef struct ATTR_ALIGNED(512)
-{
-  // Information
-  uint32_t firmware_magic;
-  uint32_t firmware_version;
-  uint8_t  reserverd[56];
-
-  // RTOS API
-  uint32_t (*rtos_delay_ms) (uint32_t ms);
-  uint32_t (*rtos_delay_us) (uint32_t us);
-
-  uint32_t (*gpio_toggle)   (uint32_t gpio);
-}adafruit_wicedlib_t;
-
-#define ADAFRUIT_WICEDLIB_BASE    ((uint32_t) 0x8010200)
-#define ADAFRUIT_WICEDLIB         ((adafruit_wicedlib_t*) ADAFRUIT_WICEDLIB_BASE)
 
 #endif

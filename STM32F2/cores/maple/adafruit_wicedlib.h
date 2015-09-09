@@ -1,7 +1,7 @@
 /**************************************************************************/
 /*!
-    @file     wirish_time.cpp
-    @author   huynguyen
+    @file     adafruit_wicedlib.h
+    @author   hathach
 
     @section LICENSE
 
@@ -34,15 +34,49 @@
 */
 /**************************************************************************/
 
-#include "adafruit_wicedlib.h"
-#include "wirish_time.h"
+#ifndef _ADAFRUIT_WICEDLIB_H_
+#define _ADAFRUIT_WICEDLIB_H_
 
-void delay(unsigned long ms)
-{
-  ADAFRUIT_WICEDLIB->rtos_delay_ms(ms);
-}
+#include <stdint.h>
+#include "compiler.h"
 
-void delayMicroseconds(uint32 us)
+#ifdef __cplusplus
+ extern "C" {
+#endif
+
+//------------- Arduino Shared Structure -------------//
+#define CFG_ARDUINO_CODE_MAGIC    0x01ADD1E5 // Laddies
+
+typedef struct ATTR_ALIGNED(512)
 {
-  ADAFRUIT_WICEDLIB->rtos_delay_us(us);
-}
+  uint32_t arduino_magic;
+  uint8_t  reserved[60];
+
+  void (*startup)(void);
+}adafruit_arduino_t;
+
+
+//------------- Wicedlib Shared Structure -------------//
+typedef struct ATTR_ALIGNED(512)
+{
+  // Information
+  uint32_t firmware_magic;
+  uint32_t firmware_version;
+  uint8_t  reserverd[56];
+
+  // RTOS API
+  uint32_t (*rtos_delay_ms) (uint32_t ms);
+  uint32_t (*rtos_delay_us) (uint32_t us);
+
+  uint32_t (*gpio_toggle)   (uint32_t gpio);
+}adafruit_wicedlib_t;
+
+#define ADAFRUIT_WICEDLIB_BASE    ((uint32_t) 0x8010200)
+#define ADAFRUIT_WICEDLIB         ((adafruit_wicedlib_t*) ADAFRUIT_WICEDLIB_BASE)
+
+
+#ifdef __cplusplus
+ }
+#endif
+
+#endif /* _ADAFRUIT_WICEDLIB_H_ */
