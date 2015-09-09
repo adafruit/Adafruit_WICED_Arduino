@@ -36,6 +36,7 @@
 #include "nvic.h"
 #include "systick.h"
 #include "boards.h"
+#include "adafruit_wicedlib.h"
 
 #define US_PER_MS               1000
 
@@ -45,7 +46,8 @@
  * @see micros()
  */
 static inline uint32 millis(void) {
-    return systick_uptime();
+    //return systick_uptime();
+  return ADAFRUIT_WICEDLIB->system_millis();
 }
 
 /**

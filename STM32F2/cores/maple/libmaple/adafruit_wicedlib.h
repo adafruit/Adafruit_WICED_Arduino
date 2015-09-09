@@ -57,18 +57,23 @@ typedef struct ATTR_ALIGNED(512)
 
 
 //------------- Wicedlib Shared Structure -------------//
+typedef uint32_t wiced_result_t;
+
 typedef struct ATTR_ALIGNED(512)
 {
   // Information
   uint32_t firmware_magic;
   uint32_t firmware_version;
-  uint8_t  reserverd[56];
+  uint8_t  reserved[56];
 
   // RTOS API
-  uint32_t (*rtos_delay_ms) (uint32_t ms);
-  uint32_t (*rtos_delay_us) (uint32_t us);
+  wiced_result_t (*rtos_delay_ms) (uint32_t ms);
+  wiced_result_t (*rtos_delay_us) (uint32_t us);
 
-  uint32_t (*gpio_toggle)   (uint32_t gpio);
+  // Peripheral API
+  uint32_t (*system_millis) (void);
+
+  wiced_result_t (*gpio_toggle)(uint32_t gpio);
 }adafruit_wicedlib_t;
 
 #define ADAFRUIT_WICEDLIB_BASE    ((uint32_t) 0x8010200)
