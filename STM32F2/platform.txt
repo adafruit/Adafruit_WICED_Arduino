@@ -136,9 +136,12 @@ tools.adafruit_upload.upload.pattern=python "{path}/{cmd}" {upload.region} "{upl
 # Adalink Programmer tools
 # ------------------- 
 tools.adalink.cmd=adalink
+tools.adalink.path=
+tools.adalink.path.macosx=/usr/local/bin
+tools.adalink.path.linux=
 tools.adalink.bootloader.params.verbose=-v
 tools.adalink.bootloader.params.quiet=
-tools.adalink.bootloader.pattern="{cmd}" {bootloader.verbose} {bootloader.cpu} --programmer {program.programmer} --program-hex "{runtime.platform.path}/{bootloader.file}"
+tools.adalink.bootloader.pattern="{path}/{cmd}" {bootloader.verbose} {bootloader.cpu} --programmer {program.programmer} --program-hex "{runtime.platform.path}/{bootloader.file}"
 
 # Adalink auto erase flash page while programming
 tools.adalink.erase.params.verbose=
