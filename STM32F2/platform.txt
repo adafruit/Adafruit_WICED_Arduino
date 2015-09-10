@@ -113,22 +113,34 @@ tools.adafruit_upload.upload.pattern=python "{path}/{cmd}" {upload.region} "{upl
 # Generic STM32 upload via serial to Serial Port 1 (pins PA9 and PA10) - note. Boot0 line needs to high on board reset to enable upload via serial
 # at the end of the upload the program is automatically run, without the board being reset
 
-tools.serial_upload.cmd=serial_upload
-tools.serial_upload.cmd.windows=serial_upload.bat
-#tools.serial_upload.cmd.linux=
-tools.serial_upload.path={runtime.hardware.path}/tools/win
+# tools.serial_upload.cmd=serial_upload
+# tools.serial_upload.cmd.windows=serial_upload.bat
+# #tools.serial_upload.cmd.linux=
+# tools.serial_upload.path={runtime.hardware.path}/tools/win
 
-tools.serial_upload.upload.params.verbose=-d
-tools.serial_upload.upload.params.quiet=
-tools.serial_upload.upload.pattern="{path}/{cmd}" {serial.port.file} {upload.altID} {upload.usbID} "{build.path}/{build.project_name}.bin"
+# tools.serial_upload.upload.params.verbose=-d
+# tools.serial_upload.upload.params.quiet=
+# tools.serial_upload.upload.pattern="{path}/{cmd}" {serial.port.file} {upload.altID} {upload.usbID} "{build.path}/{build.project_name}.bin"
 
 # STLINK/V2
 
-tools.stlink.cmd=stlink
-tools.stlink.cmd.windows=stlink_upload.bat
-#tools.stlink.cmd.linux=
-tools.stlink.path={runtime.hardware.path}/tools/win
-tools.stlink.upload.params.verbose=-d
-tools.stlink.upload.params.quiet=
-tools.stlink.upload.pattern="{path}/{cmd}" {serial.port.file} {upload.altID} {upload.usbID} "{build.path}/{build.project_name}.bin"
- 
+# tools.stlink.cmd=stlink
+# tools.stlink.cmd.windows=stlink_upload.bat
+# #tools.stlink.cmd.linux=
+# tools.stlink.path={runtime.hardware.path}/tools/win
+# tools.stlink.upload.params.verbose=-d
+# tools.stlink.upload.params.quiet=
+# tools.stlink.upload.pattern="{path}/{cmd}" {serial.port.file} {upload.altID} {upload.usbID} "{build.path}/{build.project_name}.bin"
+
+
+# Adalink Programmer tools
+# ------------------- 
+tools.adalink.cmd=adalink
+tools.adalink.bootloader.params.verbose=-v
+tools.adalink.bootloader.params.quiet=
+tools.adalink.bootloader.pattern="{cmd}" {bootloader.verbose} {bootloader.cpu} --programmer {program.programmer} --program-hex "{runtime.platform.path}/{bootloader.file}"
+
+# Adalink auto erase flash page while programming
+tools.adalink.erase.params.verbose=
+tools.adalink.erase.params.quiet=
+tools.adalink.erase.pattern=

@@ -1,0 +1,9 @@
+jlink.name=JLink with Adalink
+jlink.communication=swd
+jlink.protocol=adalink
+jlink.program.programmer=jlink
+
+stlink.name=STlinkV2 with Adalink
+stlink.communication=swd
+stlink.protocol=adalink
+stlink.program.programmer=stlink
