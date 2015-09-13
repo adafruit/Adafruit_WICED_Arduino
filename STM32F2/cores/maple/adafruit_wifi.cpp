@@ -1,7 +1,7 @@
 /**************************************************************************/
 /*!
-    @file     adafruit_wicedlib.h
-    @author   hathach
+    @file     adafruit_wifi.cpp
+    @author   huynguyen
 
     @section LICENSE
 
@@ -34,57 +34,40 @@
 */
 /**************************************************************************/
 
-#ifndef _ADAFRUIT_WICEDLIB_H_
-#define _ADAFRUIT_WICEDLIB_H_
+#include "adafruit_wicedlib.h"
+#include "adafruit_wifi.h"
+#include <string.h>
 
-#include <stdint.h>
-#include "compiler.h"
-
-#ifdef __cplusplus
- extern "C" {
-#endif
-
-//------------- Arduino Shared Structure -------------//
-#define CFG_ARDUINO_CODE_MAGIC    0x01ADD1E5 // Laddies
-
-typedef struct ATTR_ALIGNED(512)
+/******************************************************************************/
+/*!
+    @brief Instantiates a new instance of the AdafruitWICED class
+*/
+/******************************************************************************/
+AdafruitWICED::AdafruitWICED(void)
 {
-  uint32_t arduino_magic;
-  uint8_t  reserved[60];
+//  init();
+}
 
-  void (*startup) (void);
-}adafruit_arduino_t;
-
-
-//------------- Wicedlib Shared Structure -------------//
-typedef uint32_t wiced_result_t;
-
-typedef struct ATTR_ALIGNED(512)
+/******************************************************************************/
+/*!
+    @brief Initialization if necessary
+*/
+/******************************************************************************/
+void AdafruitWICED::init()
 {
-  // Information
-  uint32_t firmware_magic;
-  uint32_t firmware_version;
-  uint8_t  reserved[56];
 
-  // RTOS API
-  wiced_result_t (*rtos_delay_ms) (uint32_t ms);
-  wiced_result_t (*rtos_delay_us) (uint32_t us);
+}
 
-  // Peripheral API
-  uint32_t (*system_millis) (void);
+/******************************************************************************/
+/*!
+    @brief Instantiates a new instance of the Adafruit_BluefruitLE_SPI class
 
-  wiced_result_t (*gpio_toggle) (uint32_t gpio);
+    @param[in/out]  ap_details  Pointer to a buffer storing scanned AP information
+*/
+/******************************************************************************/
+uint16_t AdafruitWICED::scan(uint8_t* ap_details)
+{
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_SCAN, 0, NULL, ap_details);
+}
 
-  // SDEP Command
-  uint16_t (*wiced_sdep) (uint16_t sdep_cmd_id, uint8_t paylen, uint8_t* payload_buffer, uint8_t* result_buffer);
-}adafruit_wicedlib_t;
-
-#define ADAFRUIT_WICEDLIB_BASE    ((uint32_t) 0x8010200)
-#define ADAFRUIT_WICEDLIB         ((adafruit_wicedlib_t*) ADAFRUIT_WICEDLIB_BASE)
-
-
-#ifdef __cplusplus
- }
-#endif
-
-#endif /* _ADAFRUIT_WICEDLIB_H_ */
+AdafruitWICED wiced;
