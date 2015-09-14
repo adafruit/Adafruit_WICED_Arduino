@@ -60,14 +60,131 @@ void AdafruitWICED::init()
 
 /******************************************************************************/
 /*!
-    @brief Instantiates a new instance of the Adafruit_BluefruitLE_SPI class
+    @brief  Starts scanning for WiFi APs in range
 
-    @param[in/out]  ap_details  Pointer to a buffer storing scanned AP information
+    @param[in/out]  ap_details  A buffer storing scanned AP information
+
+    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
+            a specific error if something went wrong.
 */
 /******************************************************************************/
-uint16_t AdafruitWICED::scan(uint8_t* ap_details)
+sdep_err_t AdafruitWICED::scan(uint8_t* ap_details)
 {
   return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_SCAN, 0, NULL, ap_details);
+}
+
+/******************************************************************************/
+/*!
+    @brief  Attempt to connect to the specified access point
+
+    @param[in]      ssid    SSID of Wi-Fi access point
+
+    @param[in]      passwd  Password of Wi-Fi access point
+
+    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
+            a specific error if something went wrong.
+
+    @note   ssid and passwd are combined in a single payload buffer which are
+            separated by ',' character
+*/
+/******************************************************************************/
+sdep_err_t AdafruitWICED::connectAP(char* ssid, char* passwd)
+{
+  uint8_t ssid_len = strlen(ssid);
+  uint8_t pass_len = strlen(passwd);
+  char payload[ssid_len + pass_len + 1];
+
+  memcpy(&payload[0], ssid, ssid_len);
+  payload[ssid_len] = ',';
+  memcpy(&payload[ssid_len + 1], passwd, pass_len);
+
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_CONNECT, ssid_len + pass_len + 1,
+                                       (uint8_t*)payload, NULL);
+}
+
+/******************************************************************************/
+/*!
+    @brief  Attempt to connect to the specified access point with no password
+
+    @param[in]      ssid    SSID of Wi-Fi access point
+
+    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
+            a specific error if something went wrong.
+*/
+/******************************************************************************/
+sdep_err_t AdafruitWICED::connectAP(char* ssid)
+{
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_CONNECT, strlen(ssid),
+                                       (uint8_t*)ssid, NULL);
+}
+
+/******************************************************************************/
+/*!
+    @brief  Disconnects from the access point if a connection exists
+
+    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
+            a specific error if something went wrong.
+*/
+/******************************************************************************/
+sdep_err_t AdafruitWICED::disconnectAP(void)
+{
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_DISCONNECT, 0, NULL, NULL);
+}
+
+/******************************************************************************/
+/*!
+    @brief  Starts AP mode on the module, causing the module to advertise a new
+            Wireless network and SSID, etc.
+
+    @param[in]      ssid    SSID of Wi-Fi access point
+
+    @param[in]      passwd  Password of Wi-Fi access point
+
+    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
+            a specific error if something went wrong.
+
+    @note   ssid and passwd are combined in a single payload buffer which are
+            separated by ',' character
+*/
+/******************************************************************************/
+sdep_err_t AdafruitWICED::startAP(char* ssid, char* passwd)
+{
+  uint8_t ssid_len = strlen(ssid);
+  uint8_t pass_len = strlen(passwd);
+  char payload[ssid_len + pass_len + 1];
+
+  memcpy(&payload[0], ssid, ssid_len);
+  payload[ssid_len] = ',';
+  memcpy(&payload[ssid_len + 1], passwd, pass_len);
+
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_APSTART, ssid_len + pass_len + 1,
+                                       (uint8_t*)payload, NULL);
+}
+
+/******************************************************************************/
+/*!
+    @brief  Starts AP mode on the module with default SSID and password
+
+    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
+            a specific error if something went wrong.
+*/
+/******************************************************************************/
+sdep_err_t AdafruitWICED::startAP(void)
+{
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_APSTART, 0, NULL, NULL);
+}
+
+/******************************************************************************/
+/*!
+    @brief  Stop AP mode on the module
+
+    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
+            a specific error if something went wrong.
+*/
+/******************************************************************************/
+sdep_err_t AdafruitWICED::stopAP(void)
+{
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_APSTOP, 0, NULL, NULL);
 }
 
 AdafruitWICED wiced;

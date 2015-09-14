@@ -107,6 +107,12 @@ public:
   AdafruitWICED(void);
 
   sdep_err_t scan(uint8_t* ap_details);
+  sdep_err_t connectAP(char* ssid, char* passwd);
+  sdep_err_t connectAP(char* ssid);
+  sdep_err_t disconnectAP(void);
+  sdep_err_t startAP(char* ssid, char* passwd);
+  sdep_err_t startAP(void);
+  sdep_err_t stopAP(void);
 };
 
 extern AdafruitWICED wiced;
