@@ -75,6 +75,11 @@ typedef struct ATTR_ALIGNED(512)
 
   wiced_result_t (*gpio_toggle) (uint32_t gpio);
 
+  // FILE Interface
+  int (*file_write)(int file, char *ptr, int len);
+  int (*file_read)(int file, char *ptr, int len);
+  int (*file_peek)(void);
+
   // SDEP Command
   uint16_t (*wiced_sdep) (uint16_t sdep_cmd_id, uint8_t paylen, uint8_t* payload_buffer, uint8_t* result_buffer);
 }adafruit_wicedlib_t;
