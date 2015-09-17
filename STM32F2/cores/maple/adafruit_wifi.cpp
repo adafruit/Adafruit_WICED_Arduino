@@ -62,15 +62,15 @@ void AdafruitWICED::init()
 /*!
     @brief  Starts scanning for WiFi APs in range
 
-    @param[in/out]  ap_details  A buffer storing scanned AP information
+    @param[out]     ap_details  A buffer storing scanned AP information
 
     @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitWICED::scan(uint8_t* ap_details)
+sdep_err_t AdafruitWICED::scan(uint16_t* length, uint8_t* ap_details)
 {
-  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_SCAN, 0, NULL, ap_details);
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_SCAN, 0, NULL, length, ap_details);
 }
 
 /******************************************************************************/
@@ -92,14 +92,15 @@ sdep_err_t AdafruitWICED::connectAP(char* ssid, char* passwd)
 {
   uint8_t ssid_len = strlen(ssid);
   uint8_t pass_len = strlen(passwd);
-  char payload[ssid_len + pass_len + 1];
+  char payload[ssid_len + pass_len + 2];
 
   memcpy(&payload[0], ssid, ssid_len);
   payload[ssid_len] = ',';
   memcpy(&payload[ssid_len + 1], passwd, pass_len);
+  payload[ssid_len + pass_len + 1] = 0;
 
-  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_CONNECT, ssid_len + pass_len + 1,
-                                       (uint8_t*)payload, NULL);
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_CONNECT, strlen(payload),
+                                       (uint8_t*)payload, NULL, NULL);
 }
 
 /******************************************************************************/
@@ -115,7 +116,7 @@ sdep_err_t AdafruitWICED::connectAP(char* ssid, char* passwd)
 sdep_err_t AdafruitWICED::connectAP(char* ssid)
 {
   return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_CONNECT, strlen(ssid),
-                                       (uint8_t*)ssid, NULL);
+                                       (uint8_t*)ssid, NULL, NULL);
 }
 
 /******************************************************************************/
@@ -128,7 +129,7 @@ sdep_err_t AdafruitWICED::connectAP(char* ssid)
 /******************************************************************************/
 sdep_err_t AdafruitWICED::disconnectAP(void)
 {
-  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_DISCONNECT, 0, NULL, NULL);
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_DISCONNECT, 0, NULL, NULL, NULL);
 }
 
 /******************************************************************************/
@@ -151,14 +152,15 @@ sdep_err_t AdafruitWICED::startAP(char* ssid, char* passwd)
 {
   uint8_t ssid_len = strlen(ssid);
   uint8_t pass_len = strlen(passwd);
-  char payload[ssid_len + pass_len + 1];
+  char payload[ssid_len + pass_len + 2];
 
   memcpy(&payload[0], ssid, ssid_len);
   payload[ssid_len] = ',';
   memcpy(&payload[ssid_len + 1], passwd, pass_len);
+  payload[ssid_len + pass_len + 1] = 0;
 
-  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_APSTART, ssid_len + pass_len + 1,
-                                       (uint8_t*)payload, NULL);
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_APSTART, strlen(payload),
+                                       (uint8_t*)payload, NULL, NULL);
 }
 
 /******************************************************************************/
@@ -171,7 +173,7 @@ sdep_err_t AdafruitWICED::startAP(char* ssid, char* passwd)
 /******************************************************************************/
 sdep_err_t AdafruitWICED::startAP(void)
 {
-  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_APSTART, 0, NULL, NULL);
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_APSTART, 0, NULL, NULL, NULL);
 }
 
 /******************************************************************************/
@@ -184,7 +186,153 @@ sdep_err_t AdafruitWICED::startAP(void)
 /******************************************************************************/
 sdep_err_t AdafruitWICED::stopAP(void)
 {
-  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_APSTOP, 0, NULL, NULL);
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_APSTOP, 0, NULL, NULL, NULL);
+}
+
+/******************************************************************************/
+/*!
+    @brief  Return the results from an ICMP ping against a specified IP address
+
+    @param[in]      ip_address_str    String of ip address (e.g. "192.168.1.100")
+
+    @param[out]     response_time     The ping response time
+
+    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
+            a specific error if something went wrong.
+*/
+/******************************************************************************/
+sdep_err_t AdafruitWICED::ping(char* ip_address_str, uint8_t* response_time)
+{
+  uint8_t payload[4] = {0};
+  char* ptr_ip = ip_address_str;
+
+  // Parse IP address string and check if the IP address is valid
+  // The valid IP address is stored in payload buffer
+  uint8_t index = 0;
+  while (*ptr_ip)
+  {
+    if (*ptr_ip >= '0' && *ptr_ip <= '9')
+    {
+      if (index > 3) return ERROR_INVALIDPARAMETER;
+      payload[index] *= 10;
+      payload[index] += *ptr_ip - '0';
+    }
+    else if (*ptr_ip == '.')
+    {
+      index++;
+    }
+    else return ERROR_INVALIDPARAMETER;
+    ptr_ip++;
+  }
+
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_PING, 4, payload,
+                                       NULL, response_time);
+}
+
+/******************************************************************************/
+/*!
+    @brief  Return the results from an ICMP ping against a specified IP address
+
+    @param[in]      ip_address        An array of 4 bytes IP address
+
+    @param[out]     response_time     The ping response time
+
+    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
+            a specific error if something went wrong.
+*/
+/******************************************************************************/
+sdep_err_t AdafruitWICED::ping(uint8_t* ip_address, uint8_t* response_time)
+{
+  // Check if IP address is valid
+  for (int i = 0; i < 3; i++)
+  {
+    if (ip_address[i] > 255) return ERROR_INVALIDPARAMETER;
+  }
+
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_PING, 4, ip_address,
+                                       NULL, response_time);
+}
+
+/******************************************************************************/
+/*!
+    @brief  Performs DNS lookup of a specified domain name for its IPv4 IP address
+
+    @param[in]      dns             The domain name to lookup
+
+    @param[out]     ipv4_address    IPv4 IP address that is associated with
+                                    the requested domain name
+
+    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
+            a specific error if something went wrong.
+*/
+/******************************************************************************/
+sdep_err_t AdafruitWICED::dnsLookup(char* dns, uint8_t* ipv4_address)
+{
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_DNSLOOKUP, strlen(dns),
+                                       (uint8_t*)dns, NULL, ipv4_address);
+}
+
+/******************************************************************************/
+/*!
+    @brief  Starts AP mode on the module, causing the module to advertise a new
+            Wireless network and SSID, etc.
+
+    @param[in]      ssid    SSID of Wi-Fi access point
+
+    @param[in]      passwd  Password of Wi-Fi access point
+
+    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
+            a specific error if something went wrong.
+
+    @note   ssid and passwd are combined in a single payload buffer which are
+            separated by ',' character
+*/
+/******************************************************************************/
+sdep_err_t AdafruitWICED::getTime()
+{
+
+}
+
+/******************************************************************************/
+/*!
+    @brief  Starts AP mode on the module, causing the module to advertise a new
+            Wireless network and SSID, etc.
+
+    @param[in]      ssid    SSID of Wi-Fi access point
+
+    @param[in]      passwd  Password of Wi-Fi access point
+
+    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
+            a specific error if something went wrong.
+
+    @note   ssid and passwd are combined in a single payload buffer which are
+            separated by ',' character
+*/
+/******************************************************************************/
+sdep_err_t AdafruitWICED::httpGetUri(char* uri, uint8_t* response)
+{
+
+}
+
+/******************************************************************************/
+/*!
+    @brief  Starts AP mode on the module, causing the module to advertise a new
+            Wireless network and SSID, etc.
+
+    @param[in]      ssid    SSID of Wi-Fi access point
+
+    @param[in]      passwd  Password of Wi-Fi access point
+
+    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
+            a specific error if something went wrong.
+
+    @note   ssid and passwd are combined in a single payload buffer which are
+            separated by ',' character
+*/
+/******************************************************************************/
+sdep_err_t AdafruitWICED::httpPost(char* uri, uint8_t* response)
+{
+
 }
 
 AdafruitWICED wiced;

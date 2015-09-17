@@ -51,8 +51,9 @@
  *     1  byte        : Radio channel
  *     1  byte        : Radio band
  */
-#define AP_INFO_PACKET_SIZE  52
-#define ERROR_NONE           0x0000
+#define AP_INFO_PACKET_SIZE      52
+#define ERROR_NONE               0x0000
+#define ERROR_INVALIDPARAMETER   0x8025
 
 typedef enum {
   SDEP_CMD_RESET           = 0x0001, /**< HW reset                             */
@@ -106,13 +107,47 @@ private:
 public:
   AdafruitWICED(void);
 
-  sdep_err_t scan(uint8_t* ap_details);
+  /* WiFi Commands */
+  sdep_err_t scan(uint16_t* length, uint8_t* ap_details);
   sdep_err_t connectAP(char* ssid, char* passwd);
   sdep_err_t connectAP(char* ssid);
   sdep_err_t disconnectAP(void);
   sdep_err_t startAP(char* ssid, char* passwd);
   sdep_err_t startAP(void);
   sdep_err_t stopAP(void);
+
+  /* Network Commands */
+  sdep_err_t ping(char* ip_address_str, uint8_t* response_time);
+  sdep_err_t ping(uint8_t* ip_address, uint8_t* response_time);
+  sdep_err_t dnsLookup(char* dns, uint8_t* ipv4_address);
+  sdep_err_t getTime();
+  sdep_err_t httpGetUri(char* uri, uint8_t* response);
+  sdep_err_t httpPost(char* uri, uint8_t* response);
+
+//  /* DEBUG Commands */
+//  sdep_err_t stackDump();
+//  sdep_err_t stackSize();
+//  sdep_err_t heapDump();
+//  sdep_err_t heapSize();
+//  sdep_err_t threadList();
+//
+//  /* SPI Flash Commands */
+//  sdep_err_t sflashFormat();
+//  sdep_err_t sflashList();
+//
+//  /* MQTT Commands */
+//  sdep_err_t mqttLastWill();
+//  sdep_err_t mqttConnect();
+//  sdep_err_t mqttDisconnect();
+//  sdep_err_t mqttPublish();
+//  sdep_err_t mqttSubscribe();
+//  sdep_err_t mqttUnsubscribe();
+//
+//  /* IRQ Commands */
+//  sdep_err_t irqRead();
+//  sdep_err_t irqCount();
+//  sdep_err_t irqAvailable();
+//  sdep_err_t irqClear();
 };
 
 extern AdafruitWICED wiced;
