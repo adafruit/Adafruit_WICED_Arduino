@@ -7,7 +7,7 @@ menu.section=Section
 
 ##############################################################
 
-adafidev.name=Adafruit Wiced
+adafidev.name=Feather Wiced
 adafidev.vid.0=0x239A
 adafidev.pid.0=0x0009
 
@@ -42,14 +42,14 @@ adafidev.menu.section.firmware.upload.ram.maximum_size=16384
 adafidev.menu.section.firmware.upload.flash.maximum_size=1048576
 adafidev.menu.section.firmware.upload.maximum_size=131072
 
-## Wicedlib section
+## Feather Lib section
 ## -------------------------
-adafidev.menu.section.wicdelib=Wiced Lib
-adafidev.menu.section.wicdelib.upload.region=wicedlib_upgrade
-adafidev.menu.section.wicdelib.upload.binfile={runtime.platform.path}/wicedlib/wicedlib.bin
-adafidev.menu.section.wicdelib.upload.ram.maximum_size=114688
-adafidev.menu.section.wicdelib.upload.flash.maximum_size=1048576
-adafidev.menu.section.wicdelib.upload.maximum_size=851968
+adafidev.menu.section.featherlib=Feather Lib
+adafidev.menu.section.featherlib.upload.region=featherlib_upgrade
+adafidev.menu.section.featherlib.upload.binfile={runtime.platform.path}/featherlib/featherlib.bin
+adafidev.menu.section.featherlib.upload.ram.maximum_size=114688
+adafidev.menu.section.featherlib.upload.flash.maximum_size=1048576
+adafidev.menu.section.featherlib.upload.maximum_size=851968
 
 ## Bootloader
 ## -------------------------
