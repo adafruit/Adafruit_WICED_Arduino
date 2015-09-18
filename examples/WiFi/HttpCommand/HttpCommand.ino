@@ -1,11 +1,8 @@
 /*
-  Connect to a WiFi access point. If success, perform an ICMP ping against 
-  a specified IP address and a DNS lookup of the specified domain name. Then
-  disconnect from the given access point
+  Connect to a WiFi access point. If success, retrieve the results of a 
+  specified URI and send the 'x-www-form-urlencoded' URL as a HTTP POST 
+  operation
 
-  The ping response time and IPv4 address associated with the supplied domain
-  name are displayed on Serial Monitor
-  
   author: huynguyen 
  */
 
@@ -31,8 +28,9 @@ void setup()
 */
 /**************************************************************************/
 void loop() {
+  uint16_t error;
   // Connect to an AP
-  char* ssid = "ADAFRUIT";
+  char* ssid = "huy-laptop";
   char* pass = "12345678";
   if (wiced.connectAP(ssid, pass) == ERROR_NONE)
   {
@@ -44,32 +42,40 @@ void loop() {
   else
     Serial.println("Connect Error!");
 
-  uint8_t ping_time[4];
-  char* ip = "207.58.139.247";
-  if (wiced.ping(ip, ping_time) == ERROR_NONE)
+  Serial.println("");
+
+  uint16_t buffer_len;
+  uint8_t response[1024];
+  char* get_uri = "http://www.adafruit.com/testwifi/index.html";
+  Serial.println("Response from HTTP GET URI");
+  error = wiced.httpGetUri(get_uri, &buffer_len, response);
+  if (error == ERROR_NONE)
   {
-    uint32_t time;
-    memcpy(&time, &ping_time[0], sizeof(time));
-    Serial.print("Given IP address = "); Serial.println(ip);
-    Serial.print("Ping time = "); Serial.print(time); Serial.println(" ms");
+    Serial.println("");
+    for (int i = 0; i < buffer_len; i++)
+       Serial.write(response[i]);
   }
   else
-    Serial.println("Ping Error!");
-
-  uint8_t ipv4[4];
-  char* dns = "adafruit.com";
-  if (wiced.dnsLookup(dns, ipv4) == ERROR_NONE)
   {
-    Serial.print("The IPv4 address of domain name \"");
-    Serial.print(dns); Serial.print("\": ");
-    Serial.print(ipv4[3]); Serial.print(".");
-    Serial.print(ipv4[2]); Serial.print(".");
-    Serial.print(ipv4[1]); Serial.print(".");
-    Serial.println(ipv4[0]);
+    Serial.print("HTTP GET Error: ");
+    Serial.println(error, HEX);
+  }
+
+  Serial.println("");
+  
+  char* post_uri = "http://www.adafruit.com/testwifi/testpost.php?name=foo&email=bar@adafruit.com";
+  Serial.println("Response from HTTP POST");
+  Serial.println("");
+  if (wiced.httpPost(post_uri, &buffer_len, response) == ERROR_NONE)
+  {
+    for (int i = 0; i < buffer_len; i++)
+       Serial.write(response[i]);
   }
   else
-    Serial.println("DNS Lookup Error!");
+    Serial.println("HTTP POST Error!");
 
+  Serial.println("\r\n");
+  
   // Stop AP mode
   if (wiced.disconnectAP() == ERROR_NONE)
   {

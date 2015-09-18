@@ -81,9 +81,9 @@ typedef struct ATTR_ALIGNED(512)
   int (*file_peek)  (void);
 
   // SDEP Command
-  uint16_t (*wiced_sdep) (uint16_t  sdep_cmd_id,
+  uint16_t (*wiced_sdep) (uint16_t  cmd_id,
                           uint8_t   paylen,
-                          uint8_t*  payload_buffer,
+                          uint8_t*  parameter,
                           uint16_t* result_len,
                           uint8_t*  result_buffer);
 }adafruit_wicedlib_t;

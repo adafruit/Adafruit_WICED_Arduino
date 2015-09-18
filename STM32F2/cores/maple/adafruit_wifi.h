@@ -121,8 +121,8 @@ public:
   sdep_err_t ping(uint8_t* ip_address, uint8_t* response_time);
   sdep_err_t dnsLookup(char* dns, uint8_t* ipv4_address);
   sdep_err_t getTime();
-  sdep_err_t httpGetUri(char* uri, uint8_t* response);
-  sdep_err_t httpPost(char* uri, uint8_t* response);
+  sdep_err_t httpGetUri(char* uri, uint16_t* length, uint8_t* response);
+  sdep_err_t httpPost(char* uri, uint16_t* length, uint8_t* response);
 
 //  /* DEBUG Commands */
 //  sdep_err_t stackDump();

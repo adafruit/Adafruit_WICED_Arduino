@@ -62,6 +62,8 @@ void AdafruitWICED::init()
 /*!
     @brief  Starts scanning for WiFi APs in range
 
+    @param[out]     length      Length of ap_details buffer
+
     @param[out]     ap_details  A buffer storing scanned AP information
 
     @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
@@ -295,44 +297,43 @@ sdep_err_t AdafruitWICED::getTime()
 
 /******************************************************************************/
 /*!
-    @brief  Starts AP mode on the module, causing the module to advertise a new
-            Wireless network and SSID, etc.
+    @brief  Retrieve the results of a specified URI
 
-    @param[in]      ssid    SSID of Wi-Fi access point
+    @param[in]      uri       The URI
 
-    @param[in]      passwd  Password of Wi-Fi access point
+    @param[out]     length    Length of response buffer
+
+    @param[out]     response  The full response based on the specified URI
 
     @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
             a specific error if something went wrong.
-
-    @note   ssid and passwd are combined in a single payload buffer which are
-            separated by ',' character
 */
 /******************************************************************************/
-sdep_err_t AdafruitWICED::httpGetUri(char* uri, uint8_t* response)
+sdep_err_t AdafruitWICED::httpGetUri(char* uri, uint16_t* length, uint8_t* response)
 {
-
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_HTTPGETURI, strlen(uri),
+                                       (uint8_t*)uri, length, response);
 }
 
 /******************************************************************************/
 /*!
-    @brief  Starts AP mode on the module, causing the module to advertise a new
-            Wireless network and SSID, etc.
+    @brief  Send the 'x-www-form-urlencoded' URL as a HTTP POST operation
 
-    @param[in]      ssid    SSID of Wi-Fi access point
+    @param[in]      uri       The URI (must contain parameters for the post
+                                       after a '?' character in the URI)
 
-    @param[in]      passwd  Password of Wi-Fi access point
+    @param[out]     length    Length of response buffer
+
+    @param[out]     response  The full response based on the specified URI
 
     @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
             a specific error if something went wrong.
-
-    @note   ssid and passwd are combined in a single payload buffer which are
-            separated by ',' character
 */
 /******************************************************************************/
-sdep_err_t AdafruitWICED::httpPost(char* uri, uint8_t* response)
+sdep_err_t AdafruitWICED::httpPost(char* uri, uint16_t* length, uint8_t* response)
 {
-
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_HTTPPOST, strlen(uri),
+                                       (uint8_t*)uri, length, response);
 }
 
 AdafruitWICED wiced;
