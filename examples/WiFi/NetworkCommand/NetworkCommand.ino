@@ -1,10 +1,11 @@
 /*
   Connect to a WiFi access point. If success, perform an ICMP ping against 
-  a specified IP address and a DNS lookup of the specified domain name. Then
-  disconnect from the given access point
+  a specified IP address, a DNS lookup of the specified domain name and get
+  the current UTC date and time using ISO 8601 standard. Then disconnect 
+  from the given access point
 
-  The ping response time and IPv4 address associated with the supplied domain
-  name are displayed on Serial Monitor
+  The ping response time, IPv4 address associated with the supplied domain
+  name and string of current UTC date & time are displayed on Serial Monitor
   
   author: huynguyen 
  */
@@ -19,7 +20,6 @@
 void setup()
 {
   pinMode(BOARD_LED_PIN, OUTPUT);
-  delay(5000);
   
   // initialize serial port for input and output
 //  Serial.begin(11500);
@@ -69,6 +69,16 @@ void loop() {
   }
   else
     Serial.println("DNS Lookup Error!");
+
+  char iso8601_time[28];  // Length of UTC day and time in
+                          // ISO 8601 standard is 28 bytes (including '\0')
+  if (wiced.getTime(iso8601_time) == ERROR_NONE)
+  {
+    Serial.print("Current UTC time and date: ");
+    Serial.println(iso8601_time);
+  }
+  else
+    Serial.println("Get Time Error!");
 
   // Stop AP mode
   if (wiced.disconnectAP() == ERROR_NONE)

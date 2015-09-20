@@ -276,23 +276,22 @@ sdep_err_t AdafruitWICED::dnsLookup(char* dns, uint8_t* ipv4_address)
 
 /******************************************************************************/
 /*!
-    @brief  Starts AP mode on the module, causing the module to advertise a new
-            Wireless network and SSID, etc.
+    @brief  Get the current UTC date and time using the ISO 8601 standard
+            e.g. "2012-07-02T17:12:34.567890Z" (string length = 27 bytes)
 
-    @param[in]      ssid    SSID of Wi-Fi access point
-
-    @param[in]      passwd  Password of Wi-Fi access point
+    @param[out]     iso8601_time    String of current UTC date and time
 
     @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
             a specific error if something went wrong.
-
-    @note   ssid and passwd are combined in a single payload buffer which are
-            separated by ',' character
 */
 /******************************************************************************/
-sdep_err_t AdafruitWICED::getTime()
+sdep_err_t AdafruitWICED::getTime(char* iso8601_time)
 {
 
+  sdep_err_t error = ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_GETTIME, 0, NULL,
+                                                   NULL, (uint8_t*)iso8601_time);
+  *(iso8601_time + 27) = '\0';  // Terminated character
+  return error;
 }
 
 /******************************************************************************/
