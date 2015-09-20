@@ -136,12 +136,12 @@ public:
 //  sdep_err_t sflashList();
 //
 //  /* MQTT Commands */
-//  sdep_err_t mqttLastWill();
-//  sdep_err_t mqttConnect();
-//  sdep_err_t mqttDisconnect();
-//  sdep_err_t mqttPublish();
-//  sdep_err_t mqttSubscribe();
-//  sdep_err_t mqttUnsubscribe();
+  sdep_err_t mqttLastWill(char* lastWillMessage);
+  sdep_err_t mqttConnect(char* mqttServer);
+  sdep_err_t mqttDisconnect(void);
+  sdep_err_t mqttPublish(char* publishedMessage);
+  sdep_err_t mqttSubscribe(char* topic);
+  sdep_err_t mqttUnsubscribe(void);
 //
 //  /* IRQ Commands */
 //  sdep_err_t irqRead();

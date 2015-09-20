@@ -335,4 +335,115 @@ sdep_err_t AdafruitWICED::httpPost(char* uri, uint16_t* length, uint8_t* respons
                                        (uint8_t*)uri, length, response);
 }
 
+/******************************************************************************/
+/*!
+    @brief  Specify the LastWill message used in case of ungraceful disconnection
+
+    @param[in]    lastWillMessage   String of LastWill message including topic,
+                                    value, qos and retain
+
+    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
+            a specific error if something went wrong.
+
+    @note   ',' characters are used to separate parameters together
+            LastWill message format: <topic>,<value>,<qos[1]>,<retain[0?]>
+            e.g. "topic/adafruit,offline,1,0"
+*/
+/******************************************************************************/
+sdep_err_t AdafruitWICED::mqttLastWill(char* lastWillMessage)
+{
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_MQTTLASTWILL, strlen(lastWillMessage),
+                                       (uint8_t*)lastWillMessage, NULL, NULL);
+}
+
+/******************************************************************************/
+/*!
+    @brief  Connect to a broker specified by host name and port
+
+    @param[in]    mqttServer      String of mqttServer including host name, port,
+                                  and client ID
+
+    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
+            a specific error if something went wrong.
+
+    @note   ',' characters are used to separate parameters together
+            MQTT Server format: <host>,<port>,<client ID>
+            e.g. "85.119.83.194,1883,adafruit"
+*/
+/******************************************************************************/
+sdep_err_t AdafruitWICED::mqttConnect(char* mqttServer)
+{
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_MQTTCONNECT, strlen(mqttServer),
+                                       (uint8_t*)mqttServer, NULL, NULL);
+}
+
+/******************************************************************************/
+/*!
+    @brief  Disconnect from a broker
+
+    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
+            a specific error if something went wrong.
+*/
+/******************************************************************************/
+sdep_err_t AdafruitWICED::mqttDisconnect(void)
+{
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_MQTTDISCONNECT, 0, NULL, NULL, NULL);
+}
+
+/******************************************************************************/
+/*!
+    @brief  Publish a message to a specified topic
+
+    @param[in]    lastWillMessage   String of published message including topic,
+                                    value, qos and retain
+
+    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
+            a specific error if something went wrong.
+
+    @note   ',' characters are used to separate parameters together
+            Published message format: <topic>,<value>,<qos[1]>,<retain[0?]>
+            e.g. "topic/adafruit,hello,1,0"
+*/
+/******************************************************************************/
+sdep_err_t AdafruitWICED::mqttPublish(char* publishedMessage)
+{
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_MQTTPUBLISH, strlen(publishedMessage),
+                                       (uint8_t*)publishedMessage, NULL, NULL);
+}
+
+/******************************************************************************/
+/*!
+    @brief  Subscribe to a specified topic
+
+    @param[in]    topic   String of topic to subscribe including topic, and qos
+
+    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
+            a specific error if something went wrong.
+
+    @note   ',' characters are used to separate parameters together
+            Topic format: <topic>,<qos>
+            e.g. "topic/adafruit,0"
+
+            Incoming messages will be handled using ASYNC FIFO
+*/
+/******************************************************************************/
+sdep_err_t AdafruitWICED::mqttSubscribe(char* topic)
+{
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_MQTTSUBSCRIBE, strlen(topic),
+                                       (uint8_t*)topic, NULL, NULL);
+}
+
+/******************************************************************************/
+/*!
+    @brief  Un-subscribe from a subscribed topic
+
+    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
+            a specific error if something went wrong.
+*/
+/******************************************************************************/
+sdep_err_t AdafruitWICED::mqttUnsubscribe(void)
+{
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_MQTTUNSUBSCRIBE, 0, NULL, NULL, NULL);
+}
+
 AdafruitWICED wiced;
