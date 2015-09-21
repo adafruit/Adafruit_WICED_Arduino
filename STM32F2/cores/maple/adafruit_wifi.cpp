@@ -36,6 +36,7 @@
 
 #include "adafruit_wicedlib.h"
 #include "adafruit_wifi.h"
+#include "itoa.h"
 #include <string.h>
 
 /******************************************************************************/
@@ -350,15 +351,30 @@ sdep_err_t AdafruitWICED::httpPost(char* uri, uint16_t* length, uint8_t* respons
             e.g. "topic/adafruit,offline,1,0"
 */
 /******************************************************************************/
-sdep_err_t AdafruitWICED::mqttLastWill(char* lastWillMessage)
+sdep_err_t AdafruitWICED::mqttLastWill(char* topic, char* value, uint8_t qos, uint8_t retain)
 {
-  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_MQTTLASTWILL, strlen(lastWillMessage),
+  uint16_t lastWillMessage_len = strlen(topic) + strlen(value) + 5; // qos, retain & 3 commas
+  char lastWillMessage[lastWillMessage_len];
+  char* p_lastWillMessage = lastWillMessage;
+
+  strcpy(p_lastWillMessage, topic);
+  strcat(p_lastWillMessage, ",");
+  strcat(p_lastWillMessage, value);
+  strcat(p_lastWillMessage, ",");
+  char str[2];
+  utoa(qos, str, 10);
+  strcat(p_lastWillMessage, str);
+  strcat(p_lastWillMessage, ",");
+  utoa(retain, str, 10);
+  strcat(p_lastWillMessage, str);
+
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_MQTTLASTWILL, lastWillMessage_len,
                                        (uint8_t*)lastWillMessage, NULL, NULL);
 }
 
 /******************************************************************************/
 /*!
-    @brief  Connect to a broker specified by host name and port
+    @brief  Connect to a broker specified by host name, port and client ID
 
     @param[in]    mqttServer      String of mqttServer including host name, port,
                                   and client ID
@@ -368,13 +384,27 @@ sdep_err_t AdafruitWICED::mqttLastWill(char* lastWillMessage)
 
     @note   ',' characters are used to separate parameters together
             MQTT Server format: <host>,<port>,<client ID>
-            e.g. "85.119.83.194,1883,adafruit"
+            e.g. "85.119.83.194,1883,adafruit" or
+                 "test.mosquitto.org,1883,adafruit"
 */
 /******************************************************************************/
-sdep_err_t AdafruitWICED::mqttConnect(char* mqttServer)
+sdep_err_t AdafruitWICED::mqttConnect(char* host, uint16_t port, char* clientID)
 {
-  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_MQTTCONNECT, strlen(mqttServer),
-                                       (uint8_t*)mqttServer, NULL, NULL);
+  char p_port[4];
+  utoa(port, p_port, 10);
+
+  uint16_t mqttServer_len = strlen(host) + strlen(p_port) + strlen(clientID) + 2;
+  char mqttServer[mqttServer_len];
+  char* p_mqttServer = mqttServer;
+
+  strcpy(p_mqttServer, host);
+  strcat(p_mqttServer, ",");
+  strcat(p_mqttServer, p_port);
+  strcat(p_mqttServer, ",");
+  strcat(p_mqttServer, clientID);
+
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_MQTTCONNECT, mqttServer_len,
+                                       (uint8_t*)p_mqttServer, NULL, NULL);
 }
 
 /******************************************************************************/
@@ -405,9 +435,24 @@ sdep_err_t AdafruitWICED::mqttDisconnect(void)
             e.g. "topic/adafruit,hello,1,0"
 */
 /******************************************************************************/
-sdep_err_t AdafruitWICED::mqttPublish(char* publishedMessage)
+sdep_err_t AdafruitWICED::mqttPublish(char* topic, char* value, uint8_t qos, uint8_t retain)
 {
-  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_MQTTPUBLISH, strlen(publishedMessage),
+  uint16_t publishedMessage_len = strlen(topic) + strlen(value) + 5; // qos, retain & 3 commas
+  char publishedMessage[publishedMessage_len];
+  char* p_publishedMessage = publishedMessage;
+
+  strcpy(p_publishedMessage, topic);
+  strcat(p_publishedMessage, ",");
+  strcat(p_publishedMessage, value);
+  strcat(p_publishedMessage, ",");
+  char str[2];
+  utoa(qos, str, 10);
+  strcat(p_publishedMessage, str);
+  strcat(p_publishedMessage, ",");
+  utoa(retain, str, 10);
+  strcat(p_publishedMessage, str);
+
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_MQTTPUBLISH, publishedMessage_len,
                                        (uint8_t*)publishedMessage, NULL, NULL);
 }
 

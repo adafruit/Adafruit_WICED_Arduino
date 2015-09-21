@@ -136,10 +136,10 @@ public:
 //  sdep_err_t sflashList();
 //
 //  /* MQTT Commands */
-  sdep_err_t mqttLastWill(char* lastWillMessage);
-  sdep_err_t mqttConnect(char* mqttServer);
+  sdep_err_t mqttLastWill(char* topic, char* value, uint8_t qos, uint8_t retain);
+  sdep_err_t mqttConnect(char* host, uint16_t port, char* clientID);
   sdep_err_t mqttDisconnect(void);
-  sdep_err_t mqttPublish(char* publishedMessage);
+  sdep_err_t mqttPublish(char* topic, char* value, uint8_t qos, uint8_t retain);
   sdep_err_t mqttSubscribe(char* topic);
   sdep_err_t mqttUnsubscribe(void);
 //
