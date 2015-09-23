@@ -20,10 +20,14 @@ git clone git@github.com:adafruit/Adafruit_WICED_Arduino.git
 - Install an appropriate GCC toolchain for ARM: Tools->Board->Board Manager --> Download **Arduino SAM Boards (32-bits ARM Cortex-M3)**
 - Restart the Arduino IDE
 - Install [dfu-util](http://dfu-util.sourceforge.net/)
+
+On OS X you can install dfu-util via:
 ```
 brew install dfu-util
 ```
-Install python-pip, pyusb, click
+On Windows you will need to manually install it and add it to the system path and use Zadig to map the DFU device to libusb.
+
+- Install python-pip, pyusb, click
 ```
 pip install --pre pyusb
 pip install click
