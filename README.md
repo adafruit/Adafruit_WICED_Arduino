@@ -23,7 +23,11 @@ git clone git@github.com:adafruit/Adafruit_WICED_Arduino.git
 ```
 brew install dfu-util
 ```
-- Install python-pip, pyusb, click
+Install python-pip, pyusb, click
+```
+pip install --pre pyusb
+pip install click
+```
 
 ## Building a Project
 
