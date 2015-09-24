@@ -12,7 +12,7 @@ From the **development** branch, run `make clean all flash-all` in the `projects
 
 ## Arduino Setup
 
-- Create a 'hardware' folder in `~/Documents/Arduino` if it doesn't already exist
+- Create a 'hardware' folder in `~/Documents/Arduino` (OS X) or 'My Documents/Arduino' (Windows) if it doesn't already exist
 - Clone this repo to the root of the hardware folder
 ```
 git clone git@github.com:adafruit/Adafruit_WICED_Arduino.git
