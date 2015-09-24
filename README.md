@@ -12,12 +12,12 @@ From the **development** branch, run `make clean all flash-all` in the `projects
 
 ## Arduino Setup
 
-- Create a 'hardware' folder in `~/Documents/Arduino` (OS X) or 'My Documents/Arduino' (Windows) if it doesn't already exist
-- Clone this repo to the root of the hardware folder
+- Create a **hardware** folder in `~/Documents/Arduino` (OS X) or `My Documents\Arduino` (Windows) if it doesn't already exist
+- Clone this repo to the root of the hardware folder, or download as a .zip and unzip it in `hardware/Adafruit_WICED_Arduino`
 ```
 git clone git@github.com:adafruit/Adafruit_WICED_Arduino.git
 ```
-- Install an appropriate GCC toolchain for ARM: Tools->Board->Board Manager --> Download **Arduino SAM Boards (32-bits ARM Cortex-M3)**
+- Install the necessary GCC toolchain for ARM: Tools->Board->Board Manager --> Download **Arduino SAM Boards (32-bits ARM Cortex-M3)**
 - Restart the Arduino IDE
 - Install [dfu-util](http://dfu-util.sourceforge.net/)
 
@@ -27,7 +27,7 @@ brew install dfu-util
 ```
 On Windows you will need to [manually install dfu-util](http://dfu-util.sourceforge.net/releases/dfu-util-0.8-binaries/win32-mingw32/) and add it to the system path and use [Zadig](http://zadig.akeo.ie/) to map the DFU device to libusb.
 
-- Install python-pip, pyusb, click
+- Install Python 2.7, python-pip, pyusb, click (we use a python script to flash the boards for now)
 ```
 pip install --pre pyusb
 pip install click
