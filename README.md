@@ -25,7 +25,7 @@ On OS X you can install dfu-util via:
 ```
 brew install dfu-util
 ```
-On Windows you will need to [manually install dfu-util](http://dfu-util.sourceforge.net/releases/dfu-util-0.8-binaries/win32-mingw32/) and add it to the system path and use Zadig to map the DFU device to libusb.
+On Windows you will need to [manually install dfu-util](http://dfu-util.sourceforge.net/releases/dfu-util-0.8-binaries/win32-mingw32/) and add it to the system path and use [Zadig](http://zadig.akeo.ie/) to map the DFU device to libusb.
 
 - Install python-pip, pyusb, click
 ```
