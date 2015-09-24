@@ -291,7 +291,6 @@ sdep_err_t AdafruitWICED::getTime(char* iso8601_time)
 
   sdep_err_t error = ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_GETTIME, 0, NULL,
                                                    NULL, (uint8_t*)iso8601_time);
-  *(iso8601_time + 27) = '\0';  // Terminated character
   return error;
 }
 
@@ -472,10 +471,20 @@ sdep_err_t AdafruitWICED::mqttPublish(char* topic, char* value, uint8_t qos, uin
             Incoming messages will be handled using ASYNC FIFO
 */
 /******************************************************************************/
-sdep_err_t AdafruitWICED::mqttSubscribe(char* topic)
+sdep_err_t AdafruitWICED::mqttSubscribe(char* topic, uint8_t qos)
 {
-  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_MQTTSUBSCRIBE, strlen(topic),
-                                       (uint8_t*)topic, NULL, NULL);
+  uint16_t subTopic_len = strlen(topic) + 2; // qos & a comma
+  char subTopic[subTopic_len];
+  char* p_subTopic = subTopic;
+
+  strcpy(p_subTopic, topic);
+  strcat(p_subTopic, ",");
+  char str[2];
+  utoa(qos, str, 10);
+  strcat(p_subTopic, str);
+
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_MQTTSUBSCRIBE, subTopic_len,
+                                       (uint8_t*)subTopic, NULL, NULL);
 }
 
 /******************************************************************************/
@@ -489,6 +498,24 @@ sdep_err_t AdafruitWICED::mqttSubscribe(char* topic)
 sdep_err_t AdafruitWICED::mqttUnsubscribe(void)
 {
   return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_MQTTUNSUBSCRIBE, 0, NULL, NULL, NULL);
+}
+
+
+sdep_err_t AdafruitWICED::irqRead(uint16_t* response_length, uint8_t* response)
+{
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_IRQREAD, 0, NULL, response_length, response);
+}
+sdep_err_t AdafruitWICED::irqCount(uint16_t* n_items)
+{
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_IRQCOUNT, 0, NULL, NULL, (uint8_t*)n_items);
+}
+sdep_err_t AdafruitWICED::irqAvailable(uint16_t* n_available)
+{
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_IRQAVAIL, 0, NULL, NULL, (uint8_t*)n_available);
+}
+sdep_err_t AdafruitWICED::irqClear(void)
+{
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_IRQCLEAR, 0, NULL, NULL, NULL);
 }
 
 AdafruitWICED wiced;

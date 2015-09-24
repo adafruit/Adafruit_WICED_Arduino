@@ -54,6 +54,7 @@
 #define AP_INFO_PACKET_SIZE      52
 #define ERROR_NONE               0x0000
 #define ERROR_INVALIDPARAMETER   0x8025
+#define ERROR_NO_MEMORY          0x80AA   /**< Temporary */
 
 typedef enum {
   SDEP_CMD_RESET           = 0x0001, /**< HW reset                             */
@@ -134,20 +135,20 @@ public:
 //  /* SPI Flash Commands */
 //  sdep_err_t sflashFormat();
 //  sdep_err_t sflashList();
-//
-//  /* MQTT Commands */
+
+  /* MQTT Commands */
   sdep_err_t mqttLastWill(char* topic, char* value, uint8_t qos, uint8_t retain);
   sdep_err_t mqttConnect(char* host, uint16_t port, char* clientID);
   sdep_err_t mqttDisconnect(void);
   sdep_err_t mqttPublish(char* topic, char* value, uint8_t qos, uint8_t retain);
-  sdep_err_t mqttSubscribe(char* topic);
+  sdep_err_t mqttSubscribe(char* topic, uint8_t qos);
   sdep_err_t mqttUnsubscribe(void);
-//
-//  /* IRQ Commands */
-//  sdep_err_t irqRead();
-//  sdep_err_t irqCount();
-//  sdep_err_t irqAvailable();
-//  sdep_err_t irqClear();
+
+  /* IRQ Commands */
+  sdep_err_t irqRead(uint16_t* response_length, uint8_t* response);
+  sdep_err_t irqCount(uint16_t* n_items);
+  sdep_err_t irqAvailable(uint16_t* n_available);
+  sdep_err_t irqClear(void);
 };
 
 extern AdafruitWICED wiced;

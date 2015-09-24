@@ -1,16 +1,18 @@
 /*
   MQTT Example:
-  1. Connect to pre-specified AP
-  2. Set the LastWill message
-  3. Connect to MQTT Broker
-  4. Publish "Alive" message every 10 seconds
+  1.  Connect to pre-specified AP
+  2.  Set the LastWill message
+  3.  Connect to MQTT Broker
+  4.  Subscribe to a specified topic
+  5a. Publish "Alive" message every 10 seconds
+  5b. Read messages (if exist) from subscribed topic
 
   author: huynguyen 
  */
 
 #include "adafruit_wifi.h"
 
-uint16_t wifi_error, mqtt_error;
+uint16_t wifi_error, mqtt_error, subs_error;
 
 /**************************************************************************/
 /*!
@@ -68,6 +70,30 @@ uint16_t connectBroker()
 
 /**************************************************************************/
 /*!
+    @brief  Subscribe to a specified topic
+
+    @return Error code
+*/
+/**************************************************************************/
+uint16_t subscribeTopic()
+{
+  char* topic = "topic/adafruit/sub";
+  uint16_t error = wiced.mqttSubscribe(topic, 0);
+  if (error == ERROR_NONE)
+  {
+    Serial.print("Subscribed to the topic = <");
+    Serial.print(topic); Serial.println(">");
+  }
+  else
+  {
+    Serial.println("Subscribe Error!");
+  }
+  Serial.println("");
+  return error;
+}
+
+/**************************************************************************/
+/*!
     @brief  The setup function runs once when reset the board    
 */
 /**************************************************************************/
@@ -88,6 +114,12 @@ void setup()
     
     // Connect to MQTT server (broker)
     mqtt_error = connectBroker();
+
+    if (mqtt_error == ERROR_NONE)
+    {
+      // Subscribe to a specified topic
+      subs_error = subscribeTopic();
+    }
   }
 
   // initialize serial port for input and output
@@ -113,6 +145,32 @@ void loop() {
         Serial.print("Published Message! ");
         Serial.print("Value = ");
         Serial.println(value);
+      }
+
+      if (subs_error == ERROR_NONE)
+      {
+        // Read message from subscribed topic
+        uint8_t response[64];
+        uint16_t response_len;
+        uint16_t irq_error;
+        irq_error = wiced.irqRead(&response_len, response);
+        Serial.println(response_len);
+        if (irq_error == ERROR_NONE)
+        {
+          Serial.println("Message read!");
+          for (int i = 10; i < response_len; i++)
+          {
+            Serial.write(response[i]);
+          }
+          Serial.println("");
+        }
+        else
+          Serial.println(irq_error, HEX);
+      }
+      else
+      {
+        // Try to subscribe to the topic again
+        subs_error = subscribeTopic();
       }
     }
     else
