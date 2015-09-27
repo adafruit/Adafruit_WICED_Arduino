@@ -4,7 +4,7 @@
   2.  Set the LastWill message
   3.  Connect to MQTT Broker
   4.  Subscribe to a specified topic
-  5a. Publish "Alive" message every 10 seconds
+  5a. Publish "Alive" message every 15 seconds
   5b. Read messages (if exist) from subscribed topic
 
   author: huynguyen 
@@ -77,7 +77,7 @@ uint16_t connectBroker()
 /**************************************************************************/
 uint16_t subscribeTopic()
 {
-  char* topic = "topic/adafruit/sub";
+  char* topic = "topic/adafruit/sensor";
   uint16_t error = wiced.mqttSubscribe(topic, 0);
   if (error == ERROR_NONE)
   {
@@ -103,25 +103,15 @@ void setup()
   delay(1000);
 
   wifi_error = connectAP();
+  mqtt_error = connectBroker();
+  subs_error = subscribeTopic();
 
-  if (wifi_error == ERROR_NONE)
+  // Set LastWill message
+  if (wiced.mqttLastWill("topic/adafruit","Offline",0,0) == ERROR_NONE)
   {
-    // Set LastWill message
-    if (wiced.mqttLastWill("topic/adafruit","Offline",1,0) == ERROR_NONE)
-    {
-      Serial.println("Specified LastWill Message!");
-    }
-    
-    // Connect to MQTT server (broker)
-    mqtt_error = connectBroker();
-
-    if (mqtt_error == ERROR_NONE)
-    {
-      // Subscribe to a specified topic
-      subs_error = subscribeTopic();
-    }
+    Serial.println("Specified LastWill Message!");
   }
-
+  
   // initialize serial port for input and output
 //  Serial.begin(11500);
 }
@@ -140,7 +130,7 @@ void loop() {
       char* topic = "topic/adafruit";
       char* value = "Alive";
       // qos = 1, retain = 0
-      if (wiced.mqttPublish(topic, value, 1, 0) == ERROR_NONE)
+      if (wiced.mqttPublish(topic, value, 0, 0) == ERROR_NONE)
       {
         Serial.print("Published Message! ");
         Serial.print("Value = ");
@@ -149,12 +139,17 @@ void loop() {
 
       if (subs_error == ERROR_NONE)
       {
+        uint16_t irq_error;
+
+        uint16_t n_item;
+        irq_error = wiced.irqCount(&n_item);
+        Serial.print("Number of items: ");
+        Serial.println(n_item);
+
         // Read message from subscribed topic
         uint8_t response[64];
         uint16_t response_len;
-        uint16_t irq_error;
         irq_error = wiced.irqRead(&response_len, response);
-        Serial.println(response_len);
         if (irq_error == ERROR_NONE)
         {
           Serial.println("Message read!");
@@ -165,10 +160,13 @@ void loop() {
           Serial.println("");
         }
         else
+        {
           Serial.println(irq_error, HEX);
+        }
       }
       else
       {
+        wiced.mqttUnsubscribe();
         // Try to subscribe to the topic again
         subs_error = subscribeTopic();
       }
@@ -186,8 +184,8 @@ void loop() {
     Serial.println("Trying to reconnect to AP...");
     wifi_error = connectAP();
   }
-  
+
   Serial.println("");
   togglePin(BOARD_LED_PIN);
-  delay(10000);   // Delay 10 seconds before next loop
+  delay(15000);   // Delay 10 seconds before next loop
 }

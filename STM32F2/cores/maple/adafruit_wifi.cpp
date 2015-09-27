@@ -500,19 +500,64 @@ sdep_err_t AdafruitWICED::mqttUnsubscribe(void)
   return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_MQTTUNSUBSCRIBE, 0, NULL, NULL, NULL);
 }
 
+/******************************************************************************/
+/*!
+    @brief  Read from the ASYNC FIFO
 
+    @param[out]   response_length  Length of the first arrived message in the FIFO
+
+    @param[out]   response         The first arrived message in the FIFO
+
+    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
+            a specific error if something went wrong.
+*/
+/******************************************************************************/
 sdep_err_t AdafruitWICED::irqRead(uint16_t* response_length, uint8_t* response)
 {
-  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_IRQREAD, 0, NULL, response_length, response);
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_IRQREAD, 0, NULL,
+                                       response_length, response);
 }
+
+/******************************************************************************/
+/*!
+    @brief  Return the current number of items in the ASYNC FIFO
+
+    @param[out]   n_items     Number of items
+
+    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
+            a specific error if something went wrong.
+*/
+/******************************************************************************/
 sdep_err_t AdafruitWICED::irqCount(uint16_t* n_items)
 {
-  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_IRQCOUNT, 0, NULL, NULL, (uint8_t*)n_items);
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_IRQCOUNT, 0, NULL, NULL,
+                                       (uint8_t*)n_items);
 }
+
+/******************************************************************************/
+/*!
+    @brief  Return the number of records LEFT in the ASYNC FIFO
+
+    @param[out]  n_available  Number of records LEFT
+
+    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
+            a specific error if something went wrong.
+*/
+/******************************************************************************/
 sdep_err_t AdafruitWICED::irqAvailable(uint16_t* n_available)
 {
-  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_IRQAVAIL, 0, NULL, NULL, (uint8_t*)n_available);
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_IRQAVAIL, 0, NULL, NULL,
+                                       (uint8_t*)n_available);
 }
+
+/******************************************************************************/
+/*!
+    @brief  Clear the ASYNC FIFO and deassert IRQ
+
+    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
+            a specific error if something went wrong.
+*/
+/******************************************************************************/
 sdep_err_t AdafruitWICED::irqClear(void)
 {
   return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_IRQCLEAR, 0, NULL, NULL, NULL);
