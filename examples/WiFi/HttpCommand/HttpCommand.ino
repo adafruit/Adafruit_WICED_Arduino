@@ -1,7 +1,7 @@
 /*
   Connect to a WiFi access point. If success, retrieve the results of a 
   specified URI and send the 'x-www-form-urlencoded' URL as a HTTP POST 
-  operation
+  operation. Then finally disconnect from the WiFi AP.
 
   author: huynguyen 
  */
@@ -38,14 +38,7 @@ void loop() {
     Serial.print(ssid);
     Serial.print(" and PASSWORD = ");
     Serial.println(pass);
-  }
-  else
-    Serial.println("Connect Error!");
 
-  Serial.println("");
-
-  if (error == ERROR_NONE)
-  {
     uint16_t buffer_len;
     uint8_t response[1024];
     char* get_uri = "http://www.adafruit.com/testwifi/index.html";
@@ -63,7 +56,7 @@ void loop() {
       Serial.println(error, HEX);
     }
 
-    Serial.println("");
+    Serial.println("\r\n");
 
     char* post_uri = "http://www.adafruit.com/testwifi/testpost.php?name=foo&email=bar@adafruit.com";
     Serial.println("Response from HTTP POST");
@@ -77,15 +70,17 @@ void loop() {
       Serial.println("HTTP POST Error!");
 
     Serial.println("\r\n");
-  }
-  
-  // Stop AP mode
-  if (wiced.disconnectAP() == ERROR_NONE)
-  {
-    Serial.println("Disconnected from AP");
+
+    // Stop AP mode
+    if (wiced.disconnectAP() == ERROR_NONE)
+    {
+      Serial.println("Disconnected from AP");
+    }
+    else
+      Serial.println("Disconnect Error!");
   }
   else
-    Serial.println("Disconnect Error!");
+    Serial.println("Connect Error!");
 
   Serial.println("");
   togglePin(BOARD_LED_PIN);
