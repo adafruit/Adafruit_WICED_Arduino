@@ -339,8 +339,13 @@ sdep_err_t AdafruitWICED::httpPost(char* uri, uint16_t* length, uint8_t* respons
 /*!
     @brief  Specify the LastWill message used in case of ungraceful disconnection
 
-    @param[in]    lastWillMessage   String of LastWill message including topic,
-                                    value, qos and retain
+    @param[in]    topic    Topic
+
+    @param[in]    value    Value
+
+    @param[in]    qos      Quality of Service
+
+    @param[in]    retain   Retain
 
     @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
             a specific error if something went wrong.
@@ -373,34 +378,60 @@ sdep_err_t AdafruitWICED::mqttLastWill(char* topic, char* value, uint8_t qos, ui
 
 /******************************************************************************/
 /*!
-    @brief  Connect to a broker specified by host name, port and client ID
+    @brief        Connect to a broker specified by host name, port, client ID,
+                  user name and password
 
-    @param[in]    mqttServer      String of mqttServer including host name, port,
-                                  and client ID
+    @param[in]    host       Host name
+
+    @param[in]    port       Port (Value from 0 to 65535)
+
+    @param[in]    clientID   Client ID
+
+    @param[in]    username   User name
+
+    @param[in]    password   Password
 
     @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
             a specific error if something went wrong.
 
     @note   ',' characters are used to separate parameters together
-            MQTT Server format: <host>,<port>,<client ID>
-            e.g. "85.119.83.194,1883,adafruit" or
-                 "test.mosquitto.org,1883,adafruit"
+            MQTT Server format: <host>,<port>,<client ID>,<user name>,<password>
+            e.g. "85.119.83.194,1883,adafruit,mosfet,IOkey" or
+                 "test.mosquitto.org,1883,adafruit,mosfet,IOkey"
+
+            If string parameters do not exist, passing NULL or empty string as
+            function's parameters. Then the default parameters are used.
+
+            Value of zero for port parameter means port is not specified. Then
+            the default port (1883) is used.
 */
 /******************************************************************************/
-sdep_err_t AdafruitWICED::mqttConnect(char* host, uint16_t port, char* clientID)
+sdep_err_t AdafruitWICED::mqttConnect(char* host, uint16_t port, char* clientID,
+                                      char* username, char* password)
 {
-  char p_port[4];
+  if (host == NULL || host == "") return ERROR_INVALIDPARAMETER;
+
+  char p_port[6];
   utoa(port, p_port, 10);
 
-  uint16_t mqttServer_len = strlen(host) + strlen(p_port) + strlen(clientID) + 2;
+  uint16_t mqttServer_len = strlen(host) + 4;
+  if (port > 0) mqttServer_len += strlen(p_port);
+  if (clientID != NULL) mqttServer_len += strlen(clientID);
+  if (username != NULL) mqttServer_len += strlen(username);
+  if (password != NULL) mqttServer_len += strlen(password);
+
   char mqttServer[mqttServer_len];
   char* p_mqttServer = mqttServer;
 
   strcpy(p_mqttServer, host);
   strcat(p_mqttServer, ",");
-  strcat(p_mqttServer, p_port);
+  if (port > 0) strcat(p_mqttServer, p_port);
   strcat(p_mqttServer, ",");
-  strcat(p_mqttServer, clientID);
+  if (clientID != NULL) strcat(p_mqttServer, clientID);
+  strcat(p_mqttServer, ",");
+  if (username != NULL) strcat(p_mqttServer, username);
+  strcat(p_mqttServer, ",");
+  if (password != NULL) strcat(p_mqttServer, password);
 
   return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_MQTTCONNECT, mqttServer_len,
                                        (uint8_t*)p_mqttServer, NULL, NULL);
@@ -423,8 +454,13 @@ sdep_err_t AdafruitWICED::mqttDisconnect(void)
 /*!
     @brief  Publish a message to a specified topic
 
-    @param[in]    lastWillMessage   String of published message including topic,
-                                    value, qos and retain
+    @param[in]    topic    Topic
+
+    @param[in]    value    Value
+
+    @param[in]    qos      Quality of Service
+
+    @param[in]    retain   Retain
 
     @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
             a specific error if something went wrong.
