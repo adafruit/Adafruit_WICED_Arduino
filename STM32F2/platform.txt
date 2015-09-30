@@ -141,7 +141,7 @@ tools.adalink.path.linux=adalink
 tools.adalink.cmd.macosx=/usr/local/bin/adalink
 tools.adalink.bootloader.params.verbose=-v
 tools.adalink.bootloader.params.quiet=
-tools.adalink.bootloader.pattern="{cmd}" {bootloader.verbose} {bootloader.cpu} --programmer {program.programmer} --program-hex "{runtime.platform.path}/{bootloader.file}"
+tools.adalink.bootloader.pattern="{cmd}" {bootloader.verbose} {bootloader.cpu} --programmer {program.programmer} --wipe --program-hex "{runtime.platform.path}/{bootloader.file}"
 
 # Adalink auto erase flash page while programming
 tools.adalink.erase.params.verbose=

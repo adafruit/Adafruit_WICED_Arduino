@@ -7,54 +7,54 @@ menu.section=Section
 
 ##############################################################
 
-adafidev.name=Feather Wiced
-adafidev.vid.0=0x239A
-adafidev.pid.0=0x0009
+feather.name=Feather Wiced
+feather.vid.0=0x239A
+feather.pid.0=0x0009
 
 ## Building
 ## -------------------------
-adafidev.build.mcu=cortex-m3
-adafidev.build.f_cpu=120000000L
-adafidev.build.core=maple
-adafidev.build.extra_flags=-DMCU_STM32F205RG -mthumb -DSTM32_HIGH_DENSITY -DSTM32F2 -DBOARD_adafidev
-adafidev.build.ldscript=ld/flash.ld
-adafidev.build.variant=adafidev
-adafidev.build.variant_system_lib=lib_adafidev.a
-adafidev.build.vect=VECT_TAB_BASE
-adafidev.build.density=STM32_HIGH_DENSITY
-adafidev.build.error_led_port=GPIOD
-adafidev.build.error_led_pin=14
-#adafidev.build.gcc_ver=gcc-arm-none-eabi-4.8.3-2014q1
+feather.build.mcu=cortex-m3
+feather.build.f_cpu=120000000L
+feather.build.core=maple
+feather.build.extra_flags=-DMCU_STM32F205RG -mthumb -DSTM32_HIGH_DENSITY -DSTM32F2 -DBOARD_adafidev
+feather.build.ldscript=ld/flash.ld
+feather.build.variant=adafidev
+feather.build.variant_system_lib=lib_feather.a
+feather.build.vect=VECT_TAB_BASE
+feather.build.density=STM32_HIGH_DENSITY
+feather.build.error_led_port=GPIOD
+feather.build.error_led_pin=14
+#feather.build.gcc_ver=gcc-arm-none-eabi-4.8.3-2014q1
 
 ## Uploader
 ## -------------------------
-adafidev.upload.tool=adafruit_upload
-adafidev.upload.protocol=adafruit_dfu
-adafidev.upload.use_1200bps_touch=true
-adafidev.upload.file_type=bin
+feather.upload.tool=adafruit_upload
+feather.upload.protocol=adafruit_dfu
+feather.upload.use_1200bps_touch=true
+feather.upload.file_type=bin
 
 ## Firmware section
 ## -------------------------
-adafidev.menu.section.firmware=Firmware
-adafidev.menu.section.firmware.upload.region=arduino_upgrade
-adafidev.menu.section.firmware.upload.binfile={build.path}/{build.project_name}.bin
-adafidev.menu.section.firmware.upload.ram.maximum_size=16384
-adafidev.menu.section.firmware.upload.flash.maximum_size=1048576
-adafidev.menu.section.firmware.upload.maximum_size=131072
+feather.menu.section.firmware=Firmware
+feather.menu.section.firmware.upload.region=arduino_upgrade
+feather.menu.section.firmware.upload.binfile={build.path}/{build.project_name}.bin
+feather.menu.section.firmware.upload.ram.maximum_size=16384
+feather.menu.section.firmware.upload.flash.maximum_size=1048576
+feather.menu.section.firmware.upload.maximum_size=131072
 
 ## Feather Lib section
 ## -------------------------
-adafidev.menu.section.featherlib=Feather Lib
-adafidev.menu.section.featherlib.upload.region=featherlib_upgrade
-adafidev.menu.section.featherlib.upload.binfile={runtime.platform.path}/featherlib/featherlib.bin
-adafidev.menu.section.featherlib.upload.ram.maximum_size=114688
-adafidev.menu.section.featherlib.upload.flash.maximum_size=1048576
-adafidev.menu.section.featherlib.upload.maximum_size=851968
+feather.menu.section.featherlib=Feather Lib
+feather.menu.section.featherlib.upload.region=featherlib_upgrade
+feather.menu.section.featherlib.upload.binfile={runtime.platform.path}/featherlib/featherlib.bin
+feather.menu.section.featherlib.upload.ram.maximum_size=114688
+feather.menu.section.featherlib.upload.flash.maximum_size=1048576
+feather.menu.section.featherlib.upload.maximum_size=851968
 
 ## Bootloader
 ## -------------------------
-adafidev.bootloader.tool=adalink
-adafidev.bootloader.cpu=stm32f2
-adafidev.bootloader.file=bootloader/bootloader.hex
+feather.bootloader.tool=adalink
+feather.bootloader.cpu=stm32f2
+feather.bootloader.file=bootloader/bootloader.hex
 
 ##############################################################
