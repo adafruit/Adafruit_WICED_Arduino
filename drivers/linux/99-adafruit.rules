@@ -1,0 +1,15 @@
+# This file is used to gain permission for ADAFIDEV module
+# Copy this file to /etc/udev/rules.d/
+
+ACTION!="add|change", GOTO="adafruit_rules_end"
+SUBSYSTEM!="usb|tty|hidraw", GOTO="adafruit_rules_end"
+
+# Please keep this list sorted by VID:PID
+
+# ADAFIDEV in DFU mode
+ATTRS{idVendor}=="239a", ATTRS{idProduct}=="0008", MODE="664", GROUP="plugdev"
+
+# ADAFIDEV in Application mode
+ATTRS{idVendor}=="239a", ATTRS{idProduct}=="0009", MODE="664", GROUP="plugdev"
+
+LABEL="adafruit_rules_end"
