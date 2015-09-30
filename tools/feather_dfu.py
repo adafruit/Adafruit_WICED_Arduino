@@ -27,7 +27,7 @@ SDEP_MSGTYPE_ERROR = 0x80
 
 reset_sec = 2
 
-dfu_util = { 'Windows' : 'windows/dfu-util/dfu-util.exe',
+dfu_util = { 'Windows' : os.path.dirname(sys.argv[0]) + '/windows/dfu-util/dfu-util.exe',
              'Darwin'  : 'dfu-util',
              'Linux'   : 'dfu-util' }
 
