@@ -1,18 +1,18 @@
 /*
-  MQTT Example:
+  Adafruit IO Example:
   1.  Connect to pre-specified AP
   2.  Set the LastWill message
-  3.  Connect to MQTT Broker
-  4.  Subscribe to a specified topic
-  5a. Publish "Alive" message every 15 seconds
-  5b. Read messages (if exist) from subscribed topic
+  3.  Connect to Adafruit IO with username & password
+  4.  Publish temperature value to specified feed on AIO every 15 seconds
 
   author: huynguyen 
  */
 
 #include "adafruit_wifi.h"
+#include "itoa.h"
 
 uint16_t wifi_error, mqtt_error, subs_error;
+uint16_t temp = 0;
 
 /**************************************************************************/
 /*!
@@ -51,11 +51,12 @@ uint16_t connectAP()
 /**************************************************************************/
 uint16_t connectBroker()
 {
-  char* host = "test.mosquitto.org";
-  // Default clienID = "Adafruit"
-  // Default port = 1883
-  // No user name and password
-  uint16_t error = wiced.mqttConnect(host, 0, NULL, NULL, NULL);
+  char* host = "io.adafruit.com";
+  char* clientID = "Adafruit";
+  uint16_t port = 1883;
+  char* username = "huynguyen";
+  char* password = "2d0030ff67ee2abd40c2a1b3b0d7b5456df1739d";
+  uint16_t error = wiced.mqttConnect(host, port, clientID, username, password);
   if (error == ERROR_NONE)
   {
     Serial.print("Connected to Broker = ");
@@ -78,7 +79,7 @@ uint16_t connectBroker()
 /**************************************************************************/
 uint16_t subscribeTopic()
 {
-  char* topic = "topic/adafruit/sensor";
+  char* topic = "huynguyen/feeds/temp";
   uint16_t error = wiced.mqttSubscribe(topic, 0);
   if (error == ERROR_NONE)
   {
@@ -105,10 +106,9 @@ void setup()
 
   wifi_error = connectAP();
   mqtt_error = connectBroker();
-  subs_error = subscribeTopic();
 
   // Set LastWill message
-  if (wiced.mqttLastWill("topic/adafruit","Offline",0,0) == ERROR_NONE)
+  if (wiced.mqttLastWill("huynguyen/feeds/temp","Offline",1,0) == ERROR_NONE)
   {
     Serial.println("Specified LastWill Message!");
   }
@@ -128,48 +128,18 @@ void loop() {
     if (mqtt_error == ERROR_NONE)
     {
       // Publish a Message to a Topic
-      char* topic = "topic/adafruit";
-      char* value = "Alive";
+      char* topic = "huynguyen/feeds/temp";
+      char str[4];
+      temp = temp + 5;
+      if (temp > 100) temp = 0;
+      utoa(temp, str, 10);
+      
       // qos = 1, retain = 0
-      if (wiced.mqttPublish(topic, value, 0, 0) == ERROR_NONE)
+      if (wiced.mqttPublish(topic, str, 0, 0) == ERROR_NONE)
       {
         Serial.print("Published Message! ");
         Serial.print("Value = ");
-        Serial.println(value);
-      }
-
-      if (subs_error == ERROR_NONE)
-      {
-        uint16_t irq_error;
-
-        uint16_t n_item;
-        irq_error = wiced.irqCount(&n_item);
-        Serial.print("Number of items: ");
-        Serial.println(n_item);
-
-        // Read message from subscribed topic
-        uint8_t response[64];
-        uint16_t response_len;
-        irq_error = wiced.irqRead(&response_len, response);
-        if (irq_error == ERROR_NONE)
-        {
-          Serial.println("Message read!");
-          for (int i = 10; i < response_len; i++)
-          {
-            Serial.write(response[i]);
-          }
-          Serial.println("");
-        }
-        else
-        {
-          Serial.println(irq_error, HEX);
-        }
-      }
-      else
-      {
-        wiced.mqttUnsubscribe();
-        // Try to subscribe to the topic again
-        subs_error = subscribeTopic();
+        Serial.println(temp);
       }
     }
     else
