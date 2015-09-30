@@ -27,7 +27,7 @@ SDEP_MSGTYPE_ERROR = 0x80
 
 reset_sec = 2
 
-dfu_util = { 'Windows' : 'dfu-util.exe',
+dfu_util = { 'Windows' : 'windows/dfu-util/dfu-util.exe',
              'Darwin'  : 'dfu-util',
              'Linux'   : 'dfu-util' }
 
@@ -77,7 +77,7 @@ def featherlib_upgrade(binfile):
     else:
         time.sleep(reset_sec)
         force_dfu_mode()
-        subprocess.call( ('dfu-util -d 0x%04X:0x%04X -a 0 -s 0x%08X:leave -D %s' % (usb_vid, usb_dfu_pid, wicedlib_addr, binfile)).split() )
+        subprocess.call( ('%s -d 0x%04X:0x%04X -a 0 -s 0x%08X:leave -D %s' % (dfu_util[platform.system()], usb_vid, usb_dfu_pid, wicedlib_addr, binfile)).split() )
 
 @cli.command()
 @click.argument('binfile')
@@ -87,7 +87,7 @@ def arduino_upgrade(binfile):
     else:
         time.sleep(reset_sec)
         force_dfu_mode()
-        subprocess.call( ('dfu-util -d 0x%04X:0x%04X -a 0 -s 0x%08X:leave -D %s' % (usb_vid, usb_dfu_pid, arduino_addr, binfile)).split() )
+        subprocess.call( ('%s -d 0x%04X:0x%04X -a 0 -s 0x%08X:leave -D %s' % (dfu_util[platform.system()], usb_vid, usb_dfu_pid, arduino_addr, binfile)).split() )
 
 if __name__ == '__main__':
     cli()
