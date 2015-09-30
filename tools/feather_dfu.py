@@ -17,14 +17,15 @@ usb_vid = 0x239A
 usb_pid = 0x0009
 usb_dfu_pid = 0x0008
 
-bulk_ep_out = 0x03   # Out/Write EP is 0X03
-bulk_ep_in = 0x83    # In/Read EP is 0x83
-
 arduino_addr = 0x080E0000
 wicedlib_addr = 0x08010000
 
-reset_sec = 2
+SDEP_MSGTYPE_COMMAND = 0x10
+SDEP_MSGTYPE_RESPONSE = 0x20
+SDEP_MSGTYPE_ALERT = 0x40
+SDEP_MSGTYPE_ERROR = 0x80
 
+reset_sec = 2
 
 dfu_util = { 'Windows' : 'dfu-util.exe',
              'Darwin'  : 'dfu-util',
@@ -50,17 +51,7 @@ def runSystemCmd(cmd):
         if dev is None:
             print "Unable to connect to specified VID/PID 0x%04X 0x%04X" % (usb_vid, usb_dfu_pid)
             sys.exit(1)
-    dev.ctrl_transfer( 0x40, 0x5D, sdep_cmd_dict[cmd])
-
-# HID OUT endpoint is 0x03, HID IN is 0x83
-def sendSDEP(command):
-    # send command to 0x03 Endpoint
-    print ':'.join('{:02x}'.format(x) for x in command)
-    dev.write(bulk_ep_out, command)
-
-    # read response from 0x83 Endpoint
-    resp = dev.read(bulk_ep_in, 64)
-    print ':'.join('{:02x}'.format(x) for x in resp)
+    dev.ctrl_transfer( 0x40, SDEP_MSGTYPE_COMMAND, sdep_cmd_dict[cmd])
 
 @click.group()
 def cli():
