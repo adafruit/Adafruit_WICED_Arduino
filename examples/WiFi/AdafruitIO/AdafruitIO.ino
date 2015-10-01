@@ -17,10 +17,10 @@
 #define MQTT_HOST          "io.adafruit.com"
 #define MQTT_PORT          1883
 #define CLIENT_ID          "Adafruit"
-#define ADAFRUIT_USERNAME  "See accounts.adafruit.com"
+#define ADAFRUIT_USERNAME  "See your username at accounts.adafruit.com"
 #define AIO_KEY            "Your AIO key"
-#define FEED_PATH          ADAFRUIT_USERNAME "/feeds/feed-name/"
-#define LASTWILL_TOPIC     FEED_PATH
+#define FEED_PATH          ADAFRUIT_USERNAME "/feeds/feed-name"
+#define LASTWILL_TOPIC     ADAFRUIT_USERNAME "/feeds/feed-status"
 #define LASTWILL_MESSAGE   "Offline"
 #define QOS                1
 #define RETAIN             0
@@ -123,13 +123,14 @@ void setup()
   pinMode(BOARD_LED_PIN, OUTPUT);
 
   wifi_error = connectAP();
-  mqtt_error = connectBroker();
 
   // Set LastWill message
   if (wiced.mqttLastWill(LASTWILL_TOPIC, LASTWILL_MESSAGE, QOS, RETAIN) == ERROR_NONE)
   {
     Serial.println(F("LastWill message has been set!"));
   }
+
+  mqtt_error = connectBroker();
 }
 
 /**************************************************************************/
@@ -149,7 +150,7 @@ void loop() {
       itoa(temp, str, 10);
       
       // qos = 1, retain = 0
-      if (wiced.mqttPublish(FEED_PATH, str, 0, 0) == ERROR_NONE)
+      if (wiced.mqttPublish(FEED_PATH, str, QOS, RETAIN) == ERROR_NONE)
       {
         Serial.print(F("Published Message! "));
         Serial.print(F("Value = "));
