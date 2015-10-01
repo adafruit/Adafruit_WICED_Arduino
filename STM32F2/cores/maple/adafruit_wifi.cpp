@@ -38,6 +38,7 @@
 #include "adafruit_wifi.h"
 #include "itoa.h"
 #include <string.h>
+#include <stdlib.h>
 
 /******************************************************************************/
 /*!
@@ -358,22 +359,23 @@ sdep_err_t AdafruitWICED::httpPost(char* uri, uint16_t* length, uint8_t* respons
 sdep_err_t AdafruitWICED::mqttLastWill(char* topic, char* value, uint8_t qos, uint8_t retain)
 {
   uint16_t lastWillMessage_len = strlen(topic) + strlen(value) + 5; // qos, retain & 3 commas
-  char lastWillMessage[lastWillMessage_len];
-  char* p_lastWillMessage = lastWillMessage;
+  char* lastWillMessage = (char*)malloc(lastWillMessage_len);
 
-  strcpy(p_lastWillMessage, topic);
-  strcat(p_lastWillMessage, ",");
-  strcat(p_lastWillMessage, value);
-  strcat(p_lastWillMessage, ",");
+  strcpy(lastWillMessage, topic);
+  strcat(lastWillMessage, ",");
+  strcat(lastWillMessage, value);
+  strcat(lastWillMessage, ",");
   char str[2];
   utoa(qos, str, 10);
-  strcat(p_lastWillMessage, str);
-  strcat(p_lastWillMessage, ",");
+  strcat(lastWillMessage, str);
+  strcat(lastWillMessage, ",");
   utoa(retain, str, 10);
-  strcat(p_lastWillMessage, str);
+  strcat(lastWillMessage, str);
 
-  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_MQTTLASTWILL, lastWillMessage_len,
-                                       (uint8_t*)lastWillMessage, NULL, NULL);
+  uint16_t error = ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_MQTTLASTWILL, lastWillMessage_len,
+                                                 (uint8_t*)lastWillMessage, NULL, NULL);
+  free(lastWillMessage);
+  return error;
 }
 
 /******************************************************************************/
@@ -420,21 +422,23 @@ sdep_err_t AdafruitWICED::mqttConnect(char* host, uint16_t port, char* clientID,
   if (username != NULL) mqttServer_len += strlen(username);
   if (password != NULL) mqttServer_len += strlen(password);
 
-  char mqttServer[mqttServer_len];
-  char* p_mqttServer = mqttServer;
+  char* mqttBroker = (char*)malloc(mqttServer_len);
+  if (mqttBroker == NULL) return ERROR_NO_MEMORY;
 
-  strcpy(p_mqttServer, host);
-  strcat(p_mqttServer, ",");
-  if (port > 0) strcat(p_mqttServer, p_port);
-  strcat(p_mqttServer, ",");
-  if (clientID != NULL) strcat(p_mqttServer, clientID);
-  strcat(p_mqttServer, ",");
-  if (username != NULL) strcat(p_mqttServer, username);
-  strcat(p_mqttServer, ",");
-  if (password != NULL) strcat(p_mqttServer, password);
+  strcpy(mqttBroker, host);
+  strcat(mqttBroker, ",");
+  if (port > 0) strcat(mqttBroker, p_port);
+  strcat(mqttBroker, ",");
+  if (clientID != NULL) strcat(mqttBroker, clientID);
+  strcat(mqttBroker, ",");
+  if (username != NULL) strcat(mqttBroker, username);
+  strcat(mqttBroker, ",");
+  if (password != NULL) strcat(mqttBroker, password);
 
-  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_MQTTCONNECT, mqttServer_len,
-                                       (uint8_t*)p_mqttServer, NULL, NULL);
+  uint16_t error =  ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_MQTTCONNECT, mqttServer_len,
+                                                  (uint8_t*)mqttBroker, NULL, NULL);
+  free(mqttBroker);
+  return error;
 }
 
 /******************************************************************************/
@@ -473,22 +477,23 @@ sdep_err_t AdafruitWICED::mqttDisconnect(void)
 sdep_err_t AdafruitWICED::mqttPublish(char* topic, char* value, uint8_t qos, uint8_t retain)
 {
   uint16_t publishedMessage_len = strlen(topic) + strlen(value) + 5; // qos, retain & 3 commas
-  char publishedMessage[publishedMessage_len];
-  char* p_publishedMessage = publishedMessage;
+  char* publishedMessage = (char*)malloc(publishedMessage_len);
 
-  strcpy(p_publishedMessage, topic);
-  strcat(p_publishedMessage, ",");
-  strcat(p_publishedMessage, value);
-  strcat(p_publishedMessage, ",");
+  strcpy(publishedMessage, topic);
+  strcat(publishedMessage, ",");
+  strcat(publishedMessage, value);
+  strcat(publishedMessage, ",");
   char str[2];
   utoa(qos, str, 10);
-  strcat(p_publishedMessage, str);
-  strcat(p_publishedMessage, ",");
+  strcat(publishedMessage, str);
+  strcat(publishedMessage, ",");
   utoa(retain, str, 10);
-  strcat(p_publishedMessage, str);
+  strcat(publishedMessage, str);
 
-  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_MQTTPUBLISH, publishedMessage_len,
-                                       (uint8_t*)publishedMessage, NULL, NULL);
+  uint16_t error = ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_MQTTPUBLISH, publishedMessage_len,
+                                                 (uint8_t*)publishedMessage, NULL, NULL);
+  free(publishedMessage);
+  return error;
 }
 
 /******************************************************************************/
@@ -510,17 +515,18 @@ sdep_err_t AdafruitWICED::mqttPublish(char* topic, char* value, uint8_t qos, uin
 sdep_err_t AdafruitWICED::mqttSubscribe(char* topic, uint8_t qos)
 {
   uint16_t subTopic_len = strlen(topic) + 2; // qos & a comma
-  char subTopic[subTopic_len];
-  char* p_subTopic = subTopic;
+  char* subTopic = (char*)malloc(subTopic_len);
 
-  strcpy(p_subTopic, topic);
-  strcat(p_subTopic, ",");
+  strcpy(subTopic, topic);
+  strcat(subTopic, ",");
   char str[2];
   utoa(qos, str, 10);
-  strcat(p_subTopic, str);
+  strcat(subTopic, str);
 
-  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_MQTTSUBSCRIBE, subTopic_len,
-                                       (uint8_t*)subTopic, NULL, NULL);
+  uint16_t error = ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_MQTTSUBSCRIBE, subTopic_len,
+                                                 (uint8_t*)subTopic, NULL, NULL);
+  free(subTopic);
+  return error;
 }
 
 /******************************************************************************/
