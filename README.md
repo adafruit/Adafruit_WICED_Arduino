@@ -41,7 +41,7 @@ From the **development** branch, run `make clean all flash-all` in the `projects
 This requires either jlink or stlink v2 as programmer.
 
 - In the "Tools > Board" menu select **Feather WICED** as the hardware target
-- In "Tools > Programmer", select either **Jlink with Adalink" or "Stlink v2 with Adalink"
+- In "Tools > Programmer", select either **Jlink with Adalink** or **Stlink v2 with Adalink**
 
 then select "Tools > Burn bootloader", this will also perform a whole chip erased (which does take some time).
 
