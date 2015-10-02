@@ -14,28 +14,48 @@ From the **development** branch, run `make clean all flash-all` in the `projects
 
 - Create a **hardware** folder in `~/Documents/Arduino` (OS X) or `My Documents\Arduino` (Windows) if it doesn't already exist
 - Clone this repo to the root of the hardware folder, or download as a .zip and unzip it in `hardware/Adafruit_WICED_Arduino`
-```
-git clone git@github.com:adafruit/Adafruit_WICED_Arduino.git
-```
+
+	```
+	git clone git@github.com:adafruit/Adafruit_WICED_Arduino.git
+	```
+
 - Install the necessary GCC toolchain for ARM: Tools->Board->Board Manager --> Download **Arduino SAM Boards (32-bits ARM Cortex-M3)**
 - Restart the Arduino IDE
 - Install [dfu-util](http://dfu-util.sourceforge.net/)
 
-On OS X you can install dfu-util via:
-```
-brew install dfu-util
-```
-On Windows dfu-util.exe is already added in the `tools/windows/dfu-util`. To install driver for bootloader, you can use [Zadig](http://zadig.akeo.ie/) to map the DFU device to libusb or choose windows driver in `drivers/windows` 
-
+	On OS X you can install dfu-util via:
+	```
+	brew install dfu-util
+	```
+	On Windows dfu-util.exe is already added in the `tools/windows/dfu-util`. To install driver for bootloader, you can use [Zadig](http://zadig.akeo.ie/) to map the DFU device to libusb or choose windows driver in `drivers/windows` 
+	
 - Install Python 2.7, python-pip, pyusb, click (we use a python script to flash the boards for now)
-```
-pip install --pre pyusb
-pip install click
-```
+
+	```
+	pip install --pre pyusb
+	pip install click
+	```
+
+## Burnning bootloader
+
+This requires either jlink or stlink v2 as programmer.
+
+- In the "Tools > Board" menu select **Feather WICED** as the hardware target
+- In "Tools > Programmer", select either **Jlink with Adalink" or "Stlink v2 with Adalink"
+
+then select "Tools > Burn bootloader", this will also perform a whole chip erased (which does take some time).
+
+## Flashing featherlib
+
+After burning bootloader, you need to flash featherlib which contain all Adafruit wifi library. It resides on a different flash bank than Arduino sketch and only need to be flashed once.
+
+- Choose "Tools > Section > Featherlib"
+- Click on upload icon to start uploading featherlib/featherlib.bin (Arduino will try to compile the current sketch, but it is really irrelevant)
+
+It will take awhile to upload featherlib due to its massive size.
 
 ## Building a Project
 
-- In the "Tools > Board" menu select **Adafruit WICED** as the hardware target
 - Click the "File > Open ..." menu item and load the **blink.ino** sketch in the hardware folder created above (`Adafruit_WICED_Arduino/examples/Digital/Blink/Blink.ino`)
 - Build then flash the sketch as normal. You don't need to select a specific debugger since USB-DFU should run via a Python script:
 
