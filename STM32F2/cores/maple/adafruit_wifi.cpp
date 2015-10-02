@@ -90,37 +90,30 @@ sdep_err_t AdafruitWICED::scan(uint16_t* length, uint8_t* ap_details)
 
     @note   ssid and passwd are combined in a single payload buffer which are
             separated by ',' character
+
+            The passwd could be NULL or empty string if it does not exist
 */
 /******************************************************************************/
 sdep_err_t AdafruitWICED::connectAP(char* ssid, char* passwd)
 {
-  uint8_t ssid_len = strlen(ssid);
-  uint8_t pass_len = strlen(passwd);
-  char payload[ssid_len + pass_len + 2];
+  if (ssid == NULL || ssid == "") return ERROR_INVALIDPARAMETER;
 
-  memcpy(&payload[0], ssid, ssid_len);
-  payload[ssid_len] = ',';
-  memcpy(&payload[ssid_len + 1], passwd, pass_len);
-  payload[ssid_len + pass_len + 1] = 0;
+  uint16_t payload_len = strlen(ssid);
+  if (passwd != NULL) payload_len += strlen(passwd) + 1;
 
-  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_CONNECT, strlen(payload),
-                                       (uint8_t*)payload, NULL, NULL);
-}
+  char* payload = (char*)malloc(payload_len);
 
-/******************************************************************************/
-/*!
-    @brief  Attempt to connect to the specified access point with no password
+  strcpy(payload, ssid);
+  if (passwd != NULL)
+  {
+    strcat(payload, ",");
+    strcat(payload, passwd);
+  }
 
-    @param[in]      ssid    SSID of Wi-Fi access point
-
-    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
-            a specific error if something went wrong.
-*/
-/******************************************************************************/
-sdep_err_t AdafruitWICED::connectAP(char* ssid)
-{
-  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_CONNECT, strlen(ssid),
-                                       (uint8_t*)ssid, NULL, NULL);
+  sdep_err_t error = ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_CONNECT, payload_len,
+                                                   (uint8_t*)payload, NULL, NULL);
+  free(payload);
+  return error;
 }
 
 /******************************************************************************/
@@ -150,21 +143,30 @@ sdep_err_t AdafruitWICED::disconnectAP(void)
 
     @note   ssid and passwd are combined in a single payload buffer which are
             separated by ',' character
+
+            The passwd could be NULL or empty string if it does not exist
 */
 /******************************************************************************/
 sdep_err_t AdafruitWICED::startAP(char* ssid, char* passwd)
 {
-  uint8_t ssid_len = strlen(ssid);
-  uint8_t pass_len = strlen(passwd);
-  char payload[ssid_len + pass_len + 2];
+  if (ssid == NULL || ssid == "") return ERROR_INVALIDPARAMETER;
 
-  memcpy(&payload[0], ssid, ssid_len);
-  payload[ssid_len] = ',';
-  memcpy(&payload[ssid_len + 1], passwd, pass_len);
-  payload[ssid_len + pass_len + 1] = 0;
+  uint16_t payload_len = strlen(ssid);
+  if (passwd != NULL) payload_len += strlen(passwd) + 1;
 
-  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_APSTART, strlen(payload),
-                                       (uint8_t*)payload, NULL, NULL);
+  char* payload = (char*)malloc(payload_len);
+
+  strcpy(payload, ssid);
+  if (passwd != NULL)
+  {
+    strcat(payload, ",");
+    strcat(payload, passwd);
+  }
+
+  sdep_err_t error = ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_APSTART, payload_len,
+                                                   (uint8_t*)payload, NULL, NULL);
+  free(payload);
+  return error;
 }
 
 /******************************************************************************/
@@ -290,9 +292,8 @@ sdep_err_t AdafruitWICED::dnsLookup(char* dns, uint8_t* ipv4_address)
 sdep_err_t AdafruitWICED::getTime(char* iso8601_time)
 {
 
-  sdep_err_t error = ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_GETTIME, 0, NULL,
-                                                   NULL, (uint8_t*)iso8601_time);
-  return error;
+  return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_GETTIME, 0, NULL, NULL,
+                                       (uint8_t*)iso8601_time);
 }
 
 /******************************************************************************/
@@ -332,6 +333,8 @@ sdep_err_t AdafruitWICED::httpGetUri(char* uri, uint16_t* length, uint8_t* respo
 /******************************************************************************/
 sdep_err_t AdafruitWICED::httpPost(char* uri, uint16_t* length, uint8_t* response)
 {
+  if (uri == NULL) return ERROR_INVALIDPARAMETER;
+
   return ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_HTTPPOST, strlen(uri),
                                        (uint8_t*)uri, length, response);
 }
@@ -358,12 +361,15 @@ sdep_err_t AdafruitWICED::httpPost(char* uri, uint16_t* length, uint8_t* respons
 /******************************************************************************/
 sdep_err_t AdafruitWICED::mqttLastWill(char* topic, char* value, uint8_t qos, uint8_t retain)
 {
-  uint16_t lastWillMessage_len = strlen(topic) + strlen(value) + 5; // qos, retain & 3 commas
+  if (topic == NULL) return ERROR_INVALIDPARAMETER;
+
+  uint16_t lastWillMessage_len = strlen(topic) + 5; // qos, retain & 3 commas
+  if (value != NULL) lastWillMessage_len += strlen(value);
   char* lastWillMessage = (char*)malloc(lastWillMessage_len);
 
   strcpy(lastWillMessage, topic);
   strcat(lastWillMessage, ",");
-  strcat(lastWillMessage, value);
+  if (value != NULL) strcat(lastWillMessage, value);
   strcat(lastWillMessage, ",");
   char str[2];
   utoa(qos, str, 10);
@@ -372,8 +378,8 @@ sdep_err_t AdafruitWICED::mqttLastWill(char* topic, char* value, uint8_t qos, ui
   utoa(retain, str, 10);
   strcat(lastWillMessage, str);
 
-  uint16_t error = ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_MQTTLASTWILL, lastWillMessage_len,
-                                                 (uint8_t*)lastWillMessage, NULL, NULL);
+  sdep_err_t error = ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_MQTTLASTWILL, lastWillMessage_len,
+                                                   (uint8_t*)lastWillMessage, NULL, NULL);
   free(lastWillMessage);
   return error;
 }
@@ -435,8 +441,8 @@ sdep_err_t AdafruitWICED::mqttConnect(char* host, uint16_t port, char* clientID,
   strcat(mqttBroker, ",");
   if (password != NULL) strcat(mqttBroker, password);
 
-  uint16_t error =  ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_MQTTCONNECT, mqttServer_len,
-                                                  (uint8_t*)mqttBroker, NULL, NULL);
+  sdep_err_t error =  ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_MQTTCONNECT, mqttServer_len,
+                                                    (uint8_t*)mqttBroker, NULL, NULL);
   free(mqttBroker);
   return error;
 }
@@ -476,12 +482,15 @@ sdep_err_t AdafruitWICED::mqttDisconnect(void)
 /******************************************************************************/
 sdep_err_t AdafruitWICED::mqttPublish(char* topic, char* value, uint8_t qos, uint8_t retain)
 {
-  uint16_t publishedMessage_len = strlen(topic) + strlen(value) + 5; // qos, retain & 3 commas
+  if (topic == NULL) return ERROR_INVALIDPARAMETER;
+
+  uint16_t publishedMessage_len = strlen(topic) + 5; // qos, retain & 3 commas
+  if (value != NULL) publishedMessage_len += strlen(value);
   char* publishedMessage = (char*)malloc(publishedMessage_len);
 
   strcpy(publishedMessage, topic);
   strcat(publishedMessage, ",");
-  strcat(publishedMessage, value);
+  if (value != NULL) strcat(publishedMessage, value);
   strcat(publishedMessage, ",");
   char str[2];
   utoa(qos, str, 10);
@@ -490,8 +499,8 @@ sdep_err_t AdafruitWICED::mqttPublish(char* topic, char* value, uint8_t qos, uin
   utoa(retain, str, 10);
   strcat(publishedMessage, str);
 
-  uint16_t error = ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_MQTTPUBLISH, publishedMessage_len,
-                                                 (uint8_t*)publishedMessage, NULL, NULL);
+  sdep_err_t error = ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_MQTTPUBLISH, publishedMessage_len,
+                                                   (uint8_t*)publishedMessage, NULL, NULL);
   free(publishedMessage);
   return error;
 }
@@ -514,6 +523,8 @@ sdep_err_t AdafruitWICED::mqttPublish(char* topic, char* value, uint8_t qos, uin
 /******************************************************************************/
 sdep_err_t AdafruitWICED::mqttSubscribe(char* topic, uint8_t qos)
 {
+  if (topic == NULL) return ERROR_INVALIDPARAMETER;
+
   uint16_t subTopic_len = strlen(topic) + 2; // qos & a comma
   char* subTopic = (char*)malloc(subTopic_len);
 
@@ -523,8 +534,8 @@ sdep_err_t AdafruitWICED::mqttSubscribe(char* topic, uint8_t qos)
   utoa(qos, str, 10);
   strcat(subTopic, str);
 
-  uint16_t error = ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_MQTTSUBSCRIBE, subTopic_len,
-                                                 (uint8_t*)subTopic, NULL, NULL);
+  sdep_err_t error = ADAFRUIT_WICEDLIB->wiced_sdep(SDEP_CMD_MQTTSUBSCRIBE, subTopic_len,
+                                                   (uint8_t*)subTopic, NULL, NULL);
   free(subTopic);
   return error;
 }
