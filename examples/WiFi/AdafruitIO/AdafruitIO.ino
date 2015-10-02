@@ -3,7 +3,8 @@
   1.  Connect to pre-specified AP
   2.  Set the LastWill message
   3.  Connect to Adafruit IO with user name & password
-  4.  Publish random value in [-50,50] to specified feed on AIO every 20 seconds
+  4.  Read arrived message from ASYN FIFO
+  5.  Publish random value in [-50,50] to specified topic on AIO every 20 seconds
 
   author: huynguyen
  */
@@ -19,14 +20,19 @@
 #define CLIENT_ID          "Adafruit"
 #define ADAFRUIT_USERNAME  "See your username at accounts.adafruit.com"
 #define AIO_KEY            "Your AIO key"
-#define FEED_PATH          ADAFRUIT_USERNAME "/feeds/feed-name"
+#define PUBLISH_TOPIC      ADAFRUIT_USERNAME "/feeds/feed-name"
+#define SUBSCRIBE_TOPIC    ADAFRUIT_USERNAME "/feeds/feed-name"
 #define LASTWILL_TOPIC     ADAFRUIT_USERNAME "/feeds/feed-status"
 #define LASTWILL_MESSAGE   "Offline"
 #define QOS                1
 #define RETAIN             0
 
+#define MAX_LENGTH_MESSAGE 64
 
-uint16_t wifi_error, mqtt_error, subs_error;
+
+int wifi_error = -1; // FAIL
+int mqtt_error = -1; // FAIL
+int subs_error = -1; // FAIL
 int temp;
 
 /**************************************************************************/
@@ -36,15 +42,15 @@ int temp;
     @return Error code
 */
 /**************************************************************************/
-uint16_t connectAP()
+int connectAP()
 {
   // Attempt to connect to an AP
   Serial.print(F("Attempting to connect to: "));
   Serial.println(WLAN_SSID);
 
-  uint16_t error = wiced.connectAP(WLAN_SSID, WLAN_PASS);
+  int error = wiced.connectAP(WLAN_SSID, WLAN_PASS);
 
-  if (error == ERROR_NONE)
+  if (error == 0)
   {
     Serial.println(F("Connected!"));
   }
@@ -65,15 +71,14 @@ uint16_t connectAP()
     @return Error code
 */
 /**************************************************************************/
-uint16_t connectBroker()
+int connectBroker()
 {
   // Attempt to connect to a Broker
   Serial.print(F("Attempting to connect to broker: "));
   Serial.print(MQTT_HOST); Serial.print(":"); Serial.println(MQTT_PORT);
 
-  uint16_t error = wiced.mqttConnect(MQTT_HOST, MQTT_PORT, CLIENT_ID,
-                                     ADAFRUIT_USERNAME, AIO_KEY);
-  if (error == ERROR_NONE)
+  int error = wiced.mqttConnect(MQTT_HOST, MQTT_PORT, CLIENT_ID, ADAFRUIT_USERNAME, AIO_KEY);
+  if (error == 0)
   {
     Serial.println(F("Connected!"));
   }
@@ -94,15 +99,15 @@ uint16_t connectBroker()
     @return Error code
 */
 /**************************************************************************/
-uint16_t subscribeTopic()
+int subscribeTopic()
 {
   // Attempt to connect to a Broker
   Serial.print(F("Attempting to subscribe to the topic = <"));
-  Serial.print(FEED_PATH); Serial.println(">");
+  Serial.print(SUBSCRIBE_TOPIC); Serial.println(">");
 
-  uint16_t error = wiced.mqttSubscribe(FEED_PATH, QOS);
+  int error = wiced.mqttSubscribe(SUBSCRIBE_TOPIC, QOS);
 
-  if (error == ERROR_NONE)
+  if (error == 0)
   {
     Serial.println(F("Succeeded!"));
   }
@@ -111,9 +116,51 @@ uint16_t subscribeTopic()
     Serial.print(F("Failed! Error: "));
     Serial.println(error, HEX);
   }
-  Serial.println("");
+  Serial.println(F(""));
 
   return error;
+}
+
+/**************************************************************************/
+/*!
+    @brief  Read message from the ASYNC FIFO
+
+    @return NONE
+*/
+/**************************************************************************/
+void readArrivedMessage()
+{
+  if (subs_error == 0)
+  {
+    // Read message from subscribed topic
+    uint8_t response[MAX_LENGTH_MESSAGE];
+    uint16_t response_len;
+    uint16_t irq_error = wiced.irqRead(&response_len, response);
+    if (irq_error == 0)
+    {
+      if (response_len > 0)
+      {
+        Serial.print(F("Message read! "));
+        // [0:1]: interrupt source
+        // [2:9]: UTC time & date (64-bit integer)
+        // [10:]: Value
+        for (int i = 10; i < response_len; i++)
+        {
+          Serial.write(response[i]);
+        }
+        Serial.println(F(""));
+      }
+      else
+      {
+        Serial.println(F("No arrived message!"));
+      }
+    }
+    else
+    {
+      Serial.print(F("Read Failed! Error: "));
+      Serial.println(irq_error, HEX);
+    }
+  }
 }
 
 /**************************************************************************/
@@ -131,7 +178,7 @@ void setup()
   wifi_error = connectAP();
 
   // Set LastWill message
-  if (wiced.mqttLastWill(LASTWILL_TOPIC, LASTWILL_MESSAGE, QOS, RETAIN) == ERROR_NONE)
+  if (wiced.mqttLastWill(LASTWILL_TOPIC, LASTWILL_MESSAGE, QOS, RETAIN) == 0)
   {
     Serial.println(F("LastWill message has been set!\r\n"));
   }
@@ -141,6 +188,10 @@ void setup()
   }
 
   mqtt_error = connectBroker();
+  if (mqtt_error == 0)
+  {
+    subs_error = subscribeTopic();
+  }
 }
 
 /**************************************************************************/
@@ -149,10 +200,12 @@ void setup()
 */
 /**************************************************************************/
 void loop() {
-  if (wifi_error == ERROR_NONE)
+  if (wifi_error == 0)
   {
-    if (mqtt_error == ERROR_NONE)
+    if (mqtt_error == 0)
     {
+      readArrivedMessage();
+      
       // Buffer for temperature
       char str[4];
       temp = random(-50, 50);
@@ -160,9 +213,9 @@ void loop() {
       itoa(temp, str, 10);
 
       // qos = 1, retain = 0
-      if (wiced.mqttPublish(FEED_PATH, str, QOS, RETAIN) == ERROR_NONE)
+      if (wiced.mqttPublish(PUBLISH_TOPIC, str, QOS, RETAIN) == 0)
       {
-        Serial.print(F("Published Message to ")); Serial.println(FEED_PATH);
+        Serial.print(F("Published Message to ")); Serial.println(PUBLISH_TOPIC);
         Serial.print(F("Value = ")); Serial.println(temp);
       }
       else
@@ -170,16 +223,6 @@ void loop() {
         Serial.println(F("Publish Error!"));
       }
     }
-    else
-    {
-      // Try to reconnect to MQTT Server
-      mqtt_error = connectBroker();
-    }
-  }
-  else
-  {
-    // Try to reconnect to AP
-    wifi_error = connectAP();
   }
 
   Serial.println(F(""));
