@@ -5,7 +5,7 @@
   3.  Connect to Adafruit IO with user name & password
   4.  Publish random value in [-50,50] to specified feed on AIO every 20 seconds
 
-  author: huynguyen 
+  author: huynguyen
  */
 
 #include "adafruit_wifi.h"
@@ -32,27 +32,29 @@ int temp;
 /**************************************************************************/
 /*!
     @brief  Connect to pre-specified AP
-    
-    @return Error code  
+
+    @return Error code
 */
 /**************************************************************************/
 uint16_t connectAP()
 {
   // Attempt to connect to an AP
-  Serial.print(F("\r\nAttempting to connect to: "));
+  Serial.print(F("Attempting to connect to: "));
   Serial.println(WLAN_SSID);
-  
+
   uint16_t error = wiced.connectAP(WLAN_SSID, WLAN_PASS);
-  
+
   if (error == ERROR_NONE)
   {
-    Serial.print(F("Connected!"));
+    Serial.println(F("Connected!"));
   }
   else
   {
     Serial.print(F("Failed! Error: "));
     Serial.println(error, HEX);
   }
+  Serial.println("");
+
   return error;
 }
 
@@ -66,20 +68,22 @@ uint16_t connectAP()
 uint16_t connectBroker()
 {
   // Attempt to connect to a Broker
-  Serial.print(F("\r\nAttempting to connect to broker: "));
-  Serial.print(MQTT_HOST);Serial.print(":");Serial.println(MQTT_PORT);
-  
+  Serial.print(F("Attempting to connect to broker: "));
+  Serial.print(MQTT_HOST); Serial.print(":"); Serial.println(MQTT_PORT);
+
   uint16_t error = wiced.mqttConnect(MQTT_HOST, MQTT_PORT, CLIENT_ID,
                                      ADAFRUIT_USERNAME, AIO_KEY);
   if (error == ERROR_NONE)
   {
-    Serial.print(F("Connected!"));
+    Serial.println(F("Connected!"));
   }
   else
   {
     Serial.print(F("Failed! Error: "));
     Serial.println(error, HEX);
   }
+  Serial.println("");
+
   return error;
 }
 
@@ -93,31 +97,33 @@ uint16_t connectBroker()
 uint16_t subscribeTopic()
 {
   // Attempt to connect to a Broker
-  Serial.print(F("\r\nAttempting to subscribe to the topic = <"));
-  Serial.print(FEED_PATH);Serial.println(">");
-  
+  Serial.print(F("Attempting to subscribe to the topic = <"));
+  Serial.print(FEED_PATH); Serial.println(">");
+
   uint16_t error = wiced.mqttSubscribe(FEED_PATH, QOS);
-  
+
   if (error == ERROR_NONE)
   {
-    Serial.print(F("Connected!"));
+    Serial.println(F("Succeeded!"));
   }
   else
   {
     Serial.print(F("Failed! Error: "));
     Serial.println(error, HEX);
   }
+  Serial.println("");
+
   return error;
 }
 
 /**************************************************************************/
 /*!
-    @brief  The setup function runs once when reset the board    
+    @brief  The setup function runs once when reset the board
 */
 /**************************************************************************/
 void setup()
 {
-  Serial.println(F("Adafruit IO - MQTT Example"));
+  Serial.println(F("Adafruit IO - MQTT Example\r\n"));
 
   // If you want to use LED for debug
   pinMode(BOARD_LED_PIN, OUTPUT);
@@ -127,7 +133,11 @@ void setup()
   // Set LastWill message
   if (wiced.mqttLastWill(LASTWILL_TOPIC, LASTWILL_MESSAGE, QOS, RETAIN) == ERROR_NONE)
   {
-    Serial.println(F("LastWill message has been set!"));
+    Serial.println(F("LastWill message has been set!\r\n"));
+  }
+  else
+  {
+    Serial.println(F("Fail to set LastWill message!\r\n"));
   }
 
   mqtt_error = connectBroker();
@@ -148,18 +158,21 @@ void loop() {
       temp = random(-50, 50);
       if (temp > 100) temp = 0;
       itoa(temp, str, 10);
-      
+
       // qos = 1, retain = 0
       if (wiced.mqttPublish(FEED_PATH, str, QOS, RETAIN) == ERROR_NONE)
       {
-        Serial.print(F("Published Message! "));
-        Serial.print(F("Value = "));
-        Serial.println(temp);
+        Serial.print(F("Published Message to ")); Serial.println(FEED_PATH);
+        Serial.print(F("Value = ")); Serial.println(temp);
+      }
+      else
+      {
+        Serial.println(F("Publish Error!"));
       }
     }
     else
     {
-      // Try to reconnect to MQTT Server    
+      // Try to reconnect to MQTT Server
       mqtt_error = connectBroker();
     }
   }
