@@ -23,6 +23,7 @@
 #define PUBLISH_TOPIC      ADAFRUIT_USERNAME "/feeds/feed-name"
 #define SUBSCRIBE_TOPIC    ADAFRUIT_USERNAME "/feeds/feed-name"
 #define LASTWILL_TOPIC     ADAFRUIT_USERNAME "/feeds/feed-status"
+#define LASTWILL_CONNECTED "Online"
 #define LASTWILL_MESSAGE   "Offline"
 #define QOS                1
 #define RETAIN             0
@@ -132,23 +133,44 @@ void readArrivedMessage()
 {
   if (subs_error == 0)
   {
-    // Read message from subscribed topic
-    uint8_t response[MAX_LENGTH_MESSAGE];
-    uint16_t response_len;
-    uint16_t irq_error = wiced.irqRead(&response_len, response);
+    uint16_t irq_error;
+    
+    // Specify the current number of items in the ASYNC FIFO
+    uint16_t n_item;
+    irq_error = wiced.irqCount(&n_item);
     if (irq_error == 0)
     {
-      if (response_len > 0)
+      if (n_item > 0)
       {
-        Serial.print(F("Message read! "));
-        // [0:1]: interrupt source
-        // [2:9]: UTC time & date (64-bit integer)
-        // [10:]: Value
-        for (int i = 10; i < response_len; i++)
+        Serial.print(n_item);
+        Serial.println(F(" message(s) found in ASYNC FIFO"));
+        uint8_t response[MAX_LENGTH_MESSAGE];
+        uint16_t response_len;
+        for (int n = 0; n < n_item; n++)
         {
-          Serial.write(response[i]);
+          // Read message from subscribed topic
+          irq_error = wiced.irqRead(&response_len, response);
+          if (irq_error == 0)
+          {
+            if (response_len > 0)
+            {
+              Serial.print(F("Message read! "));
+              // [0:1]: interrupt source
+              // [2:9]: UTC time & date (64-bit integer)
+              // [10:]: Value
+              for (int i = 10; i < response_len; i++)
+              {
+                Serial.write(response[i]);
+              }
+              Serial.println(F(""));
+            }
+          }
+          else
+          {
+            Serial.print(F("Read Failed! Error: "));
+            Serial.println(irq_error, HEX);
+          }
         }
-        Serial.println(F(""));
       }
       else
       {
@@ -157,9 +179,11 @@ void readArrivedMessage()
     }
     else
     {
-      Serial.print(F("Read Failed! Error: "));
+      Serial.print(F("Failed to specify the current number of items in the ASYNC FIFO! Error: "));
       Serial.println(irq_error, HEX);
     }
+
+    Serial.println("");
   }
 }
 
@@ -170,6 +194,9 @@ void readArrivedMessage()
 /**************************************************************************/
 void setup()
 {
+//  while (!Serial);
+//  delay(500);
+
   Serial.println(F("Adafruit IO - MQTT Example\r\n"));
 
   // If you want to use LED for debug
@@ -191,6 +218,16 @@ void setup()
   if (mqtt_error == 0)
   {
     subs_error = subscribeTopic();
+
+    if (wiced.mqttPublish(LASTWILL_TOPIC, LASTWILL_CONNECTED, QOS, RETAIN) == ERROR_NONE)
+    {
+      Serial.print(F("Published Message to ")); Serial.println(LASTWILL_TOPIC);
+      Serial.print(F("Value = ")); Serial.println(LASTWILL_CONNECTED);
+    }
+    else
+    {
+      Serial.println(F("Publish Error!"));
+    } 
   }
 }
 
