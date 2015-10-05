@@ -65,6 +65,7 @@ public:
     virtual int read(void);
     virtual size_t write(unsigned char);
     using Print::write;
+    operator bool() { return true; }
 
     /* Pin accessors */
     int txPin(void) { return this->tx_pin; }

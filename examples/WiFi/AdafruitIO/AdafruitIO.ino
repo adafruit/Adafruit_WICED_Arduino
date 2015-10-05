@@ -194,13 +194,13 @@ void readArrivedMessage()
 /**************************************************************************/
 void setup()
 {
-//  while (!Serial);
-//  delay(500);
-
-  Serial.println(F("Adafruit IO - MQTT Example\r\n"));
-
   // If you want to use LED for debug
   pinMode(BOARD_LED_PIN, OUTPUT);
+  
+  while (!Serial);
+  delay(500);
+
+  Serial.println(F("Adafruit IO - MQTT Example\r\n"));
 
   wifi_error = connectAP();
 
