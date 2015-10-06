@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*!
-    @file     adafruit_wicedlib.h
+    @file     adafruit_featherlib.h
     @author   hathach
 
     @section LICENSE

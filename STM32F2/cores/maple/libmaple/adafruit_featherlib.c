@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*!
-    @file     adafruit_wicedlib.c
+    @file     adafruit_featherlib.c
     @author   hathach
 
     @section LICENSE
@@ -34,7 +34,7 @@
 */
 /**************************************************************************/
 
-#include "adafruit_wicedlib.h"
+#include "adafruit_featherlib.h"
 
 //--------------------------------------------------------------------+
 // MACRO CONSTANT TYPEDEF
