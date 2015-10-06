@@ -16,7 +16,8 @@ static bool defaultMode = 0;
 void setup()
 {
   pinMode(BOARD_LED_PIN, OUTPUT);
-  delay(5000);
+  // wait for Serial
+  while (!Serial) delay(1); 
   
   // initialize serial port for input and output
 //  Serial.begin(11500);

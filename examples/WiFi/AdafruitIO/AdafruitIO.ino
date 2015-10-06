@@ -197,11 +197,8 @@ void setup()
   // If you want to use LED for debug
   pinMode(BOARD_LED_PIN, OUTPUT);
   
-  while (!Serial) 
-  { 
-    delay(1); 
-  }
-  delay(500);
+  // wait for Serial
+  while (!Serial) delay(1);
 
   Serial.println(F("Adafruit IO - MQTT Example\r\n"));
 

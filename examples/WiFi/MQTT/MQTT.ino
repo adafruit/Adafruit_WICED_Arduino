@@ -101,8 +101,10 @@ uint16_t subscribeTopic()
 void setup()
 {
   pinMode(BOARD_LED_PIN, OUTPUT);
-  delay(1000);
-
+  
+  // wait for Serial
+  while (!Serial) delay(1);
+  
   wifi_error = connectAP();
   mqtt_error = connectBroker();
   subs_error = subscribeTopic();
