@@ -34,7 +34,7 @@
 */
 /**************************************************************************/
 
-#include "adafruit_wicedlib.h"
+#include "adafruit_featherlib.h"
 #include "adafruit_wifi.h"
 #include "itoa.h"
 #include <string.h>

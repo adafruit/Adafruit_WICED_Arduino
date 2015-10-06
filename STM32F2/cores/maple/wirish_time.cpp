@@ -34,7 +34,7 @@
 */
 /**************************************************************************/
 
-#include "adafruit_wicedlib.h"
+#include "adafruit_featherlib.h"
 #include "wirish_time.h"
 
 void delay(unsigned long ms)

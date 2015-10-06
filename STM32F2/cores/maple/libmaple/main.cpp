@@ -24,7 +24,7 @@
  * SOFTWARE.
  *****************************************************************************/
 
-#include "adafruit_wicedlib.h"
+#include "adafruit_featherlib.h"
 
 extern void setup(void);
 extern void loop(void);

@@ -36,7 +36,7 @@
 #include "nvic.h"
 #include "systick.h"
 #include "boards.h"
-#include "adafruit_wicedlib.h"
+#include "adafruit_featherlib.h"
 
 #define US_PER_MS               1000
 

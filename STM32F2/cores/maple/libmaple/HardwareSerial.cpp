@@ -35,7 +35,7 @@
 
 #include "HardwareSerial.h"
 #include "boards.h"
-#include "adafruit_wicedlib.h"
+#include "adafruit_featherlib.h"
 
 /* Define UNISTD.h replacements */
 #define STDIN_FILENO          0
@@ -85,6 +85,7 @@ HardwareSerial::HardwareSerial(usart_dev *usart_device,
     this->usart_device = usart_device;
     this->tx_pin = tx_pin;
     this->rx_pin = rx_pin;
+    this->isConnected = false;
 }
 
 /*
@@ -164,9 +165,29 @@ uint32 HardwareSerial::pending(void) {
 size_t HardwareSerial::write(unsigned char ch) {
 //    usart_putc(usart_device, ch);
   ADAFRUIT_WICEDLIB->file_write(FILENO_USB_CDC, (char*)&ch, 1);
-    return 1;
+  return 1;
 }
 
 void HardwareSerial::flush(void) {
     usart_reset_rx(usart_device);
+}
+
+
+void hardwareSerial_callback(uint32_t eid, void* p_data)
+{
+  enum
+  {
+    HARDWARESERIAL_EVENT_DISCONNECT = 0,
+    HARDWARESERIAL_EVENT_CONNECT = 1,
+  };
+
+  switch (eid)
+  {
+    case HARDWARESERIAL_EVENT_DISCONNECT:
+    case HARDWARESERIAL_EVENT_CONNECT:
+      Serial.isConnected = eid;
+    break;
+
+    default: break;
+  }
 }

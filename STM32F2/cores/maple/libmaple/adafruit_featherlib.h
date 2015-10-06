@@ -50,9 +50,18 @@
 typedef struct ATTR_ALIGNED(512)
 {
   uint32_t arduino_magic;
-  uint8_t  reserved[60];
+  uint32_t arduino_version;
+  uint8_t  reserved[56];
 
   void (*startup) (void);
+
+  // Peripheral Interrupt
+  uint32_t peripheral_isr[16];
+
+  // Callback
+  void (*cdc_serial_event_cb)(uint32_t eid, void* p_data);
+
+
 }adafruit_arduino_t;
 
 
@@ -66,26 +75,28 @@ typedef struct ATTR_ALIGNED(512)
   uint32_t firmware_version;
   uint8_t  reserved[56];
 
-  // RTOS API
-  wiced_result_t (*rtos_delay_ms) (uint32_t ms);
-  wiced_result_t (*rtos_delay_us) (uint32_t us);
-
-  // Peripheral API
-  uint32_t (*system_millis) (void);
-
-  wiced_result_t (*gpio_toggle) (uint32_t gpio);
-
-  // FILE Interface
-  int (*file_write) (int file, char *ptr, int len);
-  int (*file_read)  (int file, char *ptr, int len);
-  int (*file_peek)  (void);
-
   // SDEP Command
   uint16_t (*wiced_sdep) (uint16_t  cmd_id,
                           uint8_t   paylen,
                           uint8_t*  parameter,
                           uint16_t* result_len,
                           uint8_t*  result_buffer);
+  uint32_t sdep_reserved[7];
+
+  // RTOS API
+  wiced_result_t (*rtos_delay_ms) (uint32_t ms);
+  wiced_result_t (*rtos_delay_us) (uint32_t us);
+  uint32_t rtos_reserved[14];
+
+  // Peripheral API
+  uint32_t (*system_millis) (void);
+  wiced_result_t (*gpio_toggle) (uint32_t gpio);
+  uint32_t peripheral_reserved[14];
+
+  // FILE Interface
+  int (*file_write) (int file, char *ptr, int len);
+  int (*file_read)  (int file, char *ptr, int len);
+  int (*file_peek)  (void);
 }adafruit_wicedlib_t;
 
 #define ADAFRUIT_WICEDLIB_BASE    ((uint32_t) 0x8010200)

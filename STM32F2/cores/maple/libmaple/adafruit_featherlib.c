@@ -44,6 +44,7 @@
 // INTERNAL OBJECT & FUNCTION DECLARATION
 //--------------------------------------------------------------------+
 extern void __attribute__((noreturn)) start_c(void);
+extern void hardwareSerial_callback(uint32_t eid, void* p_data);
 
 //--------------------------------------------------------------------+
 // IMPLEMENTATION
@@ -51,5 +52,7 @@ extern void __attribute__((noreturn)) start_c(void);
 ATTR_USED adafruit_arduino_t const adafruit_arduino =
 {
     .arduino_magic = CFG_ARDUINO_CODE_MAGIC,
-    .startup       = start_c
+    .startup       = start_c,
+
+    .cdc_serial_event_cb = hardwareSerial_callback
 };

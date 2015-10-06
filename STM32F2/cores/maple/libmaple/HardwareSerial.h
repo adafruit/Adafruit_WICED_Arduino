@@ -37,6 +37,14 @@
 
 #include "Stream.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void hardwareSerial_callback(uint32_t eid, void* p_data);
+#ifdef __cplusplus
+}
+#endif
+
 /*
  * IMPORTANT:
  *
@@ -65,15 +73,20 @@ public:
     virtual int read(void);
     virtual size_t write(unsigned char);
     using Print::write;
-    operator bool() { return true; }
+    operator bool() { return this->isConnected; }
 
     /* Pin accessors */
     int txPin(void) { return this->tx_pin; }
     int rxPin(void) { return this->rx_pin; }
+
+    /* callback from featherlib */
+    friend void hardwareSerial_callback(uint32_t eid, void* p_data);
+
 private:
     usart_dev *usart_device;
     uint8 tx_pin;
     uint8 rx_pin;
+    bool  isConnected;
 };
 
 extern HardwareSerial Serial;
