@@ -48,7 +48,7 @@ static void setupADC(void);
 static void setupTimers(void);
 
 void init(void) {
-#if 0
+#if 0 // [ADAFRUIT] most of MCU core setup is done in featherlib
 	setupFlash();
 
 	setupClocks();
@@ -61,13 +61,14 @@ void init(void) {
 #else
     afio_init();
 #endif
+#endif
 
-    boardInit();
-    setupADC();
-    setupTimers();
+//    gpio_init_all();
+//    boardInit();
+//    setupADC();
+//    setupTimers();
 
     //setupUSB();
-#endif
 }
 
 /* You could farm this out to the files in boards/ if e.g. it takes

@@ -119,8 +119,8 @@ bool boardUsesPin(uint8 pin);
 
 /* FIXME HACK put boards/ before these paths once IDE uses make. */
 
-#ifdef BOARD_adafidev
-#include "adafidev.h"
+#ifdef BOARD_feather
+#include "feather.h"
 #else
 /*
  * TODO turn this into a warning so people can:
