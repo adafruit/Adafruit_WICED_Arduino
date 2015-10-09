@@ -38,6 +38,7 @@ feather.upload.file_type=bin
 feather.menu.section.firmware=Firmware
 feather.menu.section.firmware.upload.region=arduino_upgrade
 feather.menu.section.firmware.upload.binfile={build.path}/{build.project_name}.bin
+feather.menu.section.firmware.upload.address=0x080E0000
 feather.menu.section.firmware.upload.ram.maximum_size=16384
 feather.menu.section.firmware.upload.flash.maximum_size=1048576
 feather.menu.section.firmware.upload.maximum_size=131072
@@ -47,6 +48,7 @@ feather.menu.section.firmware.upload.maximum_size=131072
 feather.menu.section.featherlib=Feather Lib
 feather.menu.section.featherlib.upload.region=featherlib_upgrade
 feather.menu.section.featherlib.upload.binfile={runtime.platform.path}/featherlib/featherlib.bin
+feather.menu.section.featherlib.upload.address=0x08010000
 feather.menu.section.featherlib.upload.ram.maximum_size=114688
 feather.menu.section.featherlib.upload.flash.maximum_size=1048576
 feather.menu.section.featherlib.upload.maximum_size=851968
@@ -54,7 +56,6 @@ feather.menu.section.featherlib.upload.maximum_size=851968
 ## Bootloader
 ## -------------------------
 feather.bootloader.tool=adalink
-feather.bootloader.cpu=stm32f2
 feather.bootloader.file=bootloader/bootloader.hex
 
 ##############################################################

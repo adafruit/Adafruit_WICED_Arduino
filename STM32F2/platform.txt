@@ -12,13 +12,13 @@ version=0.1.0
 
 compiler.path={runtime.ide.path}/hardware/tools/gcc-arm-none-eabi-4.8.3-2014q1/bin/
 compiler.c.cmd=arm-none-eabi-gcc
-compiler.c.flags=-c -g -Os -w -MMD -ffunction-sections -fdata-sections -nostdlib --param max-inline-insns-single=500 -DBOARD_{build.variant} -D{build.vect} -DERROR_LED_PORT={build.error_led_port} -DERROR_LED_PIN={build.error_led_pin}
+compiler.c.flags=-c -g -Os -w -MMD -ffunction-sections -fdata-sections -nostdlib --param max-inline-insns-single=500 -DBOARD_{build.variant} -D{build.vect} -D{build.density} -DERROR_LED_PORT={build.error_led_port} -DERROR_LED_PIN={build.error_led_pin}
 compiler.c.elf.cmd=arm-none-eabi-g++
 compiler.c.elf.flags=-Os -Wl,--gc-sections -Wl,--defsym,FIRMWARE_MAGIC_OFFSET=512
 compiler.S.cmd=arm-none-eabi-gcc
 compiler.S.flags=-c -g -x assembler-with-cpp -MMD
 compiler.cpp.cmd=arm-none-eabi-g++
-compiler.cpp.flags=-c -g -Os -w -MMD -ffunction-sections -fdata-sections -nostdlib --param max-inline-insns-single=500 -fno-rtti -fno-exceptions -DBOARD_{build.variant} -D{build.vect} -DERROR_LED_PORT={build.error_led_port} -DERROR_LED_PIN={build.error_led_pin}
+compiler.cpp.flags=-c -g -Os -w -MMD -ffunction-sections -fdata-sections -nostdlib --param max-inline-insns-single=500 -fno-rtti -fno-exceptions -DBOARD_{build.variant} -D{build.vect} -D{build.density} -DERROR_LED_PORT={build.error_led_port} -DERROR_LED_PIN={build.error_led_pin}
 compiler.ar.cmd=arm-none-eabi-ar
 compiler.ar.flags=rcs
 compiler.objcopy.cmd=arm-none-eabi-objcopy
@@ -42,12 +42,7 @@ compiler.cpp.extra_flags=
 compiler.S.extra_flags=
 compiler.ar.extra_flags=
 compiler.elf2hex.extra_flags=
-
-#compiler.libs.c.flags="-I{build.core.path}/libmaple" -I{build.core.path}/libmaple/usbF4 -I{build.core.path}/libmaple/usbF4/STM32_USB_Device_Library/Core/inc -I{build.core.path}/libmaple/usbF4/STM32_USB_Device_Library/Class/cdc/inc -I{build.core.path}/libmaple/usbF4/STM32_USB_OTG_Driver/inc -I{build.core.path}/libmaple/usbF4/VCP 
-
 compiler.libs.c.flags="-I{build.core.path}/libmaple"
-
-
 
 # USB Flags
 # ---------
@@ -83,8 +78,11 @@ recipe.c.combine.pattern="{compiler.path}{compiler.c.elf.cmd}" {compiler.c.elf.f
 ## Create eeprom
 recipe.objcopy.eep.pattern=
 
+## Create bin
+recipe.objcopy.bin.pattern="{compiler.path}{compiler.elf2hex.cmd}" -O binary "{build.path}/{build.project_name}.elf" "{build.path}/{build.project_name}.bin"
+
 ## Create hex
-recipe.objcopy.hex.pattern="{compiler.path}{compiler.elf2hex.cmd}" {compiler.elf2hex.flags} {compiler.elf2hex.extra_flags} "{build.path}/{build.project_name}.elf" "{build.path}/{build.project_name}.bin"
+#recipe.objcopy.hex.pattern="{compiler.path}{compiler.elf2hex.cmd}" -O ihex "{build.path}/{build.project_name}.elf" "{build.path}/{build.project_name}.hex"
 
 ## Compute size
 recipe.size.pattern="{compiler.path}{compiler.size.cmd}" -A "{build.path}/{build.project_name}.elf"
@@ -102,38 +100,22 @@ tools.adafruit_upload.upload.params.verbose=-d
 tools.adafruit_upload.upload.params.quiet=
 tools.adafruit_upload.upload.pattern=python "{path}/{cmd}" {upload.region} "{upload.binfile}"
 
-# Generic STM32 upload via serial to Serial Port 1 (pins PA9 and PA10) - note. Boot0 line needs to high on board reset to enable upload via serial
-# at the end of the upload the program is automatically run, without the board being reset
-
-# tools.serial_upload.cmd=serial_upload
-# tools.serial_upload.cmd.windows=serial_upload.bat
-# #tools.serial_upload.cmd.linux=
-# tools.serial_upload.path={runtime.hardware.path}/tools/win
-
-# tools.serial_upload.upload.params.verbose=-d
-# tools.serial_upload.upload.params.quiet=
-# tools.serial_upload.upload.pattern="{path}/{cmd}" {serial.port.file} {upload.altID} {upload.usbID} "{build.path}/{build.project_name}.bin"
-
-# STLINK/V2
-
-# tools.stlink.cmd=stlink
-# tools.stlink.cmd.windows=stlink_upload.bat
-# #tools.stlink.cmd.linux=
-# tools.stlink.path={runtime.hardware.path}/tools/win
-# tools.stlink.upload.params.verbose=-d
-# tools.stlink.upload.params.quiet=
-# tools.stlink.upload.pattern="{path}/{cmd}" {serial.port.file} {upload.altID} {upload.usbID} "{build.path}/{build.project_name}.bin"
-
-
-# Adalink Programmer tools
+# Adalink Programmer/Uploader tools
 # ------------------- 
 tools.adalink.cmd=adalink
 tools.adalink.cmd.windows=adalink
 tools.adalink.path.linux=adalink
 tools.adalink.cmd.macosx=/usr/local/bin/adalink
+
+# Programmer bootloader
 tools.adalink.bootloader.params.verbose=-v
 tools.adalink.bootloader.params.quiet=
-tools.adalink.bootloader.pattern="{cmd}" {bootloader.verbose} {bootloader.cpu} --programmer {program.programmer} --wipe --program-hex "{runtime.platform.path}/{bootloader.file}"
+tools.adalink.bootloader.pattern="{cmd}" {bootloader.verbose} stm32f2 --programmer {program.programmer} --wipe --program-hex "{runtime.platform.path}/{bootloader.file}"
+
+# Uploader sketch
+tools.adalink.program.params.verbose=-v
+tools.adalink.program.params.quiet=
+tools.adalink.program.pattern="{cmd}" {program.verbose} stm32f2 --programmer {program.programmer} --program-bin "{upload.binfile}" {upload.address}
 
 # Adalink auto erase flash page while programming
 tools.adalink.erase.params.verbose=
