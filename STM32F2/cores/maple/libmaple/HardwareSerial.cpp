@@ -37,13 +37,6 @@
 #include "boards.h"
 #include "adafruit_featherlib.h"
 
-/* Define UNISTD.h replacements */
-#define STDIN_FILENO          0
-#define STDOUT_FILENO         1
-#define STDERR_FILENO         2
-#define FILENO_UART           3
-#define FILENO_USB_CDC        4
-
 #define TX1 BOARD_USART1_TX_PIN
 #define RX1 BOARD_USART1_RX_PIN
 

@@ -25,12 +25,12 @@
  *****************************************************************************/
 
 /**
- * @file   adafidev.h
+ * @file   feather.h
  * @brief  Pin description
  */
 
-#ifndef _BOARD_ADAFIDEV_H_
-#define _BOARD_ADAFIDEV_H_
+#ifndef _BOARD_FEATHER_H_
+#define _BOARD_FEATHER_H_
 
 #define Port2Pin(port, bit) ((port-'A')*16+bit)
 

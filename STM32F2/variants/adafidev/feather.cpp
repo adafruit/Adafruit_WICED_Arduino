@@ -25,13 +25,13 @@
  *****************************************************************************/
 
 /**
- * @file   adafidev.cpp
- * @brief  adafidev board file.
+ * @file   feather.cpp
+ * @brief  feather board file.
  */
 
-#ifdef BOARD_adafidev
+#ifdef BOARD_feather
 
-#include "adafidev.h"
+#include "feather.h"
 //#include "fsmc.h"
 #include "gpio.h"
 #include "rcc.h"

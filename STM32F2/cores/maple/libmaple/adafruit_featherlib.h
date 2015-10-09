@@ -34,8 +34,8 @@
 */
 /**************************************************************************/
 
-#ifndef _ADAFRUIT_WICEDLIB_H_
-#define _ADAFRUIT_WICEDLIB_H_
+#ifndef _ADAFRUIT_FEATHERLIB_H_
+#define _ADAFRUIT_FEATHERLIB_H_
 
 #include <stdint.h>
 #include "compiler.h"
@@ -43,6 +43,13 @@
 #ifdef __cplusplus
  extern "C" {
 #endif
+
+/* Define UNISTD.h replacements */
+#define STDIN_FILENO          0
+#define STDOUT_FILENO         1
+#define STDERR_FILENO         2
+#define FILENO_UART           3
+#define FILENO_USB_CDC        4
 
 //------------- Arduino Shared Structure -------------//
 #define CFG_ARDUINO_CODE_MAGIC    0x01ADD1E5 // Laddies
@@ -90,21 +97,26 @@ typedef struct ATTR_ALIGNED(512)
 
   // Peripheral API
   uint32_t (*system_millis) (void);
-  wiced_result_t (*gpio_toggle) (uint32_t gpio);
-  uint32_t peripheral_reserved[14];
+  uint32_t peripheral_reserved[15];
 
   // FILE Interface
   int (*file_write) (int file, char *ptr, int len);
   int (*file_read)  (int file, char *ptr, int len);
   int (*file_peek)  (void);
-}adafruit_wicedlib_t;
+}adafruit_featherlib_t;
 
 #define ADAFRUIT_WICEDLIB_BASE    ((uint32_t) 0x8010200)
-#define ADAFRUIT_WICEDLIB         ((adafruit_wicedlib_t*) ADAFRUIT_WICEDLIB_BASE)
+#define ADAFRUIT_WICEDLIB         ((adafruit_featherlib_t*) ADAFRUIT_WICEDLIB_BASE)
 
+#define DBG_LOCATION()       do {\
+    ADAFRUIT_WICEDLIB->file_write(FILENO_USB_CDC, (char*) __PRETTY_FUNCTION__, strlen(__PRETTY_FUNCTION__));\
+    ADAFRUIT_WICEDLIB->file_write(FILENO_USB_CDC, ": ", 2);\
+    ADAFRUIT_WICEDLIB->file_write(FILENO_USB_CDC, XSTRING_(__LINE__), strlen( XSTRING_(__LINE__) ));\
+    ADAFRUIT_WICEDLIB->file_write(FILENO_USB_CDC, "\r\n", 2);\
+  } while(0)
 
 #ifdef __cplusplus
  }
 #endif
 
-#endif /* _ADAFRUIT_WICEDLIB_H_ */
+#endif /* _ADAFRUIT_FEATHERLIB_H_ */

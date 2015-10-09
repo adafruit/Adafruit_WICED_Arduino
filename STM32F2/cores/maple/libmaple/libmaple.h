@@ -33,6 +33,7 @@
 #define _LIBMAPLE_H_
 
 #include "libmaple_types.h"
+#include "adafruit_featherlib.h"
 #include "stm32.h"
 #include "util.h"
 #include "delay.h"

@@ -166,7 +166,8 @@ typedef struct
 #define FLASH               ((FLASH_TypeDef *) FLASH_R_BASE)
 #define RESET 0
 
-typedef uint32 uint32_t;
+//typedef uint32 uint32_t;
+#include <stdint.h>
 
 void InitMCO1()
 {
