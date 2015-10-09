@@ -40,10 +40,6 @@
 #include "gpio.h"
 #include "adc.h"
 #include "timer.h"
-#include "usb.h"
-#ifdef STM32F2
-//#include "usbF4.h"
-#endif
 
 static void setupFlash(void);
 static void setupClocks(void);

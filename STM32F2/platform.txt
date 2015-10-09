@@ -43,13 +43,9 @@ compiler.S.extra_flags=
 compiler.ar.extra_flags=
 compiler.elf2hex.extra_flags=
 
+#compiler.libs.c.flags="-I{build.core.path}/libmaple" -I{build.core.path}/libmaple/usbF4 -I{build.core.path}/libmaple/usbF4/STM32_USB_Device_Library/Core/inc -I{build.core.path}/libmaple/usbF4/STM32_USB_Device_Library/Class/cdc/inc -I{build.core.path}/libmaple/usbF4/STM32_USB_OTG_Driver/inc -I{build.core.path}/libmaple/usbF4/VCP 
 
-
-##compiler.libs.c.flags="-I{build.system.path}/libmaple" "-I{build.system.path}/libmaple/include" "-I{build.system.path}/libmaple/stm32f1/include" "-I{build.system.path}/libmaple/stm32f1/include/series" "-I{build.system.path}/libmaple/usb/stm32f1" "-I{build.system.path}/libmaple/usb/usb_lib" 
-#compiler.libs.c.flags="-I{build.system.path}/libmaple" "-I{build.system.path}/libmaple/include" "-I{build.system.path}/libmaple/stm32f1/include"                                                           "-I{build.system.path}/libmaple/usb/stm32f1" "-I{build.system.path}/libmaple/usb/usb_lib" 
-
-
-compiler.libs.c.flags="-I{build.core.path}/libmaple" -I{build.core.path}/libmaple/usbF4 -I{build.core.path}/libmaple/usbF4/STM32_USB_Device_Library/Core/inc -I{build.core.path}/libmaple/usbF4/STM32_USB_Device_Library/Class/cdc/inc -I{build.core.path}/libmaple/usbF4/STM32_USB_OTG_Driver/inc -I{build.core.path}/libmaple/usbF4/VCP 
+compiler.libs.c.flags="-I{build.core.path}/libmaple" -I{build.core.path}/libmaple/usbF4/VCP
 
 
 
@@ -102,10 +98,6 @@ recipe.size.regex.data=^(?:\.data|\.bss|\.noinit)\s+([0-9]+).*
 # Upload using Adafruit bootloader over DFU
 tools.adafruit_upload.cmd=feather_dfu.py
 tools.adafruit_upload.path={runtime.hardware.path}/tools
-#tools.adafruit_upload.path={runtime.hardware.path}/tools/win
-#tools.adafruit_upload.path.macosx={runtime.hardware.path}/tools/macosx
-#tools.adafruit_upload.path.linux={runtime.hardware.path}/tools/linux
-
 tools.adafruit_upload.upload.params.verbose=-d
 tools.adafruit_upload.upload.params.quiet=
 tools.adafruit_upload.upload.pattern=python "{path}/{cmd}" {upload.region} "{upload.binfile}"

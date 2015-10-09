@@ -22,10 +22,7 @@ void setup() {
   // initialize digital pin PB1 as an output.
   pinMode(BOARD_LED_PIN, OUTPUT);
   
-  while( !Serial ) 
-  {
-    delay(10);
-  }
+//  while( !Serial ) delay(10);
 }
 
 // the loop function runs over and over again forever
