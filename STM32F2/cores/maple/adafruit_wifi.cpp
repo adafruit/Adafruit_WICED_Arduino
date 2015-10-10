@@ -359,15 +359,23 @@ sdep_err_t AdafruitWICED::httpPost(char* uri, uint16_t* length, uint8_t* respons
             e.g. "topic/adafruit,offline,1,0"
 */
 /******************************************************************************/
-sdep_err_t AdafruitWICED::mqttLastWill(char* topic, char* value, uint8_t qos, uint8_t retain)
+sdep_err_t AdafruitWICED::mqttLastWill(bool isOnlineTopic, char* topic, char* value, uint8_t qos, uint8_t retain)
 {
   if (topic == NULL) return ERROR_INVALIDPARAMETER;
 
-  uint16_t lastWillMessage_len = strlen(topic) + 5; // qos, retain & 3 commas
+  uint16_t lastWillMessage_len = strlen(topic) + 6; // bool, qos, retain & 3 commas
   if (value != NULL) lastWillMessage_len += strlen(value);
   char* lastWillMessage = (char*)malloc(lastWillMessage_len);
 
-  strcpy(lastWillMessage, topic);
+  if (isOnlineTopic)
+  {
+    strcpy(lastWillMessage, "1");
+  }
+  else
+  {
+    strcpy(lastWillMessage, "0");
+  }
+  strcat(lastWillMessage, topic);
   strcat(lastWillMessage, ",");
   if (value != NULL) strcat(lastWillMessage, value);
   strcat(lastWillMessage, ",");
