@@ -24,7 +24,7 @@
 // These constants won't change.  They're used to give names
 // to the pins used:
 
-const int analogInPin = 15; // Analog input pin that the potentiometer
+const int analogInPin = PC3; // Analog input pin that the potentiometer
                             // is attached to
 
 const int pwmOutPin = 9;    // PWM pin that the LED is attached to

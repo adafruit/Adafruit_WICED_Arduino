@@ -17,7 +17,7 @@
 
 // Analog input pin.  You may need to change this number if your board
 // can't do analog input on pin 15.
-const int analogInputPin = 15;
+const int analogInputPin = PC3;
 
 void setup() {
   // Declare analogInputPin as INPUT_ANALOG:
