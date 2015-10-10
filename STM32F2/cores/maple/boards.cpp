@@ -61,11 +61,11 @@ void init(void) {
 #else
     afio_init();
 #endif
+    gpio_init_all();
 #endif
 
-//    gpio_init_all();
 //    boardInit();
-//    setupADC();
+    setupADC();
 //    setupTimers();
 
     //setupUSB();

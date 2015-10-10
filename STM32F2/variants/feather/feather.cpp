@@ -88,6 +88,7 @@ typedef struct stm32_pin_info {
 
 #endif
 
+#if 1
 extern const stm32_pin_info PIN_MAP[BOARD_NR_GPIO_PINS] = {
     {GPIOA, TIMER5, ADC1,  0, 1,    0}, /* D00/PA0  */
     {GPIOA, TIMER5, ADC1,  1, 2,    1}, /* D01/PA1  */
@@ -131,6 +132,8 @@ extern const stm32_pin_info PIN_MAP[BOARD_NR_GPIO_PINS] = {
     {GPIOC,   NULL, ADC1,  5, 0,   15}, /* D37/PC5  */
     {GPIOC, TIMER8, NULL,  6, 1, ADCx}, /* D38/PC6  */
     {GPIOC, TIMER8, NULL,  7, 2, ADCx}, /* D39/PC7  */
+
+#if 0
     {GPIOC, TIMER8, NULL,  8, 3, ADCx}, /* D40/PC8  */
     {GPIOC, TIMER8, NULL,  9, 4, ADCx}, /* D41/PC9  */
     {GPIOC,   NULL, NULL, 10, 0, ADCx}, /* D42/PC10 */
@@ -173,10 +176,42 @@ extern const stm32_pin_info PIN_MAP[BOARD_NR_GPIO_PINS] = {
     {GPIOE, TIMER1, NULL, 13, 3, ADCx}, /* D77/PE13 */  // remap in
     {GPIOE, TIMER1, NULL, 14, 4, ADCx}, /* D78/PE14 */  // remap in
     {GPIOE,   NULL, NULL, 15, 0, ADCx}  /* D79/PE15 */
+#endif
 };
 
+#else
+
+extern const stm32_pin_info PIN_MAP[BOARD_NR_GPIO_PINS] = {
+    {GPIOA, TIMER5, ADC1,  0, 1,    0}, /* D00/PA0  */
+    {GPIOA, TIMER5, ADC1,  1, 2,    1}, /* D01/PA1  */
+    {GPIOA, TIMER5, ADC1,  2, 3,    2}, /* D02/PA2  */
+    {GPIOA, TIMER5, ADC1,  3, 4,    3}, /* D03/PA3  */
+    {GPIOA,   NULL, ADC1,  4, 0,    4}, /* D04/PA4  */
+    {GPIOA,   NULL, ADC1,  5, 0,    5}, /* D05/PA5  */
+    {GPIOA,   NULL, ADC1,  6, 1,    6}, /* D06/PA6  */ // ala check TIMER3
+    {GPIOA,   NULL, ADC1,  7, 0,    7}, /* D07/PA7  */
+    {GPIOA,   NULL, NULL,  9, 0, ADCx}, /* D09/PA9  */ // remap out
+    {GPIOA,   NULL, NULL, 10, 0, ADCx}, /* D10/PA10 */ // remap out
+    {GPIOA,   NULL, NULL, 13, 0, ADCx}, /* D13/PA13 */
+    {GPIOA,   NULL, NULL, 14, 0, ADCx}, /* D14/PA14 */
+    {GPIOA, TIMER2, NULL, 15, 1, ADCx}, /* D15/PA15 */ // remap in
+
+    {GPIOB, TIMER2, NULL,  3, 2, ADCx}, /* D19/PB3  */ // remap in
+    {GPIOB, TIMER3, NULL,  4, 1, ADCx}, /* D20/PB4  */ // remap in
+    {GPIOB, TIMER3, NULL,  5, 2, ADCx}, /* D21/PB5  */ // remap in
+    {GPIOB,   NULL, NULL,  6, 0, ADCx}, /* D22/PB6  */ // remap out
+    {GPIOB,   NULL, NULL,  7, 0, ADCx}, /* D23/PB7  */ // remap out
+
+    {GPIOC,   NULL, ADC1,  2, 0,   12}, /* D34/PC2  */
+    {GPIOC,   NULL, ADC1,  3, 0,   13}, /* D35/PC3  */
+    {GPIOC,   NULL, ADC1,  5, 0,   15}, /* D37/PC5  */
+    {GPIOC, TIMER8, NULL,  7, 2, ADCx}, /* D39/PC7  */
+};
+
+#endif
+
 extern const uint8 boardPWMPins[BOARD_NR_PWM_PINS] __FLASH__ = {
-    0, 1, 2, 3, 15, 16, 17, 19, 20, 21, 38, 39, 49, 41, 60, 61, 62, 63, 73, 75, 77, 78
+    0, 1, 2, 3, 15, 16, 17, 19, 20, 21, 38, 39 //, 49, 41, 60, 61, 62, 63, 73, 75, 77, 78
 };
 
 extern const uint8 boardADCPins[BOARD_NR_ADC_PINS] __FLASH__ = {
@@ -184,10 +219,9 @@ extern const uint8 boardADCPins[BOARD_NR_ADC_PINS] __FLASH__ = {
 };
 
 extern const uint8 boardUsedPins[BOARD_NR_USED_PINS] __FLASH__ = {
-    BOARD_LED_PIN, BOARD_BUTTON_PIN, BOARD_JTMS_SWDIO_PIN,
-    BOARD_JTCK_SWCLK_PIN, BOARD_JTDI_PIN, BOARD_JTDO_PIN, BOARD_NJTRST_PIN,
-    56, 58, 59, 61, 62, 64, 65, 67, 68, 70, 71, 73, 74, 76, 77, 78, 79, 81,
-    82, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100
+    BOARD_LED_PIN, BOARD_BUTTON_PIN,
+    BOARD_JTMS_SWDIO_PIN, BOARD_JTCK_SWCLK_PIN,  // BOARD_JTDO_PIN,
+//    BOARD_JTDI_PIN, BOARD_NJTRST_PIN,
 };
 
 /*
