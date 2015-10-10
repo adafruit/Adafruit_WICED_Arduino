@@ -16,19 +16,21 @@
   
  */
 
+int ledPin = PA1;
+//int ledPin = PB5;
 
 // the setup function runs once when you press reset or power the board
 void setup() {
   // initialize digital pin PB1 as an output.
-  pinMode(BOARD_LED_PIN, OUTPUT);
+  pinMode(ledPin, OUTPUT);
   
 //  while( !Serial ) delay(10);
 }
 
 // the loop function runs over and over again forever
 void loop() {
-  digitalWrite(BOARD_LED_PIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+  digitalWrite(ledPin, HIGH);   // turn the LED on (HIGH is the voltage level)
   delay(1000);              // wait for a second
-  digitalWrite(BOARD_LED_PIN, LOW);    // turn the LED off by making the voltage LOW
+  digitalWrite(ledPin, LOW);    // turn the LED off by making the voltage LOW
   delay(1000);              // wait for a second
 }

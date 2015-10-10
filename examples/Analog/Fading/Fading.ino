@@ -16,7 +16,7 @@
   http://leaflabs.com/docs/lang/api/analogwrite.html#arduino-compatibility
 */
 
-int ledPin = 9; // Connect an LED to digital pin 9, or any other
+int ledPin = PB5; // Connect an LED to digital pin 9, or any other
                 // PWM-capable pin
 
 void setup() {

@@ -42,36 +42,27 @@
 //static void initSRAMChip(void);
 void boardInit(void) {
 	// remap TIMER8 to PC6-9
-	gpio_set_af_mode(GPIOC, 6, 3);
+//	gpio_set_af_mode(GPIOC, 6, 3);
 	gpio_set_af_mode(GPIOC, 7, 3);
-	gpio_set_af_mode(GPIOC, 8, 3);
-	gpio_set_af_mode(GPIOC, 9, 3);
+//	gpio_set_af_mode(GPIOC, 8, 3);
+//	gpio_set_af_mode(GPIOC, 9, 3);
 
 	// remap TIMER1 to PE9,11,13,14
-	gpio_set_af_mode(GPIOE,  9, 1);
-	gpio_set_af_mode(GPIOE, 11, 1);
-	gpio_set_af_mode(GPIOE, 13, 1);
-	gpio_set_af_mode(GPIOE, 14, 1);
+//	gpio_set_af_mode(GPIOE,  9, 1);
+//	gpio_set_af_mode(GPIOE, 11, 1);
+//	gpio_set_af_mode(GPIOE, 13, 1);
+//	gpio_set_af_mode(GPIOE, 14, 1);
 
 	// remap TIMER3 to PB4,5,0,1
 	gpio_set_af_mode(GPIOB,  4, 2);
 	gpio_set_af_mode(GPIOB,  5, 2);
-	gpio_set_af_mode(GPIOB,  0, 2);
-	gpio_set_af_mode(GPIOB,  1, 2);
+//	gpio_set_af_mode(GPIOB,  0, 2);
+//	gpio_set_af_mode(GPIOB,  1, 2);
 
 	//gpio_set_af_mode(GPIOA, 2, 7);
 	//gpio_set_af_mode(GPIOA, 3, 7);
 
-#ifdef ARDUINO_STM32F4_NETDUINO2PLUS
-    // PA8 Output the Master Clock MCO1
-    gpio_set_af_mode(GPIOA, 8, 0);
-    // PB4 as alternate MISO Input
-    gpio_set_af_mode(GPIOB, 4, 5);
-    // PA5 as alternate SCK Output
-    gpio_set_af_mode(GPIOA, 5, 5);
-    // PA7 as alternate MOSI Output
-    gpio_set_af_mode(GPIOA, 7, 5);
-#endif
+
 	return;
 }
 
@@ -211,17 +202,19 @@ extern const stm32_pin_info PIN_MAP[BOARD_NR_GPIO_PINS] = {
 #endif
 
 extern const uint8 boardPWMPins[BOARD_NR_PWM_PINS] __FLASH__ = {
-    0, 1, 2, 3, 15, 16, 17, 19, 20, 21, 38, 39 //, 49, 41, 60, 61, 62, 63, 73, 75, 77, 78
+    PA0, PA1, PA2, PA3, PA15, PB0, PB1, PB3, PB4, PB5, PC6, PC7 //, 49, 41, 60, 61, 62, 63, 73, 75, 77, 78
 };
 
 extern const uint8 boardADCPins[BOARD_NR_ADC_PINS] __FLASH__ = {
-    0, 1, 2, 3, 4, 5, 6, 7, 16, 17, 32, 33, 34, 35, 36, 37
+    PA0, PA1, PA2, PA3, PA4, PA5, PA6, PA7, PB0, PB1, PC0, PC1, PC2, PC3, PC4, PC5
 };
 
 extern const uint8 boardUsedPins[BOARD_NR_USED_PINS] __FLASH__ = {
     BOARD_LED_PIN, BOARD_BUTTON_PIN,
     BOARD_JTMS_SWDIO_PIN, BOARD_JTCK_SWCLK_PIN,  // BOARD_JTDO_PIN,
 //    BOARD_JTDI_PIN, BOARD_NJTRST_PIN,
+    PB14, PB15, // USB
+    PA9, PA10,  // UART
 };
 
 /*

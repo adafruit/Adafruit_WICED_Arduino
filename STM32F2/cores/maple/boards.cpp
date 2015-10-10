@@ -64,9 +64,9 @@ void init(void) {
     gpio_init_all();
 #endif
 
-//    boardInit();
+    boardInit();
     setupADC();
-//    setupTimers();
+    setupTimers();
 
     //setupUSB();
 }
