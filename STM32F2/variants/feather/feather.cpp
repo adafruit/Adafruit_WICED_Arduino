@@ -202,11 +202,11 @@ extern const stm32_pin_info PIN_MAP[BOARD_NR_GPIO_PINS] = {
 #endif
 
 extern const uint8 boardPWMPins[BOARD_NR_PWM_PINS] __FLASH__ = {
-    PA0, PA1, PA2, PA3, PA15, PB0, PB1, PB3, PB4, PB5, PC6, PC7 //, 49, 41, 60, 61, 62, 63, 73, 75, 77, 78
+    PA0, PA1, PA2, PA3, PA15, /*PB0, PB1,*/ PB3, PB4, PB5, /*PC6,*/ PC7 //, 49, 41, 60, 61, 62, 63, 73, 75, 77, 78
 };
 
 extern const uint8 boardADCPins[BOARD_NR_ADC_PINS] __FLASH__ = {
-    PA0, PA1, PA2, PA3, PA4, PA5, PA6, PA7, PB0, PB1, PC0, PC1, PC2, PC3, PC4, PC5
+    PA0, PA1, PA2, PA3, PA4, PA5, PA6, PA7, /*PB0, PB1, PC0, PC1,*/ PC2, PC3, /*PC4,*/ PC5
 };
 
 extern const uint8 boardUsedPins[BOARD_NR_USED_PINS] __FLASH__ = {

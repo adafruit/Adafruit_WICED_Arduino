@@ -95,9 +95,9 @@ PG0,PG1,PG2,PG3,PG4,PG5,PG6,PG7,PG8,PG9,PG10,PG11,PG12,PG13,PG14,PG15
 #define BOARD_SPI3B_SCK_PIN      Port2Pin('C',10)
 
 #define BOARD_NR_GPIO_PINS      40
-#define BOARD_NR_PWM_PINS       12
-#define BOARD_NR_ADC_PINS       16
-#define BOARD_NR_USED_PINS      20 // ala42 not set yet
+#define BOARD_NR_PWM_PINS       9
+#define BOARD_NR_ADC_PINS       11
+#define BOARD_NR_USED_PINS      10 // ala42 not set yet
 
 #define BOARD_JTMS_SWDIO_PIN    Port2Pin('A',13)
 #define BOARD_JTCK_SWCLK_PIN    Port2Pin('A',14)
