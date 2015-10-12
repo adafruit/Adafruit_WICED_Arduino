@@ -93,7 +93,8 @@ typedef struct ATTR_ALIGNED(512)
   // RTOS API
   wiced_result_t (*rtos_delay_ms) (uint32_t ms);
   wiced_result_t (*rtos_delay_us) (uint32_t us);
-  uint32_t rtos_reserved[14];
+  void           (*rtos_yield) (void);
+  uint32_t rtos_reserved[13];
 
   // Peripheral API
   uint32_t (*system_millis) (void);
@@ -105,14 +106,14 @@ typedef struct ATTR_ALIGNED(512)
   int (*file_peek)  (void);
 }adafruit_featherlib_t;
 
-#define ADAFRUIT_WICEDLIB_BASE    ((uint32_t) 0x8010200)
-#define ADAFRUIT_WICEDLIB         ((adafruit_featherlib_t*) ADAFRUIT_WICEDLIB_BASE)
+#define ADAFRUIT_FEATHERLIB_BASE    ((uint32_t) 0x8010200)
+#define ADAFRUIT_FEATHERLIB         ((adafruit_featherlib_t*) ADAFRUIT_FEATHERLIB_BASE)
 
 #define DBG_LOCATION()       do {\
-    ADAFRUIT_WICEDLIB->file_write(FILENO_USB_CDC, (char*) __PRETTY_FUNCTION__, strlen(__PRETTY_FUNCTION__));\
-    ADAFRUIT_WICEDLIB->file_write(FILENO_USB_CDC, ": ", 2);\
-    ADAFRUIT_WICEDLIB->file_write(FILENO_USB_CDC, XSTRING_(__LINE__), strlen( XSTRING_(__LINE__) ));\
-    ADAFRUIT_WICEDLIB->file_write(FILENO_USB_CDC, "\r\n", 2);\
+    ADAFRUIT_FEATHERLIB->file_write(FILENO_USB_CDC, (char*) __PRETTY_FUNCTION__, strlen(__PRETTY_FUNCTION__));\
+    ADAFRUIT_FEATHERLIB->file_write(FILENO_USB_CDC, ": ", 2);\
+    ADAFRUIT_FEATHERLIB->file_write(FILENO_USB_CDC, XSTRING_(__LINE__), strlen( XSTRING_(__LINE__) ));\
+    ADAFRUIT_FEATHERLIB->file_write(FILENO_USB_CDC, "\r\n", 2);\
   } while(0)
 
 #ifdef __cplusplus

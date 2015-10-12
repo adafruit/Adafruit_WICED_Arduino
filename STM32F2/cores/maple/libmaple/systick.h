@@ -35,6 +35,7 @@
 
 #include "libmaple_types.h"
 #include "util.h"
+#include "adafruit_featherlib.h"
 
 #ifdef __cplusplus
 extern "C"{
@@ -81,7 +82,8 @@ extern volatile uint32 systick_uptime_millis;
  * @brief Returns the system uptime, in milliseconds.
  */
 static inline uint32 systick_uptime(void) {
-    return systick_uptime_millis;
+  return ADAFRUIT_FEATHERLIB->system_millis();
+//    return systick_uptime_millis;
 }
 
 

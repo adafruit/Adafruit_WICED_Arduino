@@ -39,10 +39,16 @@
 
 void delay(unsigned long ms)
 {
-  ADAFRUIT_WICEDLIB->rtos_delay_ms(ms);
+  ADAFRUIT_FEATHERLIB->rtos_delay_ms(ms);
 }
 
 void delayMicroseconds(uint32 us)
 {
-  ADAFRUIT_WICEDLIB->rtos_delay_us(us);
+  ADAFRUIT_FEATHERLIB->rtos_delay_us(us);
 }
+
+void yield(void)
+{
+  ADAFRUIT_FEATHERLIB->rtos_yield();
+}
+

@@ -41,7 +41,7 @@ int main(void) {
 
     while (1) {
         loop();
-        ADAFRUIT_WICEDLIB->rtos_delay_ms(1);
+        ADAFRUIT_FEATHERLIB->rtos_delay_ms(1);
     }
     return 0;
 }

@@ -61,7 +61,7 @@ void init(void) {
 #else
     afio_init();
 #endif
-    gpio_init_all();
+
 #endif
 
     boardInit();

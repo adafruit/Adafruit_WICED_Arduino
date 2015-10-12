@@ -157,7 +157,7 @@ uint32 HardwareSerial::pending(void) {
 
 size_t HardwareSerial::write(unsigned char ch) {
 //    usart_putc(usart_device, ch);
-  ADAFRUIT_WICEDLIB->file_write(FILENO_USB_CDC, (char*)&ch, 1);
+  ADAFRUIT_FEATHERLIB->file_write(FILENO_USB_CDC, (char*)&ch, 1);
   return 1;
 }
 

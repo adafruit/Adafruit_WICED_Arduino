@@ -47,7 +47,7 @@
  */
 static inline uint32 millis(void) {
     //return systick_uptime();
-  return ADAFRUIT_WICEDLIB->system_millis();
+  return ADAFRUIT_FEATHERLIB->system_millis();
 }
 
 /**
@@ -103,5 +103,7 @@ void delay(unsigned long ms);
  * @see delay()
  */
 void delayMicroseconds(uint32 us);
+
+void yield(void);
 
 #endif
