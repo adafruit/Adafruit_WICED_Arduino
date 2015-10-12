@@ -1,18 +1,26 @@
-int pin = PB3;
-int led = PB5;
-volatile int state = LOW;
+int irqpin = PC5;
+int ledpin = PB5;
 
-void setup() {
-    pinMode(led, OUTPUT);
-    pinMode(pin, INPUT_PULLUP);
-    attachInterrupt(pin, blink, CHANGE);
+volatile int ledstate = LOW;
+
+void setup() 
+{
+  // Setup the LED pin as an output
+  pinMode( ledpin, OUTPUT );
+  // Setup the IRQ pin as an input (pulled high)
+  pinMode( irqpin, INPUT_PULLUP );
+  // Attach 'blink' as the interrupt handler when IRQ pin changes
+  attachInterrupt( irqpin, blink, CHANGE );
 }
 
-void loop() {
-    digitalWrite(led, state);
-    yield();
+void loop() 
+{
+  // Set the LED to the current led state
+  digitalWrite(ledpin, ledstate);
+  yield();
 }
 
-void blink() {
-    state = !state;
+void blink() 
+{
+  ledstate = !ledstate;
 }
