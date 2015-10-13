@@ -10,7 +10,6 @@ void setup() {
 
 void loop() {
     digitalWrite(led, state);
-    yield();
 }
 
 void blink() {
