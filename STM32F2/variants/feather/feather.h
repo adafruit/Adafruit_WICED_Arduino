@@ -34,7 +34,7 @@
 
 #define Port2Pin(port, bit) ((port-'A')*16+bit)
 
-#define CYCLES_PER_MICROSECOND  168
+#define CYCLES_PER_MICROSECOND  120
 
 
 #undef  STM32_PCLK1

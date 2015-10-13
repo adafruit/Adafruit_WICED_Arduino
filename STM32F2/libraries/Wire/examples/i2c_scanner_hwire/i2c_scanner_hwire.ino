@@ -33,6 +33,8 @@ HardWire HWire(1, I2C_FAST_MODE); // I2c1
 void setup() {
   Serial.begin(115200);
   HWire.begin();
+  
+  while(!Serial) delay(10);
   Serial.println("\nI2C Scanner");
 }
 

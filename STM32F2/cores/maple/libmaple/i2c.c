@@ -181,6 +181,23 @@ static void i2c_irq_handler(i2c_dev *dev) {
                 }
             }
         } else {
+            // Adafruit: zero length data for scanning device
+            if ( msg->length == 0 )
+            {
+              // copied from EV8_2
+              i2c_stop_condition(dev);
+
+              /*
+               * Turn off event interrupts to keep BTF from firing until
+               * the end of the stop condition. Why on earth they didn't
+               * have a start/stop condition request clear BTF is beyond
+               * me.
+               */
+              i2c_disable_irq(dev, I2C_IRQ_EVENT);
+              I2C_CRUMB(STOP_SENT, 0, 0);
+              dev->state = I2C_STATE_XFER_DONE;
+            }else
+
             /*
              * Master transmitter: write first byte to fill shift
              * register.  We should get another TXE interrupt
@@ -400,11 +417,13 @@ void i2c_master_enable(i2c_dev *dev, uint32 flags) {
     /* PE must be disabled to configure the device */
     ASSERT(!(dev->regs->CR1 & I2C_CR1_PE));
 
+#if 0
     if ((dev == I2C1) && (flags & I2C_REMAP)) {
         afio_remap(AFIO_REMAP_I2C1);
         I2C1->sda_pin = 9;
         I2C1->scl_pin = 8;
     }
+#endif
 
     /* Reset the bus. Clock out any hung slaves. */
     if (flags & I2C_BUS_RESET) {
@@ -413,8 +432,12 @@ void i2c_master_enable(i2c_dev *dev, uint32 flags) {
 
     /* Turn on clock and set GPIO modes */
     i2c_init(dev);
-    gpio_set_mode(dev->gpio_port, dev->sda_pin, GPIO_AF_OUTPUT_OD);
+
+    gpio_set_af_mode(dev->gpio_port, dev->scl_pin, 4);
     gpio_set_mode(dev->gpio_port, dev->scl_pin, GPIO_AF_OUTPUT_OD);
+
+    gpio_set_af_mode(dev->gpio_port, dev->sda_pin, 4);
+    gpio_set_mode(dev->gpio_port, dev->sda_pin, GPIO_AF_OUTPUT_OD);
 
     /* I2C1 and I2C2 are fed from APB1, clocked at 36MHz */
     i2c_set_input_clk(dev, I2C_CLK);
@@ -435,6 +458,7 @@ void i2c_master_enable(i2c_dev *dev, uint32 flags) {
     } else {
         /* Tlow/Thigh = 1 */
         ccr = STM32_PCLK1/(100000 * 2);
+//      ccr = 0x090;
         trise = I2C_CLK + 1;
     }
 
@@ -478,8 +502,10 @@ void i2c_master_enable(i2c_dev *dev, uint32 flags) {
      * interrupt in the system (priority level 0). All other interrupts have
      * been initialized to priority level 16. See nvic_init().
      */
-    nvic_irq_set_priority(dev->ev_nvic_line, 0);
-    nvic_irq_set_priority(dev->er_nvic_line, 0);
+//    nvic_irq_set_priority(dev->ev_nvic_line, 0);
+//    nvic_irq_set_priority(dev->er_nvic_line, 0);
+    nvic_irq_set_priority(dev->ev_nvic_line, 6);
+    nvic_irq_set_priority(dev->er_nvic_line, 6);
 
     /* Make it go! */
     i2c_peripheral_enable(dev);
@@ -542,6 +568,7 @@ static inline int32 wait_for_state_change(i2c_dev *dev,
                                           i2c_state state,
                                           uint32 timeout) {
     i2c_state tmp;
+    uint32 time_left = timeout;
 
     while (1) {
         tmp = dev->state;
@@ -554,12 +581,17 @@ static inline int32 wait_for_state_change(i2c_dev *dev,
             return 0;
         }
 
-        if (timeout) {
-            if (systick_uptime() > (dev->timestamp + timeout)) {
-                /* TODO: overflow? */
-                /* TODO: racy? */
-                return I2C_ERROR_TIMEOUT;
-            }
-        }
+//        if (timeout) {
+//            if (systick_uptime() > (dev->timestamp + timeout)) {
+//                /* TODO: overflow? */
+//                /* TODO: racy? */
+//                return I2C_ERROR_TIMEOUT;
+//            }
+//        }
+
+        if (timeout && time_left == 0) return I2C_ERROR_TIMEOUT;
+
+        ADAFRUIT_FEATHERLIB->rtos_delay_ms(1);
+        time_left--;
     }
 }

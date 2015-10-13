@@ -109,11 +109,22 @@ typedef struct ATTR_ALIGNED(512)
 #define ADAFRUIT_FEATHERLIB_BASE    ((uint32_t) 0x8010200)
 #define ADAFRUIT_FEATHERLIB         ((adafruit_featherlib_t*) ADAFRUIT_FEATHERLIB_BASE)
 
+#define DBG_SERIAL FILENO_UART
+//#define DBG_SERIAL FILENO_UART
+
 #define DBG_LOCATION()       do {\
-    ADAFRUIT_FEATHERLIB->file_write(FILENO_USB_CDC, (char*) __PRETTY_FUNCTION__, strlen(__PRETTY_FUNCTION__));\
-    ADAFRUIT_FEATHERLIB->file_write(FILENO_USB_CDC, ": ", 2);\
-    ADAFRUIT_FEATHERLIB->file_write(FILENO_USB_CDC, XSTRING_(__LINE__), strlen( XSTRING_(__LINE__) ));\
-    ADAFRUIT_FEATHERLIB->file_write(FILENO_USB_CDC, "\r\n", 2);\
+    ADAFRUIT_FEATHERLIB->file_write(DBG_SERIAL, (char*) __PRETTY_FUNCTION__, strlen(__PRETTY_FUNCTION__));\
+    ADAFRUIT_FEATHERLIB->file_write(DBG_SERIAL, ": ", 2);\
+    ADAFRUIT_FEATHERLIB->file_write(DBG_SERIAL, XSTRING_(__LINE__), strlen( XSTRING_(__LINE__) ));\
+    ADAFRUIT_FEATHERLIB->file_write(DBG_SERIAL, "\r\n", 2);\
+  } while(0)
+
+#define DBG_INT(x)       do {\
+    ADAFRUIT_FEATHERLIB->file_write(DBG_SERIAL, #x, strlen(#x));\
+    ADAFRUIT_FEATHERLIB->file_write(DBG_SERIAL, " = ", 3);\
+    char ch[2] = { x+ '0', 0 } ;\
+    ADAFRUIT_FEATHERLIB->file_write(DBG_SERIAL, ch, 1);\
+    ADAFRUIT_FEATHERLIB->file_write(DBG_SERIAL, "\r\n", 2);\
   } while(0)
 
 #ifdef __cplusplus

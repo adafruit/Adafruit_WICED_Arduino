@@ -55,7 +55,7 @@
 #endif
 
 #ifndef STM32_PCLK1
-#define STM32_PCLK1   36000000U
+#define STM32_PCLK1   30000000U
 #endif
 #ifndef PCLK1
 #define PCLK1 STM32_PCLK1
@@ -65,7 +65,7 @@
 #endif
 
 #ifndef STM32_PCLK2
-#define STM32_PCLK2   72000000U
+#define STM32_PCLK2   60000000U
 #endif
 #ifndef PCLK2
 #define PCLK2 STM32_PCLK2
@@ -201,7 +201,7 @@
     #define DELAY_US_MULT               STM32_DELAY_US_MULT
 
 #elif defined(MCU_STM32F205RG)
-    #define STM32_TICKS_PER_US          168
+    #define STM32_TICKS_PER_US          120
     #define STM32_NR_GPIO_PORTS          5
     #define STM32_DELAY_US_MULT         (STM32_TICKS_PER_US/3)
     #define STM32_SRAM_END              ((void*)0x20010000)
