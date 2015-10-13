@@ -36,6 +36,8 @@ From the **development** branch, run `make clean all flash-all` in the `projects
 	pip install click
 	```
 
+- Install [AdaLink](https://github.com/adafruit/Adafruit_Adalink), which is used to flash the bootloader
+
 ## Burnning bootloader
 
 This requires either jlink or stlink v2 as programmer.
