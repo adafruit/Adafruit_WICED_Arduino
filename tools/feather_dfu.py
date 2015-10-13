@@ -1,3 +1,4 @@
+import usb.backend.libusb1
 import usb.core
 import usb.util
 import usb.control
@@ -32,22 +33,35 @@ dfu_util = { 'Windows' : os.path.dirname(sys.argv[0]) + '/windows/dfu-util/dfu-u
              'Linux'   : 'dfu-util' }
 
 sdep_cmd_dict = { 'reboot' : 1, 'factory_reset' : 2, 'enter_dfu' : 3 }
+
+# Explicitly configure the libusb backend for PyUSB.
+backend = None
+if platform.system() == 'Windows':
+    # On Windows give a path to the included libusb-1.0.dll so users don't
+    # need to have it installed.
+    libusb_dll = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                              'windows', 'dfu-util', 'libusb-1.0.dll')
+    usb.backend.libusb1.get_backend(find_library=lambda x: libusb_dll)
+else:
+    # On other platforms libusb-1.0 needs to be installed.
+    backend = usb.backend.libusb1.get_backend()
+
 ######
 
 def force_dfu_mode():
     # skip if already in DFU mode
-    if usb.core.find(idVendor=usb_vid, idProduct=usb_dfu_pid) is None:
+    if usb.core.find(idVendor=usb_vid, idProduct=usb_dfu_pid, backend=backend) is None:
         runSystemCmd('enter_dfu')
         time.sleep(reset_sec)
 
 # Send system command using control pipe
 def runSystemCmd(cmd):
     # find our device
-    dev = usb.core.find(idVendor=usb_vid, idProduct=usb_pid)
+    dev = usb.core.find(idVendor=usb_vid, idProduct=usb_pid, backend=backend)
     if dev is None:
         print "Unable to connect to specified VID/PID 0x%04X 0x%04X" % (usb_vid, usb_pid)
         print "Try to connect in DFU mode"
-        dev = usb.core.find(idVendor=usb_vid, idProduct=usb_dfu_pid)
+        dev = usb.core.find(idVendor=usb_vid, idProduct=usb_dfu_pid, backend=backend)
         if dev is None:
             print "Unable to connect to specified VID/PID 0x%04X 0x%04X" % (usb_vid, usb_dfu_pid)
             sys.exit(1)
