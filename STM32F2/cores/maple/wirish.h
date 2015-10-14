@@ -34,6 +34,7 @@
 #define _WIRISH_H_
 
 #include <stdlib.h>
+#include <stdint.h>
 #include "libmaple.h"
 
 #include "wirish_types.h"

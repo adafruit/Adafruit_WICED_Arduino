@@ -26,13 +26,11 @@
 // Devices with higher bit address might not be seen properly.
 //
 
-#include <HardWire.h>
-
-HardWire HWire(1, I2C_FAST_MODE); // I2c1
+#include <Wire.h>
 
 void setup() {
   Serial.begin(115200);
-  HWire.begin();
+  Wire.begin();
   
   while(!Serial) delay(10);
   Serial.println("\nI2C Scanner");
@@ -51,8 +49,8 @@ void loop() {
     // the Write.endTransmisstion to see if
     // a device did acknowledge to the address.
 
-    HWire.beginTransmission(address);
-    error = HWire.endTransmission();
+    Wire.beginTransmission(address);
+    error = Wire.endTransmission();
     
     if (error == 0) {
       Serial.print("I2C device found at address 0x");

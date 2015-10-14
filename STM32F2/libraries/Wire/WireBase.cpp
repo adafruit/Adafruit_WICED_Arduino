@@ -41,14 +41,14 @@
 #include "WireBase.h"
 #include "wirish.h"
 
-void WireBase::begin(uint8 self_addr) {
+void WireBase::begin(uint8_t self_addr) {
     tx_buf_idx = 0;
     tx_buf_overflow = false;
     rx_buf_idx = 0;
     rx_buf_len = 0;
 }
 
-void WireBase::beginTransmission(uint8 slave_address) {
+void WireBase::beginTransmission(uint8_t slave_address) {
     itc_msg.addr = slave_address;
     itc_msg.data = &tx_buf[tx_buf_idx];
     itc_msg.length = 0;
@@ -56,11 +56,11 @@ void WireBase::beginTransmission(uint8 slave_address) {
 }
 
 void WireBase::beginTransmission(int slave_address) {
-    beginTransmission((uint8)slave_address);
+    beginTransmission((uint8_t)slave_address);
 }
 
-uint8 WireBase::endTransmission(void) {
-    uint8 retVal;
+uint8_t WireBase::endTransmission(void) {
+    uint8_t retVal;
     if (tx_buf_overflow) {
         return EDATA;
     }
@@ -73,7 +73,7 @@ uint8 WireBase::endTransmission(void) {
 //TODO: Add the ability to queue messages (adding a boolean to end of function
 // call, allows for the Arduino style to stay while also giving the flexibility
 // to bulk send
-uint8 WireBase::requestFrom(uint8 address, int num_bytes) {
+uint8_t WireBase::requestFrom(uint8_t address, int num_bytes) {
     if (num_bytes > WIRE_BUFSIZ) {
         num_bytes = WIRE_BUFSIZ;
     }
@@ -87,55 +87,51 @@ uint8 WireBase::requestFrom(uint8 address, int num_bytes) {
     return rx_buf_len;
 }
 
-uint8 WireBase::requestFrom(int address, int numBytes) {
-    return WireBase::requestFrom((uint8)address, numBytes);
+uint8_t WireBase::requestFrom(int address, int numBytes) {
+    return WireBase::requestFrom((uint8_t)address, numBytes);
 }
 
-void WireBase::write(uint8 value) {
+size_t WireBase::write(uint8_t value) {
     if (tx_buf_idx == WIRE_BUFSIZ) {
         tx_buf_overflow = true;
-        return;
+        return 0;
     }
     tx_buf[tx_buf_idx++] = value;
     itc_msg.length++;
+    return 1;
 }
 
-void WireBase::write(uint8* buf, int len) {
-    for (uint8 i = 0; i < len; i++) {
+size_t WireBase::write(uint8_t const * buf, size_t len) {
+    for (uint8_t i = 0; i < len; i++) {
         write(buf[i]);
     }
+    return len;
 }
 
-void WireBase::write(int value) {
-    write((uint8)value);
-}
-
-void WireBase::write(int* buf, int len) {
-    write((uint8*)buf, (uint8)len);
-}
-
-void WireBase::write(char* buf) {
-    uint8 *ptr = (uint8*)buf;
-    while (*ptr) {
-        write(*ptr);
-        ptr++;
-    }
-}
-
-uint8 WireBase::available() {
+int WireBase::available() {
     return rx_buf_len - rx_buf_idx;
 }
 
-uint8 WireBase::read() {
+int WireBase::read() {
     if (rx_buf_idx == rx_buf_len) {
         rx_buf_idx = 0;
         rx_buf_len = 0;
-        return 0;
+        return -1;
     } else if (rx_buf_idx == (rx_buf_len-1)) {
-        uint8 temp = rx_buf[rx_buf_idx];
+        int temp = rx_buf[rx_buf_idx];
         rx_buf_idx = 0;
         rx_buf_len = 0;
         return temp;
     }
     return rx_buf[rx_buf_idx++];
+}
+
+int WireBase::peek(void)
+{
+  return (rx_buf_idx == rx_buf_len) ? -1 : rx_buf[rx_buf_idx];
+}
+
+void WireBase::flush(void)
+{
+  // TODO to be implemented
 }

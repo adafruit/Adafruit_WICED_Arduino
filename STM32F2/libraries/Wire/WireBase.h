@@ -53,19 +53,19 @@
 #define ENACKTRNS 3        /* received nack on transmit of data */
 #define EOTHER    4        /* other error */
 
-class WireBase { // Abstraction is awesome!
+class WireBase : public Stream { // Abstraction is awesome!
 protected:
     i2c_msg itc_msg;
-    uint8 rx_buf[WIRE_BUFSIZ];      /* receive buffer */
-    uint8 rx_buf_idx;               /* first unread idx in rx_buf */
-    uint8 rx_buf_len;               /* number of bytes read */
+    uint8_t rx_buf[WIRE_BUFSIZ];      /* receive buffer */
+    uint8_t rx_buf_idx;               /* first unread idx in rx_buf */
+    uint8_t rx_buf_len;               /* number of bytes read */
 
-    uint8 tx_buf[WIRE_BUFSIZ];      /* transmit buffer */
-    uint8 tx_buf_idx;  // next idx available in tx_buf, -1 overflow
+    uint8_t tx_buf[WIRE_BUFSIZ];      /* transmit buffer */
+    uint8_t tx_buf_idx;  // next idx available in tx_buf, -1 overflow
     boolean tx_buf_overflow;
 
     // Force derived classes to define process function
-    virtual uint8 process() = 0;
+    virtual uint8_t process() = 0;
 public:
     WireBase() {}
     ~WireBase() {}
@@ -74,12 +74,12 @@ public:
      * Initialises the class interface
      */
     // Allow derived classes to overwrite begin function
-    virtual void begin(uint8 = 0x00);
+    virtual void begin(uint8_t = 0x00);
 
     /*
      * Sets up the transmission message to be processed
      */
-    void beginTransmission(uint8);
+    void beginTransmission(uint8_t);
 
     /*
      * Allow only 8 bit addresses to be used
@@ -90,54 +90,41 @@ public:
      * Call the process function to process the message if the TX
      * buffer has not overflowed.
      */
-    uint8 endTransmission(void);
+    uint8_t endTransmission(void);
 
     /*
      * Request bytes from a slave device and process the request,
      * storing into the receiving buffer.
      */
-    uint8 requestFrom(uint8, int);
+    uint8_t requestFrom(uint8_t, int);
 
     /*
      * Allow only 8 bit addresses to be used when requesting bytes
      */
-    uint8 requestFrom(int, int);
+    uint8_t requestFrom(int, int);
 
     /*
      * Stack up bytes to be sent when transmitting
      */
-    void write(uint8);
+    virtual size_t write(uint8_t);
 
     /*
      * Stack up bytes from the array to be sent when transmitting
      */
-    void write(uint8*, int);
-
-    /*
-     * Ensure that a sending data will only be 8-bit bytes
-     */
-    void write(int);
-
-    /*
-     * Ensure that an array sending data will only be 8-bit bytes
-     */
-    void write(int*, int);
-
-    /*
-     * Stack up bytes from a string to be sent when transmitting
-     */
-    void write(char*);
+    virtual size_t write(const uint8_t*, size_t);
 
     /*
      * Return the amount of bytes that is currently in the receiving buffer
      */
-    uint8 available();
+    virtual int available();
 
     /*
      * Return the value of byte in the receiving buffer that is currently being
      * pointed to
      */
-    uint8 read();
+    virtual int read();
+    virtual int peek(void);
+    virtual void flush(void);
 };
 
 #endif // _WIREBASE_H_
