@@ -57,18 +57,23 @@ PG0,PG1,PG2,PG3,PG4,PG5,PG6,PG7,PG8,PG9,PG10,PG11,PG12,PG13,PG14,PG15
 #define BOARD_LED_PIN           PA1 // PB5
 #define BOARD_BUTTON_PIN        PA0 // PB3
 
-#define BOARD_NR_USARTS         5
-#define BOARD_USART1_TX_PIN     Port2Pin('A', 9)
-#define BOARD_USART1_RX_PIN     Port2Pin('A',10)
+#define BOARD_NR_USARTS         2
+#define BOARD_USART1_TX_PIN     PA9
+#define BOARD_USART1_RX_PIN     PA10
 
-#define BOARD_USART2_TX_PIN     Port2Pin('A', 2)
-#define BOARD_USART2_RX_PIN     Port2Pin('A', 3)
+#define BOARD_USART2_TX_PIN     PA2
+#define BOARD_USART2_RX_PIN     PA3
+
+#if 0
 #define BOARD_USART3_TX_PIN     Port2Pin('D', 8)
 #define BOARD_USART3_RX_PIN     Port2Pin('D', 9)
+
 #define BOARD_UART4_TX_PIN      Port2Pin('C',10)
 #define BOARD_UART4_RX_PIN      Port2Pin('C',11)
+
 #define BOARD_UART5_TX_PIN      Port2Pin('C',12)
 #define BOARD_UART5_RX_PIN      Port2Pin('D', 2)
+#endif
 
 #define BOARD_NR_SPI            3
 #define BOARD_SPI1_NSS_PIN      Port2Pin('A', 4)
