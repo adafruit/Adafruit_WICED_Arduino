@@ -50,7 +50,7 @@
 	#define RX3 BOARD_USART3_RX_PIN
 #endif
 
-#if defined STM32_HIGH_DENSITY && !defined(BOARD_maple_RET6)
+#if 0 && defined STM32_HIGH_DENSITY && !defined(BOARD_maple_RET6)
 #define TX4 BOARD_UART4_TX_PIN
 #define RX4 BOARD_UART4_RX_PIN
 #define TX5 BOARD_UART5_TX_PIN
@@ -67,7 +67,7 @@ HardwareSerial Serial1(USART2, TX2, RX2);
 HardwareSerial Serial2(USART3, TX3, RX3);
 #endif
 
-#if defined(STM32_HIGH_DENSITY) && !defined(BOARD_maple_RET6)
+#if 0 && defined(STM32_HIGH_DENSITY) && !defined(BOARD_maple_RET6)
 HardwareSerial Serial3(UART4,  TX4, RX4);
 HardwareSerial Serial4(UART5,  TX5, RX5);
 #endif

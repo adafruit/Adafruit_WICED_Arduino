@@ -37,13 +37,9 @@
 
 #include "Stream.h"
 
-#ifdef __cplusplus
 extern "C" {
-#endif
   void hardwareSerial_callback(uint32_t eid, void* p_data);
-#ifdef __cplusplus
 }
-#endif
 
 /*
  * IMPORTANT:

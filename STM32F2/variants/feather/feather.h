@@ -64,10 +64,10 @@ PG0,PG1,PG2,PG3,PG4,PG5,PG6,PG7,PG8,PG9,PG10,PG11,PG12,PG13,PG14,PG15
 #define BOARD_USART2_TX_PIN     PA2
 #define BOARD_USART2_RX_PIN     PA3
 
-#if 0
 #define BOARD_USART3_TX_PIN     Port2Pin('D', 8)
 #define BOARD_USART3_RX_PIN     Port2Pin('D', 9)
 
+#if 0
 #define BOARD_UART4_TX_PIN      Port2Pin('C',10)
 #define BOARD_UART4_RX_PIN      Port2Pin('C',11)
 

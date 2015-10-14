@@ -19,7 +19,7 @@ usb_pid = 0x0009
 usb_dfu_pid = 0x0008
 
 arduino_addr = 0x080E0000
-wicedlib_addr = 0x08010000
+featherlib_addr = 0x08010000
 
 SDEP_MSGTYPE_COMMAND = 0x10
 SDEP_MSGTYPE_RESPONSE = 0x20
@@ -91,7 +91,7 @@ def featherlib_upgrade(binfile):
     else:
         time.sleep(reset_sec)
         force_dfu_mode()
-        subprocess.call( ('%s -d 0x%04X:0x%04X -a 0 -s 0x%08X:leave -D %s' % (dfu_util[platform.system()], usb_vid, usb_dfu_pid, wicedlib_addr, binfile)).split() )
+        subprocess.call( ('%s -d 0x%04X:0x%04X -a 0 -s 0x%08X:leave -D %s' % (dfu_util[platform.system()], usb_vid, usb_dfu_pid, featherlib_addr, binfile)).split() )
 
 @cli.command()
 @click.argument('binfile')
