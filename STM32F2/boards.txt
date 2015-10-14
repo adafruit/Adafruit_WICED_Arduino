@@ -30,7 +30,7 @@ feather.build.error_led_pin=14
 ## -------------------------
 feather.upload.tool=adafruit_upload
 feather.upload.protocol=adafruit_dfu
-feather.upload.use_1200bps_touch=true
+feather.upload.use_1200bps_touch=false
 feather.upload.file_type=bin
 
 ## Firmware section
