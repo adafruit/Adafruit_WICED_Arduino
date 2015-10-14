@@ -76,20 +76,22 @@ PG0,PG1,PG2,PG3,PG4,PG5,PG6,PG7,PG8,PG9,PG10,PG11,PG12,PG13,PG14,PG15
 #endif
 
 #define BOARD_NR_SPI            3
-#define BOARD_SPI1_NSS_PIN      Port2Pin('A', 4)
-#define BOARD_SPI1_MOSI_PIN     Port2Pin('A', 7)
-#define BOARD_SPI1_MISO_PIN     Port2Pin('A', 6)
-#define BOARD_SPI1_SCK_PIN      Port2Pin('A', 5)
+#define BOARD_SPI1_NSS_PIN      PA4
+#define BOARD_SPI1_SCK_PIN      PA5
+#define BOARD_SPI1_MISO_PIN     PA6
+#define BOARD_SPI1_MOSI_PIN     PA7
 
 #define BOARD_SPI2_NSS_PIN      Port2Pin('B',12)
 #define BOARD_SPI2_MOSI_PIN     Port2Pin('B',15)
 #define BOARD_SPI2_MISO_PIN     Port2Pin('B',14)
 #define BOARD_SPI2_SCK_PIN      Port2Pin('B',13)
-#define BOARD_SPI3_NSS_PIN      Port2Pin('A',15)
-#define BOARD_SPI3_MOSI_PIN     Port2Pin('B', 5)
-#define BOARD_SPI3_MISO_PIN     Port2Pin('B', 4)
-#define BOARD_SPI3_SCK_PIN      Port2Pin('B', 3)
 
+#define BOARD_SPI3_NSS_PIN      Port2Pin('A',15)
+#define BOARD_SPI3_SCK_PIN      PB3
+#define BOARD_SPI3_MISO_PIN     PB4
+#define BOARD_SPI3_MOSI_PIN     PB5
+
+#if 0
 #ifdef ARDUINO_STM32F4_NETDUINO2PLUS
 #define BOARD_SPI3B_NSS_PIN      Port2Pin('B', 0)
 #else
@@ -98,6 +100,7 @@ PG0,PG1,PG2,PG3,PG4,PG5,PG6,PG7,PG8,PG9,PG10,PG11,PG12,PG13,PG14,PG15
 #define BOARD_SPI3B_MOSI_PIN     Port2Pin('C',12)
 #define BOARD_SPI3B_MISO_PIN     Port2Pin('C',11)
 #define BOARD_SPI3B_SCK_PIN      Port2Pin('C',10)
+#endif
 
 #define BOARD_NR_GPIO_PINS      40
 #define BOARD_NR_PWM_PINS       9
