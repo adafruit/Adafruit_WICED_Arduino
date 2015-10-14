@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*!
-    @file     adafruit_featherlib.c
+    @file     USBSerial.h
     @author   hathach
 
     @section LICENSE
@@ -34,25 +34,42 @@
 */
 /**************************************************************************/
 
-#include "adafruit_featherlib.h"
+#ifndef _USBSERIAL_H_
+#define _USBSERIAL_H_
 
-//--------------------------------------------------------------------+
-// MACRO CONSTANT TYPEDEF
-//--------------------------------------------------------------------+
+#include "libmaple_types.h"
+#include "Stream.h"
 
-//--------------------------------------------------------------------+
-// INTERNAL OBJECT & FUNCTION DECLARATION
-//--------------------------------------------------------------------+
-extern void __attribute__((noreturn)) start_c(void);
-extern void USBSerial_callback(uint32_t eid, void* p_data);
+extern "C" {
+  void USBSerial_callback(uint32_t eid, void* p_data);
+}
 
-//--------------------------------------------------------------------+
-// IMPLEMENTATION
-//--------------------------------------------------------------------+
-ATTR_USED adafruit_arduino_t const adafruit_arduino =
+class USBSerial : public Stream
 {
-    .arduino_magic = CFG_ARDUINO_CODE_MAGIC,
-    .startup       = start_c,
+private:
+    bool  isConnected;
 
-    .cdc_serial_event_cb = USBSerial_callback
+public:
+    USBSerial() { isConnected = false; }
+
+    /* Set up/tear down */
+    void begin(uint32 baud) {} // do nothing
+    void end(void) {}          // do nothing
+
+    /* I/O */
+    operator bool() { return this->isConnected; }
+
+    virtual int available(void);
+    virtual int peek(void);
+    virtual void flush(void) {} // do nothing
+    virtual int read(void);
+    virtual size_t write(unsigned char);
+    virtual size_t write(const uint8_t *buffer, size_t size);
+
+    /* callback from featherlib */
+    friend void USBSerial_callback(uint32_t eid, void* p_data);
 };
+
+extern USBSerial Serial;
+
+#endif /* _USBSERIAL_H_ */

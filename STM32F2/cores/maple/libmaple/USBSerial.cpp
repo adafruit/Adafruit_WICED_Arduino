@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*!
-    @file     adafruit_featherlib.c
+    @file     USBSerial.cpp
     @author   hathach
 
     @section LICENSE
@@ -34,25 +34,54 @@
 */
 /**************************************************************************/
 
+#include "libmaple.h"
+#include "boards.h"
 #include "adafruit_featherlib.h"
+#include "USBSerial.h"
 
-//--------------------------------------------------------------------+
-// MACRO CONSTANT TYPEDEF
-//--------------------------------------------------------------------+
+USBSerial Serial;
 
-//--------------------------------------------------------------------+
-// INTERNAL OBJECT & FUNCTION DECLARATION
-//--------------------------------------------------------------------+
-extern void __attribute__((noreturn)) start_c(void);
-extern void USBSerial_callback(uint32_t eid, void* p_data);
-
-//--------------------------------------------------------------------+
-// IMPLEMENTATION
-//--------------------------------------------------------------------+
-ATTR_USED adafruit_arduino_t const adafruit_arduino =
+int USBSerial::available(void)
 {
-    .arduino_magic = CFG_ARDUINO_CODE_MAGIC,
-    .startup       = start_c,
+  return -1;
+}
 
-    .cdc_serial_event_cb = USBSerial_callback
-};
+int USBSerial::peek(void)
+{
+  return -1;
+}
+
+int USBSerial::read(void)
+{
+  return -1;
+}
+
+size_t USBSerial::write(unsigned char ch)
+{
+  ADAFRUIT_FEATHERLIB->file_write(FILENO_USB_CDC, (char*)&ch, 1);
+}
+
+size_t USBSerial::write(const uint8_t *buffer, size_t size)
+{
+  ADAFRUIT_FEATHERLIB->file_write(FILENO_USB_CDC, (char*)buffer, size);
+}
+
+// Callback from featherlib when there is status change
+void USBSerial_callback(uint32_t eid, void* p_data)
+{
+  enum
+  {
+    HARDWARESERIAL_EVENT_DISCONNECT = 0,
+    HARDWARESERIAL_EVENT_CONNECT = 1,
+  };
+
+  switch (eid)
+  {
+    case HARDWARESERIAL_EVENT_DISCONNECT:
+    case HARDWARESERIAL_EVENT_CONNECT:
+      Serial.isConnected = eid;
+    break;
+
+    default: break;
+  }
+}

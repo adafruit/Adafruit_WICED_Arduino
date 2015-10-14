@@ -37,9 +37,6 @@
 
 #include "Stream.h"
 
-extern "C" {
-  void hardwareSerial_callback(uint32_t eid, void* p_data);
-}
 
 /*
  * IMPORTANT:
@@ -75,9 +72,6 @@ public:
     int txPin(void) { return this->tx_pin; }
     int rxPin(void) { return this->rx_pin; }
 
-    /* callback from featherlib */
-    friend void hardwareSerial_callback(uint32_t eid, void* p_data);
-
 private:
     usart_dev *usart_device;
     uint8 tx_pin;
@@ -85,7 +79,7 @@ private:
     bool  isConnected;
 };
 
-extern HardwareSerial Serial;
+//extern HardwareSerial Serial;
 extern HardwareSerial Serial1;
 extern HardwareSerial Serial2;
 #if defined(STM32_HIGH_DENSITY) && !defined(BOARD_maple_RET6)

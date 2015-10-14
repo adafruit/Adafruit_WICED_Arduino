@@ -57,7 +57,7 @@
 #define RX5 BOARD_UART5_RX_PIN
 #endif
 
-HardwareSerial Serial(USART1, TX1, RX1);
+//HardwareSerial Serial(USART1, TX1, RX1);
 
 #ifdef TX2
 HardwareSerial Serial1(USART2, TX2, RX2);
@@ -164,24 +164,4 @@ size_t HardwareSerial::write(unsigned char ch) {
 
 void HardwareSerial::flush(void) {
     usart_reset_rx(usart_device);
-}
-
-
-void hardwareSerial_callback(uint32_t eid, void* p_data)
-{
-  enum
-  {
-    HARDWARESERIAL_EVENT_DISCONNECT = 0,
-    HARDWARESERIAL_EVENT_CONNECT = 1,
-  };
-
-  switch (eid)
-  {
-    case HARDWARESERIAL_EVENT_DISCONNECT:
-    case HARDWARESERIAL_EVENT_CONNECT:
-      Serial.isConnected = eid;
-    break;
-
-    default: break;
-  }
 }

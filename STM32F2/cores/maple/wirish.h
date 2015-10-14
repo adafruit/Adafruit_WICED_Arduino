@@ -51,6 +51,7 @@
 #include "HardwareSPI.h"
 #include "HardwareSerial.h"
 #include "HardwareTimer.h"
+#include "USBSerial.h"
 #include "adafruit_featherlib.h"
 
 /* Arduino wiring macros and bit defines  */
