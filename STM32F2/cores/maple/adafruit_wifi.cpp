@@ -111,7 +111,7 @@ sdep_err_t AdafruitWICED::connectAP(char* ssid, char* passwd)
   }
 
   sdep_err_t error = ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_CONNECT, payload_len,
-                                                   (uint8_t*)payload, NULL, NULL);
+                                                     (uint8_t*)payload, NULL, NULL);
   free(payload);
   return error;
 }
@@ -164,7 +164,7 @@ sdep_err_t AdafruitWICED::startAP(char* ssid, char* passwd)
   }
 
   sdep_err_t error = ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_APSTART, payload_len,
-                                                   (uint8_t*)payload, NULL, NULL);
+                                                     (uint8_t*)payload, NULL, NULL);
   free(payload);
   return error;
 }
@@ -232,7 +232,7 @@ sdep_err_t AdafruitWICED::ping(char* ip_address_str, uint8_t* response_time)
   }
 
   return ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_PING, 4, payload,
-                                       NULL, response_time);
+                                         NULL, response_time);
 }
 
 /******************************************************************************/
@@ -256,7 +256,7 @@ sdep_err_t AdafruitWICED::ping(uint8_t* ip_address, uint8_t* response_time)
   }
 
   return ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_PING, 4, ip_address,
-                                       NULL, response_time);
+                                         NULL, response_time);
 }
 
 /******************************************************************************/
@@ -275,7 +275,7 @@ sdep_err_t AdafruitWICED::ping(uint8_t* ip_address, uint8_t* response_time)
 sdep_err_t AdafruitWICED::dnsLookup(char* dns, uint8_t* ipv4_address)
 {
   return ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_DNSLOOKUP, strlen(dns),
-                                       (uint8_t*)dns, NULL, ipv4_address);
+                                         (uint8_t*)dns, NULL, ipv4_address);
 }
 
 /******************************************************************************/
@@ -293,7 +293,7 @@ sdep_err_t AdafruitWICED::getTime(char* iso8601_time)
 {
 
   return ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_GETTIME, 0, NULL, NULL,
-                                       (uint8_t*)iso8601_time);
+                                         (uint8_t*)iso8601_time);
 }
 
 /******************************************************************************/
@@ -313,7 +313,7 @@ sdep_err_t AdafruitWICED::getTime(char* iso8601_time)
 sdep_err_t AdafruitWICED::httpGetUri(char* uri, uint16_t* length, uint8_t* response)
 {
   return ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_HTTPGETURI, strlen(uri),
-                                       (uint8_t*)uri, length, response);
+                                         (uint8_t*)uri, length, response);
 }
 
 /******************************************************************************/
@@ -336,7 +336,7 @@ sdep_err_t AdafruitWICED::httpPost(char* uri, uint16_t* length, uint8_t* respons
   if (uri == NULL) return ERROR_INVALIDPARAMETER;
 
   return ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_HTTPPOST, strlen(uri),
-                                       (uint8_t*)uri, length, response);
+                                         (uint8_t*)uri, length, response);
 }
 
 /******************************************************************************/
@@ -387,7 +387,7 @@ sdep_err_t AdafruitWICED::mqttLastWill(bool isOnlineTopic, char* topic, char* va
   strcat(lastWillMessage, str);
 
   sdep_err_t error = ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_MQTTLASTWILL, lastWillMessage_len,
-                                                   (uint8_t*)lastWillMessage, NULL, NULL);
+                                                     (uint8_t*)lastWillMessage, NULL, NULL);
   free(lastWillMessage);
   return error;
 }
@@ -423,14 +423,14 @@ sdep_err_t AdafruitWICED::mqttLastWill(bool isOnlineTopic, char* topic, char* va
 */
 /******************************************************************************/
 sdep_err_t AdafruitWICED::mqttConnect(char* host, uint16_t port, char* clientID,
-                                      char* username, char* password)
+                                      char* username, char* password, bool is_tls)
 {
   if (host == NULL || host == "") return ERROR_INVALIDPARAMETER;
 
   char p_port[6];
   utoa(port, p_port, 10);
 
-  uint16_t mqttServer_len = strlen(host) + 4;
+  uint16_t mqttServer_len = strlen(host) + 5; // isSSLConnection & 4 commas
   if (port > 0) mqttServer_len += strlen(p_port);
   if (clientID != NULL) mqttServer_len += strlen(clientID);
   if (username != NULL) mqttServer_len += strlen(username);
@@ -439,7 +439,15 @@ sdep_err_t AdafruitWICED::mqttConnect(char* host, uint16_t port, char* clientID,
   char* mqttBroker = (char*)malloc(mqttServer_len);
   if (mqttBroker == NULL) return ERROR_NO_MEMORY;
 
-  strcpy(mqttBroker, host);
+  if (is_tls)
+  {
+    strcpy(mqttBroker, "1");
+  }
+  else
+  {
+    strcpy(mqttBroker, "0");
+  }
+  strcat(mqttBroker, host);
   strcat(mqttBroker, ",");
   if (port > 0) strcat(mqttBroker, p_port);
   strcat(mqttBroker, ",");
@@ -450,7 +458,7 @@ sdep_err_t AdafruitWICED::mqttConnect(char* host, uint16_t port, char* clientID,
   if (password != NULL) strcat(mqttBroker, password);
 
   sdep_err_t error =  ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_MQTTCONNECT, mqttServer_len,
-                                                    (uint8_t*)mqttBroker, NULL, NULL);
+                                                      (uint8_t*)mqttBroker, NULL, NULL);
   free(mqttBroker);
   return error;
 }
@@ -508,7 +516,7 @@ sdep_err_t AdafruitWICED::mqttPublish(char* topic, char* value, uint8_t qos, uin
   strcat(publishedMessage, str);
 
   sdep_err_t error = ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_MQTTPUBLISH, publishedMessage_len,
-                                                   (uint8_t*)publishedMessage, NULL, NULL);
+                                                     (uint8_t*)publishedMessage, NULL, NULL);
   free(publishedMessage);
   return error;
 }
@@ -543,7 +551,7 @@ sdep_err_t AdafruitWICED::mqttSubscribe(char* topic, uint8_t qos)
   strcat(subTopic, str);
 
   sdep_err_t error = ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_MQTTSUBSCRIBE, subTopic_len,
-                                                   (uint8_t*)subTopic, NULL, NULL);
+                                                     (uint8_t*)subTopic, NULL, NULL);
   free(subTopic);
   return error;
 }
@@ -576,7 +584,7 @@ sdep_err_t AdafruitWICED::mqttUnsubscribe(void)
 sdep_err_t AdafruitWICED::irqRead(uint16_t* response_length, uint8_t* response)
 {
   return ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_IRQREAD, 0, NULL,
-                                       response_length, response);
+                                         response_length, response);
 }
 
 /******************************************************************************/
@@ -592,7 +600,7 @@ sdep_err_t AdafruitWICED::irqRead(uint16_t* response_length, uint8_t* response)
 sdep_err_t AdafruitWICED::irqCount(uint16_t* n_items)
 {
   return ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_IRQCOUNT, 0, NULL, NULL,
-                                       (uint8_t*)n_items);
+                                         (uint8_t*)n_items);
 }
 
 /******************************************************************************/
@@ -608,7 +616,7 @@ sdep_err_t AdafruitWICED::irqCount(uint16_t* n_items)
 sdep_err_t AdafruitWICED::irqAvailable(uint16_t* n_available)
 {
   return ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_IRQAVAIL, 0, NULL, NULL,
-                                       (uint8_t*)n_available);
+                                         (uint8_t*)n_available);
 }
 
 /******************************************************************************/

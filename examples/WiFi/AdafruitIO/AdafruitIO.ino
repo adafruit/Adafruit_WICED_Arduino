@@ -16,21 +16,24 @@
 #define WLAN_PASS            "Password of AP"
 
 #define MQTT_HOST            "io.adafruit.com"
-#define MQTT_PORT            1883
+#define MQTT_PORT            8883
+#define TLS_ENABLED          1
+
 #define CLIENT_ID            "Adafruit"
 #define ADAFRUIT_USERNAME    "See your username at accounts.adafruit.com"
 #define AIO_KEY              "Your AIO key"
 #define PUBLISH_TOPIC        ADAFRUIT_USERNAME "/feeds/feed-name"
 #define SUBSCRIBE_TOPIC      ADAFRUIT_USERNAME "/feeds/feed-name"
 
+#define LASTWILL_ENABLED     1
 #define CONNECTED_TOPIC      ADAFRUIT_USERNAME "/feeds/status"
 #define CONNECTED_MESSAGE    "Online"
 #define LASTWILL_TOPIC       ADAFRUIT_USERNAME "/feeds/status"
-#define LASTWILL_MESSAGE     "Offline" 
+#define LASTWILL_MESSAGE     "Offline"
 #define QOS                  1
 #define RETAIN               0
 
-#define MAX_LENGTH_MESSAGE   64
+#define MAX_LENGTH_MESSAGE   1024
 
 
 int wifi_error = -1; // FAIL
@@ -80,7 +83,7 @@ int connectBroker()
   Serial.print(F("Attempting to connect to broker: "));
   Serial.print(MQTT_HOST); Serial.print(":"); Serial.println(MQTT_PORT);
 
-  int error = wiced.mqttConnect(MQTT_HOST, MQTT_PORT, CLIENT_ID, ADAFRUIT_USERNAME, AIO_KEY);
+  int error = wiced.mqttConnect(MQTT_HOST, MQTT_PORT, CLIENT_ID, ADAFRUIT_USERNAME, AIO_KEY, TLS_ENABLED);
   if (error == 0)
   {
     Serial.println(F("Connected!"));
@@ -206,41 +209,33 @@ void setup()
 
   wifi_error = connectAP();
 
-  // Set LastWill message
-  if (wiced.mqttLastWill(0, LASTWILL_TOPIC, LASTWILL_MESSAGE, QOS, RETAIN) == 0)
+  if (LASTWILL_ENABLED == 1)
   {
-    Serial.println(F("LastWill message has been set!\r\n"));
-  }
-  else
-  {
-    Serial.println(F("Fail to set LastWill message!\r\n"));
-  }
+    // Set LastWill topic + message
+    if (wiced.mqttLastWill(false, LASTWILL_TOPIC, LASTWILL_MESSAGE, QOS, RETAIN) == 0)
+    {
+      Serial.println(F("LastWill message has been set!\r\n"));
+    }
+    else
+    {
+      Serial.println(F("Fail to set LastWill message!\r\n"));
+    }
 
-  // Set LastWill Connected topic + message
-  if (wiced.mqttLastWill(1, CONNECTED_TOPIC, CONNECTED_MESSAGE, QOS, RETAIN) == 0)
-  {
-    Serial.println(F("Connected topic & message have been set!\r\n"));
-  }
-  else
-  {
-    Serial.println(F("Fail to set Connected topic & message!\r\n"));
+    // Set LastWill Connected topic + message
+    if (wiced.mqttLastWill(true, CONNECTED_TOPIC, CONNECTED_MESSAGE, QOS, RETAIN) == 0)
+    {
+      Serial.println(F("Connected topic & message have been set!\r\n"));
+    }
+    else
+    {
+      Serial.println(F("Fail to set Connected topic & message!\r\n"));
+    }
   }
 
   mqtt_error = connectBroker();
   if (mqtt_error == 0)
   {
     subs_error = subscribeTopic();
-
-    // Optional: connectBroker() includes this already
-    if (wiced.mqttPublish(CONNECTED_TOPIC, CONNECTED_MESSAGE, QOS, RETAIN) == ERROR_NONE)
-    {
-      Serial.print(F("Published Message to ")); Serial.println(CONNECTED_TOPIC);
-      Serial.print(F("Value = ")); Serial.println(CONNECTED_MESSAGE);
-    }
-    else
-    {
-      Serial.println(F("Publish Error!"));
-    } 
   }
 }
 

@@ -137,7 +137,7 @@ public:
 
   /* MQTT Commands */
   sdep_err_t mqttLastWill(bool isOnlineTopic, char* topic, char* value, uint8_t qos, uint8_t retain);
-  sdep_err_t mqttConnect(char* host, uint16_t port, char* clientID, char* username, char* password);
+  sdep_err_t mqttConnect(char* host, uint16_t port, char* clientID, char* username, char* password, bool is_tls);
   sdep_err_t mqttDisconnect(void);
   sdep_err_t mqttPublish(char* topic, char* value, uint8_t qos, uint8_t retain);
   sdep_err_t mqttSubscribe(char* topic, uint8_t qos);
