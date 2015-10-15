@@ -524,6 +524,7 @@ void rcc_reset_dev(rcc_clk_id device);
 void SetupClock72MHz();
 void SetupClock120MHz();
 void SetupClock168MHz();
+void SetupClockAdafruitFeather(void);
 
 typedef enum rcc_clk_domain {
     RCC_APB1,

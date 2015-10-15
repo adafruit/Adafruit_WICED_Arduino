@@ -180,6 +180,15 @@ void InitMCO1()
     gpio_set_mode(GPIOA, 8, GPIO_MODE_AF | GPIO_OTYPE_PP | GPIO_OSPEED_100MHZ);
 }
 
+void SetupClockAdafruitFeather(void)
+{
+  uint32_t SystemCoreClock = 120000000;
+
+  // save bus clock values
+  rcc_dev_clk_speed_table[RCC_AHB1] = (SystemCoreClock/1);
+  rcc_dev_clk_speed_table[RCC_APB2] = (SystemCoreClock/2);
+  rcc_dev_clk_speed_table[RCC_APB1] = (SystemCoreClock/4);
+}
 
 void SetupClock72MHz()
 {

@@ -48,8 +48,9 @@
 #define STDIN_FILENO          0
 #define STDOUT_FILENO         1
 #define STDERR_FILENO         2
-#define FILENO_UART           3
-#define FILENO_USB_CDC        4
+#define FILENO_USB_SERIAL     3
+#define FILENO_USB_ATPARSER   4
+//#define FILENO_UART           5
 
 //------------- Arduino Shared Structure -------------//
 #define CFG_ARDUINO_CODE_MAGIC    0x01ADD1E5 // Laddies

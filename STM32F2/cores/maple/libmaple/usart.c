@@ -56,6 +56,7 @@ static usart_dev usart2 = {
 /** USART2 device */
 usart_dev *USART2 = &usart2;
 
+#if 0
 static usart_dev usart3 = {
     .regs     = USART3_BASE,
     .max_baud = 2250000UL,
@@ -83,6 +84,7 @@ static usart_dev uart5 = {
 };
 /** UART5 device */
 usart_dev *UART5 = &uart5;
+#endif
 #endif
 
 /**
@@ -279,6 +281,7 @@ void __irq_usart2(void) {
     usart_irq(USART2);
 }
 
+#if 0
 void __irq_usart3(void) {
     usart_irq(USART3);
 }
@@ -291,4 +294,6 @@ void __irq_uart4(void) {
 void __irq_uart5(void) {
     usart_irq(UART5);
 }
+#endif
+
 #endif

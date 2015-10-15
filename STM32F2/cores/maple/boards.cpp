@@ -64,11 +64,10 @@ void init(void) {
 
 #endif
 
+    SetupClockAdafruitFeather();
     boardInit();
     setupADC();
     setupTimers();
-
-    //setupUSB();
 }
 
 /* You could farm this out to the files in boards/ if e.g. it takes

@@ -46,8 +46,7 @@
  * @see micros()
  */
 static inline uint32 millis(void) {
-    //return systick_uptime();
-  return ADAFRUIT_FEATHERLIB->system_millis();
+    return systick_uptime();
 }
 
 /**

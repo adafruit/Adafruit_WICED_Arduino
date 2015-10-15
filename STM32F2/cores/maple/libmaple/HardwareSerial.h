@@ -66,7 +66,7 @@ public:
     virtual int read(void);
     virtual size_t write(unsigned char);
     using Print::write;
-    operator bool() { return this->isConnected; }
+    operator bool() { return true; /*return this->isConnected;*/ }
 
     /* Pin accessors */
     int txPin(void) { return this->tx_pin; }
@@ -79,12 +79,10 @@ private:
     bool  isConnected;
 };
 
-//extern HardwareSerial Serial;
+
 extern HardwareSerial Serial1;
 extern HardwareSerial Serial2;
-#if defined(STM32_HIGH_DENSITY) && !defined(BOARD_maple_RET6)
-extern HardwareSerial Serial3;
-extern HardwareSerial Serial4;
-#endif
-extern HardwareSerial &SerialDebug;
+
+//extern HardwareSerial &SerialDebug;
+
 #endif

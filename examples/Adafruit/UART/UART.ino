@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*!
-    @file     USBSerial.h
+    @file     UART
     @author   hathach
 
     @section LICENSE
@@ -33,43 +33,48 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 /**************************************************************************/
+#include <Arduino.h>
 
-#ifndef _USBSERIAL_H_
-#define _USBSERIAL_H_
-
-#include "libmaple_types.h"
-#include "Stream.h"
-
-extern "C" {
-  void USBSerial_callback(uint32_t eid, void* p_data);
+void setup() {
+  Serial.begin (115200);  // USB monitor
+  Serial1.begin(115200);  // HW UART1
+  Serial2.begin(115200);  // HW UART2
+  
+  while (!Serial) delay(1);
+  Serial.println ("UART demo: Serial Monitor");
+  Serial1.println("UART demo: HWUART1");
+  Serial2.println("UART demo: HWUART2");
 }
 
-class USBSerial : public Stream
+void printAll(char ch)
 {
-private:
-    volatile bool  isConnected;
+  Serial.print (ch);
+  Serial1.print(ch);
+  Serial2.print(ch);
+}
 
-public:
-    USBSerial() { isConnected = false; }
+void loop() {
+  char ch;
+  
+  // From Serial monitor to All
+  if ( Serial.available() )
+  {
+    ch = (char) Serial.read();
+    printAll(ch); 
+  }
+  
+  // From HW UART1 to All
+  if ( Serial1.available() )
+  {
+    ch = (char) Serial1.read();
+    printAll(ch); 
+  }
+  
+  // From HW UART2 to All
+  if ( Serial2.available() )
+  {
+    ch = (char) Serial2.read();
+    printAll(ch); 
+  }
 
-    /* Set up/tear down */
-    void begin(uint32 baud) {} // do nothing
-    void end(void) {}          // do nothing
-
-    /* I/O */
-    operator bool() { return this->isConnected; }
-
-    virtual int available(void);
-    virtual int peek(void);
-    virtual void flush(void) {} // do nothing
-    virtual int read(void);
-    virtual size_t write(unsigned char);
-    virtual size_t write(const uint8_t *buffer, size_t size);
-
-    /* callback from featherlib */
-    friend void USBSerial_callback(uint32_t eid, void* p_data);
-};
-
-extern USBSerial Serial;
-
-#endif /* _USBSERIAL_H_ */
+}

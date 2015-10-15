@@ -40,37 +40,12 @@
 #define TX1 BOARD_USART1_TX_PIN
 #define RX1 BOARD_USART1_RX_PIN
 
-#ifdef BOARD_USART2_TX_PIN
-	#define TX2 BOARD_USART2_TX_PIN
-	#define RX2 BOARD_USART2_RX_PIN
-#endif
+#define TX2 BOARD_USART2_TX_PIN
+#define RX2 BOARD_USART2_RX_PIN
 
-#ifdef BOARD_USART3_TX_PIN
-	#define TX3 BOARD_USART3_TX_PIN
-	#define RX3 BOARD_USART3_RX_PIN
-#endif
 
-#if 0 && defined STM32_HIGH_DENSITY && !defined(BOARD_maple_RET6)
-#define TX4 BOARD_UART4_TX_PIN
-#define RX4 BOARD_UART4_RX_PIN
-#define TX5 BOARD_UART5_TX_PIN
-#define RX5 BOARD_UART5_RX_PIN
-#endif
-
-//HardwareSerial Serial(USART1, TX1, RX1);
-
-#ifdef TX2
-HardwareSerial Serial1(USART2, TX2, RX2);
-#endif
-
-#ifdef TX3
-HardwareSerial Serial2(USART3, TX3, RX3);
-#endif
-
-#if 0 && defined(STM32_HIGH_DENSITY) && !defined(BOARD_maple_RET6)
-HardwareSerial Serial3(UART4,  TX4, RX4);
-HardwareSerial Serial4(UART5,  TX5, RX5);
-#endif
+HardwareSerial Serial1(USART1, TX1, RX1);
+HardwareSerial Serial2(USART2, TX2, RX2);
 
 HardwareSerial::HardwareSerial(usart_dev *usart_device,
                                uint8 tx_pin,
@@ -88,38 +63,18 @@ HardwareSerial::HardwareSerial(usart_dev *usart_device,
 void HardwareSerial::begin(uint32 baud) {
     ASSERT(baud <= usart_device->max_baud);
 
-    return;
-
     if (baud > usart_device->max_baud) {
         return;
     }
 
     const stm32_pin_info *txi = &PIN_MAP[tx_pin];
     const stm32_pin_info *rxi = &PIN_MAP[rx_pin];
-#ifdef STM32F2
-	// int af = 7<<8;
-    if (usart_device == UART4 || usart_device == UART5) {
-        gpio_set_af_mode(txi->gpio_device, txi->gpio_bit, 8);
-        gpio_set_af_mode(rxi->gpio_device, rxi->gpio_bit, 8);
-    }
-    else {
-        gpio_set_af_mode(txi->gpio_device, txi->gpio_bit, 7);
-        gpio_set_af_mode(rxi->gpio_device, rxi->gpio_bit, 7);
-    }
-    gpio_set_mode(txi->gpio_device, txi->gpio_bit, (gpio_pin_mode)(GPIO_AF_OUTPUT_PP | GPIO_PUPD_INPUT_PU | 0x700));
-    gpio_set_mode(rxi->gpio_device, rxi->gpio_bit, (gpio_pin_mode)(GPIO_MODE_AF      | GPIO_PUPD_INPUT_PU | 0x700));
-    //gpio_set_mode(txi->gpio_device, txi->gpio_bit, (gpio_pin_mode)(GPIO_PUPD_INPUT_PU));
-    //gpio_set_mode(rxi->gpio_device, rxi->gpio_bit, (gpio_pin_mode)(GPIO_PUPD_INPUT_PU));
-#else
-	gpio_set_mode(txi->gpio_device, txi->gpio_bit, GPIO_AF_OUTPUT_PP);
-    gpio_set_mode(rxi->gpio_device, rxi->gpio_bit, GPIO_INPUT_FLOATING);
-#endif
-#if 0
-    if (txi->timer_device != NULL) {
-        /* Turn off any PWM if there's a conflict on this GPIO bit. */
-        timer_set_mode(txi->timer_device, txi->timer_channel, TIMER_DISABLED);
-    }
-#endif
+
+    gpio_set_mode(txi->gpio_device, txi->gpio_bit, (gpio_pin_mode)(GPIO_AF_OUTPUT_PP | GPIO_PUPD_INPUT_PU));
+    gpio_set_mode(rxi->gpio_device, rxi->gpio_bit, (gpio_pin_mode)(GPIO_MODE_AF      | GPIO_PUPD_INPUT_PU));
+
+    gpio_set_af_mode(txi->gpio_device, txi->gpio_bit, 7);
+    gpio_set_af_mode(rxi->gpio_device, rxi->gpio_bit, 7);
 
     usart_init(usart_device);
     usart_set_baud_rate(usart_device, baud);
@@ -156,9 +111,7 @@ uint32 HardwareSerial::pending(void) {
 }
 
 size_t HardwareSerial::write(unsigned char ch) {
-//    usart_putc(usart_device, ch);
-//  ADAFRUIT_FEATHERLIB->file_write(FILENO_UART, (char*)&ch, 1);
-  ADAFRUIT_FEATHERLIB->file_write(FILENO_USB_CDC, (char*)&ch, 1);
+  usart_putc(usart_device, ch);
   return 1;
 }
 
