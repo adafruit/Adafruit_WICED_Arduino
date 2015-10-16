@@ -43,17 +43,19 @@ USBSerial Serial;
 
 int USBSerial::available(void)
 {
-  return 0;
+  return ADAFRUIT_FEATHERLIB->file_peek(FILENO_USB_SERIAL) != (-1);
 }
 
 int USBSerial::peek(void)
 {
-  return -1;
+  return ADAFRUIT_FEATHERLIB->file_peek(FILENO_USB_SERIAL);
 }
 
 int USBSerial::read(void)
 {
-  return -1;
+  char ch;
+  ADAFRUIT_FEATHERLIB->file_read(FILENO_USB_SERIAL, (char*)&ch, 1);
+  return (int) ch;
 }
 
 size_t USBSerial::write(unsigned char ch)

@@ -62,11 +62,7 @@ typedef struct usart_reg_map {
 } usart_reg_map;
 
 /** USART1 register map base pointer */
-#ifdef STM32F2
-  #define USART1_BASE                   ((struct usart_reg_map*)0x40011000)
-#else
-  #define USART1_BASE                   ((struct usart_reg_map*)0x40013800)
-#endif
+#define USART1_BASE                   ((struct usart_reg_map*)0x40011000)
 /** USART2 register map base pointer */
 #define USART2_BASE                     ((struct usart_reg_map*)0x40004400)
 /** USART3 register map base pointer */
@@ -272,6 +268,8 @@ void usart_disable(usart_dev *dev);
 void usart_foreach(void (*fn)(usart_dev *dev));
 uint32 usart_tx(usart_dev *dev, const uint8 *buf, uint32 len);
 void usart_putudec(usart_dev *dev, uint32 val);
+
+void usart_enable_flowcontrol(usart_dev *dev, bool cts_en, bool rts_en);
 
 /**
  * @brief Disable all serial ports.

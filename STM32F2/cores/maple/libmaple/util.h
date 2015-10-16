@@ -51,6 +51,10 @@ extern "C"{
 /** True if v is a power of two (1, 2, 4, 8, ...) */
 #define IS_POWER_OF_TWO(v)  ((v) && !((v) & ((v) - 1)))
 
+#define BIT_SET(x, n)               ( (x) | BIT(n) )
+#define BIT_CLR(x, n)               ( (x) & (~BIT(n)) )
+#define BIT_TEST(x, n)              ( ((x) & BIT(n)) ? true : false )
+
 /*
  * Failure routines
  */

@@ -104,7 +104,7 @@ typedef struct ATTR_ALIGNED(512)
   // FILE Interface
   int (*file_write) (int file, char *ptr, int len);
   int (*file_read)  (int file, char *ptr, int len);
-  int (*file_peek)  (void);
+  int (*file_peek)  (int file);
 }adafruit_featherlib_t;
 
 #define ADAFRUIT_FEATHERLIB_BASE    ((uint32_t) 0x8010200)

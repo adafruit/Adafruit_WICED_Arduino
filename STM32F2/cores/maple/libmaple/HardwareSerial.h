@@ -66,7 +66,10 @@ public:
     virtual int read(void);
     virtual size_t write(unsigned char);
     using Print::write;
+
+
     operator bool() { return true; /*return this->isConnected;*/ }
+    bool enableFlowControl(int8_t cts_pin, int8_t rts_pin);
 
     /* Pin accessors */
     int txPin(void) { return this->tx_pin; }
@@ -82,6 +85,7 @@ private:
 
 extern HardwareSerial Serial1;
 extern HardwareSerial Serial2;
+extern HardwareSerial Serial3;
 
 //extern HardwareSerial &SerialDebug;
 

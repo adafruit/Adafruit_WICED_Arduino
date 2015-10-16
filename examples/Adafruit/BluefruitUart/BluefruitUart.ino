@@ -35,49 +35,63 @@
 /**************************************************************************/
 #include <Arduino.h>
 
+#define BUFSIZE                        128
+char command[BUFSIZE+1];
+
+
+int8_t cts_pin = PA0;
+int8_t rts_pin = PA1;
+
 void setup() {
-  Serial.begin (115200);  // USB monitor
-  Serial1.begin(115200);  // HW UART1
-  Serial2.begin(115200);  // HW UART2
-  //Serial3.begin(115200);  // HW UART4 TODO not working yet
+  Serial.begin (9600);  // USB monitor
   
+  Serial2.begin(9600);  // HW UART1
+  Serial2.enableFlowControl(cts_pin, rts_pin);
+
   while (!Serial) delay(1);
   Serial.println ("UART demo: Serial Monitor");
-  Serial1.println("UART demo: HWUART1");
-  Serial2.println("UART demo: HWUART2");
-  
-  //Serial3.println("UART demo: HWUART4");
-}
-
-void printAll(char ch)
-{ 
-  Serial.print (ch);
-  Serial1.print(ch);
-  Serial2.print(ch);
-  //Serial3.print(ch);
 }
 
 void loop() {
   char ch;
   
-  // From Serial monitor to All
-  if ( Serial.available() )
-  {
-    ch = (char) Serial.read();
-    printAll(ch); 
-  }
+  // Display command prompt
+  Serial.print(F("AT > "));
 
-  // From HW UART1 to All
-  if ( Serial1.available() )
-  {
-    ch = (char) Serial1.read();
-    printAll(ch); 
-  }
+  // Check for user input and echo it back if anything was found
+  getUserInput(command, BUFSIZE);
+
+  // Send command
+  Serial2.println(command);
   
-  // From HW UART2 to All
-  if ( Serial2.available() )
+  delay(100);
+  
+  // From HW UART2 to Serial
+  while ( Serial2.available() )
   {
     ch = (char) Serial2.read();
-    printAll(ch); 
+    Serial.print(ch); 
   }
+  
+  Serial.println(); 
+}
+
+/**************************************************************************/
+/*!
+    @brief  Checks for user input (via the Serial Monitor)
+*/
+/**************************************************************************/
+void getUserInput(char buffer[], uint8_t maxSize)
+{
+  memset(buffer, 0, maxSize);
+  while( Serial.peek() < 0 ) {}
+  delay(2);
+
+  uint8_t count=0;
+
+  do
+  {
+    count += Serial.readBytes(buffer+count, maxSize);
+    delay(2);
+  } while( (count < maxSize) && !(Serial.peek() < 0) );
 }

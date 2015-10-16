@@ -56,7 +56,15 @@ static usart_dev usart2 = {
 /** USART2 device */
 usart_dev *USART2 = &usart2;
 
-#if 0
+static usart_dev uart4 = {
+    .regs     = UART4_BASE,
+    .max_baud = 2250000UL,
+    .clk_id   = RCC_UART4,
+    .irq_num  = NVIC_UART4
+};
+/** UART4 device */
+usart_dev *UART4 = &uart4;
+
 static usart_dev usart3 = {
     .regs     = USART3_BASE,
     .max_baud = 2250000UL,
@@ -66,15 +74,8 @@ static usart_dev usart3 = {
 /** USART3 device */
 usart_dev *USART3 = &usart3;
 
+#if 0
 #ifdef STM32_HIGH_DENSITY
-static usart_dev uart4 = {
-    .regs     = UART4_BASE,
-    .max_baud = 2250000UL,
-    .clk_id   = RCC_UART4,
-    .irq_num  = NVIC_UART4
-};
-/** UART4 device */
-usart_dev *UART4 = &uart4;
 
 static usart_dev uart5 = {
     .regs     = UART5_BASE,
@@ -96,6 +97,7 @@ void usart_init(usart_dev *dev) {
     rb_init(&dev->rbTX, USART_TX_BUF_SIZE, dev->tx_buf);
     rcc_clk_enable(dev->clk_id);
     nvic_irq_enable(dev->irq_num);
+    nvic_irq_set_priority(dev->irq_num, 6);
 }
 
 /**
@@ -119,6 +121,23 @@ void usart_set_baud_rate(usart_dev *dev, uint32 baud) {
     tmp |= (((fractional_part * 16) + 50) / 100) & ((uint8)0x0F);
 
     dev->regs->BRR = (uint16)tmp;
+}
+
+void usart_enable_flowcontrol(usart_dev *dev, bool cts_en, bool rts_en)
+{
+  usart_reg_map *regs = dev->regs;
+
+  // disable uart
+  regs->CR1 = BIT_CLR(regs->CR1, USART_CR1_UE_BIT);
+
+  uint32_t cr3 = regs->CR3;
+  if (cts_en) cr3 |= USART_CR3_CTSE;
+  if (cts_en) cr3 |= USART_CR3_RTSE;
+
+  regs->CR3 = cr3;
+
+  // enable uart
+  regs->CR1 |= USART_CR1_UE;
 }
 
 /**
@@ -281,19 +300,15 @@ void __irq_usart2(void) {
     usart_irq(USART2);
 }
 
-#if 0
 void __irq_usart3(void) {
-    usart_irq(USART3);
+//    usart_irq(USART3);
 }
 
-#ifdef STM32_HIGH_DENSITY
 void __irq_uart4(void) {
     usart_irq(UART4);
 }
 
 void __irq_uart5(void) {
-    usart_irq(UART5);
+//    usart_irq(UART5);
 }
-#endif
 
-#endif
