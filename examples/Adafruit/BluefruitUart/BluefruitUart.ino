@@ -45,7 +45,7 @@ int8_t rts_pin = PA1;
 void setup() {
   Serial.begin (9600);  // USB monitor
   
-  Serial2.begin(9600);  // HW UART1
+  Serial2.begin(9600);  // HW UART2
   Serial2.enableFlowControl(cts_pin, rts_pin);
 
   while (!Serial) delay(1);
@@ -71,6 +71,7 @@ void loop() {
   {
     ch = (char) Serial2.read();
     Serial.print(ch); 
+    delay(2);
   }
   
   Serial.println(); 

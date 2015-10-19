@@ -49,15 +49,15 @@ static void setupTimers(void);
 
 void init(void) {
 #if 0 // [ADAFRUIT] most of MCU core setup is done in featherlib
-	setupFlash();
+  setupFlash();
 
-	setupClocks();
+  setupClocks();
     setupNVIC();
-	systick_init(SYSTICK_RELOAD_VAL);
-	gpio_init_all();
+  systick_init(SYSTICK_RELOAD_VAL);
+  gpio_init_all();
 
 #ifdef STM32F2
-	rcc_clk_enable(RCC_SYSCFG);
+  rcc_clk_enable(RCC_SYSCFG);
 #else
     afio_init();
 #endif
@@ -83,7 +83,7 @@ bool boardUsesPin(uint8 pin) {
 
 static void setupFlash(void) {
 #ifndef STM32F2
-	// for F2 and F4 CPUs this is done in SetupClock...(), e.g. in SetupClock168MHz()
+  // for F2 and F4 CPUs this is done in SetupClock...(), e.g. in SetupClock168MHz()
     flash_enable_prefetch();
     flash_set_latency(FLASH_WAIT_STATE_2);
 #endif
@@ -104,6 +104,7 @@ static void setupClocks() {
     rcc_set_prescaler(RCC_PRESCALER_APB2, RCC_APB2_HCLK_DIV_1);
 }
 
+#if 0
 static void setupNVIC() {
 #ifdef VECT_TAB_FLASH
     nvic_init(USER_ADDR_ROM, 0);
@@ -115,14 +116,15 @@ static void setupNVIC() {
 #error "You must select a base address for the vector table."
 #endif
 }
+#endif
 
 static void adcDefaultConfig(const adc_dev* dev);
 
 static void setupADC() {
 #ifdef STM32F2
-	setupADC_F2();
+  setupADC_F2();
 #else
-	rcc_set_prescaler(RCC_PRESCALER_ADC, RCC_ADCPRE_PCLK_DIV_6);
+  rcc_set_prescaler(RCC_PRESCALER_ADC, RCC_ADCPRE_PCLK_DIV_6);
 #endif
     adc_foreach(adcDefaultConfig);
 }

@@ -65,6 +65,7 @@ static usart_dev uart4 = {
 /** UART4 device */
 usart_dev *UART4 = &uart4;
 
+#if 0
 static usart_dev usart3 = {
     .regs     = USART3_BASE,
     .max_baud = 2250000UL,
@@ -74,7 +75,6 @@ static usart_dev usart3 = {
 /** USART3 device */
 usart_dev *USART3 = &usart3;
 
-#if 0
 #ifdef STM32_HIGH_DENSITY
 
 static usart_dev uart5 = {
