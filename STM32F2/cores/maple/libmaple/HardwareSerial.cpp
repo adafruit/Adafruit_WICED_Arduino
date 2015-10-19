@@ -48,7 +48,7 @@
 
 HardwareSerial Serial1(USART1, TX1, RX1);
 HardwareSerial Serial2(USART2, TX2, RX2);
-HardwareSerial Serial3(UART4 , TX4, RX4);
+HardwareSerial Serial4(UART4 , TX4, RX4);
 
 HardwareSerial::HardwareSerial(usart_dev *usart_device,
                                uint8 tx_pin,
