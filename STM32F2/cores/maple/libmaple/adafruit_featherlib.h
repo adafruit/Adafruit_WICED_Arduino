@@ -64,7 +64,7 @@ typedef struct ATTR_ALIGNED(512)
   void (*startup) (void);
 
   // Peripheral Interrupt
-  uint32_t peripheral_isr[16];
+  uint32_t reserved2[16];
 
   // Callback
   void (*cdc_serial_event_cb)(uint32_t eid, void* p_data);

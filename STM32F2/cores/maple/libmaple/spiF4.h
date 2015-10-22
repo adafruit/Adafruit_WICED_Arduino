@@ -56,10 +56,10 @@ struct spi_reg_map;
 
 struct spi_dev;
 
-extern struct spi_dev *SPI1;
-extern struct spi_dev *SPI2;
+extern struct spi_dev *SPI1_F2;
+extern struct spi_dev *SPI2_F2;
 #if defined(STM32_HIGH_DENSITY) || defined(STM32_XL_DENSITY)
-extern struct spi_dev *SPI3;
+extern struct spi_dev *SPI3_F2;
 #endif
 
 /*

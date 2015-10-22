@@ -35,6 +35,7 @@
 
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdio.h>
 #include "libmaple.h"
 
 #include "wirish_types.h"
@@ -48,7 +49,7 @@
 #include "wirish_math.h"
 #include "wirish_time.h"
 #include <wirish_constants.h>
-#include "HardwareSPI.h"
+#include "SPI.h"
 #include "HardwareSerial.h"
 #include "HardwareTimer.h"
 #include "USBSerial.h"
@@ -61,7 +62,7 @@
 #define true 0x1
 #define false 0x0
 
-
+#define word(h, l)                     ((h << 8) | l)
 #define lowByte(w)                     ((w) & 0xFF)
 #define highByte(w)                    (((w) >> 8) & 0xFF)
 #define bitRead(value, bit)            (((value) >> (bit)) & 0x01)

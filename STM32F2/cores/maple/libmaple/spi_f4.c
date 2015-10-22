@@ -31,7 +31,7 @@
  * @brief STM32F1 SPI/I2S.
  */
 
-#include <libmaple/spi.h>
+#include <libmaple/spiF2.h>
 #include <libmaple/gpio.h>
 #include "spi_private.h"
 
@@ -42,12 +42,12 @@
 static spi_dev spi1 = SPI_DEV(1);
 static spi_dev spi2 = SPI_DEV(2);
 
-spi_dev *SPI1 = &spi1;
-spi_dev *SPI2 = &spi2;
+spi_dev *SPI1_F2 = &spi1;
+spi_dev *SPI2_F2 = &spi2;
 
 #if defined(STM32_HIGH_DENSITY) || defined(STM32_XL_DENSITY)
 static spi_dev spi3 = SPI_DEV(3);
-spi_dev *SPI3 = &spi3;
+spi_dev *SPI3_F2 = &spi3;
 #endif
 
 /*
@@ -66,7 +66,7 @@ void spi_config_gpios(spi_dev *ignored,
 //        gpio_set_mode(nss_dev, nss_bit, GPIO_AF_OUTPUT_PP);
         gpio_set_mode(comm_dev, sck_bit, GPIO_AF_OUTPUT_PP);
 //        gpio_set_mode(comm_dev, miso_bit, GPIO_INPUT_FLOATING);
-        gpio_set_mode(comm_dev, miso_bit, GPIO_AF_INPUT_PD);		
+        gpio_set_mode(comm_dev, miso_bit, GPIO_AF_INPUT_PD);
         gpio_set_mode(comm_dev, mosi_bit, GPIO_AF_OUTPUT_PP);
     } else {
         gpio_set_mode(nss_dev, nss_bit, GPIO_INPUT_FLOATING);
@@ -77,9 +77,7 @@ void spi_config_gpios(spi_dev *ignored,
 }
 
 void spi_foreach(void (*fn)(spi_dev*)) {
-    fn(SPI1);
-    fn(SPI2);
-#if defined(STM32_HIGH_DENSITY) || defined(STM32_XL_DENSITY)
-    fn(SPI3);
-#endif
+    fn(SPI1_F2);
+    fn(SPI2_F2);
+    fn(SPI3_F2);
 }

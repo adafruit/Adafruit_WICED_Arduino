@@ -32,7 +32,7 @@
  *        Currently, there is no Integrated Interchip Sound (I2S) support.
  */
 
-#include <libmaple/spi.h>
+#include <libmaple/spiF2.h>
 #include <libmaple/bitband.h>
 
 static void spi_reconfigure(spi_dev *dev, uint32 cr1_config);
