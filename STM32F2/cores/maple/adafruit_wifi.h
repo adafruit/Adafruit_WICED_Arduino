@@ -100,13 +100,13 @@ typedef enum {
 
 typedef uint16_t sdep_err_t;
 
-class AdafruitWICED
+class AdafruitFeather
 {
 private:
   void init();
 
 public:
-  AdafruitWICED(void);
+  AdafruitFeather(void);
 
   /* WiFi Commands */
   sdep_err_t scan(uint16_t* length, uint8_t* ap_details);
@@ -150,6 +150,6 @@ public:
   sdep_err_t irqClear(void);
 };
 
-extern AdafruitWICED wiced;
+extern AdafruitFeather feather;
 
 #endif

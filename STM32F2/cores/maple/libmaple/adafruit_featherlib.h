@@ -73,8 +73,8 @@ typedef struct ATTR_ALIGNED(512)
 }adafruit_arduino_t;
 
 
-//------------- Wicedlib Shared Structure -------------//
-typedef uint32_t wiced_result_t;
+//------------- Featherlib Shared Structure -------------//
+typedef uint32_t feather_result_t;
 
 typedef struct ATTR_ALIGNED(512)
 {
@@ -84,17 +84,17 @@ typedef struct ATTR_ALIGNED(512)
   uint8_t  reserved[56];
 
   // SDEP Command
-  uint16_t (*wiced_sdep) (uint16_t  cmd_id,
-                          uint8_t   paylen,
-                          uint8_t*  parameter,
-                          uint16_t* result_len,
-                          uint8_t*  result_buffer);
+  uint16_t (*feather_sdep) (uint16_t  cmd_id,
+                            uint8_t   paylen,
+                            uint8_t*  parameter,
+                            uint16_t* result_len,
+                            uint8_t*  result_buffer);
   uint32_t sdep_reserved[7];
 
   // RTOS API
-  wiced_result_t (*rtos_delay_ms) (uint32_t ms);
-  wiced_result_t (*rtos_delay_us) (uint32_t us);
-  void           (*rtos_yield) (void);
+  feather_result_t (*rtos_delay_ms) (uint32_t ms);
+  feather_result_t (*rtos_delay_us) (uint32_t us);
+  void             (*rtos_yield) (void);
   uint32_t rtos_reserved[13];
 
   // Peripheral API
