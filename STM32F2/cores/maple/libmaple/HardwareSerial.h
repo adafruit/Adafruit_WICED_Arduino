@@ -69,7 +69,11 @@ public:
 
 
     operator bool() { return true; /*return this->isConnected;*/ }
-    bool enableFlowControl(int8_t cts_pin, int8_t rts_pin);
+    bool enableFlowControl(bool use_cts, bool use_rts);
+    bool enableFlowControl(void)
+    {
+      enableFlowControl(true, true);
+    }
 
     /* Pin accessors */
     int txPin(void) { return this->tx_pin; }

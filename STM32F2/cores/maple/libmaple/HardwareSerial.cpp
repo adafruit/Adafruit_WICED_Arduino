@@ -125,30 +125,26 @@ void HardwareSerial::flush(void) {
     usart_reset_rx(usart_device);
 }
 
-bool HardwareSerial::enableFlowControl(int8_t cts_pin, int8_t rts_pin)
+bool HardwareSerial::enableFlowControl(bool use_cts, bool use_rts)
 {
   // only UART2 has flowcontrol supports
   if ( this->usart_device != USART2 ) return false;
-  if ( cts_pin != BOARD_USART2_CTS_PIN || rts_pin != BOARD_USART2_RTS_PIN ) return false;
 
-  bool cts_en = (cts_pin != -1);
-  bool rts_en = (rts_pin != -1);
-
-  if ( cts_en )
+  if ( use_cts )
   {
-    const stm32_pin_info *cts = &PIN_MAP[cts_pin];
+    const stm32_pin_info *cts = &PIN_MAP[BOARD_USART2_CTS_PIN];
     gpio_set_mode(cts->gpio_device, cts->gpio_bit, (gpio_pin_mode) GPIO_AF_OUTPUT_PP);
     gpio_set_af_mode(cts->gpio_device, cts->gpio_bit, 7);
   }
 
-  if ( rts_en )
+  if ( use_rts )
   {
-    const stm32_pin_info *rts = &PIN_MAP[rts_pin];
+    const stm32_pin_info *rts = &PIN_MAP[BOARD_USART2_RTS_PIN];
     gpio_set_mode(rts->gpio_device, rts->gpio_bit, (gpio_pin_mode) GPIO_AF_OUTPUT_PP);
     gpio_set_af_mode(rts->gpio_device, rts->gpio_bit, 7);
   }
 
-  usart_enable_flowcontrol(this->usart_device, cts_en, rts_en);
+  usart_enable_flowcontrol(this->usart_device, use_cts, use_rts);
 
   return true;
 }
