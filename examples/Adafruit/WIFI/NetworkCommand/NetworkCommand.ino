@@ -37,7 +37,7 @@ void loop() {
   // Connect to an AP
   char* ssid = "ADAFRUIT";
   char* pass = "12345678";
-  if (wiced.connectAP(ssid, pass) == ERROR_NONE)
+  if (feather.connectAP(ssid, pass) == ERROR_NONE)
   {
     Serial.print("Connected to AP with SSID = ");
     Serial.print(ssid);
@@ -46,7 +46,7 @@ void loop() {
 
     uint8_t ping_time[4];
     char* ip = "207.58.139.247";
-    if (wiced.ping(ip, ping_time) == ERROR_NONE)
+    if (feather.ping(ip, ping_time) == ERROR_NONE)
     {
       uint32_t time;
       memcpy(&time, &ping_time[0], sizeof(time));
@@ -58,7 +58,7 @@ void loop() {
 
     uint8_t ipv4[4];
     char* dns = "adafruit.com";
-    if (wiced.dnsLookup(dns, ipv4) == ERROR_NONE)
+    if (feather.dnsLookup(dns, ipv4) == ERROR_NONE)
     {
       Serial.print("The IPv4 address of domain name \"");
       Serial.print(dns); Serial.print("\": ");
@@ -72,7 +72,7 @@ void loop() {
 
     char iso8601_time[27];  // Length of UTC day and time in
                             // ISO 8601 standard is 28 bytes (including '\0')
-    if (wiced.getTime(iso8601_time) == ERROR_NONE)
+    if (feather.getTime(iso8601_time) == ERROR_NONE)
     {
       Serial.print("Current UTC time and date (ISO 8061 standard): ");
       for (int i = 0; i < 27; i++)
@@ -87,7 +87,7 @@ void loop() {
     Serial.println("Connect Error!");
 
   // Stop AP mode
-  if (wiced.disconnectAP() == ERROR_NONE)
+  if (feather.disconnectAP() == ERROR_NONE)
   {
     Serial.println("Disconnected from AP");
   }

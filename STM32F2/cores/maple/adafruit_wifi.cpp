@@ -42,10 +42,10 @@
 
 /******************************************************************************/
 /*!
-    @brief Instantiates a new instance of the AdafruitWICED class
+    @brief Instantiates a new instance of the AdafruitFeather class
 */
 /******************************************************************************/
-AdafruitWICED::AdafruitWICED(void)
+AdafruitFeather::AdafruitFeather(void)
 {
 //  init();
 }
@@ -55,7 +55,7 @@ AdafruitWICED::AdafruitWICED(void)
     @brief Initialization if necessary
 */
 /******************************************************************************/
-void AdafruitWICED::init()
+void AdafruitFeather::init()
 {
 
 }
@@ -72,9 +72,9 @@ void AdafruitWICED::init()
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitWICED::scan(uint16_t* length, uint8_t* ap_details)
+sdep_err_t AdafruitFeather::scan(uint16_t* length, uint8_t* ap_details)
 {
-  return ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_SCAN, 0, NULL, length, ap_details);
+  return ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_SCAN, 0, NULL, length, ap_details);
 }
 
 /******************************************************************************/
@@ -94,7 +94,7 @@ sdep_err_t AdafruitWICED::scan(uint16_t* length, uint8_t* ap_details)
             The passwd could be NULL or empty string if it does not exist
 */
 /******************************************************************************/
-sdep_err_t AdafruitWICED::connectAP(char* ssid, char* passwd)
+sdep_err_t AdafruitFeather::connectAP(char* ssid, char* passwd)
 {
   if (ssid == NULL || ssid == "") return ERROR_INVALIDPARAMETER;
 
@@ -110,8 +110,8 @@ sdep_err_t AdafruitWICED::connectAP(char* ssid, char* passwd)
     strcat(payload, passwd);
   }
 
-  sdep_err_t error = ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_CONNECT, payload_len,
-                                                     (uint8_t*)payload, NULL, NULL);
+  sdep_err_t error = ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_CONNECT, payload_len,
+                                                       (uint8_t*)payload, NULL, NULL);
   free(payload);
   return error;
 }
@@ -124,9 +124,9 @@ sdep_err_t AdafruitWICED::connectAP(char* ssid, char* passwd)
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitWICED::disconnectAP(void)
+sdep_err_t AdafruitFeather::disconnectAP(void)
 {
-  return ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_DISCONNECT, 0, NULL, NULL, NULL);
+  return ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_DISCONNECT, 0, NULL, NULL, NULL);
 }
 
 /******************************************************************************/
@@ -147,7 +147,7 @@ sdep_err_t AdafruitWICED::disconnectAP(void)
             The passwd could be NULL or empty string if it does not exist
 */
 /******************************************************************************/
-sdep_err_t AdafruitWICED::startAP(char* ssid, char* passwd)
+sdep_err_t AdafruitFeather::startAP(char* ssid, char* passwd)
 {
   if (ssid == NULL || ssid == "") return ERROR_INVALIDPARAMETER;
 
@@ -163,8 +163,8 @@ sdep_err_t AdafruitWICED::startAP(char* ssid, char* passwd)
     strcat(payload, passwd);
   }
 
-  sdep_err_t error = ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_APSTART, payload_len,
-                                                     (uint8_t*)payload, NULL, NULL);
+  sdep_err_t error = ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_APSTART, payload_len,
+                                                       (uint8_t*)payload, NULL, NULL);
   free(payload);
   return error;
 }
@@ -177,9 +177,9 @@ sdep_err_t AdafruitWICED::startAP(char* ssid, char* passwd)
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitWICED::startAP(void)
+sdep_err_t AdafruitFeather::startAP(void)
 {
-  return ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_APSTART, 0, NULL, NULL, NULL);
+  return ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_APSTART, 0, NULL, NULL, NULL);
 }
 
 /******************************************************************************/
@@ -190,9 +190,9 @@ sdep_err_t AdafruitWICED::startAP(void)
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitWICED::stopAP(void)
+sdep_err_t AdafruitFeather::stopAP(void)
 {
-  return ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_APSTOP, 0, NULL, NULL, NULL);
+  return ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_APSTOP, 0, NULL, NULL, NULL);
 }
 
 /******************************************************************************/
@@ -207,7 +207,7 @@ sdep_err_t AdafruitWICED::stopAP(void)
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitWICED::ping(char* ip_address_str, uint8_t* response_time)
+sdep_err_t AdafruitFeather::ping(char* ip_address_str, uint8_t* response_time)
 {
   uint8_t payload[4] = {0};
   char* ptr_ip = ip_address_str;
@@ -231,8 +231,8 @@ sdep_err_t AdafruitWICED::ping(char* ip_address_str, uint8_t* response_time)
     ptr_ip++;
   }
 
-  return ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_PING, 4, payload,
-                                         NULL, response_time);
+  return ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_PING, 4, payload,
+                                           NULL, response_time);
 }
 
 /******************************************************************************/
@@ -247,7 +247,7 @@ sdep_err_t AdafruitWICED::ping(char* ip_address_str, uint8_t* response_time)
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitWICED::ping(uint8_t* ip_address, uint8_t* response_time)
+sdep_err_t AdafruitFeather::ping(uint8_t* ip_address, uint8_t* response_time)
 {
   // Check if IP address is valid
   for (int i = 0; i < 3; i++)
@@ -255,8 +255,8 @@ sdep_err_t AdafruitWICED::ping(uint8_t* ip_address, uint8_t* response_time)
     if (ip_address[i] > 255) return ERROR_INVALIDPARAMETER;
   }
 
-  return ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_PING, 4, ip_address,
-                                         NULL, response_time);
+  return ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_PING, 4, ip_address,
+                                           NULL, response_time);
 }
 
 /******************************************************************************/
@@ -272,10 +272,10 @@ sdep_err_t AdafruitWICED::ping(uint8_t* ip_address, uint8_t* response_time)
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitWICED::dnsLookup(char* dns, uint8_t* ipv4_address)
+sdep_err_t AdafruitFeather::dnsLookup(char* dns, uint8_t* ipv4_address)
 {
-  return ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_DNSLOOKUP, strlen(dns),
-                                         (uint8_t*)dns, NULL, ipv4_address);
+  return ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_DNSLOOKUP, strlen(dns),
+                                           (uint8_t*)dns, NULL, ipv4_address);
 }
 
 /******************************************************************************/
@@ -289,11 +289,11 @@ sdep_err_t AdafruitWICED::dnsLookup(char* dns, uint8_t* ipv4_address)
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitWICED::getTime(char* iso8601_time)
+sdep_err_t AdafruitFeather::getTime(char* iso8601_time)
 {
 
-  return ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_GETTIME, 0, NULL, NULL,
-                                         (uint8_t*)iso8601_time);
+  return ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_GETTIME, 0, NULL, NULL,
+                                           (uint8_t*)iso8601_time);
 }
 
 /******************************************************************************/
@@ -310,10 +310,10 @@ sdep_err_t AdafruitWICED::getTime(char* iso8601_time)
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitWICED::httpGetUri(char* uri, uint16_t* length, uint8_t* response)
+sdep_err_t AdafruitFeather::httpGetUri(char* uri, uint16_t* length, uint8_t* response)
 {
-  return ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_HTTPGETURI, strlen(uri),
-                                         (uint8_t*)uri, length, response);
+  return ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_HTTPGETURI, strlen(uri),
+                                           (uint8_t*)uri, length, response);
 }
 
 /******************************************************************************/
@@ -331,12 +331,12 @@ sdep_err_t AdafruitWICED::httpGetUri(char* uri, uint16_t* length, uint8_t* respo
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitWICED::httpPost(char* uri, uint16_t* length, uint8_t* response)
+sdep_err_t AdafruitFeather::httpPost(char* uri, uint16_t* length, uint8_t* response)
 {
   if (uri == NULL) return ERROR_INVALIDPARAMETER;
 
-  return ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_HTTPPOST, strlen(uri),
-                                         (uint8_t*)uri, length, response);
+  return ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_HTTPPOST, strlen(uri),
+                                           (uint8_t*)uri, length, response);
 }
 
 /******************************************************************************/
@@ -359,11 +359,11 @@ sdep_err_t AdafruitWICED::httpPost(char* uri, uint16_t* length, uint8_t* respons
             e.g. "topic/adafruit,offline,1,0"
 */
 /******************************************************************************/
-sdep_err_t AdafruitWICED::mqttLastWill(bool isOnlineTopic, char* topic, char* value, uint8_t qos, uint8_t retain)
+sdep_err_t AdafruitFeather::mqttLastWill(bool isOnlineTopic, char* topic, char* value, uint8_t qos, uint8_t retain)
 {
   if (topic == NULL) return ERROR_INVALIDPARAMETER;
 
-  uint16_t lastWillMessage_len = strlen(topic) + 6; // bool, qos, retain & 3 commas
+  uint16_t lastWillMessage_len = strlen(topic) + 6; // isOnlineTopic, qos, retain & 3 commas
   if (value != NULL) lastWillMessage_len += strlen(value);
   char* lastWillMessage = (char*)malloc(lastWillMessage_len);
 
@@ -386,8 +386,8 @@ sdep_err_t AdafruitWICED::mqttLastWill(bool isOnlineTopic, char* topic, char* va
   utoa(retain, str, 10);
   strcat(lastWillMessage, str);
 
-  sdep_err_t error = ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_MQTTLASTWILL, lastWillMessage_len,
-                                                     (uint8_t*)lastWillMessage, NULL, NULL);
+  sdep_err_t error = ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_MQTTLASTWILL, lastWillMessage_len,
+                                                       (uint8_t*)lastWillMessage, NULL, NULL);
   free(lastWillMessage);
   return error;
 }
@@ -422,8 +422,8 @@ sdep_err_t AdafruitWICED::mqttLastWill(bool isOnlineTopic, char* topic, char* va
             the default port (1883) is used.
 */
 /******************************************************************************/
-sdep_err_t AdafruitWICED::mqttConnect(char* host, uint16_t port, char* clientID,
-                                      char* username, char* password, bool is_tls)
+sdep_err_t AdafruitFeather::mqttConnect(char* host, uint16_t port, char* clientID,
+                                        char* username, char* password, bool is_tls)
 {
   if (host == NULL || host == "") return ERROR_INVALIDPARAMETER;
 
@@ -457,8 +457,8 @@ sdep_err_t AdafruitWICED::mqttConnect(char* host, uint16_t port, char* clientID,
   strcat(mqttBroker, ",");
   if (password != NULL) strcat(mqttBroker, password);
 
-  sdep_err_t error =  ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_MQTTCONNECT, mqttServer_len,
-                                                      (uint8_t*)mqttBroker, NULL, NULL);
+  sdep_err_t error =  ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_MQTTCONNECT, mqttServer_len,
+                                                        (uint8_t*)mqttBroker, NULL, NULL);
   free(mqttBroker);
   return error;
 }
@@ -471,9 +471,9 @@ sdep_err_t AdafruitWICED::mqttConnect(char* host, uint16_t port, char* clientID,
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitWICED::mqttDisconnect(void)
+sdep_err_t AdafruitFeather::mqttDisconnect(void)
 {
-  return ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_MQTTDISCONNECT, 0, NULL, NULL, NULL);
+  return ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_MQTTDISCONNECT, 0, NULL, NULL, NULL);
 }
 
 /******************************************************************************/
@@ -496,7 +496,7 @@ sdep_err_t AdafruitWICED::mqttDisconnect(void)
             e.g. "topic/adafruit,hello,1,0"
 */
 /******************************************************************************/
-sdep_err_t AdafruitWICED::mqttPublish(char* topic, char* value, uint8_t qos, uint8_t retain)
+sdep_err_t AdafruitFeather::mqttPublish(char* topic, char* value, uint8_t qos, uint8_t retain)
 {
   if (topic == NULL) return ERROR_INVALIDPARAMETER;
 
@@ -515,8 +515,8 @@ sdep_err_t AdafruitWICED::mqttPublish(char* topic, char* value, uint8_t qos, uin
   utoa(retain, str, 10);
   strcat(publishedMessage, str);
 
-  sdep_err_t error = ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_MQTTPUBLISH, publishedMessage_len,
-                                                     (uint8_t*)publishedMessage, NULL, NULL);
+  sdep_err_t error = ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_MQTTPUBLISH, publishedMessage_len,
+                                                       (uint8_t*)publishedMessage, NULL, NULL);
   free(publishedMessage);
   return error;
 }
@@ -537,7 +537,7 @@ sdep_err_t AdafruitWICED::mqttPublish(char* topic, char* value, uint8_t qos, uin
             Incoming messages will be handled using ASYNC FIFO
 */
 /******************************************************************************/
-sdep_err_t AdafruitWICED::mqttSubscribe(char* topic, uint8_t qos)
+sdep_err_t AdafruitFeather::mqttSubscribe(char* topic, uint8_t qos)
 {
   if (topic == NULL) return ERROR_INVALIDPARAMETER;
 
@@ -550,8 +550,8 @@ sdep_err_t AdafruitWICED::mqttSubscribe(char* topic, uint8_t qos)
   utoa(qos, str, 10);
   strcat(subTopic, str);
 
-  sdep_err_t error = ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_MQTTSUBSCRIBE, subTopic_len,
-                                                     (uint8_t*)subTopic, NULL, NULL);
+  sdep_err_t error = ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_MQTTSUBSCRIBE, subTopic_len,
+                                                       (uint8_t*)subTopic, NULL, NULL);
   free(subTopic);
   return error;
 }
@@ -564,9 +564,9 @@ sdep_err_t AdafruitWICED::mqttSubscribe(char* topic, uint8_t qos)
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitWICED::mqttUnsubscribe(void)
+sdep_err_t AdafruitFeather::mqttUnsubscribe(void)
 {
-  return ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_MQTTUNSUBSCRIBE, 0, NULL, NULL, NULL);
+  return ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_MQTTUNSUBSCRIBE, 0, NULL, NULL, NULL);
 }
 
 /******************************************************************************/
@@ -581,10 +581,10 @@ sdep_err_t AdafruitWICED::mqttUnsubscribe(void)
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitWICED::irqRead(uint16_t* response_length, uint8_t* response)
+sdep_err_t AdafruitFeather::irqRead(uint16_t* response_length, uint8_t* response)
 {
-  return ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_IRQREAD, 0, NULL,
-                                         response_length, response);
+  return ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_IRQREAD, 0, NULL,
+                                           response_length, response);
 }
 
 /******************************************************************************/
@@ -597,10 +597,10 @@ sdep_err_t AdafruitWICED::irqRead(uint16_t* response_length, uint8_t* response)
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitWICED::irqCount(uint16_t* n_items)
+sdep_err_t AdafruitFeather::irqCount(uint16_t* n_items)
 {
-  return ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_IRQCOUNT, 0, NULL, NULL,
-                                         (uint8_t*)n_items);
+  return ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_IRQCOUNT, 0, NULL, NULL,
+                                           (uint8_t*)n_items);
 }
 
 /******************************************************************************/
@@ -613,10 +613,10 @@ sdep_err_t AdafruitWICED::irqCount(uint16_t* n_items)
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitWICED::irqAvailable(uint16_t* n_available)
+sdep_err_t AdafruitFeather::irqAvailable(uint16_t* n_available)
 {
-  return ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_IRQAVAIL, 0, NULL, NULL,
-                                         (uint8_t*)n_available);
+  return ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_IRQAVAIL, 0, NULL, NULL,
+                                           (uint8_t*)n_available);
 }
 
 /******************************************************************************/
@@ -627,9 +627,9 @@ sdep_err_t AdafruitWICED::irqAvailable(uint16_t* n_available)
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitWICED::irqClear(void)
+sdep_err_t AdafruitFeather::irqClear(void)
 {
-  return ADAFRUIT_FEATHERLIB->wiced_sdep(SDEP_CMD_IRQCLEAR, 0, NULL, NULL, NULL);
+  return ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_IRQCLEAR, 0, NULL, NULL, NULL);
 }
 
-AdafruitWICED wiced;
+AdafruitFeather feather;

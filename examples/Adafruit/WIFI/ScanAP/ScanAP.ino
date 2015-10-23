@@ -56,7 +56,7 @@ void print_ap_details(uint16_t buffer_size, uint8_t* ap_details)
     Serial.print(F("\t"));
 
     // Network type
-    if (ap_details[i++] == WICED_BSS_TYPE_ADHOC)
+    if (ap_details[i++] == BSS_TYPE_ADHOC)
     {
       Serial.print(F("Adhoc"));
     }
@@ -69,23 +69,23 @@ void print_ap_details(uint16_t buffer_size, uint8_t* ap_details)
     memcpy(&security_type, &ap_details[i], sizeof(security_type));
     i += sizeof(security_type);
     
-    if (security_type == WICED_SECURITY_OPEN)
+    if (security_type == SECURITY_OPEN)
       Serial.print(F("Open          "));
-    else if (security_type == WICED_SECURITY_WEP_PSK)
+    else if (security_type == SECURITY_WEP_PSK)
       Serial.print(F("WEP           "));
-    else if (security_type == WICED_SECURITY_WPA_TKIP_PSK)
+    else if (security_type == SECURITY_WPA_TKIP_PSK)
       Serial.print(F("WPA TKIP      "));
-    else if (security_type == WICED_SECURITY_WPA_AES_PSK)
+    else if (security_type == SECURITY_WPA_AES_PSK)
       Serial.print(F("WPA AES       "));
-    else if (security_type == WICED_SECURITY_WPA2_AES_PSK)
+    else if (security_type == SECURITY_WPA2_AES_PSK)
       Serial.print(F("WPA2 AES      "));
-    else if (security_type == WICED_SECURITY_WPA2_TKIP_PSK)
+    else if (security_type == SECURITY_WPA2_TKIP_PSK)
       Serial.print(F("WPA2 TKIP     "));
-    else if (security_type == WICED_SECURITY_WPA2_MIXED_PSK)
+    else if (security_type == SECURITY_WPA2_MIXED_PSK)
       Serial.print(F("WPA2 Mixed    "));
-    else if (security_type == WICED_SECURITY_WPS_OPEN)
+    else if (security_type == SECURITY_WPS_OPEN)
       Serial.print(F("WPS Open Mixed"));
-    else if (security_type == WICED_SECURITY_WPS_SECURE)
+    else if (security_type == SECURITY_WPS_SECURE)
       Serial.print(F("WPS AES       "));
     else 
       Serial.print(F("Unknown       "));
@@ -129,7 +129,7 @@ void loop()
   // Perform AP Scan
   uint16_t buffer_size;
   uint8_t  ap_details[10 * AP_INFO_PACKET_SIZE];
-  uint16_t error = wiced.scan(&buffer_size, ap_details);
+  uint16_t error = feather.scan(&buffer_size, ap_details);
   if (error == ERROR_NONE)
   {
     print_ap_details(buffer_size, ap_details);   // Display AP information via Serial Monitor

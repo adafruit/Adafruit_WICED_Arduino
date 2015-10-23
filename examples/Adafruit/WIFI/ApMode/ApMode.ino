@@ -34,8 +34,8 @@ void loop()
   {
     defaultMode = 0;
     
-    // Start AP mode on WICED module with default SSID and PASSWORD
-    if (wiced.startAP() == ERROR_NONE)
+    // Start AP mode with default SSID and PASSWORD
+    if (feather.startAP() == ERROR_NONE)
     {
       Serial.println("AP mode started with default SSID and PASSWORD");
     }
@@ -46,10 +46,10 @@ void loop()
   {
     defaultMode = 1;
     
-    // Start AP mode on WICED module with default SSID and PASSWORD
+    // Start AP mode with default SSID and PASSWORD
     char* ssid = "ADAFRUIT";
     char* pass = "12345678";
-    if (wiced.startAP(ssid, pass) == ERROR_NONE)
+    if (feather.startAP(ssid, pass) == ERROR_NONE)
     {
       Serial.print("AP mode started with SSID = "); Serial.print(ssid);
       Serial.print(" and PASSWORD = "); Serial.println(pass);
@@ -62,7 +62,7 @@ void loop()
   delay(30000);
   
   // Stop AP mode
-  if (wiced.stopAP() == ERROR_NONE)
+  if (feather.stopAP() == ERROR_NONE)
   {
     Serial.println("AP mode stopped");
   }
