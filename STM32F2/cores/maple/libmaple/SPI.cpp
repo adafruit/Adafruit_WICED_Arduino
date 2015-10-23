@@ -30,7 +30,6 @@
  */
 
 #include "SPI.h"
-
 #include "timer.h"
 #include "util.h"
 #include "rcc.h"
@@ -49,7 +48,7 @@ static const spi_pins* dev_to_spi_pins(spi_dev *dev);
 
 static void enable_device(spi_dev *dev,
                           bool as_master,
-                          SPIFrequency frequency,
+                          uint8_t baud,
                           spi_cfg_flag endianness,
                           spi_mode mode);
 
@@ -102,34 +101,19 @@ HardwareSPI::HardwareSPI(uint32_t spi_num) {
 
 void HardwareSPI::begin(void)
 {
-  enable_device(this->spi_d, true, SPI_468_750KHZ, SPI_FRAME_MSB, (spi_mode) SPI_MODE0);
+  enable_device(this->spi_d, true, SPI_BAUD_PCLK_DIV_8, SPI_FRAME_MSB, (spi_mode) SPI_MODE0);
 }
-
-#if 0
-void HardwareSPI::begin(SPIFrequency frequency, uint32_t bitOrder, uint32_t mode) {
-    if (mode >= 4) {
-        ASSERT(0);
-        return;
-    }
-    spi_cfg_flag end = bitOrder == MSBFIRST ? SPI_FRAME_MSB : SPI_FRAME_LSB;
-    spi_mode m = (spi_mode)mode;
-    enable_device(this->spi_d, true, frequency, end, m);
-}
-
-#else
 
 void HardwareSPI::beginTransaction(SPISettings settings)
 {
-//    this->begin(settings.clock, settings.bitOrder, settings.dataMode);
-//    this->begin(SPI_1_125MHZ, settings.bitOrder, settings.dataMode);
+  spi_reconfigure(this->spi_d, SPI_DFF_8_BIT | SPI_SW_SLAVE | SPI_SOFT_SS |
+                               settings.bitOrder | settings.baud_control | SPI_CR1_MSTR | settings.dataMode);
 }
 
 void HardwareSPI::endTransaction(void)
 {
 
 }
-
-#endif
 
 void HardwareSPI::end(void)
 {
@@ -213,7 +197,6 @@ void HardwareSPI::transfer(void const *tx_buf, void *rx_buf, size_t count)
  */
 
 static void configure_gpios(spi_dev *dev, bool as_master);
-static spi_baud_rate determine_baud_rate(spi_dev *dev, SPIFrequency freq);
 
 static const spi_pins* dev_to_spi_pins(spi_dev *dev) {
   switch (dev->clk_id) {
@@ -229,17 +212,17 @@ static const spi_pins* dev_to_spi_pins(spi_dev *dev) {
  * to HardwareSPI::end(). */
 static void enable_device(spi_dev *dev,
                           bool as_master,
-                          SPIFrequency freq,
+                          uint8_t baud,
                           spi_cfg_flag endianness,
                           spi_mode mode) {
-    spi_baud_rate baud = determine_baud_rate(dev, freq);
+//    spi_baud_rate baud = determine_baud_rate(dev, freq);
     uint32_t cfg_flags = (endianness | SPI_DFF_8_BIT | SPI_SW_SLAVE |
                         (as_master ? SPI_SOFT_SS : 0));
 
     spi_init(dev);
     configure_gpios(dev, as_master);
     if (as_master) {
-        spi_master_enable(dev, baud, mode, cfg_flags);
+        spi_master_enable(dev, (spi_baud_rate) baud, mode, cfg_flags);
     } else {
         spi_slave_enable(dev, mode, cfg_flags);
     }
@@ -305,6 +288,8 @@ static void configure_gpios(spi_dev *dev, bool as_master) {
   }
 }
 
+#if 0
+
 static const spi_baud_rate baud_rates[] __FLASH__ = {
     SPI_BAUD_PCLK_DIV_2,
     SPI_BAUD_PCLK_DIV_4,
@@ -331,8 +316,6 @@ static spi_baud_rate determine_baud_rate(spi_dev *dev, SPIFrequency freq) {
             baud_rates[freq]);
 }
 
-
-#if 0
 void HardwareSPI::beginSlave(uint32_t bitOrder, uint32_t mode) {
     if (mode >= 4) {
         ASSERT(0);

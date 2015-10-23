@@ -46,24 +46,9 @@
 #define SPI_MODE2 SPI_MODE_2
 #define SPI_MODE3 SPI_MODE_3
 
-
-/**
- * @brief Defines the possible SPI communication speeds.
- */
-typedef enum SPIFrequency {
-    SPI_30MHZ     ,
-    SPI_15MHZ     ,
-    SPI_7_5MHZ    ,
-    SPI_3_75MHZ   ,
-    SPI_1_875MHZ  ,
-    SPI_937_500KHZ,
-    SPI_468_750KHZ,
-    SPI_234_375KHZ,
-} SPIFrequency;
-
 class SPISettings {
 public:
-	SPISettings(uint32_t clock, BitOrder bitOrder, uint8_t dataMode) {
+	SPISettings(uint32_t clock, uint8_t bitOrder, uint8_t dataMode) {
 	  init_AlwaysInline(clock, bitOrder, dataMode);
 	}
 
@@ -72,15 +57,26 @@ public:
 	}
 
 private:
-	void init_AlwaysInline(uint32_t clock, BitOrder bitOrder, uint8_t dataMode) __attribute__((__always_inline__)) {
-		this->clock    = clock;
-		this->bitOrder = bitOrder;
-		this->dataMode = dataMode;
+	uint8_t baud_control;
+	uint8_t bitOrder;
+	uint8_t dataMode;
+
+	void init_AlwaysInline(uint32_t clock, uint8_t bitOrder, uint8_t dataMode) __attribute__((__always_inline__)) {
+		this->bitOrder     = (bitOrder == MSBFIRST) ? SPI_FRAME_MSB : SPI_FRAME_LSB;
+		this->dataMode     = dataMode;
+		this->baud_control = SPI_BAUD_PCLK_DIV_256; // minimum as default
+
+		for(uint8_t i =0; i < 8; i++)
+		{
+		  // TODO change to STM32_PCLK2 if using SPI1
+		  if ( ( STM32_PCLK1 / (1 << (i+1)) ) <= clock )
+		  {
+		    this->baud_control = (i << 3);
+		    break;
+		  }
+		}
 	}
 
-	uint32_t clock;
-	BitOrder bitOrder;
-	uint8_t dataMode;
 	friend class HardwareSPI;
 };
 

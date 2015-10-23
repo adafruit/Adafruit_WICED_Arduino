@@ -460,6 +460,8 @@ static inline uint8 spi_is_busy(spi_dev *dev) {
     return dev->regs->SR & SPI_SR_BSY;
 }
 
+
+void spi_reconfigure(spi_dev *dev, uint32 cr1_config);
 /*
  * I2S convenience functions (TODO)
  */

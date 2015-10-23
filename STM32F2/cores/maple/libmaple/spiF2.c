@@ -35,8 +35,6 @@
 #include <libmaple/spiF2.h>
 #include <libmaple/bitband.h>
 
-static void spi_reconfigure(spi_dev *dev, uint32 cr1_config);
-
 /*
  * SPI convenience routines
  */
@@ -156,7 +154,7 @@ void spi_rx_dma_disable(spi_dev *dev) {
  * SPI auxiliary routines
  */
 
-static void spi_reconfigure(spi_dev *dev, uint32 cr1_config) {
+void spi_reconfigure(spi_dev *dev, uint32 cr1_config) {
     spi_irq_disable(dev, SPI_INTERRUPTS_ALL);
     spi_peripheral_disable(dev);
     dev->regs->CR1 = cr1_config;
