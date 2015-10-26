@@ -632,4 +632,19 @@ sdep_err_t AdafruitFeather::irqClear(void)
   return ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_IRQCLEAR, 0, NULL, NULL, NULL);
 }
 
+/******************************************************************************/
+/*!
+    @brief  Clear the ASYNC FIFO and deassert IRQ
+
+    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
+            a specific error if something went wrong.
+*/
+/******************************************************************************/
+sdep_err_t AdafruitFeather::httpsGet(char* host, const char* root_ca_cert, const char* query,
+                                     uint32_t buffer_length, uint8_t* buffer)
+{
+  return ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_HTTPSGET, 0, NULL, NULL, NULL);
+}
+
+
 AdafruitFeather feather;

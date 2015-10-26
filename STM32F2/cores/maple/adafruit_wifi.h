@@ -62,40 +62,41 @@ typedef enum {
   SDEP_CMD_DFU             = 0x0003, /**< Go into DFU mode                     */
   SDEP_CMD_INFO            = 0x0004, /**< System information                   */
   /* GPIO Command */
-  SDEP_CMD_GPIO            = 0x0005, /**< Set GPIO                             */
+  SDEP_CMD_GPIO            = 0x0010, /**< Set GPIO                             */
   /* WiFi Commands */
-  SDEP_CMD_SCAN            = 0x0006, /**< AP scan                              */
-  SDEP_CMD_CONNECT         = 0x0007, /**< Connect to AP                        */
-  SDEP_CMD_DISCONNECT      = 0x0008, /**< Disconnect from AP                   */
-  SDEP_CMD_APSTART         = 0x0009, /**< Start AP                             */
-  SDEP_CMD_APSTOP          = 0x000A, /**< Stop AP                              */
+  SDEP_CMD_SCAN            = 0x0020, /**< AP scan                              */
+  SDEP_CMD_CONNECT         = 0x0021, /**< Connect to AP                        */
+  SDEP_CMD_DISCONNECT      = 0x0022, /**< Disconnect from AP                   */
+  SDEP_CMD_APSTART         = 0x0023, /**< Start AP                             */
+  SDEP_CMD_APSTOP          = 0x0024, /**< Stop AP                              */
   /* Network Commands */
-  SDEP_CMD_PING            = 0x000B, /**< Ping                                 */
-  SDEP_CMD_DNSLOOKUP       = 0x000C, /**< DNS lookup                           */
-  SDEP_CMD_GETTIME         = 0x000D, /**< Get time                             */
-  SDEP_CMD_HTTPGETURI      = 0x000E, /**< HTTP Get URI                         */
-  SDEP_CMD_HTTPPOST        = 0x000F, /**< HTTP Post                            */
+  SDEP_CMD_PING            = 0x0030, /**< Ping                                 */
+  SDEP_CMD_DNSLOOKUP       = 0x0031, /**< DNS lookup                           */
+  SDEP_CMD_GETTIME         = 0x0032, /**< Get time                             */
+  SDEP_CMD_HTTPGETURI      = 0x0033, /**< HTTP Get URI                         */
+  SDEP_CMD_HTTPPOST        = 0x0034, /**< HTTP Post                            */
+  SDEP_CMD_HTTPSGET        = 0x0035, /**< HTTPS Get                            */
   /* DEBUG Commands */
-  SDEP_CMD_STACKDUMP       = 0x0010, /**< Dump the stack                       */
-  SDEP_CMD_STACKSIZE       = 0x0011, /**< Get stack size                       */
-  SDEP_CMD_HEAPDUMP        = 0x0012, /**< Dump the heap                        */
-  SDEP_CMD_HEAPSIZE        = 0x0013, /**< Get heap size                        */
-  SDEP_CMD_THREADLIST      = 0x0014, /**< Get Thread information               */
+  SDEP_CMD_STACKDUMP       = 0x0040, /**< Dump the stack                       */
+  SDEP_CMD_STACKSIZE       = 0x0041, /**< Get stack size                       */
+  SDEP_CMD_HEAPDUMP        = 0x0042, /**< Dump the heap                        */
+  SDEP_CMD_HEAPSIZE        = 0x0043, /**< Get heap size                        */
+  SDEP_CMD_THREADLIST      = 0x0044, /**< Get Thread information               */
   /* SPI Flash Commands */
-  SDEP_CMD_SFLASHFORMAT    = 0x0015, /**< Format SPI flash memory              */
-  SDEP_CMD_SFLASHLIST      = 0x0016, /**< List SPI flash contents              */
+  SDEP_CMD_SFLASHFORMAT    = 0x0050, /**< Format SPI flash memory              */
+  SDEP_CMD_SFLASHLIST      = 0x0051, /**< List SPI flash contents              */
   /* MQTT Commands */
-  SDEP_CMD_MQTTLASTWILL    = 0x0017, /**< Get Last Will message                */
-  SDEP_CMD_MQTTCONNECT     = 0x0018, /**< Connect to a broker                  */
-  SDEP_CMD_MQTTDISCONNECT  = 0x0019, /**< Disconnect from a broker             */
-  SDEP_CMD_MQTTPUBLISH     = 0x001A, /**< Publish a message to a topic         */
-  SDEP_CMD_MQTTSUBSCRIBE   = 0x001B, /**< Subscribe to a topic                 */
-  SDEP_CMD_MQTTUNSUBSCRIBE = 0x001C, /**< Unsubscribe from a topic             */
+  SDEP_CMD_MQTTLASTWILL    = 0x0060, /**< Get Last Will message                */
+  SDEP_CMD_MQTTCONNECT     = 0x0061, /**< Connect to a broker                  */
+  SDEP_CMD_MQTTDISCONNECT  = 0x0062, /**< Disconnect from a broker             */
+  SDEP_CMD_MQTTPUBLISH     = 0x0063, /**< Publish a message to a topic         */
+  SDEP_CMD_MQTTSUBSCRIBE   = 0x0064, /**< Subscribe to a topic                 */
+  SDEP_CMD_MQTTUNSUBSCRIBE = 0x0065, /**< Unsubscribe from a topic             */
   /* IRQ Commands */
-  SDEP_CMD_IRQREAD         = 0x001D, /**< Read from async response fifo        */
-  SDEP_CMD_IRQCOUNT        = 0x001E, /**< Number of records in async fifo      */
-  SDEP_CMD_IRQAVAIL        = 0x001F, /**< Number of records LEFT in async fifo */
-  SDEP_CMD_IRQCLEAR        = 0x0020, /**< Clear async fifo & deassert IRQ      */
+  SDEP_CMD_IRQREAD         = 0x0070, /**< Read from async response fifo        */
+  SDEP_CMD_IRQCOUNT        = 0x0071, /**< Number of records in async fifo      */
+  SDEP_CMD_IRQAVAIL        = 0x0072, /**< Number of records LEFT in async fifo */
+  SDEP_CMD_IRQCLEAR        = 0x0073, /**< Clear async fifo & deassert IRQ      */
 } sdep_command_t;
 
 typedef uint16_t sdep_err_t;
@@ -123,6 +124,7 @@ public:
   sdep_err_t getTime(char* iso8601_time);
   sdep_err_t httpGetUri(char* uri, uint16_t* length, uint8_t* response);
   sdep_err_t httpPost(char* uri, uint16_t* length, uint8_t* response);
+  sdep_err_t httpsGet(char* host, const char* root_ca_cert, const char* query, uint32_t buffer_length, uint8_t* buffer);
 
 //  /* DEBUG Commands */
 //  sdep_err_t stackDump();
