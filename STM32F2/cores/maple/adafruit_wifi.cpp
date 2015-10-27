@@ -634,7 +634,17 @@ sdep_err_t AdafruitFeather::irqClear(void)
 
 /******************************************************************************/
 /*!
-    @brief  Clear the ASYNC FIFO and deassert IRQ
+    @brief  Download from a host using a secure HTTPS connection
+
+    @param[in]    host           Host name
+
+    @param[in]    root_ca_cert   Root CA certificate of host
+
+    @param[in]    query          Query from user
+
+    @param[in]    buffer_length  Length of the output buffer provided by user
+
+    @param[out]   buffer         Output buffer
 
     @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
             a specific error if something went wrong.
@@ -643,7 +653,27 @@ sdep_err_t AdafruitFeather::irqClear(void)
 sdep_err_t AdafruitFeather::httpsGet(char* host, const char* root_ca_cert, const char* query,
                                      uint32_t buffer_length, uint8_t* buffer)
 {
-  return ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_HTTPSGET, 0, NULL, NULL, NULL);
+  if (host == NULL || host == "") return ERROR_INVALIDPARAMETER;
+
+  uint32_t cert_addr = (uint32_t)root_ca_cert;
+  uint32_t query_addr = (uint32_t)query;
+
+  uint16_t paylen = strlen(host) + 1 + sizeof(cert_addr) + sizeof(query_addr) + sizeof(buffer_length);
+  uint8_t* payload = (uint8_t*)malloc(paylen);
+  uint8_t* p_payload = payload;
+
+  memcpy(p_payload, (uint8_t*)host, strlen(host));
+  p_payload += strlen(host);
+  *p_payload++ = 0;
+  memcpy(p_payload, (uint8_t*)&cert_addr, sizeof(cert_addr));
+  p_payload += sizeof(cert_addr);
+  memcpy(p_payload, (uint8_t*)&query_addr, sizeof(query_addr));
+  p_payload += sizeof(query_addr);
+  memcpy(p_payload, (uint8_t*)&buffer_length, sizeof(buffer_length));
+
+  sdep_err_t error =  ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_HTTPSGET, paylen, payload, NULL, buffer);
+  free(payload);
+  return error;
 }
 
 
