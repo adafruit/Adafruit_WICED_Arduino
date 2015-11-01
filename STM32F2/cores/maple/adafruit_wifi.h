@@ -63,6 +63,7 @@ typedef enum {
   SDEP_CMD_INFO            = 0x0004, /**< System information                   */
   /* GPIO Command */
   SDEP_CMD_GPIO            = 0x0010, /**< Set GPIO                             */
+  SDEP_CMD_RANDOMNUMBER    = 0x0011, /**< Random Number                        */
   /* WiFi Commands */
   SDEP_CMD_SCAN            = 0x0020, /**< AP scan                              */
   SDEP_CMD_CONNECT         = 0x0021, /**< Connect to AP                        */
@@ -108,6 +109,8 @@ private:
 
 public:
   AdafruitFeather(void);
+
+  sdep_err_t randomNumber(uint32_t* random32bit);
 
   /* WiFi Commands */
   sdep_err_t scan(uint16_t* length, uint8_t* ap_details);
