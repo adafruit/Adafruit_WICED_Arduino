@@ -408,6 +408,40 @@ sdep_err_t AdafruitFeather::mqttLastWill(bool isOnlineTopic, char* topic, char* 
   return error;
 }
 
+/**************************************************************************/
+/*!
+    @brief  Return a random MQTT Client ID
+
+    @param  clientID[out]       Random client ID
+
+    @param  length[in]          Number of characters
+
+    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
+            a specific error if something went wrong.
+*/
+/**************************************************************************/
+sdep_err_t AdafruitFeather::mqttGenerateRandomID(char* clientID, uint8_t length)
+{
+  static const char alphanum[] =
+      "0123456789"
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      "abcdefghijklmnopqrstuvwxyz";
+
+  uint8_t i;
+  sdep_err_t error;
+  uint32_t random32bit;
+  for (i = 0; i < length; i++)
+  {
+    /* Get the random number */
+    if ( (error = randomNumber(&random32bit)) == 0)
+    {
+      clientID[i] = alphanum[random32bit % (sizeof(alphanum) -  1)];
+    }
+    else return error;
+  }
+  clientID[length] = 0;
+}
+
 /******************************************************************************/
 /*!
     @brief        Connect to a broker specified by host name, port, client ID,

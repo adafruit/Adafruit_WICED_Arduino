@@ -1,5 +1,7 @@
 /*
-  Random Number Example using RNG HW
+  Random Number Generator (RNG) Example
+  1. Generate a 32-bit random number
+  2. Generate a 23-character random ID
 
   author: huynguyen
  */
@@ -18,7 +20,7 @@ void setup() {
   // wait for Serial
   while (!Serial) delay(1);
 
-  Serial.println(F("Random Number Example\r\n"));
+  Serial.println(F("Random Number Generator Example\r\n"));
 }
 
 /**************************************************************************/
@@ -34,10 +36,25 @@ void loop() {
   uint32_t random32bit;
   if (feather.randomNumber(&random32bit) == 0)
   {
-    Serial.print(F("Generated random number: "));
+    Serial.print(F("Generated a random number: "));
     Serial.println(random32bit, DEC);
-    Serial.println(F(""));
+  }
+  else
+  {
+    Serial.println(F("Failed to generate a random number!"));
   }
 
+  char clientID[24];
+  if (feather.mqttGenerateRandomID(clientID, 23) == 0)
+  {
+    Serial.print(F("Generated a 23-character ID: "));
+    Serial.println(clientID);
+  }
+  else
+  {
+    Serial.println(F("Failed to generate a random ID!"));
+  }
+  
+  Serial.println(F(""));
   delay(10000);
 }
