@@ -6,7 +6,7 @@ extern "C"
 {
 #endif
 
-const char* root_ca_cert =
+const char root_ca_cert[] =
 "-----BEGIN CERTIFICATE-----\r\n"
 "MIIDVDCCAjygAwIBAgIDAjRWMA0GCSqGSIb3DQEBBQUAMEIxCzAJBgNVBAYTAlVT\r\n"
 "MRYwFAYDVQQKEw1HZW9UcnVzdCBJbmMuMRswGQYDVQQDExJHZW9UcnVzdCBHbG9i\r\n"

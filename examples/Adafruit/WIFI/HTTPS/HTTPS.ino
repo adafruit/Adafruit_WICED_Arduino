@@ -13,18 +13,24 @@
 #include "adafruit_wifi.h"
 #include "certificate.h"
 
-#define WLAN_SSID            "huy-laptop"
-#define WLAN_PASS            "12345678"
+#define WLAN_SSID            "SSID of AP"
+#define WLAN_PASS            "Password of AP"
 #define TLS_ENABLED          (1)
 
 #define HOST_ADDRESS         "www.google.com"
-#define BUFFER_LENGTH        (1024)
+#define BUFFER_LENGTH        (2048)
 
-const char* query =
-    "GET / HTTP/1.1\r\n"
-    "Host: \r\n"
-    "Connection: close\r\n"
+const char query[] =
+    "GET / HTTP/1.1\r\n" \
+    "Host: www.google.com\r\n" \
+    "Connection: close\r\n" \
     "\r\n";
+
+//const char query[] =
+//    "GET /testwifi/index.html HTTP/1.1\r\n" \
+//    "Host: www.adafruit.com\r\n" \
+//    "Connection: close\r\n" \
+//    "\r\n";
 
 int wifi_error = -1; // FAIL
 uint8_t result_buf[BUFFER_LENGTH];

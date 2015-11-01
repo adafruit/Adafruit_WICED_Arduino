@@ -18,9 +18,9 @@ extern \"C\"\r\n\
 #endif\r\n\
 \r\n")
              
-f_out.write("const char* ")
+f_out.write("const char ")
 f_out.write(sys.argv[1])
-f_out.write(" =")
+f_out.write("[] =")
 
 for line in f_in:
     f_out.write("\r\n\"")
