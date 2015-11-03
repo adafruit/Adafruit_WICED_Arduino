@@ -79,11 +79,23 @@ int connectAP()
 /**************************************************************************/
 int connectBroker()
 {
+  // Generate a 23-character random clientID
+  char* clientID = NULL;
+  char id[24];
+  if (feather.mqttGenerateRandomID(id, 23) == 0)
+  {
+    clientID = id;
+  }
+  else
+  {
+    clientID = CLIENT_ID;
+  }
+
   // Attempt to connect to a Broker
   Serial.print(F("Attempting to connect to broker: "));
   Serial.print(MQTT_HOST); Serial.print(":"); Serial.println(MQTT_PORT);
 
-  int error = feather.mqttConnect(MQTT_HOST, MQTT_PORT, CLIENT_ID, ADAFRUIT_USERNAME, AIO_KEY, TLS_ENABLED); 
+  int error = feather.mqttConnect(MQTT_HOST, MQTT_PORT, clientID, ADAFRUIT_USERNAME, AIO_KEY, TLS_ENABLED); 
   if (error == 0)
   {
     Serial.println(F("Connected!"));
