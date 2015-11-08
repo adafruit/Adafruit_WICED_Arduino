@@ -1,12 +1,12 @@
 import sys
 
-if (len(sys.argv) < 3):
+if (len(sys.argv) < 4):
   print "Wrong syntax!"
-  print "Usage: python certs_to_h.py <variable_name> <cert_file>"
+  print "Usage: python certs_to_h.py <cert_file> <output_variable_name> <output_file_name>"
   sys.exit()
 
-f_in = open(sys.argv[2], 'r')
-f_out = open("certificate.h", 'w')
+f_in = open(sys.argv[1], 'r')
+f_out = open(sys.argv[3]+".h", 'w')
 
 f_out.write(
 "#ifndef _CERTIFICATE_H_\r\n\
@@ -19,7 +19,7 @@ extern \"C\"\r\n\
 \r\n")
              
 f_out.write("const char ")
-f_out.write(sys.argv[1])
+f_out.write(sys.argv[2])
 f_out.write("[] =")
 
 for line in f_in:

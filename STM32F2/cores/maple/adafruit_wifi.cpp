@@ -726,5 +726,115 @@ sdep_err_t AdafruitFeather::httpsGet(char* host, const char* root_ca_cert, const
   return error;
 }
 
+/******************************************************************************/
+/*!
+    @brief  Send HTTP request (GET or POST) to server
+
+    @param[in]    url            URL (e.g. www.adafruit.com/testwifi/testpost.php
+                                      or   www.adafruit.com/testwifi/index.html)
+
+    @param[in]    content        Request content (e.g. var1=value1&var2=value2)
+
+    @param[in]    method         HTTP method (GET_METHOD or POST_METHOD)
+
+    @param[in]    buffer_length  Length of the output buffer provided by user
+
+    @param[out]   buffer         Output buffer
+
+    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
+            a specific error if something went wrong.
+*/
+/******************************************************************************/
+sdep_err_t AdafruitFeather::httpRequest(const char* url, const char* content, uint8_t method, uint32_t buffer_length, uint8_t* buffer)
+{
+  if (url == NULL || url == "") return ERROR_INVALIDPARAMETER;
+  if (method != GET_METHOD && method != POST_METHOD) return ERROR_INVALIDPARAMETER;
+
+  uint16_t paylen = strlen(url) + 1 + sizeof(buffer_length) + 1;
+  if (content != NULL) paylen += strlen(content);
+
+  uint8_t* payload = (uint8_t*)malloc(paylen);
+  uint8_t* p_payload = payload;
+
+  memcpy(p_payload, (uint8_t*)url, strlen(url));
+  p_payload += strlen(url);
+  *p_payload++ = 0;
+  if (content != NULL)
+  {
+    memcpy(p_payload, (uint8_t*)content, strlen(content));
+    p_payload += strlen(content);
+  }
+  *p_payload++ = 0;
+  *p_payload++ = method;
+  memcpy(p_payload, (uint8_t*)&buffer_length, sizeof(buffer_length));
+
+  sdep_err_t error =  ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_HTTPREQUEST, paylen, payload, NULL, buffer);
+  free(payload);
+  return error;
+}
+
+/******************************************************************************/
+/*!
+    @brief  Send HTTPS request (GET or POST) to server
+
+    @param[in]    url            URL (e.g. www.adafruit.com/testwifi/testpost.php
+                                      or   www.adafruit.com/testwifi/index.html)
+
+
+    @param[in]    root_ca_cert   Certificate chain
+
+    @param[in]    content        Request content (e.g. var1=value1&var2=value2)
+
+    @param[in]    method         HTTP method (GET_METHOD or POST_METHOD)
+
+    @param[in]    buffer_length  Length of the output buffer provided by user
+
+    @param[out]   buffer         Output buffer
+
+    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
+            a specific error if something went wrong.
+*/
+/******************************************************************************/
+sdep_err_t AdafruitFeather::httpsRequest(const char* url, const char* root_ca_cert,
+                                         const char* content, uint8_t method,
+                                         uint32_t buffer_length, uint8_t* buffer)
+{
+  if (url == NULL || url == "") return ERROR_INVALIDPARAMETER;
+  if (method != GET_METHOD && method != POST_METHOD) return ERROR_INVALIDPARAMETER;
+
+  uint32_t cert_addr = (uint32_t)root_ca_cert;
+  uint16_t paylen = strlen(url) + 1 + sizeof(cert_addr) + sizeof(buffer_length) + 1;
+  if (content != NULL) paylen += strlen(content);
+
+  uint8_t* payload = (uint8_t*)malloc(paylen);
+  uint8_t* p_payload = payload;
+
+  /* URL */
+  memcpy(p_payload, (uint8_t*)url, strlen(url));
+  p_payload += strlen(url);
+  *p_payload++ = 0;
+
+  /* Certificate memory address */
+  memcpy(p_payload, (uint8_t*)&cert_addr, sizeof(cert_addr));
+  p_payload += sizeof(cert_addr);
+
+  /* Request content */
+  if (content != NULL)
+  {
+    memcpy(p_payload, (uint8_t*)content, strlen(content));
+    p_payload += strlen(content);
+  }
+  *p_payload++ = 0;
+
+  /* Method */
+  *p_payload++ = method;
+
+  /* Length of output buffer */
+  memcpy(p_payload, (uint8_t*)&buffer_length, sizeof(buffer_length));
+
+  sdep_err_t error =  ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_HTTPSREQUEST, paylen, payload, NULL, buffer);
+  free(payload);
+  return error;
+}
 
 AdafruitFeather feather;

@@ -1,24 +1,12 @@
 /*
-  HTTPS Example:
+  HTTP Example:
   1.  Connect to pre-specified AP
   2.  Send GET/POST request to server
-
-  Note: cert_to_h.py is used to generate "certificate.h" from certificate file (.pem)
-  Usage:    python cert_to_h.py <cert_file> <variable_name> <output_filename>
-  Example:  python cert_to_h.py google.pem root_ca_cert certificate
-
-  Certificate file (*.pem) for a website is generated using openssl ultility.
-  Usage:    echo "" | openssl s_client -connect <hostname>:<port> -showcerts \
-            -CApath /etc/ssl/certs | awk '/BEGIN CERT/ {p=1}; p; /END CERT/ {p=0}' > <filename>.pem
-
-  Example:  echo "" | openssl s_client -connect www.adafruit.com:443 -showcerts \
-            -CApath /etc/ssl/certs | awk '/BEGIN CERT/ {p=1}; p; /END CERT/ {p=0}' > <filename>.pem
 
   author: huynguyen
  */
 
 #include "adafruit_wifi.h"
-#include "certificate.h"
 
 #define WLAN_SSID            "SSID of AP"
 #define WLAN_PASS            "Password of AP"
@@ -36,6 +24,7 @@
 //#define URL                 "www.google.com"
 //#define CONTENT             ""
 //#define METHOD              GET_METHOD
+
 
 int wifi_error = -1; // FAIL
 uint8_t result_buf[BUFFER_LENGTH];
@@ -81,7 +70,7 @@ void setup()
   // wait for Serial
   while (!Serial) delay(1);
 
-  Serial.println(F("HTTPS Example\r\n"));
+  Serial.println(F("HTTP Example\r\n"));
 
   wifi_error = connectAP();
 }
@@ -98,8 +87,8 @@ void loop() {
   
   if (wifi_error == 0)
   {
-    int https_error = -1;
-    if ( (https_error = feather.httpsRequest(URL, root_ca_cert, CONTENT, METHOD, BUFFER_LENGTH, result_buf) ) == 0)
+    int http_error = -1;
+    if ( (http_error = feather.httpRequest(URL, CONTENT, METHOD, BUFFER_LENGTH, result_buf) ) == 0)
     {
       Serial.println(F("Download Completed!\r\n"));
       Serial.println((char*)result_buf);
@@ -107,9 +96,10 @@ void loop() {
     else
     {
       Serial.print(F("Error: "));
-      Serial.println(https_error, HEX);
+      Serial.println(http_error, HEX);
     }
   }
 
+  Serial.println(F("\r\n"));
   delay(10000);
 }

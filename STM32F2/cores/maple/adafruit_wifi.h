@@ -77,6 +77,8 @@ typedef enum {
   SDEP_CMD_HTTPGETURI      = 0x0033, /**< HTTP Get URI                         */
   SDEP_CMD_HTTPPOST        = 0x0034, /**< HTTP Post                            */
   SDEP_CMD_HTTPSGET        = 0x0035, /**< HTTPS Get                            */
+  SDEP_CMD_HTTPREQUEST     = 0x0036, /**< HTTP Request                         */
+  SDEP_CMD_HTTPSREQUEST    = 0x0037, /**< HTTPs Request                        */
   /* DEBUG Commands */
   SDEP_CMD_STACKDUMP       = 0x0040, /**< Dump the stack                       */
   SDEP_CMD_STACKSIZE       = 0x0041, /**< Get stack size                       */
@@ -99,6 +101,11 @@ typedef enum {
   SDEP_CMD_IRQAVAIL        = 0x0072, /**< Number of records LEFT in async fifo */
   SDEP_CMD_IRQCLEAR        = 0x0073, /**< Clear async fifo & deassert IRQ      */
 } sdep_command_t;
+
+enum {
+  GET_METHOD    = 0x01,
+  POST_METHOD   = 0x02,
+};
 
 typedef uint16_t sdep_err_t;
 
@@ -129,6 +136,8 @@ public:
   sdep_err_t httpPost(char* uri, uint16_t* length, uint8_t* response);
   sdep_err_t httpsGet(char* host, const char* root_ca_cert, const char* query, uint32_t buffer_length, uint8_t* buffer);
 
+  sdep_err_t httpRequest(const char* url, const char* content, uint8_t method, uint32_t buffer_length, uint8_t* buffer);
+  sdep_err_t httpsRequest(const char* url, const char* root_ca_cert, const char* content, uint8_t method, uint32_t buffer_length, uint8_t* buffer);
 //  /* DEBUG Commands */
 //  sdep_err_t stackDump();
 //  sdep_err_t stackSize();
