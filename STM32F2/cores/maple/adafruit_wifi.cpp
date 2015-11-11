@@ -290,7 +290,7 @@ sdep_err_t AdafruitFeather::ping(uint8_t* ip_address, uint8_t* response_time)
 /******************************************************************************/
 sdep_err_t AdafruitFeather::dnsLookup(char* dns, uint8_t* ipv4_address)
 {
-  return ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_DNSLOOKUP, strlen(dns),
+  return ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_DNSLOOKUP, strlen(dns)+1,
                                            (uint8_t*)dns, NULL, ipv4_address);
 }
 
