@@ -2,9 +2,10 @@
   Adafruit IO - MQTT Example:
   1.  Connect to pre-specified AP
   2.  Set the LastWill message
-  3.  Connect to Adafruit IO with user name & password - optional TLS
+  3.  Generate a 23-character random client ID
+  3.  Connect to Adafruit IO with user name, password, client ID & TLS config (optional)
   4.  Read arrived message from ASYN FIFO
-  5.  Publish random value in [-50,50] to specified topic on AIO every 20 seconds
+  5.  Publish random value in [0,50] to specified topic on AIO every 20 seconds
 
   author: huynguyen
  */
@@ -264,10 +265,12 @@ void loop() {
       readArrivedMessage();
 
       // Buffer for temperature
-      char str[4];
-      temp = random(-50, 50);
-      if (temp > 100) temp = 0;
-      itoa(temp, str, 10);
+      char str[3] = "0";
+      uint32_t randomNum;
+      if (feather.randomNumber(&randomNum) == 0)
+      {
+        utoa( randomNum % 50, str, 10);
+      }
 
       // qos = 1, retain = 0
       if (feather.mqttPublish(PUBLISH_TOPIC, str, QOS, RETAIN) == 0)
