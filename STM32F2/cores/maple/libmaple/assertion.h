@@ -38,22 +38,12 @@
 
 /** \file
  *  \brief TBD
- *
- *  \note TBD
- */
-
-/** \ingroup TBD
- *  \defgroup TBD
- *  \brief TBD
- *
- *  @{
  */
 
 #ifndef _ASSERTION_H_
 #define _ASSERTION_H_
 
-#include "projectconfig.h"
-#include "common_header.h"
+#include "compiler.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -126,11 +116,21 @@ extern "C"
 //--------------------------------------------------------------------+
 // Logical Assert
 //--------------------------------------------------------------------+
-#define ASSERT(...)                      ASSERT_TRUE(__VA_ARGS__)
+#define ASSERT_FAULT(condition)          ASSERT(condition)
+#if CFG_DEBUG
+  #define ASSERT(condition)              ASSERT_RETVOID(condition)
+#else
+  #define ASSERT(condition)
+#endif
+
+#define ASSERT_RETVOID(condition)        ASSERT_DEFINE( , (condition), VOID_RETURN, "", "")
+#define ASSERT_RETERR(...)               ASSERT_TRUE(__VA_ARGS__)
+
 #define ASSERT_TRUE(condition  , error)  ASSERT_DEFINE( , (condition), error, "%s", "")
 #define ASSERT_FALSE(condition , error)  ASSERT_DEFINE( ,!(condition), error, "%s", "")
 
-#define VERIFY(condition, error)       VERIFY_DEFINE( , (condition), error)
+#define VERIFY(condition, error)         VERIFY_DEFINE( , (condition), error)
+#define VERIFY_RETVOID(condition)        VERIFY_DEFINE( , (condition), VOID_RETURN)
 
 //--------------------------------------------------------------------+
 // Pointer Assert

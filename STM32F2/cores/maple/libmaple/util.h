@@ -88,6 +88,7 @@ void throb(void);
 #define DEBUG_LEVEL DEBUG_ALL
 #endif
 
+#if 0
 #if DEBUG_LEVEL >= DEBUG_ALL
 #define ASSERT(exp)                              \
     if (exp) {                                   \
@@ -106,6 +107,7 @@ void throb(void);
     }
 #else
 #define ASSERT_FAULT(exp) (void)((0))
+#endif
 #endif
 
 #ifdef __cplusplus
