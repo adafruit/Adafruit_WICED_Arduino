@@ -46,6 +46,8 @@
 #define SPI_MODE2 SPI_MODE_2
 #define SPI_MODE3 SPI_MODE_3
 
+#define SPI_HAS_TRANSACTION 1
+
 class SPISettings {
 public:
 	SPISettings(uint32_t clock, uint8_t bitOrder, uint8_t dataMode) {

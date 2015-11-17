@@ -40,6 +40,9 @@
 #include <string.h>
 #include <stdlib.h>
 
+
+AdafruitFeather feather;
+
 /******************************************************************************/
 /*!
     @brief Instantiates a new instance of the AdafruitFeather class
@@ -837,4 +840,58 @@ sdep_err_t AdafruitFeather::httpsRequest(const char* url, const char* root_ca_ce
   return error;
 }
 
-AdafruitFeather feather;
+/******************************************************************************/
+/*!
+    @brief  Send HTTP request (GET or POST) to server
+
+    @param[in]    url            URL (e.g. www.adafruit.com/testwifi/testpost.php
+                                      or   www.adafruit.com/testwifi/index.html)
+
+    @param[in]    content        Request content (e.g. var1=value1&var2=value2)
+
+    @param[in]    method         HTTP method (GET_METHOD or POST_METHOD)
+
+    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
+            a specific error if something went wrong.
+*/
+/******************************************************************************/
+sdep_err_t AdafruitFeather::asyncHttpRequest(const char* url, const char* content, uint8_t method)
+{
+  if (url == NULL || url == "") return ERROR_INVALIDPARAMETER;
+  if (method != GET_METHOD && method != POST_METHOD) return ERROR_INVALIDPARAMETER;
+
+  uint16_t paylen = strlen(url) + 1 + 1;
+  if (content != NULL) paylen += strlen(content);
+
+  uint8_t* payload = (uint8_t*)malloc(paylen);
+  uint8_t* p_payload = payload;
+
+  memcpy(p_payload, (uint8_t*)url, strlen(url));
+  p_payload += strlen(url);
+  *p_payload++ = 0;
+  if (content != NULL)
+  {
+    memcpy(p_payload, (uint8_t*)content, strlen(content));
+    p_payload += strlen(content);
+  }
+  *p_payload++ = 0;
+  *p_payload = method;
+
+  sdep_err_t error =  ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_ASYNCHTTPREQUEST, paylen, payload, NULL, NULL);
+  free(payload);
+  return error;
+}
+
+void AdafruitFeather::addHttpDataReceivedCallBack(ada_http_rx_callback ada_httpCallback)
+{
+  ada_http_callback = ada_httpCallback;
+}
+
+// Callback from featherlib when new data received
+void http_callback(uint8_t* data, uint16_t data_length, uint16_t available)
+{
+  if (feather.ada_http_callback != NULL)
+  {
+    feather.ada_http_callback(data, data_length, available);
+  }
+}

@@ -66,6 +66,9 @@ public:
     ~HardWire();
 
     void begin(uint8_t = 0x00);
+
+ private:
+    boolean _init;
 };
 extern HardWire Wire;
 #endif // _HARDWIRE_H_

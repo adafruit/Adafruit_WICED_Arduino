@@ -65,6 +65,8 @@ HardWire::HardWire(uint8_t dev_sel, uint8_t flags) {
         ASSERT(1);
     }
     dev_flags = flags;
+
+    _init = false;
 }
 
 HardWire::~HardWire() {
@@ -73,7 +75,10 @@ HardWire::~HardWire() {
 }
 
 void HardWire::begin(uint8_t self_addr) {
+  if (!_init) {
     i2c_master_enable(sel_hard, dev_flags);
+    _init = true;
+  }
 }
 
-HardWire Wire(1, I2C_FAST_MODE); // I2c1
+HardWire Wire(1, 0); // I2c1
