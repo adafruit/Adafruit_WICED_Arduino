@@ -434,10 +434,10 @@ void i2c_master_enable(i2c_dev *dev, uint32 flags) {
     i2c_init(dev);
 
     gpio_set_af_mode(dev->gpio_port, dev->scl_pin, 4);
-    gpio_set_mode(dev->gpio_port, dev->scl_pin, GPIO_AF_OUTPUT_OD);
+    gpio_set_mode(dev->gpio_port, dev->scl_pin, GPIO_AF_OUTPUT_OD | GPIO_PUPD_INPUT_PU);
 
     gpio_set_af_mode(dev->gpio_port, dev->sda_pin, 4);
-    gpio_set_mode(dev->gpio_port, dev->sda_pin, GPIO_AF_OUTPUT_OD);
+    gpio_set_mode(dev->gpio_port, dev->sda_pin, GPIO_AF_OUTPUT_OD | GPIO_PUPD_INPUT_PU);
 
     /* I2C1 and I2C2 are fed from APB1, clocked at 36MHz */
     i2c_set_input_clk(dev, I2C_CLK);
