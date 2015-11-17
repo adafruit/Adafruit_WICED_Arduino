@@ -38,6 +38,7 @@
 #define _ADAFRUIT_WIFI_H_
 
 #include <stdint.h>
+#include <string.h>
 
 /**
  * Maximum packet size for one access point (52 bytes)
@@ -78,7 +79,8 @@ typedef enum {
   SDEP_CMD_HTTPPOST        = 0x0034, /**< HTTP Post                            */
   SDEP_CMD_HTTPSGET        = 0x0035, /**< HTTPS Get                            */
   SDEP_CMD_HTTPREQUEST     = 0x0036, /**< HTTP Request                         */
-  SDEP_CMD_HTTPSREQUEST    = 0x0037, /**< HTTPs Request                        */
+  SDEP_CMD_HTTPSREQUEST     = 0x0037, /**< HTTPs Request                        */
+  SDEP_CMD_ASYNCHTTPREQUEST = 0x0038, /**< Async HTTP Request                   */
   /* DEBUG Commands */
   SDEP_CMD_STACKDUMP       = 0x0040, /**< Dump the stack                       */
   SDEP_CMD_STACKSIZE       = 0x0041, /**< Get stack size                       */
@@ -109,10 +111,19 @@ enum {
 
 typedef uint16_t sdep_err_t;
 
+extern "C"
+{
+  void http_callback(uint8_t* data, uint16_t data_length, uint16_t available);
+  /* Callback prototypes */
+  typedef void (*ada_http_rx_callback)(uint8_t* data, uint16_t data_length, uint16_t available);
+}
+
 class AdafruitFeather
 {
 private:
   void init();
+
+  ada_http_rx_callback  ada_http_callback;
 
 public:
   AdafruitFeather(void);
@@ -138,6 +149,9 @@ public:
 
   sdep_err_t httpRequest(const char* url, const char* content, uint8_t method, uint32_t buffer_length, uint8_t* buffer);
   sdep_err_t httpsRequest(const char* url, const char* root_ca_cert, const char* content, uint8_t method, uint32_t buffer_length, uint8_t* buffer);
+  sdep_err_t asyncHttpRequest(const char* url, const char* content, uint8_t method);
+  void       addHttpDataReceivedCallBack(ada_http_rx_callback ada_httpCallback = NULL);
+
 //  /* DEBUG Commands */
 //  sdep_err_t stackDump();
 //  sdep_err_t stackSize();
@@ -163,6 +177,9 @@ public:
   sdep_err_t irqCount(uint16_t* n_items);
   sdep_err_t irqAvailable(uint16_t* n_available);
   sdep_err_t irqClear(void);
+
+  /* callback from featherlib */
+  friend void http_callback(uint8_t* data, uint16_t data_length, uint16_t available);
 };
 
 extern AdafruitFeather feather;
