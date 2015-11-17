@@ -1,7 +1,17 @@
 /*
-  HTTP Example:
-  1.  Connect to pre-specified AP
-  2.  Send GET/POST request to server
+  AsyncHTTP Example:
+  
+  1.  Start the HTTP server via the python script in 'AsyncHTTP/http_server'
+      $ cd http_server
+      $ python server.py
+  2.  Make a note of your local IP address (the method to determine your IP
+      address will depend on your operating system)
+  3.  Add your AP details via WLAN_SSID and WLAN_PASS in this sketch
+  4.  Add the URL for the HTTP server you started to URL in this sketch,
+      using the IP address of your machine and the filesname to load.
+      For example:
+      "192.168.1.1/text_1KB.txt"
+  2.  Run the example and open serial monitor to see the async HTTP request
 
   author: huynguyen
  */
@@ -14,15 +24,6 @@
 #define URL                  "IP_Address_of_Server/text_1KB.txt"
 #define CONTENT              ""
 #define METHOD               GET_METHOD
-
-//#define URL                 "www.adafruit.com/testwifi/testpost.php"
-//#define CONTENT             "name=foo&email=bar@adafruit.com"
-//#define METHOD              POST_METHOD
-
-//#define URL                 "www.google.com"
-//#define CONTENT             ""
-//#define METHOD              GET_METHOD
-
 
 int wifi_error = -1; // FAIL
 /**************************************************************************/
