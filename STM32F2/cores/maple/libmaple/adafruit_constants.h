@@ -48,6 +48,13 @@ enum
   WIFI_INTERFACE_P2P     = 2,
 };
 
+typedef enum
+{
+  ERROR_NONE              = 0x0000,
+  ERROR_INVALIDPARAMETER  = 0x8025,
+  ERROR_NO_MEMORY         = 0x80AA   /**< Temporary */
+} err_t;
+
 #ifdef __cplusplus
  }
 #endif
