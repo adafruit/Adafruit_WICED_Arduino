@@ -29,6 +29,8 @@
 
 
 int wifi_error = -1; // FAIL
+unsigned long crc = ~0L;
+int first_chunk = 1;
 
 static PROGMEM prog_uint32_t crc_table[16] = {
   0x00000000, 0x1db71064, 0x3b6e20c8, 0x26d930ac,
@@ -44,15 +46,6 @@ unsigned long crc_update(unsigned long crc, byte data)
   crc = pgm_read_dword_near(crc_table + (tbl_idx & 0x0f)) ^ (crc >> 4);
   tbl_idx = crc ^ (data >> (1 * 4));
   crc = pgm_read_dword_near(crc_table + (tbl_idx & 0x0f)) ^ (crc >> 4);
-  return crc;
-}
-
-unsigned long crc_string(char *s)
-{
-  unsigned long crc = ~0L;
-  while (*s)
-    crc = crc_update(crc, *s++);
-  crc = ~crc;
   return crc;
 }
 
@@ -95,11 +88,20 @@ void rxCallback(uint8_t* data, uint16_t data_length, uint16_t available)
   Serial.print(F("Data Received!\r\n"));
   Serial.println((char*)data);
 
-  char* p_data = strstr((char*)data, "\r\n\r\n");
-  p_data += 4;
-  unsigned long crc = crc_string(p_data);
-  Serial.print(F("\r\nCRC = "));
-  Serial.println(crc, HEX);
+  char* p_data = NULL;
+  if (first_chunk == 1)
+  {
+    p_data = strstr((char*)data, "\r\n\r\n");
+    p_data += 4;
+    first_chunk = 0;
+  }
+  else
+  {
+    p_data = (char*)data;
+  }
+
+  while (*p_data)
+    crc = crc_update(crc, *p_data++);
 }
 
 /**************************************************************************/
@@ -139,8 +141,16 @@ void loop() {
       Serial.print(F("Error: "));
       Serial.println(http_error, HEX);
     }
+    else
+    {
+      crc = ~crc;
+      Serial.print(F("\r\nCRC = "));
+      Serial.println(crc, HEX);
+    }
   }
 
+  first_chunk = 1;
+  crc = ~0L;
   Serial.println(F("\r\n"));
   delay(10000);
 }
