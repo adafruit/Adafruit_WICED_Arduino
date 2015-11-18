@@ -16,6 +16,8 @@
       $ python crc32.py <filename>
 
   author: huynguyen
+  
+  CRC code by James Bowman: http://excamera.com/sphinx/article-crc.html
  */
 
 #include "adafruit_wifi.h"
