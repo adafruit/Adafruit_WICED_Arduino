@@ -5,15 +5,15 @@
 //#include "w5100.h"
 #include "IPAddress.h"
 #include "EthernetClient.h"
-#include "EthernetServer.h"
-#include "Dhcp.h"
+//#include "EthernetServer.h"
+//#include "Dhcp.h"
 
 #define MAX_SOCK_NUM 4
 
 class EthernetClass {
 private:
   IPAddress _dnsServerAddress;
-  DhcpClass* _dhcp;
+//  DhcpClass* _dhcp;
 public:
   static uint8_t _state[MAX_SOCK_NUM];
   static uint16_t _server_port[MAX_SOCK_NUM];

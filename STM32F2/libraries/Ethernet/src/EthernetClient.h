@@ -5,6 +5,22 @@
 #include "Client.h"
 #include "IPAddress.h"
 
+enum
+{
+  TCP_STATUS_CLOSED           = 1,               /* Connection is closed state   */
+  TCP_STATUS_LISTEN_STATE     = 2,               /* Server listen state          */
+  TCP_STATUS_SYN_SENT         = 3,               /* SYN sent state               */
+  TCP_STATUS_SYN_RECEIVED     = 4,               /* SYN received state           */
+  TCP_STATUS_ESTABLISHED      = 5,               /* Connection established state */
+  TCP_STATUS_CLOSE_WAIT       = 6,               /* Close Wait state             */
+  TCP_STATUS_FIN_WAIT_1       = 7,               /* Finished Wait 1 state        */
+  TCP_STATUS_FIN_WAIT_2       = 8,               /* Finished Wait 2 state        */
+  TCP_STATUS_CLOSING          = 9,               /* Closing state                */
+  TCP_STATUS_TIMED_WAIT       = 10,              /* Timed wait state             */
+  TCP_STATUS_LAST_ACK         = 11,              /* Last ACK state               */
+};
+
+
 class EthernetClient : public Client {
 
 public:
@@ -34,8 +50,7 @@ public:
   using Print::write;
 
 private:
-  static uint16_t _srcport;
-  uint8_t _sock;
+  uint32_t _tcp_handle;
 };
 
 #endif

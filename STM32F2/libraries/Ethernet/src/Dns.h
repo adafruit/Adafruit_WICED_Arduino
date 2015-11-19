@@ -5,7 +5,8 @@
 #ifndef DNSClient_h
 #define DNSClient_h
 
-#include <EthernetUdp.h>
+//#include <EthernetUdp.h>
+#include <IPAddress.h>
 
 class DNSClient
 {
@@ -19,7 +20,7 @@ public:
         @result 1 if aIPAddrString was successfully converted to an IP address,
                 else error code
     */
-    int inet_aton(const char *aIPAddrString, IPAddress& aResult);
+//    int inet_aton(const char *aIPAddrString, IPAddress& aResult);
 
     /** Resolve the given hostname to an IP address.
         @param aHostname Name to be resolved
@@ -29,13 +30,11 @@ public:
     */
     int getHostByName(const char* aHostname, IPAddress& aResult);
 
-protected:
-    uint16_t BuildRequest(const char* aName);
-    uint16_t ProcessResponse(uint16_t aTimeout, IPAddress& aAddress);
+    // failed return INADDR_NONE
+    IPAddress getHostByName(const char* aHostname);
 
-    IPAddress iDNSServer;
-    uint16_t iRequestId;
-    EthernetUDP iUdp;
+protected:
+
 };
 
 #endif

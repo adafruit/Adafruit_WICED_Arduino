@@ -1,6 +1,5 @@
-#include "utility/w5100.h"
 #include "Ethernet.h"
-#include "Dhcp.h"
+//#include "Dhcp.h"
 
 // XXX: don't make assumptions about the value of MAX_SOCK_NUM.
 uint8_t EthernetClass::_state[MAX_SOCK_NUM] = { 
@@ -10,6 +9,7 @@ uint16_t EthernetClass::_server_port[MAX_SOCK_NUM] = {
 
 int EthernetClass::begin(uint8_t *mac_address)
 {
+#if 0
   static DhcpClass s_dhcp;
   _dhcp = &s_dhcp;
 
@@ -36,6 +36,9 @@ int EthernetClass::begin(uint8_t *mac_address)
   }
 
   return ret;
+#endif
+
+  return 1;
 }
 
 void EthernetClass::begin(uint8_t *mac_address, IPAddress local_ip)
@@ -64,6 +67,7 @@ void EthernetClass::begin(uint8_t *mac_address, IPAddress local_ip, IPAddress dn
 
 void EthernetClass::begin(uint8_t *mac, IPAddress local_ip, IPAddress dns_server, IPAddress gateway, IPAddress subnet)
 {
+#if 0
   W5100.init();
   SPI.beginTransaction(SPI_ETHERNET_SETTINGS);
   W5100.setMACAddress(mac);
@@ -72,9 +76,11 @@ void EthernetClass::begin(uint8_t *mac, IPAddress local_ip, IPAddress dns_server
   W5100.setSubnetMask(subnet.raw_address());
   SPI.endTransaction();
   _dnsServerAddress = dns_server;
+#endif
 }
 
 int EthernetClass::maintain(){
+#if 0
   int rc = DHCP_CHECK_NONE;
   if(_dhcp != NULL){
     //we have a pointer to dhcp, use it
@@ -99,38 +105,44 @@ int EthernetClass::maintain(){
     }
   }
   return rc;
+#endif
+
+  return 0;
 }
 
 IPAddress EthernetClass::localIP()
 {
-  IPAddress ret;
-  SPI.beginTransaction(SPI_ETHERNET_SETTINGS);
-  W5100.getIPAddress(ret.raw_address());
-  SPI.endTransaction();
-  return ret;
+  uint8_t interface   = WIFI_INTERFACE_STATION;
+  uint32_t ip_address = 0;
+
+  ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_GET_IPV4_ADDRESS, 1, &interface,
+                                    NULL, &ip_address);
+  return IPAddress(ip_address);
 }
 
 IPAddress EthernetClass::subnetMask()
 {
-  IPAddress ret;
-  SPI.beginTransaction(SPI_ETHERNET_SETTINGS);
-  W5100.getSubnetMask(ret.raw_address());
-  SPI.endTransaction();
-  return ret;
+  uint8_t interface   = WIFI_INTERFACE_STATION;
+  uint32_t ip_address = 0;
+
+  ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_GET_NETMASK, 1, &interface,
+                                    NULL, &ip_address);
+  return IPAddress(ip_address);
 }
 
 IPAddress EthernetClass::gatewayIP()
 {
-  IPAddress ret;
-  SPI.beginTransaction(SPI_ETHERNET_SETTINGS);
-  W5100.getGatewayIp(ret.raw_address());
-  SPI.endTransaction();
-  return ret;
+  uint8_t interface   = WIFI_INTERFACE_STATION;
+  uint32_t ip_address = 0;
+
+  ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_GET_GATEWAY_ADDRESS, 1, &interface,
+                                    NULL, &ip_address);
+  return IPAddress(ip_address);
 }
 
 IPAddress EthernetClass::dnsServerIP()
 {
-  return _dnsServerAddress;
+  return this->gatewayIP(); // return gateway IP
 }
 
 EthernetClass Ethernet;

@@ -44,6 +44,7 @@
 #define _ASSERTION_H_
 
 #include "compiler.h"
+#include "adafruit_constants.h"
 
 #ifdef __cplusplus
 extern "C"

@@ -15,7 +15,8 @@
  */
 
 #include <SPI.h>
-#include <Ethernet.h>
+//#include <Ethernet.h>
+#include <EthernetClient.h>
 
 // Enter a MAC address for your controller below.
 // Newer Ethernet shields have a MAC address printed on a sticker on the shield
@@ -41,12 +42,12 @@ void setup() {
   }
 
   // start the Ethernet connection:
-  if (Ethernet.begin(mac) == 0) {
-    Serial.println("Failed to configure Ethernet using DHCP");
+//  if (Ethernet.begin(mac) == 0) {
+//    Serial.println("Failed to configure Ethernet using DHCP");
     // no point in carrying on, so do nothing forevermore:
     // try to congifure using IP address instead of DHCP:
-    Ethernet.begin(mac, ip);
-  }
+//    Ethernet.begin(mac, ip);
+//  }
   // give the Ethernet shield a second to initialize:
   delay(1000);
   Serial.println("connecting...");

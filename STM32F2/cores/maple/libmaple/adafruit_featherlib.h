@@ -57,6 +57,7 @@
 
 typedef struct ATTR_ALIGNED(512)
 {
+  // Static Information
   uint32_t arduino_magic;
   uint32_t arduino_version;
   uint8_t  reserved[56];
@@ -80,18 +81,22 @@ typedef uint32_t feather_result_t;
 
 typedef struct ATTR_ALIGNED(512)
 {
-  // Information
+  // Static Information
   uint32_t firmware_magic;
   uint32_t firmware_version;
   uint8_t  reserved[56];
 
   // SDEP Command
-  uint16_t (*feather_sdep) (uint16_t  cmd_id,
-                            uint8_t   paylen,
-                            uint8_t*  parameter,
-                            uint16_t* result_len,
-                            uint8_t*  result_buffer);
-  uint32_t sdep_reserved[7];
+  uint16_t (*feather_sdep) (uint16_t  cmd_id     ,
+                            uint8_t   paylen     , void const* parameter,
+                            uint16_t* result_len , void* result_buffer);
+
+  uint16_t (*sdep_execute_extend)(uint16_t  cmd_id     ,
+                                  uint8_t   paylen1    , void const * parameter1,
+                                  uint8_t   paylen2    , void const * parameter2,
+                                  uint16_t* result_len , void* result_buffer);
+
+  uint32_t sdep_reserved[6];
 
   // RTOS API
   feather_result_t (*rtos_delay_ms) (uint32_t ms);
@@ -107,6 +112,9 @@ typedef struct ATTR_ALIGNED(512)
   int (*file_write) (int file, char *ptr, int len);
   int (*file_read)  (int file, char *ptr, int len);
   int (*file_peek)  (int file);
+  uint32_t file_reserved;
+
+  //
 }adafruit_featherlib_t;
 
 #define ADAFRUIT_FEATHERLIB_BASE    ((uint32_t) 0x8010200)

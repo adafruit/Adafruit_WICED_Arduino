@@ -39,6 +39,7 @@
 
 #include <stdint.h>
 #include <string.h>
+#include "adafruit_constants.h"
 
 /**
  * Maximum packet size for one access point (52 bytes)
@@ -53,55 +54,65 @@
  *     1  byte        : Radio band
  */
 #define AP_INFO_PACKET_SIZE      52
-#define ERROR_NONE               0x0000
-#define ERROR_INVALIDPARAMETER   0x8025
-#define ERROR_NO_MEMORY          0x80AA   /**< Temporary */
 
 typedef enum {
-  SDEP_CMD_RESET           = 0x0001, /**< HW reset                             */
-  SDEP_CMD_FACTORYRESET    = 0x0002, /**< Factory reset                        */
-  SDEP_CMD_DFU             = 0x0003, /**< Go into DFU mode                     */
-  SDEP_CMD_INFO            = 0x0004, /**< System information                   */
+  SDEP_CMD_RESET               = 0x0001, /**< HW reset                             */
+  SDEP_CMD_FACTORYRESET        = 0x0002, /**< Factory reset                        */
+  SDEP_CMD_DFU                 = 0x0003, /**< Go into DFU mode                     */
+  SDEP_CMD_INFO                = 0x0004, /**< System information                   */
   /* GPIO Command */
-  SDEP_CMD_GPIO            = 0x0010, /**< Set GPIO                             */
-  SDEP_CMD_RANDOMNUMBER    = 0x0011, /**< Random Number                        */
+  SDEP_CMD_GPIO                = 0x0010, /**< Set GPIO                             */
+  SDEP_CMD_RANDOMNUMBER        = 0x0011, /**< Random Number                        */
   /* WiFi Commands */
-  SDEP_CMD_SCAN            = 0x0020, /**< AP scan                              */
-  SDEP_CMD_CONNECT         = 0x0021, /**< Connect to AP                        */
-  SDEP_CMD_DISCONNECT      = 0x0022, /**< Disconnect from AP                   */
-  SDEP_CMD_APSTART         = 0x0023, /**< Start AP                             */
-  SDEP_CMD_APSTOP          = 0x0024, /**< Stop AP                              */
+  SDEP_CMD_SCAN                = 0x0020, /**< AP scan                              */
+  SDEP_CMD_CONNECT             = 0x0021, /**< Connect to AP                        */
+  SDEP_CMD_DISCONNECT          = 0x0022, /**< Disconnect from AP                   */
+  SDEP_CMD_APSTART             = 0x0023, /**< Start AP                             */
+  SDEP_CMD_APSTOP              = 0x0024, /**< Stop AP                              */
   /* Network Commands */
-  SDEP_CMD_PING            = 0x0030, /**< Ping                                 */
-  SDEP_CMD_DNSLOOKUP       = 0x0031, /**< DNS lookup                           */
-  SDEP_CMD_GETTIME         = 0x0032, /**< Get time                             */
-  SDEP_CMD_HTTPGETURI      = 0x0033, /**< HTTP Get URI                         */
-  SDEP_CMD_HTTPPOST        = 0x0034, /**< HTTP Post                            */
-  SDEP_CMD_HTTPSGET        = 0x0035, /**< HTTPS Get                            */
-  SDEP_CMD_HTTPREQUEST     = 0x0036, /**< HTTP Request                         */
-  SDEP_CMD_HTTPSREQUEST     = 0x0037, /**< HTTPs Request                        */
-  SDEP_CMD_ASYNCHTTPREQUEST = 0x0038, /**< Async HTTP Request                   */
+  SDEP_CMD_PING                = 0x0030, /**< Ping                                 */
+  SDEP_CMD_DNSLOOKUP           = 0x0031, /**< DNS lookup                           */
+  SDEP_CMD_GETTIME             = 0x0032, /**< Get time                             */
+  SDEP_CMD_HTTPGETURI          = 0x0033, /**< HTTP Get URI                         */
+  SDEP_CMD_HTTPPOST            = 0x0034, /**< HTTP Post                            */
+  SDEP_CMD_HTTPSGET            = 0x0035, /**< HTTPS Get                            */
+  SDEP_CMD_HTTPREQUEST         = 0x0036, /**< HTTP Request                         */
+  SDEP_CMD_HTTPSREQUEST        = 0x0037, /**< HTTPs Request                        */
+  SDEP_CMD_ASYNCHTTPREQUEST    = 0x0038, /**< Async HTTP Request                   */
   /* DEBUG Commands */
-  SDEP_CMD_STACKDUMP       = 0x0040, /**< Dump the stack                       */
-  SDEP_CMD_STACKSIZE       = 0x0041, /**< Get stack size                       */
-  SDEP_CMD_HEAPDUMP        = 0x0042, /**< Dump the heap                        */
-  SDEP_CMD_HEAPSIZE        = 0x0043, /**< Get heap size                        */
-  SDEP_CMD_THREADLIST      = 0x0044, /**< Get Thread information               */
+  SDEP_CMD_STACKDUMP           = 0x0040, /**< Dump the stack                       */
+  SDEP_CMD_STACKSIZE           = 0x0041, /**< Get stack size                       */
+  SDEP_CMD_HEAPDUMP            = 0x0042, /**< Dump the heap                        */
+  SDEP_CMD_HEAPSIZE            = 0x0043, /**< Get heap size                        */
+  SDEP_CMD_THREADLIST          = 0x0044, /**< Get Thread information               */
   /* SPI Flash Commands */
-  SDEP_CMD_SFLASHFORMAT    = 0x0050, /**< Format SPI flash memory              */
-  SDEP_CMD_SFLASHLIST      = 0x0051, /**< List SPI flash contents              */
+  SDEP_CMD_SFLASHFORMAT        = 0x0050, /**< Format SPI flash memory              */
+  SDEP_CMD_SFLASHLIST          = 0x0051, /**< List SPI flash contents              */
   /* MQTT Commands */
-  SDEP_CMD_MQTTLASTWILL    = 0x0060, /**< Get Last Will message                */
-  SDEP_CMD_MQTTCONNECT     = 0x0061, /**< Connect to a broker                  */
-  SDEP_CMD_MQTTDISCONNECT  = 0x0062, /**< Disconnect from a broker             */
-  SDEP_CMD_MQTTPUBLISH     = 0x0063, /**< Publish a message to a topic         */
-  SDEP_CMD_MQTTSUBSCRIBE   = 0x0064, /**< Subscribe to a topic                 */
-  SDEP_CMD_MQTTUNSUBSCRIBE = 0x0065, /**< Unsubscribe from a topic             */
+  SDEP_CMD_MQTTLASTWILL        = 0x0060, /**< Get Last Will message                */
+  SDEP_CMD_MQTTCONNECT         = 0x0061, /**< Connect to a broker                  */
+  SDEP_CMD_MQTTDISCONNECT      = 0x0062, /**< Disconnect from a broker             */
+  SDEP_CMD_MQTTPUBLISH         = 0x0063, /**< Publish a message to a topic         */
+  SDEP_CMD_MQTTSUBSCRIBE       = 0x0064, /**< Subscribe to a topic                 */
+  SDEP_CMD_MQTTUNSUBSCRIBE     = 0x0065, /**< Unsubscribe from a topic             */
   /* IRQ Commands */
-  SDEP_CMD_IRQREAD         = 0x0070, /**< Read from async response fifo        */
-  SDEP_CMD_IRQCOUNT        = 0x0071, /**< Number of records in async fifo      */
-  SDEP_CMD_IRQAVAIL        = 0x0072, /**< Number of records LEFT in async fifo */
-  SDEP_CMD_IRQCLEAR        = 0x0073, /**< Clear async fifo & deassert IRQ      */
+  SDEP_CMD_IRQREAD             = 0x0070, /**< Read from async response fifo        */
+  SDEP_CMD_IRQCOUNT            = 0x0071, /**< Number of records in async fifo      */
+  SDEP_CMD_IRQAVAIL            = 0x0072, /**< Number of records LEFT in async fifo */
+  SDEP_CMD_IRQCLEAR            = 0x0073, /**< Clear async fifo & deassert IRQ      */
+  /* Gateway Commands */
+  SDEP_CMD_GET_IPV4_ADDRESS    = 0x0080, /**< Get IPv4 Address                     */
+  SDEP_CMD_GET_IPV6_ADDRESS    = 0x0081, /**< Get IPv6 Address                     */
+  SDEP_CMD_GET_GATEWAY_ADDRESS = 0x0082, /**< Get Gateway's IPv4 Address           */
+  SDEP_CMD_GET_NETMASK         = 0x0083, /**< Get Netmask's IPv4 Address           */
+  /* TCP Commnads */
+  SDEP_CMD_TCP_CONNECT       = 0x0090,
+  SDEP_CMD_TCP_WRITE         = 0x0091,
+  SDEP_CMD_TCP_FLUSH         = 0x0092,
+  SDEP_CMD_TCP_READ          = 0x0093,
+  SDEP_CMD_TCP_CLOSE         = 0x0094,
+  SDEP_CMD_TCP_STATUS        = 0x0095,
+
 } sdep_command_t;
 
 enum {

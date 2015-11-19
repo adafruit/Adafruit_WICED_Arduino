@@ -35,6 +35,8 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include "compiler.h"
+#include "assertion.h"
 
 typedef unsigned char uint8;
 typedef unsigned short uint16;
