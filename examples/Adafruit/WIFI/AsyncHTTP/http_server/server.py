@@ -1,7 +1,11 @@
 import SimpleHTTPServer
 import SocketServer
+import sys
 
-PORT = 8000
+PORT = 80
+
+if (len(sys.argv) > 1):
+  PORT = int(sys.argv[1])
 
 Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
 
