@@ -93,11 +93,17 @@ int EthernetClient::read() {
   }
 }
 
-int EthernetClient::read(uint8_t *buf, size_t size) {
-  uint16_t len = (uint16_t) size;
+int EthernetClient::read(uint8_t *buf, size_t size)
+{
+  uint8_t para2[6];
+
+  memcpy(para2, &size, 2); // uint16_t only
+  *((uint32_t*)(para2+2)) = 1000; // timeout
+
+
   if( ERROR_NONE != ADAFRUIT_FEATHERLIB->sdep_execute_extend(SDEP_CMD_TCP_READ,
                                                              4, &_tcp_handle,
-                                                             2, &len,
+                                                             6, para2,
                                                              NULL, buf) )
   {
     return -1;
