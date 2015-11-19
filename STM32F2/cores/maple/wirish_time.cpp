@@ -31,12 +31,12 @@
 #include "adafruit_featherlib.h"
 #include "wirish_time.h"
 
-void delay(unsigned long ms)
+void delay(uint32_t ms)
 {
   ADAFRUIT_FEATHERLIB->rtos_delay_ms(ms);
 }
 
-void delayMicroseconds(uint32 us)
+void delayMicroseconds(uint32_t us)
 {
   ADAFRUIT_FEATHERLIB->rtos_delay_us(us);
 }

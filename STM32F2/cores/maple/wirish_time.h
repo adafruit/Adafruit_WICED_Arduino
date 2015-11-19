@@ -89,7 +89,7 @@ static inline uint32 micros(void) {
  * @param ms the number of milliseconds to delay.
  * @see delayMicroseconds()
  */
-void delay(unsigned long ms);
+void delay(uint32_t ms);
 
 /**
  * Delay for at least the given number of microseconds.
@@ -101,7 +101,7 @@ void delay(unsigned long ms);
  * @param us the number of microseconds to delay.
  * @see delay()
  */
-void delayMicroseconds(uint32 us);
+void delayMicroseconds(uint32_t us);
 
 void yield(void);
 
