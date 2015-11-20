@@ -753,7 +753,7 @@ sdep_err_t AdafruitFeather::httpRequest(const char* url, const char* content, ui
   if (url == NULL || url == "") return ERROR_INVALIDPARAMETER;
   if (method != GET_METHOD && method != POST_METHOD) return ERROR_INVALIDPARAMETER;
 
-  uint16_t paylen = strlen(url) + 1 + sizeof(buffer_length) + 1;
+  uint16_t paylen = strlen(url) + sizeof(buffer_length) + 3; // 2 null terminators & 1 byte for METHOD
   if (content != NULL) paylen += strlen(content);
 
   uint8_t* payload = (uint8_t*)malloc(paylen);
@@ -806,7 +806,9 @@ sdep_err_t AdafruitFeather::httpsRequest(const char* url, const char* root_ca_ce
   if (method != GET_METHOD && method != POST_METHOD) return ERROR_INVALIDPARAMETER;
 
   uint32_t cert_addr = (uint32_t)root_ca_cert;
-  uint16_t paylen = strlen(url) + 1 + sizeof(cert_addr) + sizeof(buffer_length) + 1;
+
+  // 2 null terminators & 1 byte for METHOD are added to payload buffer
+  uint16_t paylen = strlen(url) + sizeof(cert_addr) + sizeof(buffer_length) + 3;
   if (content != NULL) paylen += strlen(content);
 
   uint8_t* payload = (uint8_t*)malloc(paylen);
@@ -857,11 +859,14 @@ sdep_err_t AdafruitFeather::httpsRequest(const char* url, const char* root_ca_ce
 /******************************************************************************/
 sdep_err_t AdafruitFeather::asyncHttpRequest(const char* url, const char* content, uint8_t method)
 {
-  if (url == NULL || url == "") return ERROR_INVALIDPARAMETER;
+  if (url == NULL || strlen(url) == 0) return ERROR_INVALIDPARAMETER;
   if (method != GET_METHOD && method != POST_METHOD) return ERROR_INVALIDPARAMETER;
 
-  uint16_t paylen = strlen(url) + 1 + 1;
-  if (content != NULL) paylen += strlen(content);
+  uint16_t paylen = strlen(url) + 3; // 2 null terminators & 1 byte for METHOD
+  if ( (content != NULL) && (strlen(content) > 0) )
+  {
+    paylen += strlen(content);
+  }
 
   uint8_t* payload = (uint8_t*)malloc(paylen);
   uint8_t* p_payload = payload;
@@ -869,7 +874,7 @@ sdep_err_t AdafruitFeather::asyncHttpRequest(const char* url, const char* conten
   memcpy(p_payload, (uint8_t*)url, strlen(url));
   p_payload += strlen(url);
   *p_payload++ = 0;
-  if (content != NULL)
+  if ( (content != NULL) && (strlen(content) > 0) )
   {
     memcpy(p_payload, (uint8_t*)content, strlen(content));
     p_payload += strlen(content);
