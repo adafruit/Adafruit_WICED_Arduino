@@ -26,25 +26,34 @@
 
 #include "adafruit_wifi.h"
 
-#define WLAN_SSID            "SSID"
-#define WLAN_PASS            "PASS"
+#define WLAN_SSID            ""
+#define WLAN_PASS            ""
 
-#define URL                  "URL/filename"
+#define URL                  "IPADDRESS:8000/text_10KB.txt"
 #define CONTENT              ""
 #define METHOD               GET_METHOD
 
 
-int wifi_error = -1; // FAIL
-unsigned long crc = ~0L;
-int first_chunk = 1;
+int           wifi_error  = -1;    // FAIL
+unsigned long crc         = ~0L;
+int           first_chunk = 1;
 
-static PROGMEM prog_uint32_t crc_table[16] = {
+// CRC Lookup table to speed things up
+static PROGMEM prog_uint32_t crc_table[16] = 
+{
   0x00000000, 0x1db71064, 0x3b6e20c8, 0x26d930ac,
   0x76dc4190, 0x6b6b51f4, 0x4db26158, 0x5005713c,
   0xedb88320, 0xf00f9344, 0xd6d6a3e8, 0xcb61b38c,
   0x9b64c2b0, 0x86d3d2d4, 0xa00ae278, 0xbdbdf21c
 };
 
+/**************************************************************************/
+/*!
+    @brief  Feeds a byte (data) into the existing CRC32 value (crc)
+
+    @return The updated CRC32 value
+*/
+/**************************************************************************/
 unsigned long crc_update(unsigned long crc, byte data)
 {
   byte tbl_idx;
@@ -57,7 +66,7 @@ unsigned long crc_update(unsigned long crc, byte data)
 
 /**************************************************************************/
 /*!
-    @brief  Connect to pre-specified AP
+    @brief  Connect to the WLAN_SSID access point using WLAN_PASS
 
     @return Error code
 */
@@ -86,14 +95,16 @@ int connectAP()
 
 /**************************************************************************/
 /*!
-    This function is called whenever new data received
+    @brief This function is called whenever new data is received from
+           the feather.asyncHttpRequest function
 */
 /**************************************************************************/
 void rxCallback(uint8_t* data, uint16_t data_length, uint16_t available)
 {
-  Serial.print(F("Data Received!\r\n"));
-  Serial.println((char*)data);
+  // Send the raw payload to the Serial Monitor ...
+  Serial.print((char*)data);
 
+  // ... then calculate the CRC32 for the payload until EOF
   char* p_data = NULL;
   if (first_chunk == 1)
   {
@@ -123,9 +134,12 @@ void setup()
   // wait for Serial
   while (!Serial) delay(1);
 
-  Serial.println(F("HTTP Example\r\n"));
-  
+  Serial.println(F("HTTP Async Callback Example\r\n"));
+
+  // Register the async callback hander
   feather.addHttpDataReceivedCallBack(rxCallback);
+
+  // Try to connect to the access point
   wifi_error = connectAP();
 }
 
@@ -134,7 +148,8 @@ void setup()
     @brief  The loop function runs over and over again forever
 */
 /**************************************************************************/
-void loop() {
+void loop() 
+{
   // put your main code here, to run repeatedly
   Serial.println(F("Toggle LED"));
   togglePin(BOARD_LED_PIN);
@@ -142,6 +157,7 @@ void loop() {
   if (wifi_error == 0)
   {
     int http_error = -1;
+    // Start the async request (this function will block until EOF or ERROR)
     if ( (http_error = feather.asyncHttpRequest(URL, CONTENT, METHOD) ) != 0)
     {
       Serial.print(F("Error: "));
@@ -149,6 +165,7 @@ void loop() {
     }
     else
     {
+      // Display the CRC32 for the entire payload
       crc = ~crc;
       Serial.print(F("\r\nCRC = "));
       Serial.println(crc, HEX);
