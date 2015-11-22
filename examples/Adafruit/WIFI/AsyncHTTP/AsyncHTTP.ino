@@ -36,7 +36,7 @@
 
 int           wifi_error  = -1;    // FAIL
 unsigned long crc         = ~0L;
-int           first_chunk = 1;
+int           data_found  = 0;
 
 // CRC Lookup table to speed things up
 static PROGMEM prog_uint32_t crc_table[16] = 
@@ -62,6 +62,36 @@ unsigned long crc_update(unsigned long crc, byte data)
   tbl_idx = crc ^ (data >> (1 * 4));
   crc = pgm_read_dword_near(crc_table + (tbl_idx & 0x0f)) ^ (crc >> 4);
   return crc;
+}
+
+/**************************************************************************/
+/*!
+    @brief  Looking for the packet data (ignore the packet header), 
+            then update the global CRC value
+*/
+/**************************************************************************/
+void crc32_calculation(uint8_t* data)
+{
+  char* p_data = NULL;
+  if (data_found == 0)
+  {
+    // Check for an empty line where data begins
+    p_data = strstr((char*)data, "\r\n\r\n");
+    if (p_data != NULL)
+    {
+      p_data += 4;
+      data_found = 1;
+
+      while (*p_data)
+        crc = crc_update(crc, *p_data++);
+    }
+  }
+  else
+  {
+    p_data = (char*)data;
+    while (*p_data)
+      crc = crc_update(crc, *p_data++);
+  }
 }
 
 /**************************************************************************/
@@ -105,20 +135,7 @@ void rxCallback(uint8_t* data, uint16_t data_length, uint16_t available)
   Serial.print((char*)data);
 
   // ... then calculate the CRC32 for the payload until EOF
-  char* p_data = NULL;
-  if (first_chunk == 1)
-  {
-    p_data = strstr((char*)data, "\r\n\r\n");
-    p_data += 4;
-    first_chunk = 0;
-  }
-  else
-  {
-    p_data = (char*)data;
-  }
-
-  while (*p_data)
-    crc = crc_update(crc, *p_data++);
+  crc32_calculation(data);
 }
 
 /**************************************************************************/
@@ -172,7 +189,7 @@ void loop()
     }
   }
 
-  first_chunk = 1;
+  data_found = 0;
   crc = ~0L;
   Serial.println(F("\r\n"));
   delay(10000);
