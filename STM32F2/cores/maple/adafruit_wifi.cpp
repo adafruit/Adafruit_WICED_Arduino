@@ -691,7 +691,7 @@ sdep_err_t AdafruitFeather::irqClear(void)
 
     @param[in]    host           Host name
 
-    @param[in]    root_ca_cert   Root CA certificate of host
+    @param[in]    ca_cert        Address of certificate chain
 
     @param[in]    query          Query from user
 
@@ -703,12 +703,12 @@ sdep_err_t AdafruitFeather::irqClear(void)
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitFeather::httpsGet(char* host, const char* root_ca_cert, const char* query,
+sdep_err_t AdafruitFeather::httpsGet(char* host, const char* ca_cert, const char* query,
                                      uint32_t buffer_length, uint8_t* buffer)
 {
   if (host == NULL || host == "") return ERROR_INVALIDPARAMETER;
 
-  uint32_t cert_addr = (uint32_t)root_ca_cert;
+  uint32_t cert_addr = (uint32_t)ca_cert;
   uint32_t query_addr = (uint32_t)query;
 
   uint16_t paylen = strlen(host) + 1 + sizeof(cert_addr) + sizeof(query_addr) + sizeof(buffer_length);
@@ -784,7 +784,7 @@ sdep_err_t AdafruitFeather::httpRequest(const char* url, const char* content, ui
                                       or   www.adafruit.com/testwifi/index.html)
 
 
-    @param[in]    root_ca_cert   Certificate chain
+    @param[in]    ca_cert        Address of certificate chain
 
     @param[in]    content        Request content (e.g. var1=value1&var2=value2)
 
@@ -798,14 +798,14 @@ sdep_err_t AdafruitFeather::httpRequest(const char* url, const char* content, ui
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitFeather::httpsRequest(const char* url, const char* root_ca_cert,
+sdep_err_t AdafruitFeather::httpsRequest(const char* url, const char* ca_cert,
                                          const char* content, uint8_t method,
                                          uint32_t buffer_length, uint8_t* buffer)
 {
   if (url == NULL || url == "") return ERROR_INVALIDPARAMETER;
   if (method != GET_METHOD && method != POST_METHOD) return ERROR_INVALIDPARAMETER;
 
-  uint32_t cert_addr = (uint32_t)root_ca_cert;
+  uint32_t cert_addr = (uint32_t)ca_cert;
 
   // 2 null terminators & 1 byte for METHOD are added to payload buffer
   uint16_t paylen = strlen(url) + sizeof(cert_addr) + sizeof(buffer_length) + 3;
@@ -871,15 +871,20 @@ sdep_err_t AdafruitFeather::asyncHttpRequest(const char* url, const char* conten
   uint8_t* payload = (uint8_t*)malloc(paylen);
   uint8_t* p_payload = payload;
 
+  /* URL */
   memcpy(p_payload, (uint8_t*)url, strlen(url));
   p_payload += strlen(url);
   *p_payload++ = 0;
+
+  /* Content */
   if ( (content != NULL) && (strlen(content) > 0) )
   {
     memcpy(p_payload, (uint8_t*)content, strlen(content));
     p_payload += strlen(content);
   }
   *p_payload++ = 0;
+
+  /* Method */
   *p_payload = method;
 
   sdep_err_t error =  ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_ASYNCHTTPREQUEST, paylen, payload, NULL, NULL);
@@ -887,16 +892,86 @@ sdep_err_t AdafruitFeather::asyncHttpRequest(const char* url, const char* conten
   return error;
 }
 
+/******************************************************************************/
+/*!
+    @brief  Send HTTPS request (GET or POST) to server with certificate chain
+
+    @param[in]    url            URL (e.g. www.adafruit.com/testwifi/testpost.php
+                                      or   www.adafruit.com/testwifi/index.html)
+
+    @param[in]    ca_cert        Address of certificate chain
+
+    @param[in]    content        Request content (e.g. var1=value1&var2=value2)
+
+    @param[in]    method         HTTP method (GET_METHOD or POST_METHOD)
+
+    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
+            a specific error if something went wrong.
+*/
+/******************************************************************************/
+sdep_err_t AdafruitFeather::asyncHttpsRequest(const char* url, const char* ca_cert,
+                                              const char* content, uint8_t method)
+{
+  if (url == NULL || strlen(url) == 0) return ERROR_INVALIDPARAMETER;
+  if (method != GET_METHOD && method != POST_METHOD) return ERROR_INVALIDPARAMETER;
+
+  uint32_t cert_addr = (uint32_t)ca_cert;
+
+  uint16_t paylen = strlen(url) + sizeof(cert_addr) + 3; // 2 null terminators & 1 byte for METHOD
+  if ( (content != NULL) && (strlen(content) > 0) )
+  {
+    paylen += strlen(content);
+  }
+
+  uint8_t* payload = (uint8_t*)malloc(paylen);
+  uint8_t* p_payload = payload;
+
+  /* URL */
+  memcpy(p_payload, (uint8_t*)url, strlen(url));
+  p_payload += strlen(url);
+  *p_payload++ = 0;
+
+  /* Certificate memory address */
+  memcpy(p_payload, (uint8_t*)&cert_addr, sizeof(cert_addr));
+  p_payload += sizeof(cert_addr);
+
+  /* Content */
+  if ( (content != NULL) && (strlen(content) > 0) )
+  {
+    memcpy(p_payload, (uint8_t*)content, strlen(content));
+    p_payload += strlen(content);
+  }
+  *p_payload++ = 0;
+
+  /* Method */
+  *p_payload = method;
+
+  sdep_err_t error =  ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_ASYNCHTTPSREQUEST, paylen, payload, NULL, NULL);
+  free(payload);
+  return error;
+}
+
+/******************************************************************************/
+/*!
+    @brief  Register the async callback handler
+
+    @param[in]    ada_httpCallback    Callback handler from Arduino code
+*/
+/******************************************************************************/
 void AdafruitFeather::addHttpDataReceivedCallBack(ada_http_rx_callback ada_httpCallback)
 {
   ada_http_callback = ada_httpCallback;
 }
 
-// Callback from featherlib when new data received
-void http_callback(uint8_t* data, uint16_t data_length, uint16_t available)
+/******************************************************************************/
+/*!
+    @brief  Callback from featherlib when new data received
+*/
+/******************************************************************************/
+void http_callback(uint8_t* data, uint16_t data_length, uint16_t avail)
 {
   if (feather.ada_http_callback != NULL)
   {
-    feather.ada_http_callback(data, data_length, available);
+    feather.ada_http_callback(data, data_length, avail);
   }
 }

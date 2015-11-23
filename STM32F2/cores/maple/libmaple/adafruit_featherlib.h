@@ -71,7 +71,7 @@ typedef struct ATTR_ALIGNED(512)
   void (*cdc_serial_event_cb)(uint32_t eid, void* p_data);
 
   // HTTP Callback
-  void (*http_rx_callback)(uint8_t* data, uint16_t data_length, uint16_t available);
+  void (*http_rx_callback)(uint8_t* data, uint16_t data_length, uint16_t avail);
 
 }adafruit_arduino_t;
 

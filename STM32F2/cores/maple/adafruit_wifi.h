@@ -79,6 +79,7 @@ typedef enum {
   SDEP_CMD_HTTPREQUEST         = 0x0036, /**< HTTP Request                         */
   SDEP_CMD_HTTPSREQUEST        = 0x0037, /**< HTTPs Request                        */
   SDEP_CMD_ASYNCHTTPREQUEST    = 0x0038, /**< Async HTTP Request                   */
+  SDEP_CMD_ASYNCHTTPSREQUEST   = 0x0039, /**< Async HTTPS Request                  */
   /* DEBUG Commands */
   SDEP_CMD_STACKDUMP           = 0x0040, /**< Dump the stack                       */
   SDEP_CMD_STACKSIZE           = 0x0041, /**< Get stack size                       */
@@ -124,9 +125,9 @@ typedef uint16_t sdep_err_t;
 
 extern "C"
 {
-  void http_callback(uint8_t* data, uint16_t data_length, uint16_t available);
+  void http_callback(uint8_t* data, uint16_t data_length, uint16_t avail);
   /* Callback prototypes */
-  typedef void (*ada_http_rx_callback)(uint8_t* data, uint16_t data_length, uint16_t available);
+  typedef void (*ada_http_rx_callback)(uint8_t* data, uint16_t data_length, uint16_t avail);
 }
 
 class AdafruitFeather
@@ -156,11 +157,12 @@ public:
   sdep_err_t getTime(char* iso8601_time);
   sdep_err_t httpGetUri(char* uri, uint16_t* length, uint8_t* response);
   sdep_err_t httpPost(char* uri, uint16_t* length, uint8_t* response);
-  sdep_err_t httpsGet(char* host, const char* root_ca_cert, const char* query, uint32_t buffer_length, uint8_t* buffer);
+  sdep_err_t httpsGet(char* host, const char* ca_cert, const char* query, uint32_t buffer_length, uint8_t* buffer);
 
   sdep_err_t httpRequest(const char* url, const char* content, uint8_t method, uint32_t buffer_length, uint8_t* buffer);
-  sdep_err_t httpsRequest(const char* url, const char* root_ca_cert, const char* content, uint8_t method, uint32_t buffer_length, uint8_t* buffer);
+  sdep_err_t httpsRequest(const char* url, const char* ca_cert, const char* content, uint8_t method, uint32_t buffer_length, uint8_t* buffer);
   sdep_err_t asyncHttpRequest(const char* url, const char* content, uint8_t method);
+  sdep_err_t asyncHttpsRequest(const char* url, const char* ca_cert, const char* content, uint8_t method);
   void       addHttpDataReceivedCallBack(ada_http_rx_callback ada_httpCallback = NULL);
 
 //  /* DEBUG Commands */
