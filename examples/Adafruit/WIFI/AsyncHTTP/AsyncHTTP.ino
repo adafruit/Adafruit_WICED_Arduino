@@ -54,7 +54,7 @@ static PROGMEM prog_uint32_t crc_table[16] =
     @return The updated CRC32 value
 */
 /**************************************************************************/
-unsigned long crc_update(unsigned long crc, byte data)
+unsigned long crc32_feed(unsigned long crc, byte data)
 {
   byte tbl_idx;
   tbl_idx = crc ^ (data >> (0 * 4));
@@ -83,14 +83,14 @@ void crc32_calculation(uint8_t* data)
       data_found = 1;
 
       while (*p_data)
-        crc = crc_update(crc, *p_data++);
+        crc = crc32_feed(crc, *p_data++);
     }
   }
   else
   {
     p_data = (char*)data;
     while (*p_data)
-      crc = crc_update(crc, *p_data++);
+      crc = crc32_feed(crc, *p_data++);
   }
 }
 
