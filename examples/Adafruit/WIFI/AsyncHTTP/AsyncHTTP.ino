@@ -26,8 +26,8 @@
 
 #include "adafruit_wifi.h"
 
-#define WLAN_SSID            ""
-#define WLAN_PASS            ""
+#define WLAN_SSID            "SSID"
+#define WLAN_PASS            "PASSWORD"
 
 #define URL                  "IPADDRESS:8000/text_10KB.txt"
 #define CONTENT              ""
