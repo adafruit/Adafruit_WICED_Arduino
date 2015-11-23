@@ -153,7 +153,7 @@ void setup()
 
   Serial.println(F("HTTP Async Callback Example\r\n"));
 
-  // Register the async callback hander
+  // Register the async callback handler
   feather.addHttpDataReceivedCallBack(rxCallback);
 
   // Try to connect to the access point
