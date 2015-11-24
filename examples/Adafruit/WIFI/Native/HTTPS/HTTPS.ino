@@ -20,8 +20,8 @@
 #include "adafruit_wifi.h"
 #include "certificate.h"
 
-#define WLAN_SSID            "thach"
-#define WLAN_PASS            "hoangthach"
+#define WLAN_SSID            "YOURSSID"
+#define WLAN_PASS            "YOURPASSWORD"
 
 #define BUFFER_LENGTH        (2048)
 
