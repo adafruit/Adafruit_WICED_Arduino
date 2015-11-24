@@ -125,9 +125,12 @@ typedef uint16_t sdep_err_t;
 
 extern "C"
 {
-  void http_callback(uint8_t* data, uint16_t data_length, uint16_t avail);
+  void http_rx_callback (uint8_t* data, uint16_t data_length, uint16_t avail);
+  void mqtt_evt_callback(mqtt_evt_opcode_t event, uint8_t* data);
+
   /* Callback prototypes */
-  typedef void (*ada_http_rx_callback)(uint8_t* data, uint16_t data_length, uint16_t avail);
+  typedef void (*ada_http_callback)(uint8_t* data, uint16_t data_length, uint16_t avail);
+  typedef void (*ada_mqtt_callback)(mqtt_evt_opcode_t event, uint8_t* data);
 }
 
 class AdafruitFeather
@@ -135,7 +138,8 @@ class AdafruitFeather
 private:
   void init();
 
-  ada_http_rx_callback  ada_http_callback;
+  ada_http_callback  ada_http_rx_callback;
+  ada_mqtt_callback  ada_mqtt_evt_callback;
 
 public:
   AdafruitFeather(void);
@@ -163,7 +167,7 @@ public:
   sdep_err_t httpsRequest(const char* url, const char* ca_cert, const char* content, uint8_t method, uint32_t buffer_length, uint8_t* buffer);
   sdep_err_t asyncHttpRequest(const char* url, const char* content, uint8_t method);
   sdep_err_t asyncHttpsRequest(const char* url, const char* ca_cert, const char* content, uint8_t method);
-  void       addHttpDataReceivedCallBack(ada_http_rx_callback ada_httpCallback = NULL);
+  void       addHttpDataReceivedCallBack(ada_http_callback ada_httpCallback = NULL);
 
 //  /* DEBUG Commands */
 //  sdep_err_t stackDump();
@@ -184,6 +188,7 @@ public:
   sdep_err_t mqttPublish(char* topic, char* value, uint8_t qos, uint8_t retain);
   sdep_err_t mqttSubscribe(char* topic, uint8_t qos);
   sdep_err_t mqttUnsubscribe(void);
+  void       addMqttCallBack(ada_mqtt_callback ada_mqttCallback = NULL);
 
   /* IRQ Commands */
   sdep_err_t irqRead(uint16_t* response_length, uint8_t* response);
@@ -192,7 +197,8 @@ public:
   sdep_err_t irqClear(void);
 
   /* callback from featherlib */
-  friend void http_callback(uint8_t* data, uint16_t data_length, uint16_t available);
+  friend void http_rx_callback (uint8_t* data, uint16_t data_length, uint16_t avail);
+  friend void mqtt_evt_callback(mqtt_evt_opcode_t event, uint8_t* data);
 };
 
 extern AdafruitFeather feather;

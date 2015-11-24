@@ -48,12 +48,28 @@ enum
   WIFI_INTERFACE_P2P     = 2,
 };
 
+/**
+ * @enum err_t
+ * @brief Error opcodes
+ */
 typedef enum
 {
   ERROR_NONE              = 0x0000,
   ERROR_INVALIDPARAMETER  = 0x8025,
   ERROR_NO_MEMORY         = 0x80AA   /**< Temporary */
 } err_t;
+
+/**
+ * @enum mqtt_evt_opcode_t
+ * @brief MQTT event opcodes
+ */
+typedef enum
+{
+  MQTT_EVT_INVALID          = 0x00,  /**< Invalid event code            */
+  MQTT_EVT_DISCONNECTED     = 0x81,  /**< Link disconnected event code  */
+  MQTT_EVT_TOPIC_CHANGED    = 0x82   /**< Topic changed event code      */
+
+} mqtt_evt_opcode_t;
 
 #ifdef __cplusplus
  }

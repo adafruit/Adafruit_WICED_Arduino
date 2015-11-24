@@ -45,7 +45,8 @@
 //--------------------------------------------------------------------+
 extern void __attribute__((noreturn)) start_c(void);
 extern void USBSerial_callback(uint32_t eid, void* p_data);
-extern void http_callback(uint8_t* data, uint16_t data_length, uint16_t available);
+extern void http_rx_callback(uint8_t* data, uint16_t data_length, uint16_t avail);
+extern void mqtt_evt_callback(mqtt_evt_opcode_t event, uint8_t* data);
 
 //--------------------------------------------------------------------+
 // IMPLEMENTATION
@@ -56,5 +57,6 @@ ATTR_USED adafruit_arduino_t const adafruit_arduino =
     .startup             = start_c,
 
     .cdc_serial_event_cb = USBSerial_callback,
-    .http_rx_callback    = http_callback
+    .http_callback       = http_rx_callback,
+    .mqtt_callback       = mqtt_evt_callback
 };

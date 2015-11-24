@@ -1,7 +1,7 @@
 /*
-  Connect to a WiFi access point. If success, retrieve the results of a 
-  specified URI and send the 'x-www-form-urlencoded' URL as a HTTP POST 
-  operation. Then finally disconnect from the WiFi AP.
+  This example will attempt to connect to a WiFi access point, then read
+  the response from the 'x-www-form-urlencoded' URI as an HTTP POST
+  operation. It will then display the response and disconnect from the AP.
 
   author: huynguyen 
  */
@@ -10,16 +10,13 @@
 
 /**************************************************************************/
 /*!
-    @brief  The setup function runs once when reset the board    
+    @brief  The setup function (runs once when the board resets or boots)
 */
 /**************************************************************************/
 void setup()
 {
   pinMode(BOARD_LED_PIN, OUTPUT);
   
-  // initialize serial port for input and output
-//  Serial.begin(11500);
-
   // wait for Serial
   while (!Serial) delay(1);
 }
@@ -32,8 +29,9 @@ void setup()
 void loop() {
   uint16_t error;
   // Connect to an AP
-  char* ssid = "huy-laptop";
-  char* pass = "12345678";
+  // ToDo: Change the values below!
+  char* ssid = "YOUR SSID";
+  char* pass = "YOUR PASSWORD";
   if ( (error = feather.connectAP(ssid, pass) ) == ERROR_NONE)
   {
     Serial.print("Connected to AP with SSID = ");
