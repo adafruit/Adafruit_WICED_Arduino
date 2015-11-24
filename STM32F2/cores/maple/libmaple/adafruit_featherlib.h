@@ -39,6 +39,7 @@
 
 #include <stdint.h>
 #include "compiler.h"
+#include "adafruit_constants.h""
 
 #ifdef __cplusplus
  extern "C" {
@@ -67,11 +68,14 @@ typedef struct ATTR_ALIGNED(512)
   // Peripheral Interrupt
   uint32_t reserved2[16];
 
-  // Callback
+  // USBCDC callback
   void (*cdc_serial_event_cb)(uint32_t eid, void* p_data);
 
-  // HTTP Callback
-  void (*http_rx_callback)(uint8_t* data, uint16_t data_length, uint16_t avail);
+  // HTTP callback
+  void (*http_callback)(uint8_t* data, uint16_t data_length, uint16_t avail);
+
+  // MQTT callback
+  void (*mqtt_callback)(mqtt_evt_opcode_t event, uint8_t* data);
 
 }adafruit_arduino_t;
 

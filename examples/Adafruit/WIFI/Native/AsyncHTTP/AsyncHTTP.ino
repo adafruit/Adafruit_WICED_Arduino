@@ -129,7 +129,7 @@ int connectAP()
            the feather.asyncHttpRequest function
 */
 /**************************************************************************/
-void rxCallback(uint8_t* data, uint16_t data_length, uint16_t available)
+void rxCallback(uint8_t* data, uint16_t data_length, uint16_t avail)
 {
   // Send the raw payload to the Serial Monitor ...
   Serial.print((char*)data);

@@ -953,25 +953,50 @@ sdep_err_t AdafruitFeather::asyncHttpsRequest(const char* url, const char* ca_ce
 
 /******************************************************************************/
 /*!
-    @brief  Register the async callback handler
+    @brief  Register the async callback handler for HTTP
 
-    @param[in]    ada_httpCallback    Callback handler from Arduino code
+    @param[in]    ada_httpCallback    HTTP Callback handler from Arduino code
 */
 /******************************************************************************/
-void AdafruitFeather::addHttpDataReceivedCallBack(ada_http_rx_callback ada_httpCallback)
+void AdafruitFeather::addHttpDataReceivedCallBack(ada_http_callback ada_httpCallback)
 {
-  ada_http_callback = ada_httpCallback;
+  ada_http_rx_callback = ada_httpCallback;
 }
 
 /******************************************************************************/
 /*!
-    @brief  Callback from featherlib when new data received
+    @brief  Register the MQTT event callback handler
+
+    @param[in]    ada_mqttCallback    MQTT Callback handler from Arduino code
 */
 /******************************************************************************/
-void http_callback(uint8_t* data, uint16_t data_length, uint16_t avail)
+void AdafruitFeather::addMqttCallBack(ada_mqtt_callback ada_mqttCallback)
 {
-  if (feather.ada_http_callback != NULL)
+  ada_mqtt_evt_callback = ada_mqttCallback;
+}
+
+/******************************************************************************/
+/*!
+    @brief  HTTP Callback from featherlib when new data received
+*/
+/******************************************************************************/
+void http_rx_callback(uint8_t* data, uint16_t data_length, uint16_t avail)
+{
+  if (feather.ada_http_rx_callback != NULL)
   {
-    feather.ada_http_callback(data, data_length, avail);
+    feather.ada_http_rx_callback(data, data_length, avail);
+  }
+}
+
+/******************************************************************************/
+/*!
+    @brief  MQTT Callback from featherlib when a new event occurs
+*/
+/******************************************************************************/
+void mqtt_evt_callback(mqtt_evt_opcode_t event, uint8_t* data)
+{
+  if (feather.ada_mqtt_evt_callback != NULL)
+  {
+    feather.ada_mqtt_evt_callback(event, data);
   }
 }

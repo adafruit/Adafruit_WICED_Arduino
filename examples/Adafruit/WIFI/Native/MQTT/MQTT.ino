@@ -13,12 +13,12 @@
 #include "adafruit_wifi.h"
 #include "itoa.h"
 
-#define WLAN_SSID            "SSID of AP"
-#define WLAN_PASS            "Password of AP"
+#define WLAN_SSID            "YOUR SSID"
+#define WLAN_PASS            "YOUR PASSWORD"
 
 #define MQTT_HOST            "io.adafruit.com"
-#define MQTT_PORT            8883
-#define TLS_ENABLED          1
+#define MQTT_PORT            1883
+#define TLS_ENABLED          0
 
 #define CLIENT_ID            "Adafruit"
 #define ADAFRUIT_USERNAME    "See your username at accounts.adafruit.com"
@@ -207,6 +207,26 @@ void readArrivedMessage()
 
 /**************************************************************************/
 /*!
+    @brief This function is called whenever a new event occurs
+*/
+/**************************************************************************/
+void mqttCallback(mqtt_evt_opcode_t event, uint8_t* data)
+{
+  switch (event)
+  {
+    case MQTT_EVT_DISCONNECTED:
+      Serial.println(F("Disconnected\r\n"));
+      break;
+    case MQTT_EVT_TOPIC_CHANGED:
+      Serial.println(F("Topic changed\r\n"));
+      break;
+    default:
+      break;
+  }
+}
+
+/**************************************************************************/
+/*!
     @brief  The setup function runs once when reset the board
 */
 /**************************************************************************/
@@ -245,6 +265,10 @@ void setup()
     }
   }
 
+  // Register the mqtt callback handler
+  feather.addMqttCallBack(mqttCallback);
+
+  // Connect to broker
   mqtt_error = connectBroker();
   if (mqtt_error == 0)
   {
@@ -262,7 +286,7 @@ void loop() {
   {
     if (mqtt_error == 0)
     {
-      readArrivedMessage();
+//      readArrivedMessage();
 
       // Buffer for temperature
       char str[3] = "0";
