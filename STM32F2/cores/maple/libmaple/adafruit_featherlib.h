@@ -91,7 +91,7 @@ typedef struct ATTR_ALIGNED(512)
   uint8_t  reserved[56];
 
   // SDEP Command
-  uint16_t (*feather_sdep) (uint16_t  cmd_id     ,
+  uint16_t (*sdep_execute) (uint16_t  cmd_id     ,
                             uint16_t   paylen     , void const* parameter,
                             uint16_t* result_len , void* result_buffer);
 

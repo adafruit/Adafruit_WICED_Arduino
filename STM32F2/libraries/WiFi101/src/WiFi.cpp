@@ -137,102 +137,46 @@ static void resolve_cb(uint8_t * /* hostName */, uint32_t hostIp)
 
 WiFiClass::WiFiClass()
 {
-	_mode = WL_RESET_MODE;
-	_status = WL_NO_SHIELD;
-	_init = 0;
+	_mode    = WL_RESET_MODE;
+	_status  = WL_IDLE_STATUS;
+	_localip = 0;
+	_submask = 0;
+	_gateway = 0;
+	strcpy(_version, "0.0.1");
 }
 
 int WiFiClass::init()
 {
-	tstrWifiInitParam param;
-	int8_t ret;
-
-	// Initialize the WiFi BSP:
-	nm_bsp_init();
-
+#if 0
 	// Initialize WiFi module and register status callback:
 	param.pfAppWifiCb = wifi_cb;
-	ret = m2m_wifi_init(&param);
-	if (M2M_SUCCESS != ret) {
-		// Error led ON (may not work depending on init failure origin).
-		m2m_periph_gpio_set_val(M2M_PERIPH_GPIO18, 0);
-		m2m_periph_gpio_set_dir(M2M_PERIPH_GPIO18, 1);
-		return ret;
-	}
 
 	// Initialize socket API and register socket callback:
 	socketInit();
 	socketBufferInit();
 	registerSocketCallback(socketBufferCb, resolve_cb);
-	_init = 1;
-	_status = WL_IDLE_STATUS;
-	_localip = 0;
-	_submask = 0;
-	_gateway = 0;
-	memset(_client, 0, sizeof(WiFiClient *) * TCP_SOCK_MAX);
 
-	// Initialize IO expander (LED control).
-	m2m_periph_gpio_set_val(M2M_PERIPH_GPIO15, 1);
-	m2m_periph_gpio_set_val(M2M_PERIPH_GPIO16, 1);
-	m2m_periph_gpio_set_val(M2M_PERIPH_GPIO18, 1);
-	m2m_periph_gpio_set_dir(M2M_PERIPH_GPIO15, 1);
-	m2m_periph_gpio_set_dir(M2M_PERIPH_GPIO16, 1);
-	m2m_periph_gpio_set_dir(M2M_PERIPH_GPIO18, 1);
+	memset(_client, 0, sizeof(WiFiClient *) * TCP_SOCK_MAX);
+#endif
 
 	return ret;
 }
 
-extern "C" {
-	sint8 nm_get_firmware_info(tstrM2mRev* M2mRev);
-}
-
 char* WiFiClass::firmwareVersion()
 {
-	tstrM2mRev rev;
-	
-	if (!_init) {
-		init();
-	}
-	nm_get_firmware_info(&rev);
-	memset(_version, 0, 9);
-	if (rev.u8FirmwareMajor != rev.u8DriverMajor && rev.u8FirmwareMinor != rev.u8DriverMinor) {
-		sprintf(_version, "-Err-");
-	}
-	else {
-		sprintf(_version, "%d.%d.%d", rev.u8FirmwareMajor, rev.u8FirmwareMinor, rev.u8FirmwarePatch);
-	}
 	return _version;
 }
 
 uint8_t WiFiClass::begin()
 {
-	if (!_init) {
-		init();
-	}
-	
 	// Connect to router:
 	_localip = 0;
 	_submask = 0;
 	_gateway = 0;
-	if (m2m_wifi_default_connect() < 0) {
-		_status = WL_CONNECT_FAILED;
-		return _status;
-	}
 	_status = WL_IDLE_STATUS;
-	_mode = WL_STA_MODE;
 
-	// Wait for connection or timeout:
-	unsigned long start = millis();
-	while (!(_status & WL_CONNECTED) &&
-			!(_status & WL_DISCONNECTED) &&
-			millis() - start < 60000) {
-		m2m_wifi_handle_events(NULL);
-	}
-	if (!(_status & WL_CONNECTED)) {
-		_mode = WL_RESET_MODE;
-	}
+	// TODO connect to default SSID
 
-	memset(_ssid, 0, M2M_MAX_SSID_LEN);
 	return _status;
 }
 
@@ -616,13 +560,6 @@ uint8_t WiFiClass::encryptionType(uint8_t pos)
 
 uint8_t WiFiClass::status()
 {
-	if (!_init) {
-		init();
-		if (nmi_get_chipid() == 0x1502b1) {
-			_status = WL_IDLE_STATUS;
-			return _status;
-		}
-	}
 	return _status;
 }
 

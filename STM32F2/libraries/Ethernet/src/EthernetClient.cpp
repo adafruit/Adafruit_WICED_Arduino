@@ -49,7 +49,7 @@ int EthernetClient::connect(IPAddress ip, uint16_t port) {
   connect_input.timeout_ms = 1000;
 
   int err;
-  if( ERROR_NONE != (err = (int) ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_TCP_CONNECT,
+  if( ERROR_NONE != (err = (int) ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_TCP_CONNECT,
                                                                    sizeof(sdep_tcp_connect_t), &connect_input,
                                                                    NULL, &_tcp_handle) ) )
   {
@@ -123,7 +123,7 @@ int EthernetClient::peek() {
 }
 
 void EthernetClient::flush() {
-  ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_TCP_FLUSH,
+  ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_TCP_FLUSH,
                                     4, &_tcp_handle,
                                     NULL, NULL);
 }
@@ -131,7 +131,7 @@ void EthernetClient::flush() {
 void EthernetClient::stop() {
   if ( _tcp_handle == 0 ) return;
 
-  ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_TCP_CLOSE,
+  ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_TCP_CLOSE,
                                     4, &_tcp_handle,
                                     NULL, NULL);
   _tcp_handle = 0;
@@ -150,7 +150,7 @@ uint8_t EthernetClient::status() {
   if ( _tcp_handle == 0 ) return TCP_STATUS_CLOSED;
 
   uint8_t status = TCP_STATUS_CLOSED;
-  ADAFRUIT_FEATHERLIB->feather_sdep(SDEP_CMD_TCP_STATUS,
+  ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_TCP_STATUS,
                                     4, &_tcp_handle,
                                     NULL, &status);
   return status;
