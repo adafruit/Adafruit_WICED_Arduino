@@ -113,7 +113,7 @@ sdep_err_t AdafruitFeather::scan(uint16_t* length, uint8_t* ap_details)
             The passwd could be NULL or empty string if it does not exist
 */
 /******************************************************************************/
-sdep_err_t AdafruitFeather::connectAP(char* ssid, char* passwd)
+sdep_err_t AdafruitFeather::connectAP(char const* ssid, char const* passwd)
 {
   if (ssid == NULL || ssid == "") return ERROR_INVALIDPARAMETER;
 

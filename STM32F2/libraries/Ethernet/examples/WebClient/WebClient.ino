@@ -38,6 +38,8 @@ void setup() {
   }
   
  connectAP();
+ 
+ while (true) delay(1);
 
   // if you get a connection, report back via serial:
   if (client.connect(HOST, 80)) {
@@ -72,7 +74,7 @@ void loop()
       client.stop();
   
       // do nothing forevermore:
-      while (true);
+      while (true) delay(1);
     }
   }
 }

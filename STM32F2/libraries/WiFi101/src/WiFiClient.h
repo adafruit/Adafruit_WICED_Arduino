@@ -23,7 +23,23 @@
 #include <Arduino.h>
 #include <Client.h>
 #include <IPAddress.h>
-#include "socket/include/socket_buffer.h"
+//#include "socket/include/socket_buffer.h"
+
+
+enum
+{
+  TCP_STATUS_CLOSED           = 1,               /* Connection is closed state   */
+  TCP_STATUS_LISTEN_STATE     = 2,               /* Server listen state          */
+  TCP_STATUS_SYN_SENT         = 3,               /* SYN sent state               */
+  TCP_STATUS_SYN_RECEIVED     = 4,               /* SYN received state           */
+  TCP_STATUS_ESTABLISHED      = 5,               /* Connection established state */
+  TCP_STATUS_CLOSE_WAIT       = 6,               /* Close Wait state             */
+  TCP_STATUS_FIN_WAIT_1       = 7,               /* Finished Wait 1 state        */
+  TCP_STATUS_FIN_WAIT_2       = 8,               /* Finished Wait 2 state        */
+  TCP_STATUS_CLOSING          = 9,               /* Closing state                */
+  TCP_STATUS_TIMED_WAIT       = 10,              /* Timed wait state             */
+  TCP_STATUS_LAST_ACK         = 11,              /* Last ACK state               */
+};
 
 class WiFiClient : public Client {
 
@@ -51,15 +67,17 @@ public:
 
 	using Print::write;
 
-	uint32_t _flag;
+//	uint32_t _flag;
 
 private:
-	SOCKET _socket;
-	uint32_t _head;
-	uint32_t _tail;
-	uint8_t	_buffer[SOCKET_BUFFER_TCP_SIZE];
-	int connect(const char* host, uint16_t port, uint8_t opt);
-	int connect(IPAddress ip, uint16_t port, uint8_t opt, const uint8_t *hostname);
+	uint32_t _tcp_handle;
+
+//	SOCKET _socket;
+//	uint32_t _head;
+//	uint32_t _tail;
+//	uint8_t	_buffer[SOCKET_BUFFER_TCP_SIZE];
+//	int connect(const char* host, uint16_t port, uint8_t opt);
+//	int connect(IPAddress ip, uint16_t port, uint8_t opt, const uint8_t *hostname);
 
 };
 

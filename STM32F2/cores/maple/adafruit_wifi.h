@@ -106,6 +106,7 @@ typedef enum {
   SDEP_CMD_GET_IPV6_ADDRESS    = 0x0081, /**< Get IPv6 Address                     */
   SDEP_CMD_GET_GATEWAY_ADDRESS = 0x0082, /**< Get Gateway's IPv4 Address           */
   SDEP_CMD_GET_NETMASK         = 0x0083, /**< Get Netmask's IPv4 Address           */
+  SDEP_CMD_GET_MAC_ADDRESS     = 0x0084, /**< Get MAC Address           */
   /* TCP Commnads */
   SDEP_CMD_TCP_CONNECT       = 0x0090,
   SDEP_CMD_TCP_WRITE         = 0x0091,
@@ -148,7 +149,7 @@ public:
 
   /* WiFi Commands */
   sdep_err_t scan(uint16_t* length, uint8_t* ap_details);
-  sdep_err_t connectAP(char* ssid, char* passwd);
+  sdep_err_t connectAP(char const* ssid, char const* passwd);
   sdep_err_t disconnectAP(void);
   sdep_err_t startAP(char* ssid, char* passwd);
   sdep_err_t startAP(void);

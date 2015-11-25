@@ -24,13 +24,13 @@
 
 #include <Arduino.h>
 
-extern "C" {
-	#include "driver/include/m2m_wifi.h"
-	#include "socket/include/socket.h"
-}
+//extern "C" {
+//	#include "driver/include/m2m_wifi.h"
+//	#include "socket/include/socket.h"
+//}
 
 #include "WiFiClient.h"
-#include "WiFiServer.h"
+//#include "WiFiServer.h"
 
 typedef enum {
 	WL_NO_SHIELD = 255,
@@ -43,6 +43,7 @@ typedef enum {
 	WL_DISCONNECTED
 } wl_status_t;
 
+#if 0
 /* Encryption modes */
 enum wl_enc_type {  /* Values map to 802.11 encryption suites... */
 	ENC_TYPE_WEP  = M2M_WIFI_SEC_WEP,
@@ -52,6 +53,7 @@ enum wl_enc_type {  /* Values map to 802.11 encryption suites... */
 	ENC_TYPE_NONE = M2M_WIFI_SEC_OPEN,
 	ENC_TYPE_AUTO = M2M_WIFI_SEC_INVALID
 };
+#endif
 
 typedef enum {
 	WL_RESET_MODE = 0,
@@ -70,10 +72,13 @@ public:
 	byte *_bssid;
 	wl_mode_t _mode;
 	wl_status_t _status;
+
+#if 0
 	char _scan_ssid[M2M_MAX_SSID_LEN];
 	uint8_t _scan_auth;
 	char _ssid[M2M_MAX_SSID_LEN];
 	WiFiClient *_client[TCP_SOCK_MAX];
+#endif
 
 	WiFiClass();
 
