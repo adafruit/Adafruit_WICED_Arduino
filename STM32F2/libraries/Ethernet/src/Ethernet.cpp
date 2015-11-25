@@ -115,7 +115,7 @@ IPAddress EthernetClass::localIP()
   uint8_t interface   = WIFI_INTERFACE_STATION;
   uint32_t ip_address = 0;
 
-  ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_GET_IPV4_ADDRESS, 1, &interface,
+  FEATHERLIB->sdep_execute(SDEP_CMD_GET_IPV4_ADDRESS, 1, &interface,
                                     NULL, &ip_address);
   return IPAddress(ip_address);
 }
@@ -125,7 +125,7 @@ IPAddress EthernetClass::subnetMask()
   uint8_t interface   = WIFI_INTERFACE_STATION;
   uint32_t ip_address = 0;
 
-  ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_GET_NETMASK, 1, &interface,
+  FEATHERLIB->sdep_execute(SDEP_CMD_GET_NETMASK, 1, &interface,
                                     NULL, &ip_address);
   return IPAddress(ip_address);
 }
@@ -135,7 +135,7 @@ IPAddress EthernetClass::gatewayIP()
   uint8_t interface   = WIFI_INTERFACE_STATION;
   uint32_t ip_address = 0;
 
-  ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_GET_GATEWAY_ADDRESS, 1, &interface,
+  FEATHERLIB->sdep_execute(SDEP_CMD_GET_GATEWAY_ADDRESS, 1, &interface,
                                     NULL, &ip_address);
   return IPAddress(ip_address);
 }

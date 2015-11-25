@@ -82,7 +82,7 @@ extern volatile uint32 systick_uptime_millis;
  * @brief Returns the system uptime, in milliseconds.
  */
 static inline uint32 systick_uptime(void) {
-  return ADAFRUIT_FEATHERLIB->system_millis();
+  return FEATHERLIB->system_millis();
 //    return systick_uptime_millis;
 }
 

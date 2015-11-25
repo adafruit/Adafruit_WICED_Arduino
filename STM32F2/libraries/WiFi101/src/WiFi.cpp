@@ -18,6 +18,7 @@
 */
 
 #include "WiFi101.h"
+#include "adafruit_wifi.h"
 
 extern "C" {
   #include "bsp/include/nm_bsp.h"
@@ -185,6 +186,7 @@ uint8_t WiFiClass::begin(const char *ssid)
 	return startConnect(ssid, M2M_WIFI_SEC_OPEN, (void *)0);
 }
 
+#if 0
 uint8_t WiFiClass::begin(const char *ssid, uint8_t key_idx, const char* key)
 {
 	tstrM2mWifiWepParams wep_params;
@@ -195,6 +197,7 @@ uint8_t WiFiClass::begin(const char *ssid, uint8_t key_idx, const char* key)
 	strcpy((char *)&wep_params.au8WepKey[0], key);
 	return startConnect(ssid, M2M_WIFI_SEC_WEP, &wep_params);
 }
+#endif
 
 uint8_t WiFiClass::begin(const char *ssid, const char *key)
 {

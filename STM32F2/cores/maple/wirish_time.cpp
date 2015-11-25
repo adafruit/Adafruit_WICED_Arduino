@@ -33,16 +33,16 @@
 
 void delay(uint32_t ms)
 {
-  ADAFRUIT_FEATHERLIB->rtos_delay_ms(ms);
+  FEATHERLIB->rtos_delay_ms(ms);
 }
 
 void delayMicroseconds(uint32_t us)
 {
-  ADAFRUIT_FEATHERLIB->rtos_delay_us(us);
+  FEATHERLIB->rtos_delay_us(us);
 }
 
 void yield(void)
 {
-  ADAFRUIT_FEATHERLIB->rtos_yield();
+  FEATHERLIB->rtos_yield();
 }
 

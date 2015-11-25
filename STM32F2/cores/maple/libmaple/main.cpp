@@ -41,7 +41,7 @@ int main(void) {
 
     while (1) {
         loop();
-        ADAFRUIT_FEATHERLIB->rtos_yield();
+        FEATHERLIB->rtos_yield();
     }
     return 0;
 }

@@ -49,7 +49,7 @@ int EthernetClient::connect(IPAddress ip, uint16_t port) {
   connect_input.timeout_ms = 1000;
 
   int err;
-  if( ERROR_NONE != (err = (int) ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_TCP_CONNECT,
+  if( ERROR_NONE != (err = (int) FEATHERLIB->sdep_execute(SDEP_CMD_TCP_CONNECT,
                                                                    sizeof(sdep_tcp_connect_t), &connect_input,
                                                                    NULL, &_tcp_handle) ) )
   {
@@ -64,7 +64,7 @@ size_t EthernetClient::write(uint8_t b) {
 }
 
 size_t EthernetClient::write(const uint8_t *buf, size_t size) {
-  if( ERROR_NONE != ADAFRUIT_FEATHERLIB->sdep_execute_extend(SDEP_CMD_TCP_WRITE,
+  if( ERROR_NONE != FEATHERLIB->sdep_execute_extend(SDEP_CMD_TCP_WRITE,
                                                              4, &_tcp_handle,
                                                              size, buf,
                                                              NULL, NULL) )
@@ -101,7 +101,7 @@ int EthernetClient::read(uint8_t *buf, size_t size)
   *((uint32_t*)(para2+2)) = 1000; // timeout
 
 
-  if( ERROR_NONE != ADAFRUIT_FEATHERLIB->sdep_execute_extend(SDEP_CMD_TCP_READ,
+  if( ERROR_NONE != FEATHERLIB->sdep_execute_extend(SDEP_CMD_TCP_READ,
                                                              4, &_tcp_handle,
                                                              6, para2,
                                                              NULL, buf) )
@@ -123,7 +123,7 @@ int EthernetClient::peek() {
 }
 
 void EthernetClient::flush() {
-  ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_TCP_FLUSH,
+  FEATHERLIB->sdep_execute(SDEP_CMD_TCP_FLUSH,
                                     4, &_tcp_handle,
                                     NULL, NULL);
 }
@@ -131,7 +131,7 @@ void EthernetClient::flush() {
 void EthernetClient::stop() {
   if ( _tcp_handle == 0 ) return;
 
-  ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_TCP_CLOSE,
+  FEATHERLIB->sdep_execute(SDEP_CMD_TCP_CLOSE,
                                     4, &_tcp_handle,
                                     NULL, NULL);
   _tcp_handle = 0;
@@ -150,7 +150,7 @@ uint8_t EthernetClient::status() {
   if ( _tcp_handle == 0 ) return TCP_STATUS_CLOSED;
 
   uint8_t status = TCP_STATUS_CLOSED;
-  ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_TCP_STATUS,
+  FEATHERLIB->sdep_execute(SDEP_CMD_TCP_STATUS,
                                     4, &_tcp_handle,
                                     NULL, &status);
   return status;

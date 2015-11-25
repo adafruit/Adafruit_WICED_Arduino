@@ -43,29 +43,29 @@ USBSerial Serial;
 
 int USBSerial::available(void)
 {
-  return ADAFRUIT_FEATHERLIB->file_peek(FILENO_USB_SERIAL) != (-1);
+  return FEATHERLIB->file_peek(FILENO_USB_SERIAL) != (-1);
 }
 
 int USBSerial::peek(void)
 {
-  return ADAFRUIT_FEATHERLIB->file_peek(FILENO_USB_SERIAL);
+  return FEATHERLIB->file_peek(FILENO_USB_SERIAL);
 }
 
 int USBSerial::read(void)
 {
   char ch;
-  ADAFRUIT_FEATHERLIB->file_read(FILENO_USB_SERIAL, (char*)&ch, 1);
+  FEATHERLIB->file_read(FILENO_USB_SERIAL, (char*)&ch, 1);
   return (int) ch;
 }
 
 size_t USBSerial::write(unsigned char ch)
 {
-  ADAFRUIT_FEATHERLIB->file_write(FILENO_USB_SERIAL, (char*)&ch, 1);
+  FEATHERLIB->file_write(FILENO_USB_SERIAL, (char*)&ch, 1);
 }
 
 size_t USBSerial::write(const uint8_t *buffer, size_t size)
 {
-  ADAFRUIT_FEATHERLIB->file_write(FILENO_USB_SERIAL, (char*)buffer, size);
+  FEATHERLIB->file_write(FILENO_USB_SERIAL, (char*)buffer, size);
 }
 
 // Callback from featherlib when there is status change

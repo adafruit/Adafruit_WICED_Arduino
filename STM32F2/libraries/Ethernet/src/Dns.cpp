@@ -27,7 +27,7 @@ int DNSClient::getHostByName(const char* aHostname, IPAddress& aResult)
   uint32_t ip_addr = 0;
   int err;
 
-  if( ERROR_NONE != (err = (int) ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_DNSLOOKUP, strlen(aHostname), aHostname, NULL, &ip_addr)) )
+  if( ERROR_NONE != (err = (int) FEATHERLIB->sdep_execute(SDEP_CMD_DNSLOOKUP, strlen(aHostname), aHostname, NULL, &ip_addr)) )
   {
     return (-err);
   }
@@ -41,7 +41,7 @@ IPAddress DNSClient::getHostByName(const char* aHostname)
 {
   uint32_t ip_addr = 0;
 
-  VERIFY( ERROR_NONE == ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_DNSLOOKUP, strlen(aHostname), aHostname, NULL, &ip_addr),
+  VERIFY( ERROR_NONE == FEATHERLIB->sdep_execute(SDEP_CMD_DNSLOOKUP, strlen(aHostname), aHostname, NULL, &ip_addr),
           INADDR_NONE);
 
   return IPAddress(ip_addr);

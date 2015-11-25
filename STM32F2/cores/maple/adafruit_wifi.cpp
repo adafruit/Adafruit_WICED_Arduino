@@ -75,7 +75,7 @@ void AdafruitFeather::init()
 /******************************************************************************/
 sdep_err_t AdafruitFeather::randomNumber(uint32_t* random32bit)
 {
-  return ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_RANDOMNUMBER, 0, NULL,
+  return FEATHERLIB->sdep_execute(SDEP_CMD_RANDOMNUMBER, 0, NULL,
                                            NULL, (uint8_t*)random32bit);
 }
 
@@ -93,7 +93,7 @@ sdep_err_t AdafruitFeather::randomNumber(uint32_t* random32bit)
 /******************************************************************************/
 sdep_err_t AdafruitFeather::scan(uint16_t* length, uint8_t* ap_details)
 {
-  return ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_SCAN, 0, NULL, length, ap_details);
+  return FEATHERLIB->sdep_execute(SDEP_CMD_SCAN, 0, NULL, length, ap_details);
 }
 
 /******************************************************************************/
@@ -129,7 +129,7 @@ sdep_err_t AdafruitFeather::connectAP(char* ssid, char* passwd)
     strcat(payload, passwd);
   }
 
-  sdep_err_t error = ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_CONNECT, payload_len,
+  sdep_err_t error = FEATHERLIB->sdep_execute(SDEP_CMD_CONNECT, payload_len,
                                                        (uint8_t*)payload, NULL, NULL);
   free(payload);
   return error;
@@ -145,7 +145,7 @@ sdep_err_t AdafruitFeather::connectAP(char* ssid, char* passwd)
 /******************************************************************************/
 sdep_err_t AdafruitFeather::disconnectAP(void)
 {
-  return ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_DISCONNECT, 0, NULL, NULL, NULL);
+  return FEATHERLIB->sdep_execute(SDEP_CMD_DISCONNECT, 0, NULL, NULL, NULL);
 }
 
 /******************************************************************************/
@@ -182,7 +182,7 @@ sdep_err_t AdafruitFeather::startAP(char* ssid, char* passwd)
     strcat(payload, passwd);
   }
 
-  sdep_err_t error = ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_APSTART, payload_len,
+  sdep_err_t error = FEATHERLIB->sdep_execute(SDEP_CMD_APSTART, payload_len,
                                                        (uint8_t*)payload, NULL, NULL);
   free(payload);
   return error;
@@ -198,7 +198,7 @@ sdep_err_t AdafruitFeather::startAP(char* ssid, char* passwd)
 /******************************************************************************/
 sdep_err_t AdafruitFeather::startAP(void)
 {
-  return ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_APSTART, 0, NULL, NULL, NULL);
+  return FEATHERLIB->sdep_execute(SDEP_CMD_APSTART, 0, NULL, NULL, NULL);
 }
 
 /******************************************************************************/
@@ -211,7 +211,7 @@ sdep_err_t AdafruitFeather::startAP(void)
 /******************************************************************************/
 sdep_err_t AdafruitFeather::stopAP(void)
 {
-  return ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_APSTOP, 0, NULL, NULL, NULL);
+  return FEATHERLIB->sdep_execute(SDEP_CMD_APSTOP, 0, NULL, NULL, NULL);
 }
 
 /******************************************************************************/
@@ -250,7 +250,7 @@ sdep_err_t AdafruitFeather::ping(char* ip_address_str, uint8_t* response_time)
     ptr_ip++;
   }
 
-  return ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_PING, 4, payload,
+  return FEATHERLIB->sdep_execute(SDEP_CMD_PING, 4, payload,
                                            NULL, response_time);
 }
 
@@ -274,7 +274,7 @@ sdep_err_t AdafruitFeather::ping(uint8_t* ip_address, uint8_t* response_time)
     if (ip_address[i] > 255) return ERROR_INVALIDPARAMETER;
   }
 
-  return ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_PING, 4, ip_address,
+  return FEATHERLIB->sdep_execute(SDEP_CMD_PING, 4, ip_address,
                                            NULL, response_time);
 }
 
@@ -293,7 +293,7 @@ sdep_err_t AdafruitFeather::ping(uint8_t* ip_address, uint8_t* response_time)
 /******************************************************************************/
 sdep_err_t AdafruitFeather::dnsLookup(char* dns, uint8_t* ipv4_address)
 {
-  return ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_DNSLOOKUP, strlen(dns),
+  return FEATHERLIB->sdep_execute(SDEP_CMD_DNSLOOKUP, strlen(dns),
                                            (uint8_t*)dns, NULL, ipv4_address);
 }
 
@@ -311,7 +311,7 @@ sdep_err_t AdafruitFeather::dnsLookup(char* dns, uint8_t* ipv4_address)
 sdep_err_t AdafruitFeather::getTime(char* iso8601_time)
 {
 
-  return ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_GETTIME, 0, NULL, NULL,
+  return FEATHERLIB->sdep_execute(SDEP_CMD_GETTIME, 0, NULL, NULL,
                                            (uint8_t*)iso8601_time);
 }
 
@@ -331,7 +331,7 @@ sdep_err_t AdafruitFeather::getTime(char* iso8601_time)
 /******************************************************************************/
 sdep_err_t AdafruitFeather::httpGetUri(char* uri, uint16_t* length, uint8_t* response)
 {
-  return ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_HTTPGETURI, strlen(uri),
+  return FEATHERLIB->sdep_execute(SDEP_CMD_HTTPGETURI, strlen(uri),
                                            (uint8_t*)uri, length, response);
 }
 
@@ -354,7 +354,7 @@ sdep_err_t AdafruitFeather::httpPost(char* uri, uint16_t* length, uint8_t* respo
 {
   if (uri == NULL) return ERROR_INVALIDPARAMETER;
 
-  return ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_HTTPPOST, strlen(uri),
+  return FEATHERLIB->sdep_execute(SDEP_CMD_HTTPPOST, strlen(uri),
                                            (uint8_t*)uri, length, response);
 }
 
@@ -405,7 +405,7 @@ sdep_err_t AdafruitFeather::mqttLastWill(bool isOnlineTopic, char* topic, char* 
   utoa(retain, str, 10);
   strcat(lastWillMessage, str);
 
-  sdep_err_t error = ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_MQTTLASTWILL, lastWillMessage_len,
+  sdep_err_t error = FEATHERLIB->sdep_execute(SDEP_CMD_MQTTLASTWILL, lastWillMessage_len,
                                                        (uint8_t*)lastWillMessage, NULL, NULL);
   free(lastWillMessage);
   return error;
@@ -510,7 +510,7 @@ sdep_err_t AdafruitFeather::mqttConnect(char* host, uint16_t port, char* clientI
   strcat(mqttBroker, ",");
   if (password != NULL) strcat(mqttBroker, password);
 
-  sdep_err_t error =  ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_MQTTCONNECT, mqttServer_len,
+  sdep_err_t error =  FEATHERLIB->sdep_execute(SDEP_CMD_MQTTCONNECT, mqttServer_len,
                                                         (uint8_t*)mqttBroker, NULL, NULL);
   free(mqttBroker);
   return error;
@@ -526,7 +526,7 @@ sdep_err_t AdafruitFeather::mqttConnect(char* host, uint16_t port, char* clientI
 /******************************************************************************/
 sdep_err_t AdafruitFeather::mqttDisconnect(void)
 {
-  return ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_MQTTDISCONNECT, 0, NULL, NULL, NULL);
+  return FEATHERLIB->sdep_execute(SDEP_CMD_MQTTDISCONNECT, 0, NULL, NULL, NULL);
 }
 
 /******************************************************************************/
@@ -568,7 +568,7 @@ sdep_err_t AdafruitFeather::mqttPublish(char* topic, char* value, uint8_t qos, u
   utoa(retain, str, 10);
   strcat(publishedMessage, str);
 
-  sdep_err_t error = ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_MQTTPUBLISH, publishedMessage_len,
+  sdep_err_t error = FEATHERLIB->sdep_execute(SDEP_CMD_MQTTPUBLISH, publishedMessage_len,
                                                        (uint8_t*)publishedMessage, NULL, NULL);
   free(publishedMessage);
   return error;
@@ -603,7 +603,7 @@ sdep_err_t AdafruitFeather::mqttSubscribe(char* topic, uint8_t qos)
   utoa(qos, str, 10);
   strcat(subTopic, str);
 
-  sdep_err_t error = ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_MQTTSUBSCRIBE, subTopic_len,
+  sdep_err_t error = FEATHERLIB->sdep_execute(SDEP_CMD_MQTTSUBSCRIBE, subTopic_len,
                                                        (uint8_t*)subTopic, NULL, NULL);
   free(subTopic);
   return error;
@@ -619,7 +619,7 @@ sdep_err_t AdafruitFeather::mqttSubscribe(char* topic, uint8_t qos)
 /******************************************************************************/
 sdep_err_t AdafruitFeather::mqttUnsubscribe(void)
 {
-  return ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_MQTTUNSUBSCRIBE, 0, NULL, NULL, NULL);
+  return FEATHERLIB->sdep_execute(SDEP_CMD_MQTTUNSUBSCRIBE, 0, NULL, NULL, NULL);
 }
 
 /******************************************************************************/
@@ -636,7 +636,7 @@ sdep_err_t AdafruitFeather::mqttUnsubscribe(void)
 /******************************************************************************/
 sdep_err_t AdafruitFeather::irqRead(uint16_t* response_length, uint8_t* response)
 {
-  return ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_IRQREAD, 0, NULL,
+  return FEATHERLIB->sdep_execute(SDEP_CMD_IRQREAD, 0, NULL,
                                            response_length, response);
 }
 
@@ -652,7 +652,7 @@ sdep_err_t AdafruitFeather::irqRead(uint16_t* response_length, uint8_t* response
 /******************************************************************************/
 sdep_err_t AdafruitFeather::irqCount(uint16_t* n_items)
 {
-  return ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_IRQCOUNT, 0, NULL, NULL,
+  return FEATHERLIB->sdep_execute(SDEP_CMD_IRQCOUNT, 0, NULL, NULL,
                                            (uint8_t*)n_items);
 }
 
@@ -668,7 +668,7 @@ sdep_err_t AdafruitFeather::irqCount(uint16_t* n_items)
 /******************************************************************************/
 sdep_err_t AdafruitFeather::irqAvailable(uint16_t* n_available)
 {
-  return ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_IRQAVAIL, 0, NULL, NULL,
+  return FEATHERLIB->sdep_execute(SDEP_CMD_IRQAVAIL, 0, NULL, NULL,
                                            (uint8_t*)n_available);
 }
 
@@ -682,7 +682,7 @@ sdep_err_t AdafruitFeather::irqAvailable(uint16_t* n_available)
 /******************************************************************************/
 sdep_err_t AdafruitFeather::irqClear(void)
 {
-  return ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_IRQCLEAR, 0, NULL, NULL, NULL);
+  return FEATHERLIB->sdep_execute(SDEP_CMD_IRQCLEAR, 0, NULL, NULL, NULL);
 }
 
 /******************************************************************************/
@@ -724,7 +724,7 @@ sdep_err_t AdafruitFeather::httpsGet(char* host, const char* ca_cert, const char
   p_payload += sizeof(query_addr);
   memcpy(p_payload, (uint8_t*)&buffer_length, sizeof(buffer_length));
 
-  sdep_err_t error =  ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_HTTPSGET, paylen, payload, NULL, buffer);
+  sdep_err_t error =  FEATHERLIB->sdep_execute(SDEP_CMD_HTTPSGET, paylen, payload, NULL, buffer);
   free(payload);
   return error;
 }
@@ -771,7 +771,7 @@ sdep_err_t AdafruitFeather::httpRequest(const char* url, const char* content, ui
   *p_payload++ = method;
   memcpy(p_payload, (uint8_t*)&buffer_length, sizeof(buffer_length));
 
-  sdep_err_t error =  ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_HTTPREQUEST, paylen, payload, NULL, buffer);
+  sdep_err_t error =  FEATHERLIB->sdep_execute(SDEP_CMD_HTTPREQUEST, paylen, payload, NULL, buffer);
   free(payload);
   return error;
 }
@@ -837,7 +837,7 @@ sdep_err_t AdafruitFeather::httpsRequest(const char* url, const char* ca_cert,
   /* Length of output buffer */
   memcpy(p_payload, (uint8_t*)&buffer_length, sizeof(buffer_length));
 
-  sdep_err_t error =  ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_HTTPSREQUEST, paylen, payload, NULL, buffer);
+  sdep_err_t error =  FEATHERLIB->sdep_execute(SDEP_CMD_HTTPSREQUEST, paylen, payload, NULL, buffer);
   free(payload);
   return error;
 }
@@ -887,7 +887,7 @@ sdep_err_t AdafruitFeather::asyncHttpRequest(const char* url, const char* conten
   /* Method */
   *p_payload = method;
 
-  sdep_err_t error =  ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_ASYNCHTTPREQUEST, paylen, payload, NULL, NULL);
+  sdep_err_t error =  FEATHERLIB->sdep_execute(SDEP_CMD_ASYNCHTTPREQUEST, paylen, payload, NULL, NULL);
   free(payload);
   return error;
 }
@@ -946,7 +946,7 @@ sdep_err_t AdafruitFeather::asyncHttpsRequest(const char* url, const char* ca_ce
   /* Method */
   *p_payload = method;
 
-  sdep_err_t error =  ADAFRUIT_FEATHERLIB->sdep_execute(SDEP_CMD_ASYNCHTTPSREQUEST, paylen, payload, NULL, NULL);
+  sdep_err_t error =  FEATHERLIB->sdep_execute(SDEP_CMD_ASYNCHTTPSREQUEST, paylen, payload, NULL, NULL);
   free(payload);
   return error;
 }

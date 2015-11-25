@@ -19,8 +19,8 @@
 #include <EthernetClient.h>
 #include "adafruit_wifi.h"
 
-#define WLAN_SSID            "SSID of AP"
-#define WLAN_PASS            "Password of AP"
+#define WLAN_SSID            "thach"
+#define WLAN_PASS            "hoangthach"
 
 #define URI                 "/testwifi/index.html"
 #define HOST                "www.adafruit.com"

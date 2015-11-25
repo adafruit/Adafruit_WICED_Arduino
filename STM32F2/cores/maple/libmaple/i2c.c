@@ -591,7 +591,7 @@ static inline int32 wait_for_state_change(i2c_dev *dev,
 
         if (timeout && time_left == 0) return I2C_ERROR_TIMEOUT;
 
-        ADAFRUIT_FEATHERLIB->rtos_delay_ms(1);
+        FEATHERLIB->rtos_delay_ms(1);
         time_left--;
     }
 }
