@@ -55,6 +55,31 @@ extern "C"{
 #define BIT_CLR(x, n)               ( (x) & (~BIT(n)) )
 #define BIT_TEST(x, n)              ( ((x) & BIT(n)) ? true : false )
 
+
+//--------------------------------------------------------------------+
+// MACROS
+//--------------------------------------------------------------------+
+#define U16_HIGH_U8(u16)            ((uint8_t) (((u16) >> 8) & 0x00ff))
+#define U16_LOW_U8(u16)             ((uint8_t) ((u16)       & 0x00ff))
+#define U16_TO_U8S_BE(u16)          U16_HIGH_U8(u16), U16_LOW_U8(u16)
+#define U16_TO_U8S_LE(u16)          U16_LOW_U8(u16), U16_HIGH_U8(u16)
+
+#define U32_B1_U8(u32)              ((uint8_t) (((u32) >> 24) & 0x000000ff)) // MSB
+#define U32_B2_U8(u32)              ((uint8_t) (((u32) >> 16) & 0x000000ff))
+#define U32_B3_U8(u32)              ((uint8_t) (((u32) >>  8) & 0x000000ff))
+#define U32_B4_U8(u32)              ((uint8_t) ((u32)         & 0x000000ff)) // LSB
+
+#define U32_FROM_U8(b1, b2, b3, b4) ((uint32_t) (((b1) << 24) + ((b2) << 16) + ((b3) << 8) + (b4)))
+#define U32_FROM_U16(high, low)     ((uint32_t) (((high) << 16) | (low)))
+#define U16_FROM_U8(high, low)      ((uint32_t) (((high) << 8) | (low)))
+
+#define U32_TO_U8S_BE(u32)          U32_B1_U8(u32), U32_B2_U8(u32), U32_B3_U8(u32), U32_B4_U8(u32)
+#define U32_TO_U8S(u32)             U32_B4_U8(u32), U32_B3_U8(u32), U32_B2_U8(u32), U32_B1_U8(u32)
+
+#define BIN8(x)                     ((uint8_t)  (0b##x))
+#define BIN16(b1, b2)               ((uint16_t) (0b##b1##b2))
+#define BIN32(b1, b2, b3, b4)       ((uint32_t) (0b##b1##b2##b3##b4))
+
 /*
  * Failure routines
  */

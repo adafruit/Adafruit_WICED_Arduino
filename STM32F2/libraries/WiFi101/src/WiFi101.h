@@ -20,7 +20,7 @@
 #ifndef WIFI_H
 #define WIFI_H
 
-#define WIFI_FIRMWARE_REQUIRED "19.3.0"
+#define WIFI_FIRMWARE_REQUIRED "0.1.0"
 
 #include <Arduino.h>
 

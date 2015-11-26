@@ -15,20 +15,12 @@ void setup() {
   // Initialize serial
   Serial.begin(9600);
   while (!Serial) {
-    ; // wait for serial port to connect. Needed for native USB port only
+    delay(1); // wait for serial port to connect. Needed for native USB port only
   }
 
   // Print a welcome message
   Serial.println("WiFi101 firmware check.");
   Serial.println();
-
-  // Check for the presence of the shield
-  Serial.print("WiFi101 shield: ");
-  if (WiFi.status() == WL_NO_SHIELD) {
-    Serial.println("NOT PRESENT");
-    return; // don't continue
-  }
-  Serial.println("DETECTED");
 
   // Print firmware version on the shield
   String fv = WiFi.firmwareVersion();
