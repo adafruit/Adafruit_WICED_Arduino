@@ -124,6 +124,18 @@ size_t Print::print(double n, int digits) {
     return printFloat(n, digits);
 }
 
+size_t Print::print(const Printable& x)
+{
+  return x.printTo(*this);
+}
+
+size_t Print::println(const Printable& x)
+{
+  size_t n = print(x);
+  n += println();
+  return n;
+}
+
 size_t Print::println(void) 
 {
 	size_t n =  print('\r');

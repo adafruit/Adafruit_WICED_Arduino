@@ -25,6 +25,7 @@
 
 #include <libmaple/libmaple_types.h>
 #include "WString.h"
+#include "Printable.h"
 
 enum {
     BYTE = 0,
@@ -51,6 +52,8 @@ public:
     size_t print(long long, int=DEC);
     size_t print(unsigned long long, int=DEC);
     size_t print(double, int=2);
+    size_t print(const Printable&);
+    size_t println(const Printable&);
     size_t println(void);
 	size_t println(const String &s);
 	size_t println(char);

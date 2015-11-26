@@ -38,6 +38,7 @@
 extern "C"{
 #endif
 
+
 /*
  * Bit manipulation
  */
@@ -79,6 +80,9 @@ extern "C"{
 #define BIN8(x)                     ((uint8_t)  (0b##x))
 #define BIN16(b1, b2)               ((uint16_t) (0b##b1##b2))
 #define BIN32(b1, b2, b3, b4)       ((uint32_t) (0b##b1##b2##b3##b4))
+
+#define __swap32(x)    __builtin_bswap32(x)    ///< built-in function to swap Endian of 32-bit number
+#define __swap16(u16)  __builtin_bswap16(u16)  ///< built-in function to swap Endian of 16-bit number
 
 /*
  * Failure routines

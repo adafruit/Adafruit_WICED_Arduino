@@ -36,7 +36,7 @@ IPAddress::IPAddress(uint8_t first_octet, uint8_t second_octet, uint8_t third_oc
 
 IPAddress::IPAddress(uint32_t address)
 {
-    _address.dword = address;
+    _address.dword = __swap32(address);
 }
 
 IPAddress::IPAddress(const uint8_t *address)
@@ -52,7 +52,7 @@ IPAddress& IPAddress::operator=(const uint8_t *address)
 
 IPAddress& IPAddress::operator=(uint32_t address)
 {
-    _address.dword = address;
+    _address.dword = __swap32(address);
     return *this;
 }
 
