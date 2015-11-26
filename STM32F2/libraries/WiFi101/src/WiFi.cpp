@@ -148,25 +148,8 @@ WiFiClass::WiFiClass()
 
 	uint8_t fw_version[4] = { U32_TO_U8S_BE(FEATHERLIB->firmware_version) };
 	sprintf(_version, "%d.%d.%d", fw_version[1], fw_version[2], fw_version[3]);
-}
 
-int WiFiClass::init()
-{
-#if 0
-	// Initialize WiFi module and register status callback:
-	param.pfAppWifiCb = wifi_cb;
-
-	// Initialize socket API and register socket callback:
-	socketInit();
-	socketBufferInit();
-	registerSocketCallback(socketBufferCb, resolve_cb);
-
-	memset(_client, 0, sizeof(WiFiClient *) * TCP_SOCK_MAX);
-
-	return ret;
-#endif
-
-	return 0;
+	_ssid[0] = 0;
 }
 
 char* WiFiClass::firmwareVersion()
@@ -189,7 +172,10 @@ uint8_t WiFiClass::begin()
 
 uint8_t WiFiClass::begin(const char *ssid)
 {
-	return ( ERROR_NONE == feather.connectAP(ssid, NULL) ) ? WL_CONNECTED : WL_IDLE_STATUS;
+	if ( ERROR_NONE != feather.connectAP(ssid, NULL) ) return WL_IDLE_STATUS;
+
+	strcpy(_ssid, ssid);
+	return WL_CONNECTED;
 }
 
 #if 0
@@ -207,7 +193,10 @@ uint8_t WiFiClass::begin(const char *ssid, uint8_t key_idx, const char* key)
 
 uint8_t WiFiClass::begin(const char *ssid, const char *key)
 {
-	return ( ERROR_NONE == feather.connectAP(ssid, key) ) ? WL_CONNECTED : WL_IDLE_STATUS;
+  if ( ERROR_NONE != feather.connectAP(ssid, key) ) return WL_IDLE_STATUS;
+
+	strcpy(_ssid, ssid);
+	return WL_CONNECTED;
 }
 
 uint8_t WiFiClass::startConnect(const char *ssid, uint8_t u8SecType, const void *pvAuthInfo)
@@ -413,13 +402,16 @@ uint32_t WiFiClass::gatewayIP()
 
 char* WiFiClass::SSID()
 {
+  return _ssid;
+  
+#if 0
 	if (_status == WL_CONNECTED) {
-//		return _ssid;
-	  return 0;
+		return _ssid;
 	}
 	else {
 		return 0;
 	}
+#endif  
 }
 
 uint8_t* WiFiClass::BSSID(uint8_t* bssid)

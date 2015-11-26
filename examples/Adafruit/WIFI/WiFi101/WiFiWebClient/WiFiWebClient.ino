@@ -42,13 +42,15 @@ void setup() {
   }
 
   // attempt to connect to Wifi network:
-  Serial.print("Attempting to connect to SSID: ");
-  Serial.println(ssid);
+  while ( status != WL_CONNECTED) {
+    Serial.print("Attempting to connect to SSID: ");
+    Serial.println(ssid);
 
-  status = WiFi.begin(ssid, pass);
+    status = WiFi.begin(ssid, pass);
 
-  // wait 10 seconds for connection:
-  // delay(10000);
+    // wait 10 seconds for connection:
+    //delay(10000);
+  }
 
   Serial.println("Connected to wifi");
   printWifiStatus();

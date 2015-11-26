@@ -20,7 +20,9 @@
 #ifndef WIFI_H
 #define WIFI_H
 
-#define WIFI_FIRMWARE_REQUIRED "0.1.0"
+#define WIFI_FIRMWARE_REQUIRED    "0.1.0"
+#define WIFI_MAX_SSID_LEN         32
+#define WIFI_MAX_PASSPHRASE_LEN   64
 
 #include <Arduino.h>
 
@@ -73,16 +75,16 @@ public:
 	wl_mode_t _mode;
 	wl_status_t _status;
 
+	char _ssid[WIFI_MAX_SSID_LEN+1];
 #if 0
 	char _scan_ssid[M2M_MAX_SSID_LEN];
 	uint8_t _scan_auth;
-	char _ssid[M2M_MAX_SSID_LEN];
 	WiFiClient *_client[TCP_SOCK_MAX];
 #endif
 
 	WiFiClass();
 
-	int init();
+//	int init() { return 1; }
 	
 	char* firmwareVersion();
 
