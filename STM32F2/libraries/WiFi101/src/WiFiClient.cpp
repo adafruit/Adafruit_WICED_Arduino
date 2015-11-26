@@ -128,7 +128,7 @@ int WiFiClient::connect(IPAddress ip, uint16_t port)
   connect_input.is_tls     = false;
   connect_input.ipv4       = (uint32_t) ip;
   connect_input.port       = port;
-  connect_input.timeout_ms = 1000;
+  connect_input.timeout_ms = _timeout;
 
   int err = FEATHERLIB->sdep_execute(SDEP_CMD_TCP_CONNECT,
                                      sizeof(sdep_tcp_connect_t), &connect_input,
@@ -266,12 +266,9 @@ int WiFiClient::read(uint8_t* buf, size_t size)
   uint8_t para2[6];
 
   memcpy(para2, &size, 2); // uint16_t only
-  *((uint32_t*)(para2+2)) = 1000; // timeout
+  memcpy(para2+2, &_timeout, 4); // timeout
 
-  if( ERROR_NONE != FEATHERLIB->sdep_execute_extend(SDEP_CMD_TCP_READ,
-                                                    4, &_tcp_handle,
-                                                    6, para2,
-                                                    NULL, buf) )
+  if( ERROR_NONE != FEATHERLIB->sdep_execute_extend(SDEP_CMD_TCP_READ, 4, &_tcp_handle, 6, para2, NULL, buf) )
   {
     return -1;
   }
@@ -284,7 +281,7 @@ int WiFiClient::peek()
   if ( _tcp_handle == 0 ) return EOF;
 
   uint8_t ch;
-  VERIFY(ERROR_NONE == FEATHERLIB->sdep_execute(SDEP_CMD_TCP_PEEK, 4, &_tcp_handle, NULL, &ch), EOF);
+  VERIFY(ERROR_NONE == FEATHERLIB->sdep_execute_extend(SDEP_CMD_TCP_PEEK, 4, &_tcp_handle, 4, &_timeout, NULL, &ch), EOF);
 
   return (int) ch;
 }
