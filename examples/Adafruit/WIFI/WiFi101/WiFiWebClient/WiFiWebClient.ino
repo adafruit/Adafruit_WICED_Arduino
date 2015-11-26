@@ -70,16 +70,9 @@ void setup() {
 void loop() {
   // if there are incoming bytes available
   // from the server, read them and print them:
-#if 0
   while (client.available()) {
     char c = client.read();
     Serial.write(c);
-  }
-#endif
-
-  char c = client.read();
-  if (c != EOF) {
-    Serial.print(c);
   }
 
   // if the server's disconnected, stop the client:

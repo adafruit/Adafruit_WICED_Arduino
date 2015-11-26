@@ -114,6 +114,8 @@ typedef enum {
   SDEP_CMD_TCP_READ          = 0x0093,
   SDEP_CMD_TCP_CLOSE         = 0x0094,
   SDEP_CMD_TCP_STATUS        = 0x0095,
+  SDEP_CMD_TCP_AVAILABLE     = 0x0096,
+  SDEP_CMD_TCP_PEEK          = 0x0097,
 
 } sdep_command_t;
 

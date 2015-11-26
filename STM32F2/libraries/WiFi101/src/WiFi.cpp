@@ -378,8 +378,7 @@ void WiFiClass::disconnect()
 
 uint8_t *WiFiClass::macAddress(uint8_t *mac)
 {
-	FEATHERLIB->sdep_execute(SDEP_CMD_GET_MAC_ADDRESS, 0, NULL,
-	                         NULL, mac);
+	FEATHERLIB->sdep_execute(SDEP_CMD_GET_MAC_ADDRESS, 0, NULL, NULL, mac);
 	return mac;
 }
 

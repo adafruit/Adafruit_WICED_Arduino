@@ -219,16 +219,12 @@ size_t WiFiClient::write(const uint8_t *buf, size_t size)
 
 int WiFiClient::available()
 {
-#if 0
-	m2m_wifi_handle_events(NULL);
+  if ( _tcp_handle == 0 ) return 0;
 
-	if (_socket != -1) {
-		return _head - _tail;
-	}
-	return 0;
-#endif
+  uint8_t result;
+  VERIFY(ERROR_NONE == FEATHERLIB->sdep_execute(SDEP_CMD_TCP_AVAILABLE, 4, &_tcp_handle, NULL, &result), 0);
 
-	return 0;
+  return result;
 }
 
 int WiFiClient::read()
@@ -285,8 +281,12 @@ int WiFiClient::read(uint8_t* buf, size_t size)
 
 int WiFiClient::peek()
 {
-  return -1;
-  //	return read();
+  if ( _tcp_handle == 0 ) return EOF;
+
+  uint8_t ch;
+  VERIFY(ERROR_NONE == FEATHERLIB->sdep_execute(SDEP_CMD_TCP_PEEK, 4, &_tcp_handle, NULL, &ch), EOF);
+
+  return (int) ch;
 }
 
 void WiFiClient::flush()
@@ -294,9 +294,7 @@ void WiFiClient::flush()
   if ( _tcp_handle == 0 ) return;
 
   // flush is flush read !!!!
-  FEATHERLIB->sdep_execute(SDEP_CMD_TCP_FLUSH,
-                           4, &_tcp_handle,
-                           NULL, NULL);
+  FEATHERLIB->sdep_execute(SDEP_CMD_TCP_FLUSH, 4, &_tcp_handle, NULL, NULL);
 
 //	while (available())
 //		read();
@@ -306,9 +304,7 @@ void WiFiClient::stop()
 {
   if ( _tcp_handle == 0 ) return;
 
-  FEATHERLIB->sdep_execute(SDEP_CMD_TCP_CLOSE,
-                           4, &_tcp_handle,
-                           NULL, NULL);
+  FEATHERLIB->sdep_execute(SDEP_CMD_TCP_CLOSE, 4, &_tcp_handle, NULL, NULL);
   _tcp_handle = 0;
 }
 
@@ -334,9 +330,7 @@ uint8_t WiFiClient::status()
   if ( _tcp_handle == 0 ) return TCP_STATUS_CLOSED;
 
   uint8_t status = TCP_STATUS_CLOSED;
-  FEATHERLIB->sdep_execute(SDEP_CMD_TCP_STATUS,
-                           4, &_tcp_handle,
-                           NULL, &status);
+  FEATHERLIB->sdep_execute(SDEP_CMD_TCP_STATUS, 4, &_tcp_handle, NULL, &status);
 
   return status;
 }
