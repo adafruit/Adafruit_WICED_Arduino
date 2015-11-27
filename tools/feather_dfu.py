@@ -26,13 +26,15 @@ SDEP_MSGTYPE_RESPONSE = 0x20
 SDEP_MSGTYPE_ALERT = 0x40
 SDEP_MSGTYPE_ERROR = 0x80
 
+SDEP_CMD_RESET          = 0x0001
+SDEP_CMD_FACTORYRESET   = 0x0002
+SDEP_CMD_DFU            = 0x0003
+
 reset_sec = 2
 
 dfu_util = { 'Windows' : os.path.dirname(sys.argv[0]) + '/windows/dfu-util/dfu-util.exe',
              'Darwin'  : 'dfu-util',
              'Linux'   : 'dfu-util' }
-
-sdep_cmd_dict = { 'reboot' : 1, 'factory_reset' : 2, 'enter_dfu' : 3 }
 
 # Explicitly configure the libusb backend for PyUSB.
 backend = None
@@ -46,16 +48,8 @@ else:
     # On other platforms libusb-1.0 needs to be installed.
     backend = usb.backend.libusb1.get_backend()
 
-######
-
-def force_dfu_mode():
-    # skip if already in DFU mode
-    if usb.core.find(idVendor=usb_vid, idProduct=usb_dfu_pid, backend=backend) is None:
-        runSystemCmd('enter_dfu')
-        time.sleep(reset_sec)
-
 # Send system command using control pipe
-def runSystemCmd(cmd):
+def runSystemCmd(cmd_id):
     # find our device
     dev = usb.core.find(idVendor=usb_vid, idProduct=usb_pid, backend=backend)
     if dev is None:
@@ -65,7 +59,13 @@ def runSystemCmd(cmd):
         if dev is None:
             print "Unable to connect to specified VID/PID 0x%04X 0x%04X" % (usb_vid, usb_dfu_pid)
             sys.exit(1)
-    dev.ctrl_transfer( 0x40, SDEP_MSGTYPE_COMMAND, sdep_cmd_dict[cmd])
+    dev.ctrl_transfer( 0x40, SDEP_MSGTYPE_COMMAND, cmd_id)
+
+def force_dfu_mode():
+    # skip if already in DFU mode
+    if usb.core.find(idVendor=usb_vid, idProduct=usb_dfu_pid, backend=backend) is None:
+        runSystemCmd(SDEP_CMD_DFU)
+        time.sleep(reset_sec)
 
 @click.group()
 def cli():
@@ -73,7 +73,7 @@ def cli():
 
 @cli.command()
 def reboot():
-    runSystemCmd('reboot')
+    runSystemCmd(SDEP_CMD_RESET)
 
 @cli.command()
 def enter_dfu():
@@ -81,7 +81,7 @@ def enter_dfu():
 
 @cli.command()
 def factory_reset():
-    runSystemCmd('factory_reset')
+    runSystemCmd(SDEP_CMD_FACTORYRESET)
 
 @cli.command()
 @click.argument('binfile')
