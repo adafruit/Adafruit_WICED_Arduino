@@ -84,6 +84,8 @@ extern "C"{
 #define __swap32(x)    __builtin_bswap32(x)    ///< built-in function to swap Endian of 32-bit number
 #define __swap16(u16)  __builtin_bswap16(u16)  ///< built-in function to swap Endian of 16-bit number
 
+#define memclr(buffer, size)  memset(buffer, 0, size)
+
 /*
  * Failure routines
  */

@@ -22,7 +22,7 @@
 
 // TODO remove later (using malloc/free to save memory)
 #define WIFI_MAX_SCAN_NUM   20
-static wl_scan_result_t wifi_scan_result[WIFI_MAX_SCAN_NUM];
+static wl_ap_info_t wifi_scan_result[WIFI_MAX_SCAN_NUM];
 
 #if 0
 extern "C" {
@@ -146,14 +146,14 @@ WiFiClass::WiFiClass()
 {
 	_mode    = WL_RESET_MODE;
 	_status  = WL_IDLE_STATUS;
-	_localip = 0;
+
 	_submask = 0;
 	_gateway = 0;
 
 	uint8_t fw_version[4] = { U32_TO_U8S_BE(FEATHERLIB->firmware_version) };
 	sprintf(_version, "%d.%d.%d", fw_version[1], fw_version[2], fw_version[3]);
 
-	_ssid[0] = 0;
+	memclr(&_ap_info, sizeof(wl_ap_info_t));
 }
 
 char* WiFiClass::firmwareVersion()
@@ -164,7 +164,6 @@ char* WiFiClass::firmwareVersion()
 uint8_t WiFiClass::begin()
 {
 	// Connect to router:
-	_localip = 0;
 	_submask = 0;
 	_gateway = 0;
 	_status = WL_IDLE_STATUS;
@@ -176,23 +175,34 @@ uint8_t WiFiClass::begin()
 
 uint8_t WiFiClass::begin(const char *ssid)
 {
-	if ( ERROR_NONE != feather.connectAP(ssid, NULL) ) return WL_IDLE_STATUS;
-
-	strcpy(_ssid, ssid);
-	return WL_CONNECTED;
+	return this->begin(ssid, NULL);
 }
 
 uint8_t WiFiClass::begin(const char *ssid, const char *key)
 {
-  if ( ERROR_NONE != feather.connectAP(ssid, key) ) return WL_IDLE_STATUS;
+  if (ssid == NULL || ssid == "") return WL_NO_SSID_AVAIL;
 
-	strcpy(_ssid, ssid);
-	return WL_CONNECTED;
-}
+  uint16_t payload_len = strlen(ssid);
+  if (key != NULL) payload_len += strlen(key) + 1;
 
-uint8_t WiFiClass::startConnect(const char *ssid, uint8_t u8SecType, const void *pvAuthInfo)
-{
-  return 0;
+  char* payload = (char*)malloc(payload_len);
+
+  strcpy(payload, ssid);
+  if (key != NULL)
+  {
+    strcat(payload, ",");
+    strcat(payload, key);
+  }
+
+  uint16_t resp_len = sizeof(wl_ap_info_t);
+  uint16_t err = FEATHERLIB->sdep_execute(SDEP_CMD_CONNECT, payload_len, (uint8_t*)payload,
+                                                 &resp_len, &_ap_info);
+  free(payload);
+
+  Serial.println(resp_len);
+
+  _status = (err == ERROR_NONE) ? WL_CONNECTED : WL_CONNECT_FAILED;
+	return _status;
 }
 
 uint8_t WiFiClass::beginAP(char *ssid)
@@ -300,7 +310,6 @@ uint32_t WiFiClass::provisioned()
 // Configuring static IP instead of using DHCP
 void WiFiClass::config(IPAddress local_ip)
 {
-	_localip = (uint32_t) local_ip;
 	_submask = 0;
 	_gateway = 0;
 }
@@ -316,7 +325,6 @@ void WiFiClass::config(IPAddress local_ip, IPAddress dns_server)
 	conf.u32SubnetMask = 0;
 	m2m_wifi_set_static_ip(&conf);
 #endif
-	_localip = (uint32_t) local_ip;
 	_submask = 0;
 	_gateway = 0;
 }
@@ -393,91 +401,39 @@ uint32_t WiFiClass::gatewayIP()
 
 char* WiFiClass::SSID()
 {
-  return _ssid;
-  
-#if 0
-	if (_status == WL_CONNECTED) {
-		return _ssid;
-	}
-	else {
-		return 0;
-	}
-#endif  
+	return (_status == WL_CONNECTED) ? _ap_info.ssid : NULL;
 }
 
 uint8_t* WiFiClass::BSSID(uint8_t* bssid)
 {
-  return 0;
-#if 0
-  int8_t net = scanNetworks();
-	
-	_bssid = bssid;
-	memset(bssid, 0, 6);
-	for (uint8_t i = 0; i < net; ++i) {
-		SSID(i);
-		if (strcmp(_scan_ssid, _ssid) == 0) {
-			break;
-		}
-	}
-	
-	_bssid = 0;
-	return bssid;
-#endif
+  memcpy(bssid, _ap_info.bssid, 6);
+  return bssid;
 }
 
 uint32_t WiFiClass::encryptionType()
 {
-  return 0;
-#if 0
-	int8_t net = scanNetworks();
-
-	for (uint8_t i = 0; i < net; ++i) {
-		SSID(i);
-		if (strcmp(_scan_ssid, _ssid) == 0) {
-			break;
-		}
-	}
-
-	return _scan_auth;
-#endif
+  return _ap_info.security;
 }
 
 int32_t WiFiClass::RSSI()
 {
-  return 0;
-#if 0
-	// Clear pending events:
-	m2m_wifi_handle_events(NULL);
-
-	// Send RSSI request:
-	_resolve = 0;
-	if (m2m_wifi_req_curr_rssi() < 0) {
-		return 0;
-	}
-
-	// Wait for connection or timeout:
-	unsigned long start = millis();
-	while (_resolve == 0 && millis() - start < 1000) {
-		m2m_wifi_handle_events(NULL);
-	}
-
-	return _resolve;
-#endif
+  // TODO should rescan, and recheck rssi
+  return _ap_info.rssi;
 }
 
 int8_t WiFiClass::scanNetworks()
 {
-  uint16_t length = sizeof(wl_scan_result_t) * WIFI_MAX_SCAN_NUM;
+  uint16_t length = sizeof(wl_ap_info_t) * WIFI_MAX_SCAN_NUM;
   VERIFY( ERROR_NONE == FEATHERLIB->sdep_execute(SDEP_CMD_SCAN, 0, NULL, &length, wifi_scan_result), 0);
 
-  return length/sizeof(wl_scan_result_t);
+  return length/sizeof(wl_ap_info_t);
 }
 
 char* WiFiClass::SSID(uint8_t pos)
 {
   VERIFY(pos < WIFI_MAX_SCAN_NUM, NULL);
 
-  wl_scan_result_t* p_scan = &wifi_scan_result[pos];
+  wl_ap_info_t* p_scan = &wifi_scan_result[pos];
 
   return p_scan->ssid;
 }
@@ -486,7 +442,7 @@ int32_t WiFiClass::RSSI(uint8_t pos)
 {
   VERIFY(pos < WIFI_MAX_SCAN_NUM, NULL);
 
-  wl_scan_result_t* p_scan = &wifi_scan_result[pos];
+  wl_ap_info_t* p_scan = &wifi_scan_result[pos];
 
   return p_scan->rssi;
 }
@@ -495,7 +451,7 @@ uint32_t WiFiClass::encryptionType(uint8_t pos)
 {
   VERIFY(pos < WIFI_MAX_SCAN_NUM, NULL);
 
-  wl_scan_result_t* p_scan = &wifi_scan_result[pos];
+  wl_ap_info_t* p_scan = &wifi_scan_result[pos];
 
   return p_scan->security;
 }

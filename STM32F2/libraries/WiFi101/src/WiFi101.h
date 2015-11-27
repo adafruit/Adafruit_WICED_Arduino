@@ -59,9 +59,9 @@ typedef struct ATTR_PACKED
   uint32_t security;
   uint8_t  channel;
   uint8_t  band_2_4ghz;
-} wl_scan_result_t;
+} wl_ap_info_t;
 
-ASSERT_STATIC(sizeof(wl_scan_result_t) == 52);
+ASSERT_STATIC(sizeof(wl_ap_info_t) == 52);
 
 typedef enum {
 	WL_NO_SHIELD = 255,
@@ -111,18 +111,16 @@ typedef enum {
 class WiFiClass
 {
 public:
-	uint32_t _localip;
+  wl_ap_info_t _ap_info;
+
 	uint32_t _submask;
 	uint32_t _gateway;
 	uint32_t _resolve;
-	byte *_bssid;
+
 	wl_mode_t _mode;
 	wl_status_t _status;
 
-	char _ssid[WIFI_MAX_SSID_LEN+1];
 #if 0
-	char _scan_ssid[M2M_MAX_SSID_LEN];
-	uint8_t _scan_auth;
 	WiFiClient *_client[TCP_SOCK_MAX];
 #endif
 
@@ -190,9 +188,7 @@ public:
 	void refresh(void);
 
 private:
-	int _init;
 	char _version[9];
-	uint8_t startConnect(const char *ssid, uint8_t u8SecType, const void *pvAuthInfo);
 };
 
 extern WiFiClass WiFi;
