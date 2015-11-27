@@ -22,14 +22,7 @@ void setup() {
   //Initialize serial and wait for port to open:
   Serial.begin(9600);
   while (!Serial) {
-    ; // wait for serial port to connect. Needed for native USB port only
-  }
-  
-  // check for the presence of the shield:
-  if (WiFi.status() == WL_NO_SHIELD) {
-    Serial.println("WiFi shield not present");
-    // don't continue:
-    while (true);
+    delay(1); // wait for serial port to connect. Needed for native USB port only
   }
 
   // Print WiFi MAC address:
@@ -98,21 +91,30 @@ void listNetworks() {
 void printEncryptionType(uint32_t thisType) {
   // read the encryption type and print out the name:
   switch (thisType) {
-    case ENC_TYPE_WEP:
+    case ENC_TYPE_WEP_PSK:
+    case ENC_TYPE_WEP_SHARED:
       Serial.println("WEP");
       break;
-    case ENC_TYPE_TKIP:
+      
+    case ENC_TYPE_WPA_TKIP_PSK:
+    case ENC_TYPE_WPA_AES_PSK:
       Serial.println("WPA");
       break;
-    case ENC_TYPE_CCMP:
+    
+      
+    case ENC_TYPE_WPA2_AES_PSK:
+    case ENC_TYPE_WPA2_TKIP_PSK:
+    case ENC_TYPE_WPA2_MIXED_PSK:
       Serial.println("WPA2");
       break;
-    case ENC_TYPE_NONE:
+      
+    case ENC_TYPE_OPEN:
       Serial.println("None");
       break;
-    case ENC_TYPE_AUTO:
-      Serial.println("Auto");
-      break;
+      
+//    case ENC_TYPE_AUTO:
+//      Serial.println("Auto");
+//      break;
   }
 }
 
