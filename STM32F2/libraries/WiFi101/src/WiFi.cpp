@@ -199,8 +199,6 @@ uint8_t WiFiClass::begin(const char *ssid, const char *key)
                                                  &resp_len, &_ap_info);
   free(payload);
 
-  Serial.println(resp_len);
-
   _status = (err == ERROR_NONE) ? WL_CONNECTED : WL_CONNECT_FAILED;
 	return _status;
 }
