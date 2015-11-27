@@ -40,7 +40,7 @@ void setup() {
   //Initialize serial and wait for port to open:
   Serial.begin(9600);
   while (!Serial) {
-    ; // wait for serial port to connect. Needed for native USB port only
+    delay(1); // wait for serial port to connect. Needed for native USB port only
   }
 
   // attempt to connect to Wifi network:
@@ -88,6 +88,8 @@ void httpRequest() {
     client.println("Host: www.adafruit.com");
     client.println("Connection: close");
     client.println();
+    
+    client.flush();
 
     // note the time that the connection was made:
     lastConnectionTime = millis();
