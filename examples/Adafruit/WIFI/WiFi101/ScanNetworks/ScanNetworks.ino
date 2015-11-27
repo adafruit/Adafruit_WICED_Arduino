@@ -95,7 +95,7 @@ void listNetworks() {
   }
 }
 
-void printEncryptionType(int thisType) {
+void printEncryptionType(uint32_t thisType) {
   // read the encryption type and print out the name:
   switch (thisType) {
     case ENC_TYPE_WEP:

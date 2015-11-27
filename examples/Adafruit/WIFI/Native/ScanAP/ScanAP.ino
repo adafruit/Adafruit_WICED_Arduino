@@ -19,16 +19,11 @@ void print_ap_details(uint16_t buffer_size, uint8_t* ap_details)
   int i = 0;
   while (i < buffer_size)
   {
-    // SSID field
-    uint8_t ssid_len = ap_details[i++];
-    for (int j = 0; j < 32; j++)
-    {
-      if (j < ssid_len)
-        Serial.write(ap_details[j + i]);
-      else
-        Serial.print(F(" "));
-    }
-    i += ssid_len;
+    // SSID field (null terminated string)
+    Serial.print( (char*)(ap_details+i) );
+    for(uint8_t j=strlen( (char*)(ap_details+i) ); j<32; j++) Serial.print(" ");
+
+    i += (32+1);
     Serial.print(F("\t"));
 
     // MAC address
@@ -127,9 +122,11 @@ void setup()
 void loop()
 {
   // Perform AP Scan
-  uint16_t buffer_size;
-  uint8_t  ap_details[10 * AP_INFO_PACKET_SIZE];
+  uint8_t  ap_details[20 * AP_INFO_PACKET_SIZE];
+  uint16_t buffer_size = sizeof(ap_details);
   uint16_t error = feather.scan(&buffer_size, ap_details);
+  
+  Serial.println(buffer_size);
   if (error == ERROR_NONE)
   {
     print_ap_details(buffer_size, ap_details);   // Display AP information via Serial Monitor

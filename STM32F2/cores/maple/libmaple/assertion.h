@@ -60,7 +60,7 @@ extern "C"
   #define _ASSERT_COUNTER __LINE__
 #endif
 
-#define ASSERT_STATIC(const_expr, message) enum { XSTRING_CONCAT_(static_assert_, _ASSERT_COUNTER) = 1/(!!(const_expr)) }
+#define ASSERT_STATIC(const_expr) enum { XSTRING_CONCAT_(static_assert_, _ASSERT_COUNTER) = 1/(!!(const_expr)) }
 
 //--------------------------------------------------------------------+
 // Assert Helper

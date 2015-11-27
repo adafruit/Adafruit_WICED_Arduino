@@ -20,10 +20,6 @@
 #ifndef WIFI_H
 #define WIFI_H
 
-#define WIFI_FIRMWARE_REQUIRED    "0.1.0"
-#define WIFI_MAX_SSID_LEN         32
-#define WIFI_MAX_PASSPHRASE_LEN   64
-
 #include <Arduino.h>
 
 //extern "C" {
@@ -33,6 +29,39 @@
 
 #include "WiFiClient.h"
 //#include "WiFiServer.h"
+
+#define WIFI_FIRMWARE_REQUIRED    "0.1.0"
+#define WIFI_MAX_SSID_LEN         32
+#define WIFI_MAX_PASSPHRASE_LEN   64
+#define WIFI_SCAN_RESULT_LEN      52
+
+
+#define SHARED_ENABLED  0x00008000
+#define WPA_SECURITY    0x00200000
+#define WPA2_SECURITY   0x00400000
+#define WPS_ENABLED     0x10000000
+
+#define OPEN_AUTH                   0x0000
+#define SHARED_AUTH                 0x0001
+#define WEP_ENABLED                 0x0001
+#define TKIP_ENABLED                0x0002
+#define AES_ENABLED                 0x0004
+#define WSEC_SWFLAG                 0x0008
+
+typedef struct ATTR_PACKED
+{
+  char     ssid[WIFI_MAX_SSID_LEN+1];
+
+  uint8_t  bssid[6];
+  int16_t  rssi;
+  uint32_t max_data_rate;
+  uint8_t  network_type;
+  uint32_t security;
+  uint8_t  channel;
+  uint8_t  band_2_4ghz;
+} wl_scan_result_t;
+
+ASSERT_STATIC(sizeof(wl_scan_result_t) == 52);
 
 typedef enum {
 	WL_NO_SHIELD = 255,
@@ -44,6 +73,21 @@ typedef enum {
 	WL_CONNECTION_LOST,
 	WL_DISCONNECTED
 } wl_status_t;
+
+typedef enum
+{
+    ENC_TYPE_OPEN           = 0,                                                /**< Open security                           */
+    ENC_TYPE_WEP_PSK        = WEP_ENABLED,                                      /**< WEP Security with open authentication   */
+    ENC_TYPE_WEP_SHARED     = ( WEP_ENABLED | SHARED_ENABLED ),                 /**< WEP Security with shared authentication */
+    ENC_TYPE_WPA_TKIP_PSK   = ( WPA_SECURITY  | TKIP_ENABLED ),                 /**< WPA Security with TKIP                  */
+    ENC_TYPE_WPA_AES_PSK    = ( WPA_SECURITY  | AES_ENABLED ),                  /**< WPA Security with AES                   */
+    ENC_TYPE_WPA2_AES_PSK   = ( WPA2_SECURITY | AES_ENABLED ),                  /**< WPA2 Security with AES                  */
+    ENC_TYPE_WPA2_TKIP_PSK  = ( WPA2_SECURITY | TKIP_ENABLED ),                 /**< WPA2 Security with TKIP                 */
+    ENC_TYPE_WPA2_MIXED_PSK = ( WPA2_SECURITY | AES_ENABLED | TKIP_ENABLED ),   /**< WPA2 Security with AES & TKIP           */
+
+    ENC_TYPE_WPS_OPEN       = ( WPS_ENABLED ),                                   /**< WPS with open security                  */
+    ENC_TYPE_WPS_SECURE     = ( WPS_ENABLED | AES_ENABLED),                      /**< WPS with AES security                   */
+} wl_enc_type_t;
 
 #if 0
 /* Encryption modes */
@@ -127,14 +171,16 @@ public:
 	uint32_t localIP();
 	uint32_t subnetMask();
 	uint32_t gatewayIP();
+
 	char* SSID();
 	int32_t RSSI();
-	uint8_t encryptionType();
+	uint32_t encryptionType();
 	uint8_t* BSSID(uint8_t* bssid);
+
 	int8_t scanNetworks();
 	char* SSID(uint8_t pos);
 	int32_t RSSI(uint8_t pos);
-	uint8_t encryptionType(uint8_t pos);
+	uint32_t encryptionType(uint8_t pos);
 
 	uint8_t status();
 

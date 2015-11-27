@@ -39,10 +39,12 @@ void loop() {
     Serial.print(" and PASSWORD = ");
     Serial.println(pass);
 
-    uint16_t buffer_len;
     uint8_t response[1024];
+    uint16_t buffer_len;
+
     char* get_uri = "http://www.adafruit.com/testwifi/index.html";
     Serial.println("Response from HTTP GET URI");
+    buffer_len = sizeof(response);
     error = feather.httpGetUri(get_uri, &buffer_len, response);
     if (error == ERROR_NONE)
     {
@@ -61,6 +63,7 @@ void loop() {
     char* post_uri = "http://www.adafruit.com/testwifi/testpost.php?name=foo&email=bar@adafruit.com";
     Serial.println("Response from HTTP POST");
     Serial.println("");
+    buffer_len = sizeof(response);
     if (feather.httpPost(post_uri, &buffer_len, response) == ERROR_NONE)
     {
       for (int i = 0; i < buffer_len; i++)

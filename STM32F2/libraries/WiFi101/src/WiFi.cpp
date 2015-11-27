@@ -20,6 +20,10 @@
 #include "WiFi101.h"
 #include "adafruit_wifi.h"
 
+// TODO remove later (using malloc/free to save memory)
+#define WIFI_MAX_SCAN_NUM   20
+static wl_scan_result_t wifi_scan_result[WIFI_MAX_SCAN_NUM];
+
 #if 0
 extern "C" {
   #include "bsp/include/nm_bsp.h"
@@ -177,19 +181,6 @@ uint8_t WiFiClass::begin(const char *ssid)
 	strcpy(_ssid, ssid);
 	return WL_CONNECTED;
 }
-
-#if 0
-uint8_t WiFiClass::begin(const char *ssid, uint8_t key_idx, const char* key)
-{
-	tstrM2mWifiWepParams wep_params;
-
-	memset(&wep_params, 0, sizeof(tstrM2mWifiWepParams));
-	wep_params.u8KeyIndx = key_idx;
-	wep_params.u8KeySz = strlen(key);
-	strcpy((char *)&wep_params.au8WepKey[0], key);
-	return startConnect(ssid, M2M_WIFI_SEC_WEP, &wep_params);
-}
-#endif
 
 uint8_t WiFiClass::begin(const char *ssid, const char *key)
 {
@@ -434,6 +425,23 @@ uint8_t* WiFiClass::BSSID(uint8_t* bssid)
 #endif
 }
 
+uint32_t WiFiClass::encryptionType()
+{
+  return 0;
+#if 0
+	int8_t net = scanNetworks();
+
+	for (uint8_t i = 0; i < net; ++i) {
+		SSID(i);
+		if (strcmp(_scan_ssid, _ssid) == 0) {
+			break;
+		}
+	}
+
+	return _scan_auth;
+#endif
+}
+
 int32_t WiFiClass::RSSI()
 {
   return 0;
@@ -459,115 +467,37 @@ int32_t WiFiClass::RSSI()
 
 int8_t WiFiClass::scanNetworks()
 {
-  return 0;
-#if 0
-	wl_status_t tmp = _status;
+  uint16_t length = sizeof(wl_scan_result_t) * WIFI_MAX_SCAN_NUM;
+  VERIFY( ERROR_NONE == FEATHERLIB->sdep_execute(SDEP_CMD_SCAN, 0, NULL, &length, wifi_scan_result), 0);
 
-	if (!_init) {
-		init();
-	}
-
-	// Start scan:
-	if (m2m_wifi_request_scan(M2M_WIFI_CH_ALL) < 0) {
-		return 0;
-	}
-
-	// Wait for scan result or timeout:
-	_status = WL_IDLE_STATUS;
-	unsigned long start = millis();
-	while (!(_status & WL_SCAN_COMPLETED) && millis() - start < 5000) {
-		m2m_wifi_handle_events(NULL);
-	}
-	_status = tmp;
-	return m2m_wifi_get_num_ap_found();
-#endif
+  return length/sizeof(wl_scan_result_t);
 }
 
 char* WiFiClass::SSID(uint8_t pos)
 {
-  return 0;
-#if 0
-	wl_status_t tmp = _status;
+  VERIFY(pos < WIFI_MAX_SCAN_NUM, NULL);
 
-	// Get scan SSID result:
-	memset(_scan_ssid, 0, M2M_MAX_SSID_LEN);
-	if (m2m_wifi_req_scan_result(pos) < 0) {
-		return 0;
-	}
+  wl_scan_result_t* p_scan = &wifi_scan_result[pos];
 
-	// Wait for connection or timeout:
-	_status = WL_IDLE_STATUS;
-	unsigned long start = millis();
-	while (!(_status & WL_SCAN_COMPLETED) && millis() - start < 2000) {
-		m2m_wifi_handle_events(NULL);
-	}
-
-	_status = tmp;
-	return _scan_ssid;
-#endif
+  return p_scan->ssid;
 }
 
 int32_t WiFiClass::RSSI(uint8_t pos)
 {
-  return 0;
-#if 0
-	wl_status_t tmp = _status;
+  VERIFY(pos < WIFI_MAX_SCAN_NUM, NULL);
 
-	// Get scan RSSI result:
-	if (m2m_wifi_req_scan_result(pos) < 0) {
-		return 0;
-	}
+  wl_scan_result_t* p_scan = &wifi_scan_result[pos];
 
-	// Wait for connection or timeout:
-	_status = WL_IDLE_STATUS;
-	unsigned long start = millis();
-	while (!(_status & WL_SCAN_COMPLETED) && millis() - start < 2000) {
-		m2m_wifi_handle_events(NULL);
-	}
-
-	_status = tmp;
-	return _resolve;
-#endif
+  return p_scan->rssi;
 }
 
-uint8_t WiFiClass::encryptionType()
-{ 
-  return 0;
-#if 0
-	int8_t net = scanNetworks();
-
-	for (uint8_t i = 0; i < net; ++i) {
-		SSID(i);
-		if (strcmp(_scan_ssid, _ssid) == 0) {
-			break;
-		}
-	}
-
-	return _scan_auth;
-#endif
-}
-
-uint8_t WiFiClass::encryptionType(uint8_t pos)
+uint32_t WiFiClass::encryptionType(uint8_t pos)
 {
-  return 0;
-#if 0
-	wl_status_t tmp = _status;
+  VERIFY(pos < WIFI_MAX_SCAN_NUM, NULL);
 
-	// Get scan auth result:
-	if (m2m_wifi_req_scan_result(pos) < 0) {
-		return 0;
-	}
+  wl_scan_result_t* p_scan = &wifi_scan_result[pos];
 
-	// Wait for connection or timeout:
-	_status = WL_IDLE_STATUS;
-	unsigned long start = millis();
-	while (!(_status & WL_SCAN_COMPLETED) && millis() - start < 2000) {
-		m2m_wifi_handle_events(NULL);
-	}
-
-	_status = tmp;
-	return _scan_auth;
-#endif
+  return p_scan->security;
 }
 
 uint8_t WiFiClass::status()
