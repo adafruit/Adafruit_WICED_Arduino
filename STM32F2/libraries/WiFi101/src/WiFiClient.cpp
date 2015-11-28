@@ -240,23 +240,6 @@ int WiFiClient::read()
     // No data available
     return -1;
   }
-
-#if 0
-	uint8_t b;
-
-	if (!available())
-		return -1;
-
-	b = _buffer[_tail++];
-	if (_tail == _head) {
-		_tail = _head = 0;
-		_flag &= ~SOCKET_BUFFER_FLAG_FULL;
-		recv(_socket, _buffer, SOCKET_BUFFER_MTU, 0);
-		m2m_wifi_handle_events(NULL);
-	}
-
-	return b;
-#endif
 }
 
 int WiFiClient::read(uint8_t* buf, size_t size)

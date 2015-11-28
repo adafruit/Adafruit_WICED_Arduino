@@ -17,17 +17,19 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#if 0
 extern "C" {
 	#include "socket/include/socket.h"
 	#include "driver/include/m2m_periph.h"
 	extern uint8 hif_small_xfer;
 }
+#endif
 
 #include <string.h>
 #include "WiFi101.h"
 #include "WiFiUdp.h"
 #include "WiFiClient.h"
-#include "WiFiServer.h"
+//#include "WiFiServer.h"
 
 #define READY	(_flag & SOCKET_BUFFER_FLAG_BIND)
 
@@ -41,55 +43,18 @@ WiFiUDP::WiFiUDP()
 	_rcvSize = 0;
 	_rcvPort = 0;
 	_rcvIP = 0;
+
+	_udp_handle = 0;
 }
 
 /* Start WiFiUDP socket, listening at local port PORT */
 uint8_t WiFiUDP::begin(uint16_t port)
 {
-	struct sockaddr_in addr;
-	uint32 u32EnableCallbacks = 0;
+  uint8_t para[3];
+  para[0] = WIFI_INTERFACE_STATION;
+  memcpy(para+1, &port, 2);
 
-	_flag = 0;
-	_head = 0;
-	_tail = 0;
-	_rcvSize = 0;
-	_rcvPort = 0;
-	_rcvIP = 0;
-
-	// Initialize socket address structure.
-	addr.sin_family = AF_INET;
-	addr.sin_port = _htons(port);
-	addr.sin_addr.s_addr = 0;
-
-	// Open TCP server socket.
-	if ((_socket = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-		return 0;
-	}
-
-	// Add socket buffer handler:
-	socketBufferRegister(_socket, &_flag, &_head, &_tail, (uint8 *)_buffer);
-	setsockopt(_socket, SOL_SOCKET, SO_SET_UDP_SEND_CALLBACK, &u32EnableCallbacks, 0);
-
-	// Bind socket:
-	if (bind(_socket, (struct sockaddr *)&addr, sizeof(struct sockaddr_in)) < 0) {
-		close(_socket);
-		_socket = -1;
-		return 0;
-	}
-	
-	// Wait for connection or timeout:
-	unsigned long start = millis();
-	while (!READY && millis() - start < 2000) {
-		m2m_wifi_handle_events(NULL);
-	}
-	if (!READY) {
-		close(_socket);
-		_socket = -1;
-		return 0;
-	}
-	_flag &= ~SOCKET_BUFFER_FLAG_BIND;
-
-	return 1;
+  return ERROR_NONE == FEATHERLIB->sdep_execute(SDEP_CMD_UDP_CREATE, sizeof(para), para, NULL, &_udp_handle);
 }
 
 /* return number of bytes available in the current packet,
@@ -126,8 +91,7 @@ int WiFiUDP::beginPacket(const char *host, uint16_t port)
 {
 	IPAddress ip;
 	if (WiFi.hostByName(host, ip)) {
-		_sndIP = ip;
-		_sndPort = port;
+	  this->beginPacket(ip, port);
 	}
 
 	return 0;
@@ -143,6 +107,9 @@ int WiFiUDP::beginPacket(IPAddress ip, uint16_t port)
 
 int WiFiUDP::endPacket()
 {
+  _sndIP = 0;
+  _sndPort = 0;
+
 	return 1;
 }
 
@@ -153,26 +120,13 @@ size_t WiFiUDP::write(uint8_t byte)
 
 size_t WiFiUDP::write(const uint8_t *buffer, size_t size)
 {
-	struct sockaddr_in addr;
+  if (_sndIP == 0 || _sndPort == 0) return 0;
 
-	// Network led ON.
-	m2m_periph_gpio_set_val(M2M_PERIPH_GPIO16, 0);
+  uint8_t para2[6];
+  memcpy(para2  , &_sndIP  , 4);
+  memcpy(para2+4, &_sndPort, 2);
 
-	addr.sin_family = AF_INET;
-	addr.sin_port = _htons(_sndPort);
-	addr.sin_addr.s_addr = _sndIP;
-
-	if (sendto(_socket, (void *)buffer, size, 0,
-			(struct sockaddr *)&addr, sizeof(addr)) < 0) {
-		// Network led OFF.
-		m2m_periph_gpio_set_val(M2M_PERIPH_GPIO16, 1);
-		return 0;
-	}
-
-	// Network led OFF.
-	m2m_periph_gpio_set_val(M2M_PERIPH_GPIO16, 1);
-
-	return size;
+  return (ERROR_NONE == FEATHERLIB->sdep_execute_extend(SDEP_CMD_UDP_WRITE, 4, &_udp_handle, 6, para2, NULL, NULL) ) ? size : 0;
 }
 
 int WiFiUDP::parsePacket()

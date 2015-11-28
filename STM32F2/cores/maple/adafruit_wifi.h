@@ -117,6 +117,9 @@ typedef enum {
   SDEP_CMD_TCP_AVAILABLE     = 0x0096,
   SDEP_CMD_TCP_PEEK          = 0x0097,
 
+  /* UDP Commands */
+  SDEP_CMD_UDP_CREATE        = 0x00A0,
+  SDEP_CMD_UDP_WRITE         = 0x00A1,
 } sdep_command_t;
 
 enum {

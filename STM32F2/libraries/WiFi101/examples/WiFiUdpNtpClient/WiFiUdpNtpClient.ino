@@ -41,14 +41,7 @@ void setup()
   // Open serial communications and wait for port to open:
   Serial.begin(9600);
   while (!Serial) {
-    ; // wait for serial port to connect. Needed for native USB port only
-  }
-
-  // check for the presence of the shield:
-  if (WiFi.status() == WL_NO_SHIELD) {
-    Serial.println("WiFi shield not present");
-    // don't continue:
-    while (true);
+    delay(1); // wait for serial port to connect. Needed for native USB port only
   }
 
   // attempt to connect to Wifi network:
