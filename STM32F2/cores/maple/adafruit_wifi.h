@@ -129,11 +129,11 @@ typedef uint16_t sdep_err_t;
 extern "C"
 {
   void http_rx_callback (uint8_t* data, uint16_t data_length, uint16_t avail);
-  void mqtt_evt_callback(mqtt_evt_opcode_t event, uint8_t* data);
+  void mqtt_evt_callback(mqtt_evt_opcode_t event, uint16_t len, uint8_t* data);
 
   /* Callback prototypes */
   typedef void (*ada_http_callback)(uint8_t* data, uint16_t data_length, uint16_t avail);
-  typedef void (*ada_mqtt_callback)(mqtt_evt_opcode_t event, uint8_t* data);
+  typedef void (*ada_mqtt_callback)(mqtt_evt_opcode_t event, uint16_t len, uint8_t* data);
 }
 
 class AdafruitFeather
@@ -201,7 +201,7 @@ public:
 
   /* callback from featherlib */
   friend void http_rx_callback (uint8_t* data, uint16_t data_length, uint16_t avail);
-  friend void mqtt_evt_callback(mqtt_evt_opcode_t event, uint8_t* data);
+  friend void mqtt_evt_callback(mqtt_evt_opcode_t event, uint16_t len, uint8_t* data);
 };
 
 extern AdafruitFeather feather;

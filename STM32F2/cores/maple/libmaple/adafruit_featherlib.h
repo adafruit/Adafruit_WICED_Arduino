@@ -75,7 +75,7 @@ typedef struct ATTR_ALIGNED(512)
   void (*http_callback)(uint8_t* data, uint16_t data_length, uint16_t avail);
 
   // MQTT callback
-  void (*mqtt_callback)(mqtt_evt_opcode_t event, uint8_t* data);
+  void (*mqtt_callback)(mqtt_evt_opcode_t event, uint16_t len, uint8_t* data);
 
 }adafruit_arduino_t;
 
