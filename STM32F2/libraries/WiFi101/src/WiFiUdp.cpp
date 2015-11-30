@@ -81,7 +81,7 @@ void WiFiUDP::stop()
 {
   if (_udp_handle == 0) return;
 
-  FEATHERLIB->sdep_execute(SDEP_CMD_UDP_CLOSE, 4, &_udp_handle, NULL, NULL)
+  FEATHERLIB->sdep_execute(SDEP_CMD_UDP_CLOSE, 4, &_udp_handle, NULL, NULL);
   _udp_handle = 0;
 }
 
@@ -129,22 +129,21 @@ size_t WiFiUDP::write(const uint8_t *buffer, size_t size)
 
 int WiFiUDP::parsePacket()
 {
-	m2m_wifi_handle_events(NULL);
-	
-	if (_socket != -1) {
-		if (_rcvSize != 0) {
-			return _rcvSize;
-		}
-		if (_head != _tail) {
-			_rcvSize = ((uint16_t)_buffer[_tail] << 8) + (uint16_t)_buffer[_tail + 1];
-			_rcvPort = ((uint16_t)_buffer[_tail + 2] << 8) + (uint16_t)_buffer[_tail + 3];
-			_rcvIP =   ((uint32_t)_buffer[_tail + 4] << 24) + ((uint32_t)_buffer[_tail + 5] << 16) +
-					((uint32_t)_buffer[_tail + 6] << 8) + (uint32_t)_buffer[_tail + 7];
-			_tail += SOCKET_BUFFER_UDP_HEADER_SIZE;
-			return _rcvSize;
-		}
-	}
-	return 0;
+  if (_udp_handle == 0) return 0;
+
+  struct ATTR_PACKED {
+    uint32_t remote_ip;
+    uint16_t remote_port;
+    uint16_t packet_size;
+  } response;
+
+  if ( ERROR_NONE != FEATHERLIB->sdep_execute_extend(SDEP_CMD_UDP_PACKET_INFO, 4, &_udp_handle, 4, &_timeout, NULL, &response) ) return 0;
+
+  _rcvIP = response.remote_ip;
+  _rcvPort = response.remote_port;
+  _rcvSize = remote_port.packet_size;
+
+  return _rcvSize;
 }
 
 int WiFiUDP::read()
