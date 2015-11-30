@@ -79,12 +79,10 @@ int WiFiUDP::available()
 /* Release any resources being used by this WiFiUDP instance */
 void WiFiUDP::stop()
 {
-	if (_socket < 0)
-		return;
-	
-	socketBufferUnregister(_socket);
-	close(_socket);
-	_socket = -1;
+  if (_udp_handle == 0) return;
+
+  FEATHERLIB->sdep_execute(SDEP_CMD_UDP_CLOSE, 4, &_udp_handle, NULL, NULL)
+  _udp_handle = 0;
 }
 
 int WiFiUDP::beginPacket(const char *host, uint16_t port)
