@@ -24,7 +24,7 @@
 #define ADAFRUIT_USERNAME    "See your username at accounts.adafruit.com"
 #define AIO_KEY              "Your AIO key"
 #define PUBLISH_TOPIC        ADAFRUIT_USERNAME "/feeds/temp"
-#define SUBSCRIBE_TOPIC      ADAFRUIT_USERNAME "/feeds/temp"
+#define SUBSCRIBE_TOPIC      ADAFRUIT_USERNAME "/#"
 
 #define LASTWILL_ENABLED     1
 #define CONNECTED_TOPIC      ADAFRUIT_USERNAME "/feeds/status"
@@ -37,10 +37,10 @@
 #define MAX_LENGTH_MESSAGE   1024
 
 
-int wifi_error = -1; // FAIL
-int mqtt_error = -1; // FAIL
-int subs_error = -1; // FAIL
-int temp;
+int wifi_error  = -1; // FAIL
+int mqtt_error  = -1; // FAIL
+int subs_error  = -1; // FAIL
+int isConnected = 0;
 
 /**************************************************************************/
 /*!
@@ -210,15 +210,24 @@ void readArrivedMessage()
     @brief This function is called whenever a new event occurs
 */
 /**************************************************************************/
-void mqttCallback(mqtt_evt_opcode_t event, uint8_t* data)
+void mqttCallback(mqtt_evt_opcode_t event, uint16_t len, uint8_t* data)
 {
   switch (event)
   {
     case MQTT_EVT_DISCONNECTED:
       Serial.println(F("Disconnected\r\n"));
+      isConnected = 0;
       break;
     case MQTT_EVT_TOPIC_CHANGED:
-      Serial.println(F("Topic changed\r\n"));
+      Serial.println(F("Topic changed"));
+      // Print the message
+      // [0:7]: UTC time & date (64-bit integer)
+      // [8: ]: "topic=value"
+      for (int i = 8; i < len; i++)
+      {
+        Serial.write(data[i]);
+      }
+      Serial.println(F("\r\n"));
       break;
     default:
       break;
@@ -272,6 +281,7 @@ void setup()
   mqtt_error = connectBroker();
   if (mqtt_error == 0)
   {
+    isConnected = 1;
     subs_error = subscribeTopic();
   }
 }
@@ -284,23 +294,24 @@ void setup()
 void loop() {
   if (wifi_error == 0)
   {
-    if (mqtt_error == 0)
+    if (isConnected)
     {
 //      readArrivedMessage();
 
       // Buffer for temperature
       char str[3] = "0";
-      uint32_t randomNum;
+      uint32_t randomNum = 0;
       if (feather.randomNumber(&randomNum) == 0)
       {
-        utoa( randomNum % 50, str, 10);
+        randomNum = randomNum % 50;
+        utoa( randomNum, str, 10);
       }
 
       // qos = 1, retain = 0
       if (feather.mqttPublish(PUBLISH_TOPIC, str, QOS, RETAIN) == 0)
       {
         Serial.print(F("Published Message to ")); Serial.println(PUBLISH_TOPIC);
-        Serial.print(F("Value = ")); Serial.println(temp);
+        Serial.print(F("Value = ")); Serial.println(randomNum);
       }
       else
       {

@@ -993,10 +993,10 @@ void http_rx_callback(uint8_t* data, uint16_t data_length, uint16_t avail)
     @brief  MQTT Callback from featherlib when a new event occurs
 */
 /******************************************************************************/
-void mqtt_evt_callback(mqtt_evt_opcode_t event, uint8_t* data)
+void mqtt_evt_callback(mqtt_evt_opcode_t event, uint16_t len, uint8_t* data)
 {
   if (feather.ada_mqtt_evt_callback != NULL)
   {
-    feather.ada_mqtt_evt_callback(event, data);
+    feather.ada_mqtt_evt_callback(event, len, data);
   }
 }
