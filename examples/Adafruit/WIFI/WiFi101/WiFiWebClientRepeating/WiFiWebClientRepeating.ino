@@ -89,6 +89,8 @@ void httpRequest() {
     client.println("Connection: close");
     client.println();
     
+    // Data is buffered and only be sent when network packet is full
+    // or flush() is called to optimize network usage
     client.flush();
 
     // note the time that the connection was made:

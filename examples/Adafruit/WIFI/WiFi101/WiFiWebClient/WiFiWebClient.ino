@@ -65,6 +65,8 @@ void setup() {
     client.println("Connection: close");
     client.println();
     
+    // Data is buffered and only be sent when network packet is full
+    // or flush() is called to optimize network usage
     client.flush();
   }
 }
