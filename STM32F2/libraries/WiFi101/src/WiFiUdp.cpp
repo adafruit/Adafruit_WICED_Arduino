@@ -111,7 +111,7 @@ int WiFiUDP::parsePacket()
   struct ATTR_PACKED {
     uint32_t remote_ip;
     uint16_t remote_port;
-    uint16_t packet_size;
+    uint32_t packet_size;
   } response;
 
   if ( ERROR_NONE != FEATHERLIB->sdep_execute_extend(SDEP_CMD_UDP_PACKET_INFO, 4, &_udp_handle, 4, &_timeout, NULL, &response) ) return 0;
