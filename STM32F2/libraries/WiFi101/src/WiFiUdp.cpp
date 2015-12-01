@@ -148,25 +148,8 @@ int WiFiUDP::parsePacket()
 
 int WiFiUDP::read()
 {
-	uint8_t b;
-
-	if (!available())
-		return -1;
-
-	b = _buffer[_tail++];
-	_rcvSize -= 1;
-	if (_tail == _head) {
-		_tail = _head = 0;
-		_flag &= ~SOCKET_BUFFER_FLAG_FULL;
-		if (hif_small_xfer) {
-			recvfrom(_socket, _buffer, SOCKET_BUFFER_MTU, 0);
-		}
-		else {
-			recvfrom(_socket, _buffer + SOCKET_BUFFER_UDP_HEADER_SIZE, SOCKET_BUFFER_MTU, 0);			
-		}
-		m2m_wifi_handle_events(NULL);
-	}
-	return b;
+  uint8_t b;
+  return ( this->read(&b, 1) > 0 ) ? (int) b : (-1);
 }
 
 int WiFiUDP::read(unsigned char* buf, size_t size)
@@ -205,10 +188,8 @@ int WiFiUDP::read(unsigned char* buf, size_t size)
 
 int WiFiUDP::peek()
 {
-	if (!available())
-		return -1;
-
-	return _buffer[_tail];
+  uint8_t data;
+  return (ERROR_NONE == FEATHERLIB->sdep_execute_extend(SDEP_CMD_UDP_PEEK, 4, &_udp_handle, 4, &_timeout, NULL, &data)) ? (int) data : EOF;
 }
 
 void WiFiUDP::flush()

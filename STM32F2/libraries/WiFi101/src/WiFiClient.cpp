@@ -230,16 +230,7 @@ int WiFiClient::available()
 int WiFiClient::read()
 {
   uint8_t b;
-  if ( this->read(&b, 1) > 0 )
-  {
-    // recv worked
-    return b;
-  }
-  else
-  {
-    // No data available
-    return -1;
-  }
+  return ( this->read(&b, 1) > 0 ) ? b : (-1);
 }
 
 int WiFiClient::read(uint8_t* buf, size_t size)
