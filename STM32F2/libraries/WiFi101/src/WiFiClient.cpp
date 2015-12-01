@@ -115,7 +115,7 @@ int WiFiClient::connect(const char* host, uint16_t port)
 
 int WiFiClient::connect(IPAddress ip, uint16_t port)
 {
-  typedef struct PACKED {
+  typedef struct ATTR_PACKED {
     uint8_t  interface;
     uint8_t  is_tls;
     uint32_t ipv4;

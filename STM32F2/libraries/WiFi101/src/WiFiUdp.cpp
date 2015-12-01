@@ -74,7 +74,7 @@ int WiFiUDP::beginPacket(const char *host, uint16_t port)
 
 int WiFiUDP::beginPacket(IPAddress ip, uint16_t port)
 {
-	_sndIP = ip;
+	_sndIP = (uint32_t) ip;
 	_sndPort = port;
 	
 	return 1;
@@ -95,13 +95,14 @@ size_t WiFiUDP::write(uint8_t byte)
 
 size_t WiFiUDP::write(const uint8_t *buffer, size_t size)
 {
-  if (_sndIP == 0 || _sndPort == 0) return 0;
+  if (_udp_handle == 0 || _sndIP == 0 || _sndPort == 0) return 0;
 
-  uint8_t para2[6];
-  memcpy(para2  , &_sndIP  , 4);
-  memcpy(para2+4, &_sndPort, 2);
+  uint8_t para1[10];
+  memcpy(para1  , &_udp_handle, 4);
+  memcpy(para1+4, &_sndIP     , 4);
+  memcpy(para1+8, &_sndPort   , 2);
 
-  return (ERROR_NONE == FEATHERLIB->sdep_execute_extend(SDEP_CMD_UDP_WRITE, 4, &_udp_handle, 6, para2, NULL, NULL) ) ? size : 0;
+  return (ERROR_NONE == FEATHERLIB->sdep_execute_extend(SDEP_CMD_UDP_WRITE, sizeof(para1), para1, size, buffer, NULL, NULL) ) ? size : 0;
 }
 
 int WiFiUDP::parsePacket()
