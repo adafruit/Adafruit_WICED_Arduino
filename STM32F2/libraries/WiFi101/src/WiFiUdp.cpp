@@ -57,24 +57,15 @@ uint8_t WiFiUDP::begin(uint16_t port)
   return ERROR_NONE == FEATHERLIB->sdep_execute(SDEP_CMD_UDP_CREATE, sizeof(para), para, NULL, &_udp_handle);
 }
 
-/* return number of bytes available in the current packet,
-   will return zero if parsePacket hasn't been called yet */
 int WiFiUDP::available()
 {
-	m2m_wifi_handle_events(NULL);
-	
-	if (_socket != -1) {
-		if (_rcvSize != 0) {
-			if (_head - _tail > _rcvSize) {
-				return _rcvSize;
-			}
-			else {
-				return _head - _tail;
-			}
-		}
-	}
-	return 0;
- }
+  if (_udp_handle == 0) return 0;
+
+  uint32_t rx_byte=0;
+  FEATHERLIB->sdep_execute(SDEP_CMD_UDP_CLOSE, 4, &_udp_handle, NULL, &rx_byte);
+
+  return rx_byte;
+}
 
 /* Release any resources being used by this WiFiUDP instance */
 void WiFiUDP::stop()
@@ -154,36 +145,15 @@ int WiFiUDP::read()
 
 int WiFiUDP::read(unsigned char* buf, size_t size)
 {
-	// sizeof(size_t) is architecture dependent
-	// but we need a 16 bit data type here
-	uint16_t size_tmp = available();
-	
-	if (size_tmp == 0) {
-		return -1;
-	}
-	
-	if (size < size_tmp) {
-		size_tmp = size;
-	}
+  if ( _udp_handle == 0 ) return -1;
 
-	for (uint32_t i = 0; i < size_tmp; ++i) {
-		buf[i] = _buffer[_tail++];
-	}
-	_rcvSize -= size_tmp;
-	
-	if (_tail == _head) {
-		_tail = _head = 0;
-		_flag &= ~SOCKET_BUFFER_FLAG_FULL;
-		if (hif_small_xfer) {
-			recvfrom(_socket, _buffer, SOCKET_BUFFER_MTU, 0);
-		}
-		else {
-			recvfrom(_socket, _buffer + SOCKET_BUFFER_UDP_HEADER_SIZE, SOCKET_BUFFER_MTU, 0);			
-		}
-		m2m_wifi_handle_events(NULL);
-	}
+  uint16_t len = (uint16_t) size;
+  uint8_t para2[6];
 
-	return size_tmp;
+  memcpy(para2, &size, 2);        // uint16_t only
+  memcpy(para2+2, &_timeout, 4);  // timeout
+
+  return (ERROR_NONE == FEATHERLIB->sdep_execute_extend(SDEP_CMD_UDP_READ, 4, &_udp_handle, 6, para2, &len, buf) ) ? len : (-1);
 }
 
 int WiFiUDP::peek()
