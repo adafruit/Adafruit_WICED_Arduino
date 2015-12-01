@@ -17,29 +17,15 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#if 0
-extern "C" {
-	#include "socket/include/socket.h"
-	#include "driver/include/m2m_periph.h"
-	extern uint8 hif_small_xfer;
-}
-#endif
-
 #include <string.h>
 #include "WiFi101.h"
 #include "WiFiUdp.h"
 #include "WiFiClient.h"
 //#include "WiFiServer.h"
 
-#define READY	(_flag & SOCKET_BUFFER_FLAG_BIND)
-
 /* Constructor. */
 WiFiUDP::WiFiUDP()
 {
-	_socket = -1;
-	_flag = 0;
-	_head = 0;
-	_tail = 0;
 	_rcvSize = 0;
 	_rcvPort = 0;
 	_rcvIP = 0;
@@ -130,9 +116,9 @@ int WiFiUDP::parsePacket()
 
   if ( ERROR_NONE != FEATHERLIB->sdep_execute_extend(SDEP_CMD_UDP_PACKET_INFO, 4, &_udp_handle, 4, &_timeout, NULL, &response) ) return 0;
 
-  _rcvIP = response.remote_ip;
+  _rcvIP   = response.remote_ip;
   _rcvPort = response.remote_port;
-  _rcvSize = remote_port.packet_size;
+  _rcvSize = response.packet_size;
 
   return _rcvSize;
 }
@@ -164,8 +150,12 @@ int WiFiUDP::peek()
 
 void WiFiUDP::flush()
 {
-	while (available())
-		read();
+  if (_udp_handle == 0) return;
+
+  FEATHERLIB->sdep_execute(SDEP_CMD_UDP_FLUSH, 4, &_udp_handle, NULL, NULL);
+
+//	while (available())
+//		read();
 }
 
 IPAddress  WiFiUDP::remoteIP()

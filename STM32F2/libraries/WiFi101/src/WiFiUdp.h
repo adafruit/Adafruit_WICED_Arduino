@@ -24,8 +24,6 @@
 
 class WiFiUDP : public UDP {
 private:
-	uint32_t _flag;
-
   uint32_t _udp_handle;
 
 	uint16_t _rcvSize;
