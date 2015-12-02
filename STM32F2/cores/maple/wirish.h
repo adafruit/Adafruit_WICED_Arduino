@@ -49,6 +49,7 @@
 #include "wirish_math.h"
 #include "wirish_time.h"
 #include "avr/dtostrf.h"
+#include "itoa.h" // can be replaced by sprintf
 #include <wirish_constants.h>
 #include "SPI.h"
 #include "HardwareSerial.h"
