@@ -448,7 +448,7 @@ sdep_err_t AdafruitFeather::mqttGenerateRandomID(char* clientID, uint8_t length)
 /******************************************************************************/
 /*!
     @brief        Connect to a broker specified by host name, port, client ID,
-                  user name and password
+                  user name and password (TLS disabled)
 
     @param[in]    host       Host name
 
@@ -460,17 +460,13 @@ sdep_err_t AdafruitFeather::mqttGenerateRandomID(char* clientID, uint8_t length)
 
     @param[in]    password   Password
 
-    @param[in]    ca_cert    Address of CA certificate chain (NULL means unspecified)
-
-    @param[in]    is_tls     TLS option (1: enable, 0: disable)
-
     @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
             a specific error if something went wrong.
 
     @note   ',' characters are used to separate parameters together
             MQTT Server format: <host>,<port>,<client ID>,<user name>,<password>
-            e.g. "85.119.83.194,1883,adafruit,mosfet,IOkey" or
-                 "test.mosquitto.org,1883,adafruit,mosfet,IOkey"
+            e.g. "85.119.83.194,1883,adafruit,user,IOkey" or
+                 "test.mosquitto.org,1883,adafruit,user,IOkey"
 
             If string parameters do not exist, passing NULL or empty string as
             function's parameters. Then the default parameters are used.
@@ -480,8 +476,7 @@ sdep_err_t AdafruitFeather::mqttGenerateRandomID(char* clientID, uint8_t length)
 */
 /******************************************************************************/
 sdep_err_t AdafruitFeather::mqttConnect(char* host, uint16_t port, char* clientID,
-                                        char* username, char* password,
-                                        const char* ca_cert, bool is_tls)
+                                        char* username, char* password)
 {
   if (host == NULL || host == "") return ERROR_INVALIDPARAMETER;
 
@@ -499,14 +494,94 @@ sdep_err_t AdafruitFeather::mqttConnect(char* host, uint16_t port, char* clientI
   if (payload == NULL) return ERROR_NO_MEMORY;
 
   uint8_t* p_payload = payload;
-  if (is_tls)
+  p_payload[0] = 0;
+
+  /* Certificate memory address */
+  uint32_t cert_addr = 0;
+  memcpy(&p_payload[1], (uint8_t*)&cert_addr, sizeof(cert_addr));
+  p_payload += sizeof(cert_addr) + 1;
+
+  memcpy(p_payload, (uint8_t*)host, strlen(host));
+  p_payload += strlen(host);
+  *p_payload++ = ',';
+
+  if (port > 0)
   {
-    p_payload[0] = 1;
+    memcpy(p_payload, (uint8_t*)p_port, strlen(p_port));
+    p_payload += strlen(p_port);
   }
-  else
-  {
-    p_payload[0] = 0;
-  }
+  *p_payload++ = ',';
+
+  memcpy(p_payload, (uint8_t*)clientID, strlen(clientID));
+  p_payload += strlen(clientID);
+  *p_payload++ = ',';
+
+  memcpy(p_payload, (uint8_t*)username, strlen(username));
+  p_payload += strlen(username);
+  *p_payload++ = ',';
+
+  memcpy(p_payload, (uint8_t*)password, strlen(password));
+
+  sdep_err_t error =  FEATHERLIB->sdep_execute(SDEP_CMD_MQTTCONNECT, mqttServer_len,
+                                               payload, NULL, NULL);
+  free(payload);
+  return error;
+}
+
+/******************************************************************************/
+/*!
+    @brief        Connect to a broker specified by host name, port, client ID,
+                  user name and password with TLS connection
+
+    @param[in]    host       Host name
+
+    @param[in]    port       Port (Value from 0 to 65535)
+
+    @param[in]    clientID   Client ID
+
+    @param[in]    username   User name
+
+    @param[in]    password   Password
+
+    @param[in]    ca_cert    Address of CA certificate chain (NULL means unspecified)
+
+    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
+            a specific error if something went wrong.
+
+    @note   ',' characters are used to separate parameters together
+            MQTT Server format: <host>,<port>,<client ID>,<user name>,<password>
+            e.g. "85.119.83.194,8883,adafruit,user,IOkey" or
+                 "test.mosquitto.org,8883,adafruit,user,IOkey"
+
+            If string parameters do not exist, passing NULL or empty string as
+            function's parameters. Then the default parameters are used.
+
+            Value of zero for port parameter means port is not specified. Then
+            the default port (8883) is used.
+*/
+/******************************************************************************/
+sdep_err_t AdafruitFeather::mqttTLSConnect(char* host, uint16_t port, char* clientID,
+                                           char* username, char* password, const char* ca_cert)
+{
+  if (host == NULL || host == "") return ERROR_INVALIDPARAMETER;
+
+  char p_port[6];
+  utoa(port, p_port, 10);
+
+  uint16_t mqttServer_len = strlen(host) + 9;      // isSSLConnection, 4 commas
+                                                   // & 4 bytes certificate address
+  if (port > 0) mqttServer_len += strlen(p_port);
+  if (clientID != NULL) mqttServer_len += strlen(clientID);
+  if (username != NULL) mqttServer_len += strlen(username);
+  if (password != NULL) mqttServer_len += strlen(password);
+
+  uint8_t* payload = (uint8_t*)malloc(mqttServer_len);
+  if (payload == NULL) return ERROR_NO_MEMORY;
+
+  uint8_t* p_payload = payload;
+
+  /* Enable TLS connection */
+  p_payload[0] = 1;
 
   /* Certificate memory address */
   uint32_t cert_addr = 0;
@@ -518,8 +593,11 @@ sdep_err_t AdafruitFeather::mqttConnect(char* host, uint16_t port, char* clientI
   p_payload += strlen(host);
   *p_payload++ = ',';
 
-  if (port > 0) memcpy(p_payload, (uint8_t*)p_port, strlen(p_port));
-  p_payload += strlen(p_port);
+  if (port > 0)
+  {
+    memcpy(p_payload, (uint8_t*)p_port, strlen(p_port));
+    p_payload += strlen(p_port);
+  }
   *p_payload++ = ',';
 
   memcpy(p_payload, (uint8_t*)clientID, strlen(clientID));
