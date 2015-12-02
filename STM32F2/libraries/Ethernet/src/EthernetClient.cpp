@@ -33,7 +33,7 @@ int EthernetClient::connect(const char* host, uint16_t port) {
 }
 
 int EthernetClient::connect(IPAddress ip, uint16_t port) {
-  typedef struct PACKED {
+  typedef struct ATTR_PACKED {
     uint8_t  interface;
     uint8_t  is_tls;
     uint32_t ipv4;

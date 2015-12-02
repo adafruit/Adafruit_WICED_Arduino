@@ -125,7 +125,7 @@ typedef enum {
   SDEP_CMD_UDP_CLOSE         = 0x00A4,
   SDEP_CMD_UDP_AVAILABLE     = 0x00A5,
   SDEP_CMD_UDP_PEEK          = 0x00A6,
-//  SDEP_CMD_UDP_STATUS        = 0x00A7,
+  SDEP_CMD_UDP_PACKET_INFO   = 0x00A7,
 } sdep_command_t;
 
 enum {

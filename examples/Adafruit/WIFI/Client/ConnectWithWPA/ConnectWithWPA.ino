@@ -71,6 +71,15 @@ void printWifiData() {
   Serial.print(":");
   Serial.println(mac[0], HEX);
 
+  // print your subnet mask:
+  IPAddress subnet = WiFi.subnetMask();
+  Serial.print("NetMask: ");
+  Serial.println(subnet);
+
+  // print your gateway address:
+  IPAddress gateway = WiFi.gatewayIP();
+  Serial.print("Gateway: ");
+  Serial.println(gateway);
 }
 
 void printCurrentNet() {

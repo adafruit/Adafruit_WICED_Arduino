@@ -22,14 +22,7 @@ void setup() {
   //Initialize serial and wait for port to open:
   Serial.begin(9600);
   while (!Serial) {
-    ; // wait for serial port to connect. Needed for native USB port only
-  }
-
-  // check for the presence of the shield:
-  if (WiFi.status() == WL_NO_SHIELD) {
-    Serial.println("WiFi shield not present");
-    // don't continue:
-    while (true);
+    delay(1); // wait for serial port to connect. Needed for native USB port only
   }
 
   // attempt to connect to Wifi network:
@@ -39,7 +32,7 @@ void setup() {
     status = WiFi.begin(ssid);
 
     // wait 10 seconds for connection:
-    delay(10000);
+    //delay(10000);
   }
 
   // you're connected now, so print out the data:
@@ -59,8 +52,6 @@ void printWifiData() {
   IPAddress ip = WiFi.localIP();
   Serial.print("IP Address: ");
   Serial.println(ip);
-  Serial.println(ip);
-
   // print your MAC address:
   byte mac[6];
   WiFi.macAddress(mac);

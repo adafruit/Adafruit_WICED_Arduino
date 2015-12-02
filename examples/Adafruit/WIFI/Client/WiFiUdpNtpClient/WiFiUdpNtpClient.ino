@@ -21,8 +21,8 @@
 #include <WiFiUdp.h>
 
 int status = WL_IDLE_STATUS;
-char ssid[] = "mynetwork";  //  your network SSID (name)
-char pass[] = "mypassword";       // your network password
+char ssid[] = "yourNetwork";  //  your network SSID (name)
+char pass[] = "secretPassword";       // your network password
 int keyIndex = 0;            // your network key Index number (needed only for WEP)
 
 unsigned int localPort = 2390;      // local port to listen for UDP packets
@@ -52,7 +52,7 @@ void setup()
     status = WiFi.begin(ssid, pass);
 
     // wait 10 seconds for connection:
-    delay(10000);
+    //delay(10000);
   }
 
   Serial.println("Connected to wifi");

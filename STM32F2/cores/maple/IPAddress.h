@@ -21,6 +21,7 @@
 #define IPAddress_h
 
 #include <stdint.h>
+#include <Arduino.h>
 #include <Printable.h>
 
 // A class to make it easier to handle and pass around IP addresses
