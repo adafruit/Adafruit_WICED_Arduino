@@ -49,6 +49,7 @@ public:
 	WiFiClient(const WiFiClient& other);
 
 	uint8_t status();
+	void usePacketBuffered(bool isEnable);
 	
 	int connectSSL(IPAddress ip, uint16_t port);
 	int connectSSL(const char* host, uint16_t port);
@@ -67,18 +68,12 @@ public:
 
 	using Print::write;
 
-//	uint32_t _flag;
-
 private:
 	uint32_t _tcp_handle;
 
-//	SOCKET _socket;
-//	uint32_t _head;
-//	uint32_t _tail;
-//	uint8_t	_buffer[SOCKET_BUFFER_TCP_SIZE];
-//	int connect(const char* host, uint16_t port, uint8_t opt);
-//	int connect(IPAddress ip, uint16_t port, uint8_t opt, const uint8_t *hostname);
-
+	// buffer written until network packet is full ~1500 or flush() is called
+	// default is false
+	bool     _use_packet_buffer;
 };
 
 #endif /* WIFICLIENT_H */

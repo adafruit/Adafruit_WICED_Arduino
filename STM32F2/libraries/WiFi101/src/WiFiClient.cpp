@@ -17,28 +17,18 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-//extern "C" {
-//	#include "socket/include/socket.h"
-//	#include "driver/include/m2m_periph.h"
-//}
-
 #include "WiFi101.h"
 #include "WiFiClient.h"
 
-#define IS_CONNECTED	(_flag & SOCKET_BUFFER_FLAG_CONNECTED)
-
 WiFiClient::WiFiClient()
 {
-  _tcp_handle = 0;
-//	_flag = 0;
-//	_socket = -1;
-//	_head = 0;
-//	_tail = 0;
+  _tcp_handle        = 0;
+  _use_packet_buffer = false;
 }
 
+#if 0
 WiFiClient::WiFiClient(uint8_t sock, uint8_t parentsock)
 {
-#if 0
 	// Spawn connected TCP client from TCP server socket:
 	_socket = sock;
 	_flag = SOCKET_BUFFER_FLAG_CONNECTED;
@@ -60,12 +50,10 @@ WiFiClient::WiFiClient(uint8_t sock, uint8_t parentsock)
 	recv(_socket, _buffer, SOCKET_BUFFER_MTU, 0);
 
 	m2m_wifi_handle_events(NULL);
-#endif
 }
 
 WiFiClient::WiFiClient(const WiFiClient& other)
 {
-#if 0
 	_socket = other._socket;
 	_flag = other._flag;
 	_head = 0;
@@ -83,7 +71,12 @@ WiFiClient::WiFiClient(const WiFiClient& other)
 	recv(_socket, _buffer, SOCKET_BUFFER_MTU, 0);
 
 	m2m_wifi_handle_events(NULL);
+}
 #endif
+
+void WiFiClient::usePacketBuffered(bool isEnable)
+{
+  _use_packet_buffer = isEnable;
 }
 
 int WiFiClient::connectSSL(const char* host, uint16_t port)
@@ -139,64 +132,6 @@ int WiFiClient::connect(IPAddress ip, uint16_t port)
   return 1;
 }
 
-#if 0
-int WiFiClient::connect(const char* host, uint16_t port, uint8_t opt)
-{
-	IPAddress remote_addr;
-	if (WiFi.hostByName(host, remote_addr)) {
-		return connect(remote_addr, port, opt, (const uint8_t *)host);
-	}
-	return 0;
-}
-#endif
-
-#if 0
-int WiFiClient::connect(IPAddress ip, uint16_t port, uint8_t opt, const uint8_t *hostname)
-{
-	struct sockaddr_in addr;
-
-	// Initialize socket address structure:
-	addr.sin_family = AF_INET;
-	addr.sin_port = _htons(port);
-	addr.sin_addr.s_addr = ip;
-
-	// Create TCP socket:
-	_flag = 0;
-	_head = 0;
-	_tail = 0;
-	if ((_socket = socket(AF_INET, SOCK_STREAM, opt)) < 0) {
-		return 0;
-	}
-
-	if (opt & SOCKET_FLAGS_SSL && hostname) {
-		setsockopt(_socket, SOL_SSL_SOCKET, SO_SSL_SNI, hostname, m2m_strlen((uint8_t *)hostname));
-	}
-
-	// Add socket buffer handler:
-	socketBufferRegister(_socket, &_flag, &_head, &_tail, (uint8 *)_buffer);
-
-	// Connect to remote host:
-	if (connectSocket(_socket, (struct sockaddr *)&addr, sizeof(struct sockaddr_in)) < 0) {
-		close(_socket);
-		_socket = -1;
-		return 0;
-	}
-	
-	// Wait for connection or timeout:
-	unsigned long start = millis();
-	while (!IS_CONNECTED && millis() - start < 20000) {
-		m2m_wifi_handle_events(NULL);
-	}
-	if (!IS_CONNECTED) {
-		close(_socket);
-		_socket = -1;
-		return 0;
-	}
-
-	return 1;
-}
-#endif
-
 size_t WiFiClient::write(uint8_t b)
 {
 	return write(&b, 1);
@@ -206,12 +141,12 @@ size_t WiFiClient::write(const uint8_t *buf, size_t size)
 {
   if ( _tcp_handle == 0 ) return 0;
 
-  if( ERROR_NONE != FEATHERLIB->sdep_execute_extend(SDEP_CMD_TCP_WRITE,
-                                                    4, &_tcp_handle,
-                                                    size, buf,
-                                                    NULL, NULL) )
+  VERIFY(ERROR_NONE == FEATHERLIB->sdep_execute_extend(SDEP_CMD_TCP_WRITE, 4, &_tcp_handle, size, buf, NULL, NULL), 0);
+
+  // if packet is not buffered --> send out immediately
+  if (!_use_packet_buffer)
   {
-    return 0;
+    this->flush();
   }
 
   return size;
@@ -287,13 +222,6 @@ uint8_t WiFiClient::connected()
   return !(s == TCP_STATUS_LISTEN_STATE || s == TCP_STATUS_CLOSED ||
            s == TCP_STATUS_FIN_WAIT_1 || s == TCP_STATUS_FIN_WAIT_2 ||
            (s == TCP_STATUS_CLOSED && !available()) );
-
-#if 0
-	m2m_wifi_handle_events(NULL);
-	if (available())
-		return 1;
-	return IS_CONNECTED;
-#endif
 }
 
 uint8_t WiFiClient::status()

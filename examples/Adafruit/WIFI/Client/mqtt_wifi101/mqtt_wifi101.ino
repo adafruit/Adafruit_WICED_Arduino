@@ -13,7 +13,7 @@
 #include "Adafruit_MQTT.h"
 #include "Adafruit_MQTT_Client.h"
 
-/************************* Ethernet Client Setup *****************************/
+/************************* WIFI Client Setup *****************************/
 char ssid[] = "yourNetwork";     //  your network SSID (name)
 char pass[] = "secretPassword";  // your network password (use for WPA, or use as key for WEP)
 
@@ -61,6 +61,9 @@ Adafruit_MQTT_Subscribe onoffbutton = Adafruit_MQTT_Subscribe(&mqtt, ONOFF_FEED)
 
 void setup() {
   Serial.begin(115200);
+  
+  // wait until Serial is connected
+  while (!Serial) delay(1);
 
   Serial.println(F("Adafruit MQTT demo"));
 
