@@ -54,11 +54,12 @@ def runSystemCmd(cmd_id):
     dev = usb.core.find(idVendor=usb_vid, idProduct=usb_pid, backend=backend)
     if dev is None:
         print "Unable to connect to specified VID/PID 0x%04X 0x%04X" % (usb_vid, usb_pid)
-        print "Try to connect in DFU mode"
+        print "Trying to connect in DFU mode"
         dev = usb.core.find(idVendor=usb_vid, idProduct=usb_dfu_pid, backend=backend)
         if dev is None:
             print "Unable to connect to specified VID/PID 0x%04X 0x%04X" % (usb_vid, usb_dfu_pid)
             sys.exit(1)
+        print "Connected in DFU mode"
     dev.ctrl_transfer( 0x40, SDEP_MSGTYPE_COMMAND, cmd_id)
 
 def force_dfu_mode():
