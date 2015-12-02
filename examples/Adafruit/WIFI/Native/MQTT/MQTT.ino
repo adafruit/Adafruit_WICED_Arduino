@@ -1,17 +1,32 @@
 /*
   Adafruit IO - MQTT Example:
-  1.  Connect to pre-specified AP
-  2.  Set the LastWill message
-  3.  Generate a 23-character random client ID
-  3.  Connect to Adafruit IO with user name, password, client ID & TLS config (optional)
-  4.  Read arrived message from ASYN FIFO
-  5.  Publish random value in [0,50] to specified topic on AIO every 20 seconds
+  1.  Add your AP details via WLAN_SSID and WLAN_PASS in this sketch
+
+  2.  Add your adafruit user name and AIO key and default clientID
+      Note: The 23-character random client ID can be generated using
+            mqttGenerateRandomID function
+
+  3.  Add your publish topic, subscribed topic, and lastwill configuration
+
+  4.  Configure TLS for socket connection
+      - TLS_ENABLED = 0: pass ca_cert = NULL as parameter of mqttConnect function
+      - TLS_ENABLED = 1: if certificate verify is not used, pass ca_cert = NULL 
+        as parameter of mqttConnect function, otherwise perform these steps to add
+        certificate
+        + Generate "certificate.h" from certificate file (aio.pem) using python script
+            $ python cert_to_h.py cert.pem ca_cert certificate
+        + Include "certificate.h" to the sketch
+        + Pass ca_cert (variable name) as parameter of mqttConnect function
+
+  5.  Run the example and open serial monitor to see the result. This sketch publishes
+      random values in [0,50] to specified topic on AIO every 20 seconds
 
   author: huynguyen
  */
 
 #include "adafruit_wifi.h"
 #include "itoa.h"
+#include "certificate.h"
 
 #define WLAN_SSID            "YOUR SSID"
 #define WLAN_PASS            "YOUR PASSWORD"
@@ -33,8 +48,6 @@
 #define LASTWILL_MESSAGE     "Offline"
 #define QOS                  1
 #define RETAIN               0
-
-#define MAX_LENGTH_MESSAGE   1024
 
 
 int wifi_error  = -1; // FAIL
@@ -96,7 +109,7 @@ int connectBroker()
   Serial.print(F("Attempting to connect to broker: "));
   Serial.print(MQTT_HOST); Serial.print(":"); Serial.println(MQTT_PORT);
 
-  int error = feather.mqttConnect(MQTT_HOST, MQTT_PORT, clientID, ADAFRUIT_USERNAME, AIO_KEY, TLS_ENABLED); 
+  int error = feather.mqttConnect(MQTT_HOST, MQTT_PORT, clientID, ADAFRUIT_USERNAME, AIO_KEY, NULL, TLS_ENABLED); 
   if (error == 0)
   {
     Serial.println(F("Connected!"));
@@ -138,71 +151,6 @@ int subscribeTopic()
   Serial.println(F(""));
 
   return error;
-}
-
-/**************************************************************************/
-/*!
-    @brief  Read message from the ASYNC FIFO
-
-    @return NONE
-*/
-/**************************************************************************/
-void readArrivedMessage()
-{
-  if (subs_error == 0)
-  {
-    uint16_t irq_error;
-
-    // Specify the current number of items in the ASYNC FIFO
-    uint16_t n_item;
-    irq_error = feather.irqCount(&n_item);
-    if (irq_error == 0)
-    {
-      if (n_item > 0)
-      {
-        Serial.print(n_item);
-        Serial.println(F(" message(s) found in ASYNC FIFO"));
-        uint8_t response[MAX_LENGTH_MESSAGE];
-        uint16_t response_len;
-        for (int n = 0; n < n_item; n++)
-        {
-          // Read message from subscribed topic
-          irq_error = feather.irqRead(&response_len, response);
-          if (irq_error == 0)
-          {
-            if (response_len > 0)
-            {
-              Serial.print(F("Message read! "));
-              // [0:1]: interrupt source
-              // [2:9]: UTC time & date (64-bit integer)
-              // [10:]: Value
-              for (int i = 10; i < response_len; i++)
-              {
-                Serial.write(response[i]);
-              }
-              Serial.println(F(""));
-            }
-          }
-          else
-          {
-            Serial.print(F("Read Failed! Error: "));
-            Serial.println(irq_error, HEX);
-          }
-        }
-      }
-      else
-      {
-        Serial.println(F("No arrived message!"));
-      }
-    }
-    else
-    {
-      Serial.print(F("Failed to specify the current number of items in the ASYNC FIFO! Error: "));
-      Serial.println(irq_error, HEX);
-    }
-
-    Serial.println("");
-  }
 }
 
 /**************************************************************************/
@@ -296,8 +244,6 @@ void loop() {
   {
     if (isConnected)
     {
-//      readArrivedMessage();
-
       // Buffer for temperature
       char str[3] = "0";
       uint32_t randomNum = 0;
