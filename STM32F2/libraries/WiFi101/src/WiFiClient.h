@@ -49,7 +49,7 @@ public:
 	WiFiClient(const WiFiClient& other);
 
 	uint8_t status();
-	void usePacketBuffered(bool isEnable);
+	void usePacketBuffering(bool isEnable);
 	
 	int connectSSL(IPAddress ip, uint16_t port);
 	int connectSSL(const char* host, uint16_t port);
@@ -73,7 +73,7 @@ private:
 
 	// buffer written until network packet is full ~1500 or flush() is called
 	// default is false
-	bool     _use_packet_buffer;
+	bool     _packet_buffering;
 };
 
 #endif /* WIFICLIENT_H */
