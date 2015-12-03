@@ -108,24 +108,24 @@ typedef enum {
   SDEP_CMD_GET_NETMASK         = 0x0083, /**< Get Netmask's IPv4 Address           */
   SDEP_CMD_GET_MAC_ADDRESS     = 0x0084, /**< Get MAC Address           */
   /* TCP Commnads */
-  SDEP_CMD_TCP_CONNECT       = 0x0090,
-  SDEP_CMD_TCP_WRITE         = 0x0091,
-  SDEP_CMD_TCP_FLUSH         = 0x0092,
-  SDEP_CMD_TCP_READ          = 0x0093,
-  SDEP_CMD_TCP_CLOSE         = 0x0094,
-  SDEP_CMD_TCP_AVAILABLE     = 0x0095,
-  SDEP_CMD_TCP_PEEK          = 0x0096,
-  SDEP_CMD_TCP_STATUS        = 0x0097,
+  SDEP_CMD_TCP_CONNECT         = 0x0090,
+  SDEP_CMD_TCP_WRITE           = 0x0091,
+  SDEP_CMD_TCP_FLUSH           = 0x0092,
+  SDEP_CMD_TCP_READ            = 0x0093,
+  SDEP_CMD_TCP_CLOSE           = 0x0094,
+  SDEP_CMD_TCP_AVAILABLE       = 0x0095,
+  SDEP_CMD_TCP_PEEK            = 0x0096,
+  SDEP_CMD_TCP_STATUS          = 0x0097,
 
   /* UDP Commands */
-  SDEP_CMD_UDP_CREATE        = 0x00A0,
-  SDEP_CMD_UDP_WRITE         = 0x00A1,
-  SDEP_CMD_UDP_FLUSH         = 0x00A2,
-  SDEP_CMD_UDP_READ          = 0x00A3,
-  SDEP_CMD_UDP_CLOSE         = 0x00A4,
-  SDEP_CMD_UDP_AVAILABLE     = 0x00A5,
-  SDEP_CMD_UDP_PEEK          = 0x00A6,
-  SDEP_CMD_UDP_PACKET_INFO   = 0x00A7,
+  SDEP_CMD_UDP_CREATE          = 0x00A0,
+  SDEP_CMD_UDP_WRITE           = 0x00A1,
+  SDEP_CMD_UDP_FLUSH           = 0x00A2,
+  SDEP_CMD_UDP_READ            = 0x00A3,
+  SDEP_CMD_UDP_CLOSE           = 0x00A4,
+  SDEP_CMD_UDP_AVAILABLE       = 0x00A5,
+  SDEP_CMD_UDP_PEEK            = 0x00A6,
+  SDEP_CMD_UDP_PACKET_INFO     = 0x00A7,
 } sdep_command_t;
 
 enum {
@@ -195,7 +195,8 @@ public:
   /* MQTT Commands */
   sdep_err_t mqttLastWill(bool isOnlineTopic, char* topic, char* value, uint8_t qos, uint8_t retain);
   sdep_err_t mqttGenerateRandomID(char* clientID, uint8_t length);
-  sdep_err_t mqttConnect(char* host, uint16_t port, char* clientID, char* username, char* password, const char* ca_cert, bool is_tls);
+  sdep_err_t mqttConnect(char* host, uint16_t port, char* clientID, char* username, char* password);
+  sdep_err_t mqttTLSConnect(char* host, uint16_t port, char* clientID, char *username, char* password, const char* ca_cert);
   sdep_err_t mqttDisconnect(void);
   sdep_err_t mqttPublish(char* topic, char* value, uint8_t qos, uint8_t retain);
   sdep_err_t mqttSubscribe(char* topic, uint8_t qos);

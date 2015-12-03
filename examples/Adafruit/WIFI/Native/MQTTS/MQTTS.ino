@@ -1,10 +1,10 @@
 /*
-  Adafruit IO - MQTT Example
+  Adafruit IO - MQTTS Example with TLS connection
   This sketch publishes random values in [0,50] to specified topic on Adafruit IO every 20 seconds.
-
+  
   1.  Add your AP details via WLAN_SSID and WLAN_PASS in this sketch
 
-  2.  Add the MQTT host & MQTT port (default is 1883)
+  2.  Add the MQTT host & MQTT port (default is 8883)
 
   3.  Add your adafruit user name and AIO key and default clientID
       Note: The 23-character random client ID can be generated using
@@ -12,25 +12,33 @@
 
   4.  Add your publish topic, subscribed topic, and lastwill configuration
 
-  5.  Run the example and open serial monitor to see the result
+  5.  If SSL verification is not used, pass ca_cert = NULL as parameter of mqttConnect function.
+      Otherwise perform these steps to add certificate file to the sketch:
+        + Generate "certificate.h" from certificate file (aio.pem) using python script
+            $ python cert_to_h.py cert.pem ca_cert certificate
+        + Include "certificate.h" to the sketch
+        + Pass ca_cert (variable name) as parameter of mqttConnect function
 
-  author: huynguyen
+  6.  Run the example and open serial monitor to see the result
+
+  author: huynguyen 
  */
 
 #include "adafruit_wifi.h"
 #include "itoa.h"
+#include "certificate.h"
 
 #define WLAN_SSID            "YOUR SSID"
 #define WLAN_PASS            "YOUR PASSWORD"
 
 #define MQTT_HOST            "io.adafruit.com"
-#define MQTT_PORT            1883
+#define MQTT_PORT            8883
 
-#define CLIENT_ID            "Adafruit"
+#define DEFAULT_CLIENT_ID    "Adafruit"
 #define ADAFRUIT_USERNAME    "See your username at accounts.adafruit.com"
 #define AIO_KEY              "Your AIO key"
 #define PUBLISH_TOPIC        ADAFRUIT_USERNAME "/feeds/temp"
-#define SUBSCRIBE_TOPIC      ADAFRUIT_USERNAME "/#"
+#define SUBSCRIBE_TOPIC      ADAFRUIT_USERNAME "/feeds/temp"
 
 #define LASTWILL_ENABLED     1
 #define CONNECTED_TOPIC      ADAFRUIT_USERNAME "/feeds/status"
@@ -93,14 +101,14 @@ int connectBroker()
   }
   else
   {
-    clientID = CLIENT_ID;
+    clientID = DEFAULT_CLIENT_ID;
   }
 
   // Attempt to connect to a Broker
   Serial.print(F("Attempting to connect to broker: "));
   Serial.print(MQTT_HOST); Serial.print(":"); Serial.println(MQTT_PORT);
 
-  int error = feather.mqttConnect(MQTT_HOST, MQTT_PORT, clientID, ADAFRUIT_USERNAME, AIO_KEY); 
+  int error = feather.mqttTLSConnect(MQTT_HOST, MQTT_PORT, clientID, ADAFRUIT_USERNAME, AIO_KEY, NULL); 
   if (error == 0)
   {
     Serial.println(F("Connected!"));
