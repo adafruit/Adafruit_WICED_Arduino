@@ -75,11 +75,10 @@ typedef enum {
   SDEP_CMD_GETTIME             = 0x0032, /**< Get time                             */
   SDEP_CMD_HTTPGETURI          = 0x0033, /**< HTTP Get URI                         */
   SDEP_CMD_HTTPPOST            = 0x0034, /**< HTTP Post                            */
-  SDEP_CMD_HTTPSGET            = 0x0035, /**< HTTPS Get                            */
-  SDEP_CMD_HTTPREQUEST         = 0x0036, /**< HTTP Request                         */
-  SDEP_CMD_HTTPSREQUEST        = 0x0037, /**< HTTPs Request                        */
-  SDEP_CMD_ASYNCHTTPREQUEST    = 0x0038, /**< Async HTTP Request                   */
-  SDEP_CMD_ASYNCHTTPSREQUEST   = 0x0039, /**< Async HTTPS Request                  */
+  SDEP_CMD_HTTPREQUEST         = 0x0035, /**< HTTP Request                         */
+  SDEP_CMD_HTTPSREQUEST        = 0x0036, /**< HTTPs Request                        */
+  SDEP_CMD_ASYNCHTTPREQUEST    = 0x0037, /**< Async HTTP Request                   */
+  SDEP_CMD_ASYNCHTTPSREQUEST   = 0x0038, /**< Async HTTPS Request                  */
   /* DEBUG Commands */
   SDEP_CMD_STACKDUMP           = 0x0040, /**< Dump the stack                       */
   SDEP_CMD_STACKSIZE           = 0x0041, /**< Get stack size                       */
@@ -106,7 +105,7 @@ typedef enum {
   SDEP_CMD_GET_IPV6_ADDRESS    = 0x0081, /**< Get IPv6 Address                     */
   SDEP_CMD_GET_GATEWAY_ADDRESS = 0x0082, /**< Get Gateway's IPv4 Address           */
   SDEP_CMD_GET_NETMASK         = 0x0083, /**< Get Netmask's IPv4 Address           */
-  SDEP_CMD_GET_MAC_ADDRESS     = 0x0084, /**< Get MAC Address           */
+  SDEP_CMD_GET_MAC_ADDRESS     = 0x0084, /**< Get MAC Address                      */
   /* TCP Commnads */
   SDEP_CMD_TCP_CONNECT         = 0x0090,
   SDEP_CMD_TCP_WRITE           = 0x0091,
@@ -173,7 +172,6 @@ public:
   sdep_err_t getTime(char* iso8601_time);
   sdep_err_t httpGetUri(char* uri, uint16_t* length, uint8_t* response);
   sdep_err_t httpPost(char* uri, uint16_t* length, uint8_t* response);
-  sdep_err_t httpsGet(char* host, const char* ca_cert, const char* query, uint32_t buffer_length, uint8_t* buffer);
 
   sdep_err_t httpRequest(const char* url, const char* content, uint8_t method, uint32_t buffer_length, uint8_t* buffer);
   sdep_err_t httpsRequest(const char* url, const char* ca_cert, const char* content, uint8_t method, uint32_t buffer_length, uint8_t* buffer);
