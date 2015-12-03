@@ -198,7 +198,7 @@ public:
   sdep_err_t mqttDisconnect(void);
   sdep_err_t mqttPublish(char* topic, char* value, uint8_t qos, uint8_t retain);
   sdep_err_t mqttSubscribe(char* topic, uint8_t qos);
-  sdep_err_t mqttUnsubscribe(void);
+  sdep_err_t mqttUnsubscribe(char* topic);
   void       addMqttCallBack(ada_mqtt_callback ada_mqttCallback = NULL);
 
   /* IRQ Commands */
