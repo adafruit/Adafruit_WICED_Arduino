@@ -144,10 +144,7 @@ size_t WiFiClient::write(const uint8_t *buf, size_t size)
   VERIFY(ERROR_NONE == FEATHERLIB->sdep_execute_extend(SDEP_CMD_TCP_WRITE, 4, &_tcp_handle, size, buf, NULL, NULL), 0);
 
   // if packet is not buffered --> send out immediately
-  if (!_packet_buffering)
-  {
-    this->flush();
-  }
+  if (!_packet_buffering) this->flush();
 
   return size;
 }
