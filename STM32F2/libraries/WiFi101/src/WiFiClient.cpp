@@ -23,7 +23,7 @@
 WiFiClient::WiFiClient()
 {
   _tcp_handle        = 0;
-  _use_packet_buffer = false;
+  _packet_buffering = false;
 }
 
 #if 0
@@ -74,9 +74,9 @@ WiFiClient::WiFiClient(const WiFiClient& other)
 }
 #endif
 
-void WiFiClient::usePacketBuffered(bool isEnable)
+void WiFiClient::usePacketBuffering(bool isEnable)
 {
-  _use_packet_buffer = isEnable;
+  _packet_buffering = isEnable;
 }
 
 int WiFiClient::connectSSL(const char* host, uint16_t port)
@@ -144,10 +144,7 @@ size_t WiFiClient::write(const uint8_t *buf, size_t size)
   VERIFY(ERROR_NONE == FEATHERLIB->sdep_execute_extend(SDEP_CMD_TCP_WRITE, 4, &_tcp_handle, size, buf, NULL, NULL), 0);
 
   // if packet is not buffered --> send out immediately
-  if (!_use_packet_buffer)
-  {
-    this->flush();
-  }
+  if (!_packet_buffering) this->flush();
 
   return size;
 }

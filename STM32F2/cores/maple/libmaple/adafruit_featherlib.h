@@ -54,7 +54,7 @@
 //#define FILENO_UART           5
 
 //------------- Arduino Shared Structure -------------//
-#define CFG_ARDUINO_CODE_MAGIC    0x01ADD1E5 // 0xDECODED
+#define CFG_ARDUINO_CODE_MAGIC    0xDEC0DED
 
 typedef struct ATTR_ALIGNED(512)
 {
