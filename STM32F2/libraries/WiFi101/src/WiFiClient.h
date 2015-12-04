@@ -45,8 +45,8 @@ class WiFiClient : public Client {
 
 public:
 	WiFiClient();
-	WiFiClient(uint8_t sock, uint8_t parentsock = 0);
-	WiFiClient(const WiFiClient& other);
+//	WiFiClient(uint8_t sock, uint8_t parentsock = 0);
+//	WiFiClient(const WiFiClient& other);
 
 	uint8_t status();
 	void usePacketBuffering(bool isEnable);

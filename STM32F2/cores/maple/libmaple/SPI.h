@@ -68,10 +68,9 @@ private:
 		this->dataMode     = dataMode;
 		this->baud_control = SPI_BAUD_PCLK_DIV_256; // minimum as default
 
-		for(uint8_t i =0; i < 8; i++)
+		for(uint8_t i=0; i < 8; i++)
 		{
-		  // TODO change to STM32_PCLK2 if using SPI1
-		  if ( ( STM32_PCLK1 / (1 << (i+1)) ) <= clock )
+		  if ( ( STM32_PCLK2 / (1 << (i+1)) ) <= clock )
 		  {
 		    this->baud_control = (i << 3);
 		    break;

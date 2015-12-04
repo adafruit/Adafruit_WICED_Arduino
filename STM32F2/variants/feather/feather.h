@@ -85,11 +85,6 @@ enum {
 #define MISO     PA6
 #define MOSI     PA7
 
-#define BOARD_SPI2_NSS_PIN      Port2Pin('B',12)
-#define BOARD_SPI2_MOSI_PIN     Port2Pin('B',15)
-#define BOARD_SPI2_MISO_PIN     Port2Pin('B',14)
-#define BOARD_SPI2_SCK_PIN      Port2Pin('B',13)
-
 #define BOARD_SPI3_NSS_PIN      PA15
 #define BOARD_SPI3_SCK_PIN      PB3
 #define BOARD_SPI3_MISO_PIN     PB4

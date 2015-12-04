@@ -41,14 +41,11 @@
 
 static spi_dev spi1 = SPI_DEV(1);
 static spi_dev spi2 = SPI_DEV(2);
+static spi_dev spi3 = SPI_DEV(3);
 
 spi_dev *SPI1_F2 = &spi1;
 spi_dev *SPI2_F2 = &spi2;
-
-#if defined(STM32_HIGH_DENSITY) || defined(STM32_XL_DENSITY)
-static spi_dev spi3 = SPI_DEV(3);
 spi_dev *SPI3_F2 = &spi3;
-#endif
 
 /*
  * Routines

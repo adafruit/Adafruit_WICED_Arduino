@@ -58,22 +58,14 @@ static const spi_pins board_spi_pins[] __FLASH__ =
      BOARD_SPI1_SCK_PIN,
      BOARD_SPI1_MISO_PIN,
      BOARD_SPI1_MOSI_PIN},
-#ifdef BOARD_SPI2_NSS_PIN
-    {BOARD_SPI2_NSS_PIN,
-     BOARD_SPI2_SCK_PIN,
-     BOARD_SPI2_MISO_PIN,
-     BOARD_SPI2_MOSI_PIN},
-#endif
 
-#ifdef STM32_HIGH_DENSITY
     {BOARD_SPI3_NSS_PIN,
      BOARD_SPI3_SCK_PIN,
      BOARD_SPI3_MISO_PIN,
      BOARD_SPI3_MOSI_PIN},
-#endif
 };
 
-HardwareSPI SPI(3);
+HardwareSPI SPI(1);
 
 /*
  * Constructor
@@ -84,9 +76,9 @@ HardwareSPI::HardwareSPI(uint32_t spi_num) {
     case 1:
         this->spi_d = SPI1_F2;
         break;
-    case 2:
-        this->spi_d = SPI2_F2;
-        break;
+//    case 2:
+//        this->spi_d = SPI2_F2;
+//        break;
     case 3:
         this->spi_d = SPI3_F2;
         break;
@@ -106,8 +98,16 @@ void HardwareSPI::begin(void)
 
 void HardwareSPI::beginTransaction(SPISettings settings)
 {
+  uint32_t baud = settings.baud_control;
+
+  // SPI3 has slower speed than SPI1
+  if (this->spi_d == SPI3_F2 && baud > 0)
+  {
+    baud -= (1<<3);
+  }
+
   spi_reconfigure(this->spi_d, SPI_DFF_8_BIT | SPI_SW_SLAVE | SPI_SOFT_SS |
-                               settings.bitOrder | settings.baud_control | SPI_CR1_MSTR | settings.dataMode);
+                               settings.bitOrder | baud | SPI_CR1_MSTR | settings.dataMode);
 }
 
 void HardwareSPI::endTransaction(void)
@@ -201,7 +201,7 @@ static void configure_gpios(spi_dev *dev, bool as_master);
 static const spi_pins* dev_to_spi_pins(spi_dev *dev) {
   switch (dev->clk_id) {
     case RCC_SPI1: return board_spi_pins;
-    case RCC_SPI2: return board_spi_pins + 1;
+//    case RCC_SPI2: return board_spi_pins + 1;
     case RCC_SPI3: return board_spi_pins + 2;
     default:       return NULL;
   }

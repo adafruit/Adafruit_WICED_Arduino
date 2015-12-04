@@ -81,10 +81,12 @@ void WiFiClient::usePacketBuffering(bool isEnable)
 
 int WiFiClient::connectSSL(const char* host, uint16_t port)
 {
-  return 0;
-#if 0
-  return connect(host, port, SOCKET_FLAGS_SSL);
-#endif
+  IPAddress ip;
+
+  int err = WiFi.hostByName(host, ip);
+  VERIFY( err == 1, err);
+
+	return this->connectSSL(ip, port);
 }
 
 int WiFiClient::connectSSL(IPAddress ip, uint16_t port)
@@ -97,10 +99,9 @@ int WiFiClient::connectSSL(IPAddress ip, uint16_t port)
 
 int WiFiClient::connect(const char* host, uint16_t port)
 {
-  int err;
   IPAddress ip;
 
-  err = WiFi.hostByName(host, ip);
+  int err = WiFi.hostByName(host, ip);
   VERIFY( err == 1, err);
 
 	return this->connect(ip, port);
