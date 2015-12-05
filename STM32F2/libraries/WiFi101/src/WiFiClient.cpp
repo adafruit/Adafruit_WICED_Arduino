@@ -145,7 +145,7 @@ size_t WiFiClient::write(const uint8_t *buf, size_t size)
       { .len = size, .p_value = buf          }
   };
 
-  VERIFY(ERROR_NONE == FEATHERLIB->sdep_command(SDEP_CMD_TCP_WRITE,
+  VERIFY(ERROR_NONE == FEATHERLIB->sdep_execute_n(SDEP_CMD_TCP_WRITE,
                                                 sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
                                                 NULL, NULL), 0);
 
@@ -185,7 +185,7 @@ int WiFiClient::read(uint8_t* buf, size_t size)
   };
 
   // TODO check case when read bytes < size
-  VERIFY(ERROR_NONE == FEATHERLIB->sdep_command(SDEP_CMD_TCP_READ,
+  VERIFY(ERROR_NONE == FEATHERLIB->sdep_execute_n(SDEP_CMD_TCP_READ,
                                                 sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
                                                 &size16, buf), -1);
   return size;
@@ -202,7 +202,7 @@ int WiFiClient::peek()
       { .len = 4, .p_value = &_timeout    },
   };
 
-  VERIFY(ERROR_NONE == FEATHERLIB->sdep_command(SDEP_CMD_TCP_PEEK,
+  VERIFY(ERROR_NONE == FEATHERLIB->sdep_execute_n(SDEP_CMD_TCP_PEEK,
                                                 sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
                                                 NULL, &ch), -1);
 

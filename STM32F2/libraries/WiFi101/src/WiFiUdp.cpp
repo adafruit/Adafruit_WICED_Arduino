@@ -105,7 +105,7 @@ size_t WiFiUDP::write(const uint8_t *buffer, size_t size)
       { .len = size, .p_value = buffer       }
   };
 
-  VERIFY(ERROR_NONE == FEATHERLIB->sdep_command(SDEP_CMD_UDP_WRITE,
+  VERIFY(ERROR_NONE == FEATHERLIB->sdep_execute_n(SDEP_CMD_UDP_WRITE,
                                                 sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
                                                 NULL, NULL), 0);
   return size;
@@ -127,7 +127,7 @@ int WiFiUDP::parsePacket()
       { .len = 4   , .p_value = &_timeout    },
   };
 
-  VERIFY(ERROR_NONE == FEATHERLIB->sdep_command(SDEP_CMD_UDP_PACKET_INFO,
+  VERIFY(ERROR_NONE == FEATHERLIB->sdep_execute_n(SDEP_CMD_UDP_PACKET_INFO,
                                                 sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
                                                 NULL, &response), 0);
 
@@ -157,7 +157,7 @@ int WiFiUDP::read(unsigned char* buf, size_t size)
       { .len = 4   , .p_value = &_timeout    },
   };
 
-  VERIFY(ERROR_NONE == FEATHERLIB->sdep_command(SDEP_CMD_UDP_READ,
+  VERIFY(ERROR_NONE == FEATHERLIB->sdep_execute_n(SDEP_CMD_UDP_READ,
                                                 sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
                                                 &size16, buf), -1);
 
@@ -174,7 +174,7 @@ int WiFiUDP::peek()
       { .len = 4, .p_value = &_timeout    },
   };
 
-  VERIFY(ERROR_NONE == FEATHERLIB->sdep_command(SDEP_CMD_UDP_PEEK,
+  VERIFY(ERROR_NONE == FEATHERLIB->sdep_execute_n(SDEP_CMD_UDP_PEEK,
                                                 sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
                                                 NULL, &data), -1);
 
