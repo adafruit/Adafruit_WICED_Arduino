@@ -68,12 +68,26 @@ public:
 
 	using Print::write;
 
+	// callback
+	void setReceiveCallback( void (*fp) (void) )
+	{
+	  _rx_callback = fp;
+	}
+
+	void setDisconnectCallback( void (*fp) (void))
+	{
+	  _disconnect_callback = fp;
+	}
+
 private:
 	uint32_t _tcp_handle;
 
 	// buffer written until network packet is full ~1500 or flush() is called
 	// default is false
 	bool     _packet_buffering;
+
+	void (*_disconnect_callback) (void);
+	void (*_rx_callback) (void);
 };
 
 #endif /* WIFICLIENT_H */

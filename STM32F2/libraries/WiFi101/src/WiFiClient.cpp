@@ -124,10 +124,7 @@ int WiFiClient::connect(IPAddress ip, uint16_t port)
   connect_input.port       = port;
   connect_input.timeout_ms = _timeout;
 
-  int err = FEATHERLIB->sdep_execute(SDEP_CMD_TCP_CONNECT,
-                                     sizeof(sdep_tcp_connect_t), &connect_input,
-                                     NULL, &_tcp_handle);
-
+  int err = FEATHERLIB->sdep_execute(SDEP_CMD_TCP_CONNECT, sizeof(sdep_tcp_connect_t), &connect_input, NULL, &_tcp_handle);
   VERIFY( err == ERROR_NONE, -err);
 
   return 1;
@@ -142,7 +139,15 @@ size_t WiFiClient::write(const uint8_t *buf, size_t size)
 {
   if ( _tcp_handle == 0 ) return 0;
 
-  VERIFY(ERROR_NONE == FEATHERLIB->sdep_execute_extend(SDEP_CMD_TCP_WRITE, 4, &_tcp_handle, size, buf, NULL, NULL), 0);
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = 4   , .p_value = &_tcp_handle },
+      { .len = size, .p_value = buf          }
+  };
+
+  VERIFY(ERROR_NONE == FEATHERLIB->sdep_command(SDEP_CMD_TCP_WRITE,
+                                                sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                                NULL, NULL), 0);
 
   // if packet is not buffered --> send out immediately
   if (!_packet_buffering) this->flush();
@@ -170,16 +175,19 @@ int WiFiClient::read(uint8_t* buf, size_t size)
 {
   if ( _tcp_handle == 0 ) return -1;
 
-  uint8_t para2[6];
+  uint16_t size16 = (uint16_t) size;
 
-  memcpy(para2, &size, 2); // uint16_t only
-  memcpy(para2+2, &_timeout, 4); // timeout
-
-  if( ERROR_NONE != FEATHERLIB->sdep_execute_extend(SDEP_CMD_TCP_READ, 4, &_tcp_handle, 6, para2, NULL, buf) )
+  sdep_cmd_para_t para_arr[] =
   {
-    return -1;
-  }
+      { .len = 4, .p_value = &_tcp_handle },
+      { .len = 2, .p_value = &size16      },
+      { .len = 4, .p_value = &_timeout    },
+  };
 
+  // TODO check case when read bytes < size
+  VERIFY(ERROR_NONE == FEATHERLIB->sdep_command(SDEP_CMD_TCP_READ,
+                                                sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                                &size16, buf), -1);
   return size;
 }
 
@@ -188,7 +196,15 @@ int WiFiClient::peek()
   if ( _tcp_handle == 0 ) return EOF;
 
   uint8_t ch;
-  VERIFY(ERROR_NONE == FEATHERLIB->sdep_execute_extend(SDEP_CMD_TCP_PEEK, 4, &_tcp_handle, 4, &_timeout, NULL, &ch), EOF);
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = 4, .p_value = &_tcp_handle },
+      { .len = 4, .p_value = &_timeout    },
+  };
+
+  VERIFY(ERROR_NONE == FEATHERLIB->sdep_command(SDEP_CMD_TCP_PEEK,
+                                                sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                                NULL, &ch), -1);
 
   return (int) ch;
 }

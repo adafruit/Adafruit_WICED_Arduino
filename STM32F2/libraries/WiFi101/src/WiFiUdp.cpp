@@ -97,12 +97,18 @@ size_t WiFiUDP::write(const uint8_t *buffer, size_t size)
 {
   if (_udp_handle == 0 || _sndIP == 0 || _sndPort == 0) return 0;
 
-  uint8_t para1[10];
-  memcpy(para1  , &_udp_handle, 4);
-  memcpy(para1+4, &_sndIP     , 4);
-  memcpy(para1+8, &_sndPort   , 2);
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = 4   , .p_value = &_udp_handle },
+      { .len = 4   , .p_value = &_sndIP      },
+      { .len = 2   , .p_value = &_sndPort    },
+      { .len = size, .p_value = buffer       }
+  };
 
-  return (ERROR_NONE == FEATHERLIB->sdep_execute_extend(SDEP_CMD_UDP_WRITE, sizeof(para1), para1, size, buffer, NULL, NULL) ) ? size : 0;
+  VERIFY(ERROR_NONE == FEATHERLIB->sdep_command(SDEP_CMD_UDP_WRITE,
+                                                sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                                NULL, NULL), 0);
+  return size;
 }
 
 int WiFiUDP::parsePacket()
@@ -115,7 +121,15 @@ int WiFiUDP::parsePacket()
     uint32_t packet_size;
   } response;
 
-  if ( ERROR_NONE != FEATHERLIB->sdep_execute_extend(SDEP_CMD_UDP_PACKET_INFO, 4, &_udp_handle, 4, &_timeout, NULL, &response) ) return 0;
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = 4   , .p_value = &_udp_handle },
+      { .len = 4   , .p_value = &_timeout    },
+  };
+
+  VERIFY(ERROR_NONE == FEATHERLIB->sdep_command(SDEP_CMD_UDP_PACKET_INFO,
+                                                sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                                NULL, &response), 0);
 
   _rcvIP   = response.remote_ip;
   _rcvPort = response.remote_port;
@@ -134,19 +148,37 @@ int WiFiUDP::read(unsigned char* buf, size_t size)
 {
   if ( _udp_handle == 0 ) return -1;
 
-  uint16_t len = (uint16_t) size;
-  uint8_t para2[6];
+  uint16_t size16 = (uint16_t) size;
 
-  memcpy(para2, &size, 2);        // uint16_t only
-  memcpy(para2+2, &_timeout, 4);  // timeout
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = 4   , .p_value = &_udp_handle },
+      { .len = 2   , .p_value = &size16      },
+      { .len = 4   , .p_value = &_timeout    },
+  };
 
-  return (ERROR_NONE == FEATHERLIB->sdep_execute_extend(SDEP_CMD_UDP_READ, 4, &_udp_handle, 6, para2, &len, buf) ) ? len : (-1);
+  VERIFY(ERROR_NONE == FEATHERLIB->sdep_command(SDEP_CMD_UDP_READ,
+                                                sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                                &size16, buf), -1);
+
+  return size16;
 }
 
 int WiFiUDP::peek()
 {
   uint8_t data;
-  return (ERROR_NONE == FEATHERLIB->sdep_execute_extend(SDEP_CMD_UDP_PEEK, 4, &_udp_handle, 4, &_timeout, NULL, &data)) ? (int) data : EOF;
+
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = 4, .p_value = &_udp_handle },
+      { .len = 4, .p_value = &_timeout    },
+  };
+
+  VERIFY(ERROR_NONE == FEATHERLIB->sdep_command(SDEP_CMD_UDP_PEEK,
+                                                sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                                NULL, &data), -1);
+
+  return (int) data;
 }
 
 void WiFiUDP::flush()

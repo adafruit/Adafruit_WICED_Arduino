@@ -39,7 +39,7 @@
 
 #include <stdint.h>
 #include "compiler.h"
-#include "adafruit_constants.h""
+#include "adafruit_constants.h"
 
 #ifdef __cplusplus
  extern "C" {
@@ -81,7 +81,11 @@ typedef struct ATTR_ALIGNED(512)
 
 
 //------------- Featherlib Shared Structure -------------//
-typedef uint32_t feather_result_t;
+typedef struct
+{
+  uint16_t    len;
+  void const* p_value;
+}sdep_cmd_para_t;
 
 typedef struct ATTR_ALIGNED(512)
 {
@@ -95,17 +99,16 @@ typedef struct ATTR_ALIGNED(512)
                             uint16_t   paylen     , void const* parameter,
                             uint16_t* result_len , void* result_buffer);
 
-  uint16_t (*sdep_execute_extend)(uint16_t  cmd_id     ,
-                                  uint16_t   paylen1    , void const * parameter1,
-                                  uint16_t   paylen2    , void const * parameter2,
-                                  uint16_t* result_len , void* result_buffer);
+  err_t (*sdep_command)(uint16_t cmd_id,
+                        uint8_t para_count, sdep_cmd_para_t const* para_arr,
+                        uint16_t* p_result_len, void* p_result);
 
   uint32_t sdep_reserved[6];
 
   // RTOS API
-  feather_result_t (*rtos_delay_ms) (uint32_t ms);
-  feather_result_t (*rtos_delay_us) (uint32_t us);
-  void             (*rtos_yield) (void);
+  uint32_t (*rtos_delay_ms) (uint32_t ms);
+  uint32_t (*rtos_delay_us) (uint32_t us);
+  void     (*rtos_yield) (void);
   uint32_t rtos_reserved[13];
 
   // Peripheral API
