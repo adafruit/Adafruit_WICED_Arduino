@@ -60,15 +60,18 @@ typedef enum {
   SDEP_CMD_FACTORYRESET        = 0x0002, /**< Factory reset                        */
   SDEP_CMD_DFU                 = 0x0003, /**< Go into DFU mode                     */
   SDEP_CMD_INFO                = 0x0004, /**< System information                   */
+
   /* GPIO Command */
   SDEP_CMD_GPIO                = 0x0010, /**< Set GPIO                             */
   SDEP_CMD_RANDOMNUMBER        = 0x0011, /**< Random Number                        */
+
   /* WiFi Commands */
   SDEP_CMD_SCAN                = 0x0020, /**< AP scan                              */
   SDEP_CMD_CONNECT             = 0x0021, /**< Connect to AP                        */
   SDEP_CMD_DISCONNECT          = 0x0022, /**< Disconnect from AP                   */
   SDEP_CMD_APSTART             = 0x0023, /**< Start AP                             */
   SDEP_CMD_APSTOP              = 0x0024, /**< Stop AP                              */
+
   /* Network Commands */
   SDEP_CMD_PING                = 0x0030, /**< Ping                                 */
   SDEP_CMD_DNSLOOKUP           = 0x0031, /**< DNS lookup                           */
@@ -79,15 +82,18 @@ typedef enum {
   SDEP_CMD_HTTPSREQUEST        = 0x0036, /**< HTTPs Request                        */
   SDEP_CMD_ASYNCHTTPREQUEST    = 0x0037, /**< Async HTTP Request                   */
   SDEP_CMD_ASYNCHTTPSREQUEST   = 0x0038, /**< Async HTTPS Request                  */
+
   /* DEBUG Commands */
   SDEP_CMD_STACKDUMP           = 0x0040, /**< Dump the stack                       */
   SDEP_CMD_STACKSIZE           = 0x0041, /**< Get stack size                       */
   SDEP_CMD_HEAPDUMP            = 0x0042, /**< Dump the heap                        */
   SDEP_CMD_HEAPSIZE            = 0x0043, /**< Get heap size                        */
   SDEP_CMD_THREADLIST          = 0x0044, /**< Get Thread information               */
+
   /* SPI Flash Commands */
   SDEP_CMD_SFLASHFORMAT        = 0x0050, /**< Format SPI flash memory              */
   SDEP_CMD_SFLASHLIST          = 0x0051, /**< List SPI flash contents              */
+
   /* MQTT Commands */
   SDEP_CMD_MQTTLASTWILL        = 0x0060, /**< Get Last Will message                */
   SDEP_CMD_MQTTCONNECT         = 0x0061, /**< Connect to a broker                  */
@@ -95,17 +101,20 @@ typedef enum {
   SDEP_CMD_MQTTPUBLISH         = 0x0063, /**< Publish a message to a topic         */
   SDEP_CMD_MQTTSUBSCRIBE       = 0x0064, /**< Subscribe to a topic                 */
   SDEP_CMD_MQTTUNSUBSCRIBE     = 0x0065, /**< Unsubscribe from a topic             */
+
   /* IRQ Commands */
   SDEP_CMD_IRQREAD             = 0x0070, /**< Read from async response fifo        */
   SDEP_CMD_IRQCOUNT            = 0x0071, /**< Number of records in async fifo      */
   SDEP_CMD_IRQAVAIL            = 0x0072, /**< Number of records LEFT in async fifo */
   SDEP_CMD_IRQCLEAR            = 0x0073, /**< Clear async fifo & deassert IRQ      */
+
   /* Gateway Commands */
   SDEP_CMD_GET_IPV4_ADDRESS    = 0x0080, /**< Get IPv4 Address                     */
   SDEP_CMD_GET_IPV6_ADDRESS    = 0x0081, /**< Get IPv6 Address                     */
   SDEP_CMD_GET_GATEWAY_ADDRESS = 0x0082, /**< Get Gateway's IPv4 Address           */
   SDEP_CMD_GET_NETMASK         = 0x0083, /**< Get Netmask's IPv4 Address           */
   SDEP_CMD_GET_MAC_ADDRESS     = 0x0084, /**< Get MAC Address                      */
+
   /* TCP Commnads */
   SDEP_CMD_TCP_CONNECT         = 0x0090,
   SDEP_CMD_TCP_WRITE           = 0x0091,
@@ -115,6 +124,7 @@ typedef enum {
   SDEP_CMD_TCP_AVAILABLE       = 0x0095,
   SDEP_CMD_TCP_PEEK            = 0x0096,
   SDEP_CMD_TCP_STATUS          = 0x0097,
+  SDEP_CMD_TCP_SET_CALLBACK    = 0x0098,
 
   /* UDP Commands */
   SDEP_CMD_UDP_CREATE          = 0x00A0,

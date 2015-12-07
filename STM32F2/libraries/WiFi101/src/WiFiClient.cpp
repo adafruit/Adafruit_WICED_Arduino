@@ -24,6 +24,9 @@ WiFiClient::WiFiClient()
 {
   _tcp_handle        = 0;
   _packet_buffering = false;
+
+  _disconnect_callback = NULL;
+  _rx_callback         = NULL;
 }
 
 #if 0
@@ -73,6 +76,41 @@ WiFiClient::WiFiClient(const WiFiClient& other)
 	m2m_wifi_handle_events(NULL);
 }
 #endif
+
+void WiFiClient::install_callback(void)
+{
+  if (_disconnect_callback == NULL && _rx_callback == NULL) return;
+
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = 4, .p_value = &_tcp_handle         },
+      { .len = 4, .p_value = &_disconnect_callback },
+      { .len = 4, .p_value = &_rx_callback         },
+  };
+
+  // TODO check case when read bytes < size
+  FEATHERLIB->sdep_execute_n(SDEP_CMD_TCP_SET_CALLBACK,
+                             sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                             NULL, NULL);
+
+}
+
+void WiFiClient::setReceiveCallback( int (*fp) (void*) )
+{
+  _rx_callback = fp;
+
+  // connected --> register callback
+  if ( _tcp_handle != 0 ) this->install_callback();
+}
+
+void WiFiClient::setDisconnectCallback( int (*fp) (void*))
+{
+  _disconnect_callback = fp;
+
+  // connected --> register callback
+  if ( _tcp_handle != 0 ) this->install_callback();
+}
+
 
 void WiFiClient::usePacketBuffering(bool isEnable)
 {
@@ -126,6 +164,8 @@ int WiFiClient::connect(IPAddress ip, uint16_t port)
 
   int err = FEATHERLIB->sdep_execute(SDEP_CMD_TCP_CONNECT, sizeof(sdep_tcp_connect_t), &connect_input, NULL, &_tcp_handle);
   VERIFY( err == ERROR_NONE, -err);
+
+  this->install_callback();
 
   return 1;
 }

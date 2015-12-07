@@ -69,15 +69,8 @@ public:
 	using Print::write;
 
 	// callback
-	void setReceiveCallback( void (*fp) (void) )
-	{
-	  _rx_callback = fp;
-	}
-
-	void setDisconnectCallback( void (*fp) (void))
-	{
-	  _disconnect_callback = fp;
-	}
+	void setReceiveCallback( int (*fp) (void*) );
+	void setDisconnectCallback( int (*fp) (void*));
 
 private:
 	uint32_t _tcp_handle;
@@ -86,8 +79,10 @@ private:
 	// default is false
 	bool     _packet_buffering;
 
-	void (*_disconnect_callback) (void);
-	void (*_rx_callback) (void);
+	int (*_disconnect_callback) (void *);
+	int (*_rx_callback) (void *);
+
+	void install_callback(void);
 };
 
 #endif /* WIFICLIENT_H */
