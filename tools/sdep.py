@@ -21,6 +21,7 @@ SDEP_CMD_RESET          = 0x0001
 SDEP_CMD_FACTORYRESET   = 0x0002
 SDEP_CMD_DFU            = 0x0003
 SDEP_CMD_INFO           = 0x0004
+SDEP_CMD_NVM_RESET      = 0x0005
 
 # GPIO Command
 SDEP_CMD_GPIO           = 0x0010
@@ -94,6 +95,9 @@ else:
 
 class Sdep(object):
     def syscommand(self, cmd_id):
+        if cmd_id > SDEP_CMD_NVM_RESET:
+            return
+
         # sys command will try to run system command with normal mode USB_VID = 0x0009
         # if device is not found, it will try to run with dfu mode USB_VID = 0x0008
         usbdev = usb.core.find(idVendor=USB_VID, idProduct=USB_PID, backend=backend)

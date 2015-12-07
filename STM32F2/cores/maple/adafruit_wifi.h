@@ -57,9 +57,10 @@
 
 typedef enum {
   SDEP_CMD_RESET               = 0x0001, /**< HW reset                             */
-  SDEP_CMD_FACTORYRESET        = 0x0002, /**< Factory reset                        */
+  SDEP_CMD_FACTORYRESET        = 0x0002, /**< Factory reset (reset NVM & erase Arduino code) */
   SDEP_CMD_DFU                 = 0x0003, /**< Go into DFU mode                     */
   SDEP_CMD_INFO                = 0x0004, /**< System information                   */
+  SDEP_CMD_NVM_RESET           = 0x0005, /**< Reset NVM/DCT setting                */
 
   /* GPIO Command */
   SDEP_CMD_GPIO                = 0x0010, /**< Set GPIO                             */

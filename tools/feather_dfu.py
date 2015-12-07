@@ -38,6 +38,10 @@ def factory_reset():
     sdep.syscommand(SDEP_CMD_FACTORYRESET)
 
 @cli.command()
+def nvm_reset():
+    sdep.syscommand(SDEP_CMD_NVM_RESET)
+
+@cli.command()
 @click.argument('binfile')
 def featherlib_upgrade(binfile):
     if not (binfile.endswith('.bin') and os.path.isfile(binfile)):
