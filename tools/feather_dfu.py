@@ -54,7 +54,7 @@ def featherlib_upgrade(binfile):
     else:
         time.sleep(reset_sec)
         sdep.enter_dfu()
-        subprocess.call( ('%s -d 0x%04X:0x%04X -a 0 -s 0x%08X:leave -D %s' % (dfu_util[platform.system()], usb_vid, usb_dfu_pid, featherlib_addr, binfile)).split() )
+        subprocess.call( ('%s -d 0x%04X:0x%04X -a 0 -s 0x%08X:leave -D %s' % (dfu_util[platform.system()], USB_VID, USB_DFU_PID, featherlib_addr, binfile)).split() )
 
 @cli.command()
 @click.argument('binfile')
@@ -64,7 +64,7 @@ def arduino_upgrade(binfile):
     else:
         time.sleep(reset_sec)
         sdep.enter_dfu()
-        subprocess.call( ('%s -d 0x%04X:0x%04X -a 0 -s 0x%08X:leave -D %s' % (dfu_util[platform.system()], usb_vid, usb_dfu_pid, arduino_addr, binfile)).split() )
+        subprocess.call( ('%s -d 0x%04X:0x%04X -a 0 -s 0x%08X:leave -D %s' % (dfu_util[platform.system()], USB_VID, USB_DFU_PID, arduino_addr, binfile)).split() )
 
 if __name__ == '__main__':
     cli()
