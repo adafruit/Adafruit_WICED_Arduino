@@ -94,6 +94,15 @@ else:
     backend = usb.backend.libusb1.get_backend()
 
 class Sdep(object):
+    def enter_dfu(self):
+        # skip if already in DFU mode
+        if usb.core.find(idVendor=USB_VID, idProduct=USB_DFU_PID, backend=backend) is None:
+            self.syscommand(SDEP_CMD_DFU)
+            time.sleep(reset_sec)
+
+    def reboot(self):
+        self.syscommand(SDEP_CMD_RESET)
+
     def syscommand(self, cmd_id):
         if cmd_id > SDEP_CMD_NVM_RESET:
             return
@@ -108,31 +117,32 @@ class Sdep(object):
                 sys.exit(1)
         usbdev.ctrl_transfer( 0x40, SDEP_MSGTYPE_COMMAND, cmd_id)
 
-    def enter_dfu(self):
-        # skip if already in DFU mode
-        if usb.core.find(idVendor=USB_VID, idProduct=USB_DFU_PID, backend=backend) is None:
-            sdep.syscommand(SDEP_CMD_DFU)
-            time.sleep(reset_sec)
+        # in system command, only info has response data
+        if cmd_id == SDEP_CMD_INFO:
+            return self.get_response(cmd_id, usbdev)
 
-    def reboot(self):
-        sdep.syscommand(SDEP_CMD_RESET)
-
-    def execute(self, cmd_id, data):
+    def execute(self, cmd_id, data=None):
         # send SDEP command via Control Transfer
         # find our device
         usbdev = usb.core.find(idVendor=USB_VID, idProduct=USB_PID)
         if usbdev is None:
             print "Unable to connect to feather board"
-            sys.exit()
+            sys.exit(1)
 
         # Send command phase
         # Uncomment to print out command bytes
         if SDEP_DEBUG == 1:
             print ':'.join('{:02x}'.format(x) for x in data)
 
-        usbdev.ctrl_transfer( 0x40, SDEP_MSGTYPE_COMMAND, cmd_id , 0, data)
+        if data is None:
+            usbdev.ctrl_transfer( 0x40, SDEP_MSGTYPE_COMMAND, cmd_id)
+        else:
+            usbdev.ctrl_transfer( 0x40, SDEP_MSGTYPE_COMMAND, cmd_id , 0, data)
         time.sleep(0.1)
 
+        return self.get_response(cmd_id, usbdev)
+
+    def get_response(self, cmd_id, usbdev):
         # Response phase
         while True:
             resp_content = usbdev.ctrl_transfer( 0xC0, SDEP_MSGTYPE_RESPONSE, cmd_id, 0, 4096)
@@ -146,9 +156,6 @@ class Sdep(object):
             print ':'.join('{:02x}'.format(x) for x in resp_content)
 
         # skip header
-        resp_content = resp_content[4:]
-
-        return resp_content
-
+        return resp_content[4:]
 
 sdep = Sdep()

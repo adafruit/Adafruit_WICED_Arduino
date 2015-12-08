@@ -151,7 +151,7 @@ WiFiClass::WiFiClass()
 	_gateway = 0;
 
 	uint8_t fw_version[4] = { U32_TO_U8S_BE(FEATHERLIB->firmware_version) };
-	sprintf(_version, "%d.%d.%d", fw_version[1], fw_version[2], fw_version[3]);
+	sprintf(_version, "%d.%d.%d", fw_version[0], fw_version[1], fw_version[2]);
 
 	memclr(&_ap_info, sizeof(wl_ap_info_t));
 }

@@ -125,7 +125,7 @@ typedef struct ATTR_ALIGNED(512)
 }adafruit_featherlib_t;
 
 #define FEATHERLIB_BASE    ((uint32_t) 0x8010200)
-#define FEATHERLIB         ((adafruit_featherlib_t*) FEATHERLIB_BASE)
+#define FEATHERLIB         ((adafruit_featherlib_t const*) FEATHERLIB_BASE)
 
 #define DBG_SERIAL FILENO_UART
 //#define DBG_SERIAL FILENO_UART

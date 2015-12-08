@@ -42,6 +42,11 @@ def nvm_reset():
     sdep.syscommand(SDEP_CMD_NVM_RESET)
 
 @cli.command()
+def info():
+    resp = sdep.syscommand(SDEP_CMD_INFO)
+    click.echo(resp.tostring())
+
+@cli.command()
 @click.argument('binfile')
 def featherlib_upgrade(binfile):
     if not (binfile.endswith('.bin') and os.path.isfile(binfile)):
