@@ -92,7 +92,13 @@ typedef struct ATTR_ALIGNED(512)
   // Static Information
   uint32_t firmware_magic;
   uint32_t firmware_version;
-  uint8_t  reserved[56];
+  uint32_t codebase_verion;
+
+  char     board_name[12];         // e.g "Feather"
+  char     mcu_str[12];            // e.g "ST32F205RGY"
+  char     firmware_builddate[12]; // e.g "Dec 07 2015"
+
+  uint8_t  reserved[80];
 
   // SDEP Command
   uint16_t (*sdep_execute) (uint16_t  cmd_id     ,
