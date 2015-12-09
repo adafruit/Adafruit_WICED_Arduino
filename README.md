@@ -21,22 +21,27 @@ From the **development** branch, run `make clean all flash-all` in the `projects
 
 - Install the necessary GCC toolchain for ARM: Tools->Board->Board Manager --> Download **Arduino SAM Boards (32-bits ARM Cortex-M3)**
 - Restart the Arduino IDE
-- Install [dfu-util](http://dfu-util.sourceforge.net/)
+- OSX or Linux only: Install [dfu-util](http://dfu-util.sourceforge.net/)
 
 	On OS X you can install dfu-util via:
 	```
 	brew install dfu-util
 	```
-	On Windows dfu-util.exe is already added in the `tools/windows/dfu-util`. To install driver for bootloader, you can use [Zadig](http://zadig.akeo.ie/) to map the DFU device to libusb or choose windows driver in `drivers/windows` 
-	
-- Install Python 2.7, python-pip, pyusb, click (we use a python script to flash the boards for now)
+	On Windows dfu-util.exe is included and will be used automatically.
+
+- Windows only: To install driver for bootloader, you can use [Zadig](http://zadig.akeo.ie/) to map the DFU device to libusb or choose windows driver in `drivers/windows`
+
+- OSX or Linux only: Install Python 2.7, python-pip, pyusb, click (we use a python script to flash the boards for now)
 
 	```
 	pip install --pre pyusb
 	pip install click
 	```
 
-- Install [AdaLink](https://github.com/adafruit/Adafruit_Adalink), which is used to flash the bootloader
+	On Windows the programming script is bundled with Python and includes all
+	dependencies automatically.
+
+- Optional: Install [AdaLink](https://github.com/adafruit/Adafruit_Adalink), which is used to flash the bootloader
 
 ## Burnning bootloader
 
@@ -115,3 +120,82 @@ dfu-util: Error during download get_status
 ```
 
 Note: The error at the end can be ignored, and is related to a problem with the dfu utility.
+
+## Updating Windows Binaries
+
+The script to upload to the board is written in Python and located in the
+`tools/source/feather_dfu` folder.  For Windows users a pre-built binary version
+is included and used by the Arduino IDE so that Python and other dependencies
+do not need to be installed.  However this means any time the feather_dfu script
+is modified a new Windows binary will need to be generated.  Follow the steps below
+on a Windows machine with the **32-bit version** of Python (for maximum compatibility
+with all Windows versions, since 32-bit executables can run on 64-bit Windows too).
+
+First you need to install the dependencies of the script.  This is only done
+once (unless the dependencies change).  From inside the `tools/source/feather_dfu`
+folder run:
+```
+pip install -r requirements.txt --pre
+```
+
+Now to generate a new executable and its related files use the setup.py script
+and its `build_exe` action.  Internally this is using the cx_Freeze module to
+embed the script with a Python interpretor and all its depenedencies.
+```
+python setup.py build_exe
+```
+
+The output of this command will be in the `build` subdirectory.  Inside will be
+a subdirectory for the current platform (like `exe.win32-2.7`), and inside of that
+folder will be all of the necessary files for the feather_dfu binary.  Copy all
+of these files over the files in the `tools/win32-x86/feather_dfu` folder to
+update the binaries.
+
+Note that inside `tools/win32-x86/feather_dfu` there will be one extra file that
+is not included in the build steps above, libusb-1.0.dll.  This is the 32-bit
+version of libusb-1.0.dll which can be downloaded from http://libusb.info.  The
+DLL **must** be located inside the feather_dfu directory next to the executable.
+
+## Windows 32-bit Python side-by-side 64-bit Python
+
+Typically on Windows you will install the 64-bit version of Python, however
+this presents a challenge when building binaries with cx_Freeze since it will
+use this 64-bit version of Python exclusively.  To generate a 32-bit binary you
+will need to install a 32-bit version of Python side-by-side the 64-bit version.
+Unfortunately this is a tricky process but it can be simplified using the
+virtualenv tool.
+
+The steps below outline a general process for installing 64-bit Python as the
+main Python interpretor and using a 32-bit Python virtualenv side-by-side to
+build 32-bit executables with cx_Freeze.
+
+First install Python 2.7 **x64** in its normal C:\Python27 location.
+
+Next install Python 2.7 **x86** but override the location to be something unique
+like C:\Python27-x86.  Also you **must** set the register extensions option in the
+installer to disabled/not installed (this will prevent the 32-bit version taking
+over the default path, etc.).
+
+Now open a command window and navigate to the path that Python 32bit was installed
+and run the `scripts/pip.exe` to install virtualenv in 32bit python:
+```
+c:\Python27-x86\Scripts\pip.exe install virtualenv
+```
+
+To create a virtualenv use the virtualenv.exe (also installed in the Scripts folder)
+like normal.  For example to create a new virtual environment called py32 open a
+terminal in your home directory and run:
+```
+c:\Python27-x86\Scripts\virtualenv.exe py32
+```
+
+The created virtualenv will have a Scripts subdirectory with an activate.bat.  When
+this bat file is run it will setup the environment to use Python 32-bit.  For example
+from your home directory run in a command terminal:
+```
+.\py32\Scripts\activate.bat
+```
+
+Now Python, pip, etc. should all be using the 32-bit Python virtual environment.
+You can build software with cx_Freeze etc and it will use this 32-bit version
+of Python.

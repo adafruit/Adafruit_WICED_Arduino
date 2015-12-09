@@ -81,17 +81,15 @@ USB_DFU_PID = 0x0008
 SDEP_DEBUG = 0
 reset_sec = 2
 
-# Explicitly configure the libusb backend for PyUSB.
+# Explicitly configure the libusb backend for PyUSB to use libusb-1.0.
+# On windows this will look for a libusb-1.0.dll in the same directory as the
+# script/executable.
 backend = None
 if platform.system() == 'Windows':
-    # On Windows give a path to the included libusb-1.0.dll so users don't
-    # need to have it installed.
-    libusb_dll = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                              'windows', 'dfu-util', 'libusb-1.0.dll')
-    usb.backend.libusb1.get_backend(find_library=lambda x: libusb_dll)
+    backend = usb.backend.libusb1.get_backend(find_library=lambda x: "libusb-1.0.dll")
 else:
-    # On other platforms libusb-1.0 needs to be installed.
     backend = usb.backend.libusb1.get_backend()
+
 
 class Sdep(object):
     def enter_dfu(self):
