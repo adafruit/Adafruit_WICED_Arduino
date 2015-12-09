@@ -96,14 +96,16 @@ recipe.size.regex.data=^(?:\.data|\.bss|\.noinit)\s+([0-9]+).*
 # Upload using Adafruit bootloader over DFU.
 # Default values require python, dfu-util, and all script dependencies to be
 # installed and in the path.
-tools.adafruit_upload.cmd=feather_dfu.py
+tools.adafruit_upload.python=python
+tools.adafruit_upload.cmd=feather_dfu/feather_dfu.py
 tools.adafruit_upload.path={runtime.hardware.path}/tools/source
 tools.adafruit_upload.dfu_util=
 tools.adafruit_upload.upload.params.verbose=-d
 tools.adafruit_upload.upload.params.quiet=
-tools.adafruit_upload.upload.pattern="{path}/{cmd}" {upload.region} {dfu_util} "{upload.binfile}"
+tools.adafruit_upload.upload.pattern={python} "{path}/{cmd}" {upload.region} {dfu_util} "{upload.binfile}"
 # Windows overrides to use a pre-built feather_dfu.exe & dfu-util.exe that
 # bundle in python and all dependencies.
+tools.adafruit_upload.python.windows=
 tools.adafruit_upload.cmd.windows=feather_dfu/feather_dfu.exe
 tools.adafruit_upload.path.windows={runtime.hardware.path}/tools/win32-x86
 tools.adafruit_upload.dfu_util.windows=-u "{path}/dfu-util/dfu-util-static.exe"
