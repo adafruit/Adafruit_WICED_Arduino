@@ -76,6 +76,7 @@ typedef enum {
   SDEP_CMD_WIFI_PROFILE_DEL    = 0x0026, ///< Add a network profile
   SDEP_CMD_WIFI_PROFILE_CLEAR  = 0x0027, ///< Clear all network profiles
   SDEP_CMD_WIFI_PROFILE_CHECK  = 0x0028, ///< Check if a network profile existed
+  SDEP_CMD_WIFI_GET_RSSI       = 0x0029, ///< Get current RSSI
 
   /* Network Commands */
   SDEP_CMD_PING                = 0x0030, /**< Ping                                 */

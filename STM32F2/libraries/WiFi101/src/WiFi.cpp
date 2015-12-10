@@ -246,7 +246,10 @@ void WiFiClass::config(IPAddress local_ip, IPAddress dns_server, IPAddress gatew
 
 void WiFiClass::disconnect()
 {
+  if ( _status != WL_CONNECTED ) return;
+
   FEATHERLIB->sdep_execute(SDEP_CMD_DISCONNECT, 0, NULL, NULL, NULL);
+  _status = WL_DISCONNECTED;
 }
 
 uint8_t *WiFiClass::macAddress(uint8_t *mac)
@@ -257,6 +260,8 @@ uint8_t *WiFiClass::macAddress(uint8_t *mac)
 
 uint32_t WiFiClass::localIP()
 {
+  if ( _status != WL_CONNECTED ) return 0;
+
   uint8_t interface   = WIFI_INTERFACE_STATION;
   uint32_t ip_address = 0;
 
@@ -266,6 +271,8 @@ uint32_t WiFiClass::localIP()
 
 uint32_t WiFiClass::subnetMask()
 {
+  if ( _status != WL_CONNECTED ) return 0;
+
   uint8_t interface   = WIFI_INTERFACE_STATION;
   uint32_t subnet = 0;
 
@@ -275,6 +282,8 @@ uint32_t WiFiClass::subnetMask()
 
 uint32_t WiFiClass::gatewayIP()
 {
+  if ( _status != WL_CONNECTED ) return 0;
+
   uint8_t interface   = WIFI_INTERFACE_STATION;
   uint32_t ip_address = 0;
 
@@ -284,7 +293,8 @@ uint32_t WiFiClass::gatewayIP()
 
 char* WiFiClass::SSID()
 {
-	return (_status == WL_CONNECTED) ? _ap_info.ssid : NULL;
+  if ( _status != WL_CONNECTED ) return NULL;
+	return _ap_info.ssid;
 }
 
 uint8_t* WiFiClass::BSSID(uint8_t* bssid)
@@ -300,8 +310,12 @@ uint32_t WiFiClass::encryptionType()
 
 int32_t WiFiClass::RSSI()
 {
-  // TODO should rescan, and recheck rssi
-  return _ap_info.rssi;
+  if ( _status != WL_CONNECTED ) return 0;
+
+  int32_t rssi;
+  FEATHERLIB->sdep_execute(SDEP_CMD_WIFI_GET_RSSI, 0, NULL, NULL, &rssi);
+
+  return rssi;
 }
 
 int8_t WiFiClass::scanNetworks()
@@ -346,6 +360,8 @@ uint8_t WiFiClass::status()
 
 int WiFiClass::hostByName(const char* aHostname, IPAddress& aResult)
 {
+  if ( _status != WL_CONNECTED ) return NULL;
+
   uint32_t ip_addr = 0;
   int err = FEATHERLIB->sdep_execute(SDEP_CMD_DNSLOOKUP, strlen(aHostname), aHostname, NULL, &ip_addr);
 
