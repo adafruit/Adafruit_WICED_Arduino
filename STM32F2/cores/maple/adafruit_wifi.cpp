@@ -116,21 +116,16 @@ sdep_err_t AdafruitFeather::connectAP(char const* ssid, char const* passwd)
 {
   if (ssid == NULL || ssid == "") return ERROR_INVALIDPARAMETER;
 
-  uint16_t payload_len = strlen(ssid);
-  if (passwd != NULL) payload_len += strlen(passwd) + 1;
-
-  char* payload = (char*)malloc(payload_len);
-
-  strcpy(payload, ssid);
-  if (passwd != NULL)
+  sdep_cmd_para_t para_arr[] =
   {
-    strcat(payload, ",");
-    strcat(payload, passwd);
-  }
+      { .len = strlen(ssid)  + 1 , .p_value = ssid   },
+      { .len = strlen(passwd)+ 1 , .p_value = passwd },
+  };
 
-  sdep_err_t error = FEATHERLIB->sdep_execute(SDEP_CMD_CONNECT, payload_len,
-                                              (uint8_t*)payload, NULL, NULL);
-  free(payload);
+  uint16_t error = FEATHERLIB->sdep_execute_n(SDEP_CMD_CONNECT,
+                                              sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                              NULL, NULL);
+
   return error;
 }
 

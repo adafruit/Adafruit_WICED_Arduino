@@ -24,124 +24,6 @@
 #define WIFI_MAX_SCAN_NUM   20
 static wl_ap_info_t wifi_scan_result[WIFI_MAX_SCAN_NUM];
 
-#if 0
-extern "C" {
-  #include "bsp/include/nm_bsp.h"
-  #include "socket/include/socket_buffer.h"
-  #include "driver/source/nmasic.h"
-  #include "driver/include/m2m_periph.h"
-}
-
-static void wifi_cb(uint8_t u8MsgType, void *pvMsg)
-{
-	switch (u8MsgType) {
-		case M2M_WIFI_RESP_CON_STATE_CHANGED:
-		{
-			tstrM2mWifiStateChanged *pstrWifiState = (tstrM2mWifiStateChanged *)pvMsg;
-			if (pstrWifiState->u8CurrState == M2M_WIFI_DISCONNECTED) {
-				//SERIAL_PORT_MONITOR.println("wifi_cb: M2M_WIFI_RESP_CON_STATE_CHANGED: DISCONNECTED");
-				if (WiFi._mode == WL_STA_MODE) {
-					WiFi._status = WL_DISCONNECTED;
-					WiFi._localip = 0;
-					WiFi._submask = 0;
-					WiFi._gateway = 0;
-				}
-				// WiFi led OFF.
-				m2m_periph_gpio_set_val(M2M_PERIPH_GPIO15, 1);
-			}
-		}
-		break;
-
-		case M2M_WIFI_REQ_DHCP_CONF:
-		{
-			if (WiFi._mode == WL_STA_MODE) {
-				tstrM2MIPConfig *pstrIPCfg = (tstrM2MIPConfig *)pvMsg;
-				WiFi._localip = pstrIPCfg->u32StaticIP;
-				WiFi._submask = pstrIPCfg->u32SubnetMask;
-				WiFi._gateway = pstrIPCfg->u32Gateway;
-				
-				WiFi._status = WL_CONNECTED;
-
-				// WiFi led ON.
-				m2m_periph_gpio_set_val(M2M_PERIPH_GPIO15, 0);
-			}
-			/*uint8_t *pu8IPAddress = (uint8_t *)pvMsg;
-			SERIAL_PORT_MONITOR.print("wifi_cb: M2M_WIFI_REQ_DHCP_CONF: IP is ");
-			SERIAL_PORT_MONITOR.print(pu8IPAddress[0], 10);
-			SERIAL_PORT_MONITOR.print(".");
-			SERIAL_PORT_MONITOR.print(pu8IPAddress[1], 10);
-			SERIAL_PORT_MONITOR.print(".");
-			SERIAL_PORT_MONITOR.print(pu8IPAddress[2], 10);
-			SERIAL_PORT_MONITOR.print(".");
-			SERIAL_PORT_MONITOR.print(pu8IPAddress[3], 10);
-			SERIAL_PORT_MONITOR.println("");*/
-		}
-		break;
-
-		case M2M_WIFI_RESP_CURRENT_RSSI:
-		{
-			WiFi._resolve = *((int8_t *)pvMsg);
-		}
-		break;
-
-		case M2M_WIFI_RESP_PROVISION_INFO:
-		{
-			tstrM2MProvisionInfo *pstrProvInfo = (tstrM2MProvisionInfo *)pvMsg;
-			//SERIAL_PORT_MONITOR.println("wifi_cb: M2M_WIFI_RESP_PROVISION_INFO");
-
-			if (pstrProvInfo->u8Status == M2M_SUCCESS) {
-				memset(WiFi._ssid, 0, M2M_MAX_SSID_LEN);
-				memcpy(WiFi._ssid, (char *)pstrProvInfo->au8SSID, strlen((char *)pstrProvInfo->au8SSID));
-				WiFi._mode = WL_STA_MODE;
-				WiFi._localip = 0;
-				WiFi._submask = 0;
-				WiFi._gateway = 0;
-				m2m_wifi_connect((char *)pstrProvInfo->au8SSID, strlen((char *)pstrProvInfo->au8SSID),
-						pstrProvInfo->u8SecType, pstrProvInfo->au8Password, M2M_WIFI_CH_ALL);
-			} else {
-				WiFi._status = WL_CONNECT_FAILED;
-				//SERIAL_PORT_MONITOR.println("wifi_cb: Provision failed.\r\n");
-			}
-		}
-		break;
-
-		case M2M_WIFI_RESP_SCAN_DONE:
-		{
-			tstrM2mScanDone *pstrInfo = (tstrM2mScanDone *)pvMsg;
-			if (pstrInfo->u8NumofCh >= 1) {
-				WiFi._status = WL_SCAN_COMPLETED;
-			}
-		}
-		break;
-
-		case M2M_WIFI_RESP_SCAN_RESULT:
-		{
-			tstrM2mWifiscanResult *pstrScanResult = (tstrM2mWifiscanResult *)pvMsg;
-			uint16_t scan_ssid_len = strlen((const char *)pstrScanResult->au8SSID);
-			memset(WiFi._scan_ssid, 0, M2M_MAX_SSID_LEN);
-			if (scan_ssid_len) {
-				memcpy(WiFi._scan_ssid, (const char *)pstrScanResult->au8SSID, scan_ssid_len);
-			}
-			if (WiFi._bssid) {
-				memcpy(WiFi._bssid, (const char *)pstrScanResult->au8BSSID, 6);
-			}
-			WiFi._resolve = pstrScanResult->s8rssi;
-			WiFi._scan_auth = pstrScanResult->u8AuthType;
-			WiFi._status = WL_SCAN_COMPLETED;
-		}
-		break;
-
-		default:
-		break;
-	}
-}
-
-static void resolve_cb(uint8_t * /* hostName */, uint32_t hostIp)
-{
-	WiFi._resolve = hostIp;
-}
-#endif
-
 WiFiClass::WiFiClass()
 {
 	_mode    = WL_RESET_MODE;
@@ -175,29 +57,32 @@ uint8_t WiFiClass::begin()
 
 uint8_t WiFiClass::begin(const char *ssid)
 {
-	return this->begin(ssid, NULL);
+  if (ssid == NULL || ssid == "") return WL_NO_SSID_AVAIL;
+
+  uint16_t resp_len = sizeof(wl_ap_info_t);
+  uint16_t err = FEATHERLIB->sdep_execute(SDEP_CMD_CONNECT,
+                                          strlen(ssid) + 1, ssid,
+                                          &resp_len, &_ap_info);
+
+  _status = (err == ERROR_NONE) ? WL_CONNECTED : WL_CONNECT_FAILED;
+	return _status;
 }
 
-uint8_t WiFiClass::begin(const char *ssid, const char *key)
+uint8_t WiFiClass::begin(const char *ssid, const char *key, int enc_type)
 {
   if (ssid == NULL || ssid == "") return WL_NO_SSID_AVAIL;
 
-  uint16_t payload_len = strlen(ssid);
-  if (key != NULL) payload_len += strlen(key) + 1;
-
-  char* payload = (char*)malloc(payload_len);
-
-  strcpy(payload, ssid);
-  if (key != NULL)
+  sdep_cmd_para_t para_arr[] =
   {
-    strcat(payload, ",");
-    strcat(payload, key);
-  }
+      { .len = strlen(ssid) + 1 , .p_value = ssid      },
+      { .len = strlen(key)  + 1 , .p_value = key       },
+      { .len = 4                , .p_value = &enc_type },
+  };
 
   uint16_t resp_len = sizeof(wl_ap_info_t);
-  uint16_t err = FEATHERLIB->sdep_execute(SDEP_CMD_CONNECT, payload_len, (uint8_t*)payload,
-                                                 &resp_len, &_ap_info);
-  free(payload);
+  uint16_t err = FEATHERLIB->sdep_execute_n(SDEP_CMD_CONNECT,
+                                            sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                            &resp_len, &_ap_info);
 
   _status = (err == ERROR_NONE) ? WL_CONNECTED : WL_CONNECT_FAILED;
 	return _status;
@@ -361,7 +246,7 @@ void WiFiClass::config(IPAddress local_ip, IPAddress dns_server, IPAddress gatew
 
 void WiFiClass::disconnect()
 {
-  feather.disconnectAP();
+  FEATHERLIB->sdep_execute(SDEP_CMD_DISCONNECT, 0, NULL, NULL, NULL);
 }
 
 uint8_t *WiFiClass::macAddress(uint8_t *mac)
@@ -471,10 +356,59 @@ int WiFiClass::hostByName(const char* aHostname, IPAddress& aResult)
   return 1;
 }
 
-void WiFiClass::refresh(void)
+bool WiFiClass::addProfile(char* ssid)
 {
-	// Update state machine:
-//	m2m_wifi_handle_events(NULL);
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = strlen(ssid) + 1 , .p_value = ssid      },
+  };
+
+  // TODO check case when read bytes < size
+  return (ERROR_NONE == FEATHERLIB->sdep_execute_n(SDEP_CMD_WIFI_PROFILE_ADD,
+                                                   sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                                   NULL, NULL)) ? true : false;
+}
+
+bool WiFiClass::addProfile(char* ssid, char* key, int enc_type)
+{
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = strlen(ssid) + 1 , .p_value = ssid      },
+      { .len = strlen(key)  + 1 , .p_value = key       },
+      { .len = 4                , .p_value = &enc_type },
+  };
+
+  // TODO check case when read bytes < size
+  return (ERROR_NONE == FEATHERLIB->sdep_execute_n(SDEP_CMD_WIFI_PROFILE_ADD,
+                                                   sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                                   NULL, NULL)) ? true : false;
+}
+
+bool WiFiClass::delProfile(char* ssid)
+{
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = strlen(ssid) + 1 , .p_value = ssid },
+  };
+
+  // TODO check case when read bytes < size
+  return (ERROR_NONE == FEATHERLIB->sdep_execute_n(SDEP_CMD_WIFI_PROFILE_DEL,
+                                                   sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                                   NULL, NULL)) ? true : false;
+}
+
+void WiFiClass::clearProfile(void)
+{
+  FEATHERLIB->sdep_execute(SDEP_CMD_WIFI_PROFILE_CLEAR, 0, NULL, NULL, NULL);
+}
+
+bool WiFiClass::checkProfile(char* ssid)
+{
+  bool result = false;
+
+  return (ERROR_NONE == FEATHERLIB->sdep_execute(SDEP_CMD_WIFI_PROFILE_CHECK,
+                                                 strlen(ssid)+1, ssid,
+                                                 NULL, &result) ) ? false : result;
 }
 
 WiFiClass WiFi;

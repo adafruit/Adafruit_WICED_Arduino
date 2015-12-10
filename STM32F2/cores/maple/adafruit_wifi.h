@@ -72,6 +72,10 @@ typedef enum {
   SDEP_CMD_DISCONNECT          = 0x0022, /**< Disconnect from AP                   */
   SDEP_CMD_APSTART             = 0x0023, /**< Start AP                             */
   SDEP_CMD_APSTOP              = 0x0024, /**< Stop AP                              */
+  SDEP_CMD_WIFI_PROFILE_ADD    = 0x0025, ///< Add a network profile
+  SDEP_CMD_WIFI_PROFILE_DEL    = 0x0026, ///< Add a network profile
+  SDEP_CMD_WIFI_PROFILE_CLEAR  = 0x0027, ///< Clear all network profiles
+  SDEP_CMD_WIFI_PROFILE_CHECK  = 0x0028, ///< Check if a network profile existed
 
   /* Network Commands */
   SDEP_CMD_PING                = 0x0030, /**< Ping                                 */

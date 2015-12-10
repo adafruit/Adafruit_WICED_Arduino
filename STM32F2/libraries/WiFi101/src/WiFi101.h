@@ -76,30 +76,22 @@ typedef enum {
 
 typedef enum
 {
-    ENC_TYPE_OPEN           = 0,                                                /**< Open security                           */
-    ENC_TYPE_WEP_PSK        = WEP_ENABLED,                                      /**< WEP Security with open authentication   */
-    ENC_TYPE_WEP_SHARED     = ( WEP_ENABLED | SHARED_ENABLED ),                 /**< WEP Security with shared authentication */
-    ENC_TYPE_WPA_TKIP_PSK   = ( WPA_SECURITY  | TKIP_ENABLED ),                 /**< WPA Security with TKIP                  */
-    ENC_TYPE_WPA_AES_PSK    = ( WPA_SECURITY  | AES_ENABLED ),                  /**< WPA Security with AES                   */
-    ENC_TYPE_WPA2_AES_PSK   = ( WPA2_SECURITY | AES_ENABLED ),                  /**< WPA2 Security with AES                  */
-    ENC_TYPE_WPA2_TKIP_PSK  = ( WPA2_SECURITY | TKIP_ENABLED ),                 /**< WPA2 Security with TKIP                 */
-    ENC_TYPE_WPA2_MIXED_PSK = ( WPA2_SECURITY | AES_ENABLED | TKIP_ENABLED ),   /**< WPA2 Security with AES & TKIP           */
+  ENC_TYPE_AUTO       = -1,                                               /**< Auto detection                         */
+  ENC_TYPE_OPEN       = 0,                                                /**< Open security                           */
 
-    ENC_TYPE_WPS_OPEN       = ( WPS_ENABLED ),                                   /**< WPS with open security                  */
-    ENC_TYPE_WPS_SECURE     = ( WPS_ENABLED | AES_ENABLED),                      /**< WPS with AES security                   */
+  ENC_TYPE_WEP        = WEP_ENABLED,                                      /**< WEP Security with open authentication   */
+  ENC_TYPE_WEP_SHARED = ( WEP_ENABLED | SHARED_ENABLED ),                 /**< WEP Security with shared authentication */
+
+  ENC_TYPE_WPA_TKIP   = ( WPA_SECURITY  | TKIP_ENABLED ),                 /**< WPA Security with TKIP                  */
+  ENC_TYPE_WPA_AES    = ( WPA_SECURITY  | AES_ENABLED ),                  /**< WPA Security with AES                   */
+
+  ENC_TYPE_WPA2_AES   = ( WPA2_SECURITY | AES_ENABLED ),                  /**< WPA2 Security with AES                  */
+  ENC_TYPE_WPA2_TKIP  = ( WPA2_SECURITY | TKIP_ENABLED ),                 /**< WPA2 Security with TKIP                 */
+  ENC_TYPE_WPA2_MIXED = ( WPA2_SECURITY | AES_ENABLED | TKIP_ENABLED ),   /**< WPA2 Security with AES & TKIP           */
+
+  ENC_TYPE_WPS_OPEN   = ( WPS_ENABLED ),                                   /**< WPS with open security                  */
+  ENC_TYPE_WPS_SECURE = ( WPS_ENABLED | AES_ENABLED),                      /**< WPS with AES security                   */
 } wl_enc_type_t;
-
-#if 0
-/* Encryption modes */
-enum wl_enc_type {  /* Values map to 802.11 encryption suites... */
-	ENC_TYPE_WEP  = M2M_WIFI_SEC_WEP,
-	ENC_TYPE_TKIP = M2M_WIFI_SEC_WPA_PSK,
-	ENC_TYPE_CCMP = M2M_WIFI_SEC_802_1X,
-	/* ... except these two, 7 and 8 are reserved in 802.11-2007 */
-	ENC_TYPE_NONE = M2M_WIFI_SEC_OPEN,
-	ENC_TYPE_AUTO = M2M_WIFI_SEC_INVALID
-};
-#endif
 
 typedef enum {
 	WL_RESET_MODE = 0,
@@ -126,7 +118,7 @@ public:
 
 	WiFiClass();
 
-//	int init() { return 1; }
+	int init() { return 1; }
 	
 	char* firmwareVersion();
 
@@ -138,10 +130,18 @@ public:
 	uint8_t begin();
 	uint8_t begin(const char *ssid);
 //	uint8_t begin(const char *ssid, uint8_t key_idx, const char* key);
-	uint8_t begin(const char *ssid, const char *key);
+	uint8_t begin(const char *ssid, const char *key, int enc_type = ENC_TYPE_AUTO);
+
 	uint8_t begin(const String &ssid) { return begin(ssid.c_str()); }
 //	uint8_t begin(const String &ssid, uint8_t key_idx, const String &key) { return begin(ssid.c_str(), key_idx, key.c_str()); }
-	uint8_t begin(const String &ssid, const String &key) { return begin(ssid.c_str(), key.c_str()); }
+	uint8_t begin(const String &ssid, const String &key, int enc_type = ENC_TYPE_AUTO) { return begin(ssid.c_str(), key.c_str(), enc_type); }
+
+	bool addProfile(char* ssid); // open
+	bool addProfile(char* ssid, char* key, int enc_type = ENC_TYPE_AUTO);
+	bool delProfile(char* ssid);
+	bool checkProfile(char* ssid); // check if profile is existed
+	void clearProfile(void);
+
 
 	/* Start Wifi in Access Point, with open security.
 	 * Only one client can connect to the AP at a time.
@@ -185,7 +185,7 @@ public:
 	int hostByName(const char* hostname, IPAddress& result);
 	int hostByName(const String &hostname, IPAddress& result) { return hostByName(hostname.c_str(), result); }
 
-	void refresh(void);
+	void refresh(void) {}
 
 private:
 	char _version[9];
