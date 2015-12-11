@@ -1,6 +1,7 @@
 /*
   WiFi.h - Library for Arduino Wifi shield.
   Copyright (c) 2011-2014 Arduino.  All right reserved.
+  Copyright (c) 2015 Adafruit Industries. All rights reserved.
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -23,8 +24,8 @@
 #include <Arduino.h>
 
 //extern "C" {
-//	#include "driver/include/m2m_wifi.h"
-//	#include "socket/include/socket.h"
+//        #include "driver/include/m2m_wifi.h"
+//        #include "socket/include/socket.h"
 //}
 
 #include "WiFiClient.h"
@@ -36,17 +37,17 @@
 #define WIFI_SCAN_RESULT_LEN      52
 
 
-#define SHARED_ENABLED  0x00008000
-#define WPA_SECURITY    0x00200000
-#define WPA2_SECURITY   0x00400000
-#define WPS_ENABLED     0x10000000
+#define SHARED_ENABLED            0x00008000
+#define WPA_SECURITY              0x00200000
+#define WPA2_SECURITY             0x00400000
+#define WPS_ENABLED               0x10000000
 
-#define OPEN_AUTH                   0x0000
-#define SHARED_AUTH                 0x0001
-#define WEP_ENABLED                 0x0001
-#define TKIP_ENABLED                0x0002
-#define AES_ENABLED                 0x0004
-#define WSEC_SWFLAG                 0x0008
+#define OPEN_AUTH                 0x0000
+#define SHARED_AUTH               0x0001
+#define WEP_ENABLED               0x0001
+#define TKIP_ENABLED              0x0002
+#define AES_ENABLED               0x0004
+#define WSEC_SWFLAG               0x0008
 
 typedef struct ATTR_PACKED
 {
@@ -63,15 +64,16 @@ typedef struct ATTR_PACKED
 
 ASSERT_STATIC(sizeof(wl_ap_info_t) == 52);
 
-typedef enum {
-	WL_NO_SHIELD = 255,
-	WL_IDLE_STATUS = 0,
-	WL_NO_SSID_AVAIL,
-	WL_SCAN_COMPLETED,
-	WL_CONNECTED,
-	WL_CONNECT_FAILED,
-	WL_CONNECTION_LOST,
-	WL_DISCONNECTED
+typedef enum 
+{
+  WL_NO_SHIELD = 255,
+  WL_IDLE_STATUS = 0,
+  WL_NO_SSID_AVAIL,
+  WL_SCAN_COMPLETED,
+  WL_CONNECTED,
+  WL_CONNECT_FAILED,
+  WL_CONNECTION_LOST,
+  WL_DISCONNECTED
 } wl_status_t;
 
 typedef enum
@@ -93,102 +95,89 @@ typedef enum
   ENC_TYPE_WPS_SECURE = ( WPS_ENABLED | AES_ENABLED),                      /**< WPS with AES security                   */
 } wl_enc_type_t;
 
-typedef enum {
-	WL_RESET_MODE = 0,
-	WL_STA_MODE,
-	WL_PROV_MODE,
-	WL_AP_MODE
+typedef enum 
+{
+  WL_RESET_MODE = 0,
+  WL_STA_MODE,
+  WL_PROV_MODE,
+  WL_AP_MODE
 } wl_mode_t;
 
 class WiFiClass
 {
-private:
-	char _version[9];
+  private:
+    char          _version[9];
+    uint32_t      _submask;
+    uint32_t      _gateway;
+    uint32_t      _resolve;
+    wl_ap_info_t  _ap_info;
+    wl_mode_t     _mode;
+    wl_status_t   _status;
 
-  wl_ap_info_t _ap_info;
-
-	uint32_t _submask;
-	uint32_t _gateway;
-	uint32_t _resolve;
-
-	wl_mode_t _mode;
-	wl_status_t _status;
-
-public:
+  public:
 #if 0
-	WiFiClient *_client[TCP_SOCK_MAX];
+    WiFiClient *_client[TCP_SOCK_MAX];
 #endif
 
-	WiFiClass();
+    /* Constructor */
+    WiFiClass();
 
-	int init() { return 1; }
-	
-	char* firmwareVersion();
+    /* Public functions */
+    int       init            ( void ) { return 1; }
 
-	/* Start Wifi connection with WPA/WPA2 encryption.
-	 *
-	 * param ssid: Pointer to the SSID string.
-	 * param key: Key input buffer.
-	 */
-	uint8_t begin();
-	uint8_t begin(const char *ssid);
-//	uint8_t begin(const char *ssid, uint8_t key_idx, const char* key);
-	uint8_t begin(const char *ssid, const char *key, int enc_type = ENC_TYPE_AUTO);
+    char*     firmwareVersion ( void );
 
-	uint8_t begin(const String &ssid) { return begin(ssid.c_str()); }
-//	uint8_t begin(const String &ssid, uint8_t key_idx, const String &key) { return begin(ssid.c_str(), key_idx, key.c_str()); }
-	uint8_t begin(const String &ssid, const String &key, int enc_type = ENC_TYPE_AUTO) { return begin(ssid.c_str(), key.c_str(), enc_type); }
+    uint8_t   begin           ( void );
+    uint8_t   begin           ( const char *ssid );
+    //uint8_t begin           ( const char *ssid, uint8_t key_idx, const char* key );
+    uint8_t   begin           ( const char *ssid, const char *key, int enc_type = ENC_TYPE_AUTO );
+    uint8_t   begin           ( const String &ssid ) { return begin(ssid.c_str()); }
+    //uint8_t begin           ( const String &ssid, uint8_t key_idx, const String &key ) { return begin(ssid.c_str(), key_idx, key.c_str()); }
+    uint8_t   begin           ( const String &ssid, const String &key, int enc_type = ENC_TYPE_AUTO ) { return begin(ssid.c_str(), key.c_str(), enc_type); }
 
-	bool addProfile(char* ssid); // open
-	bool addProfile(char* ssid, char* key, int enc_type /*= ENC_TYPE_AUTO*/); // TODO allow encryption = auto as default
-	bool removeProfile(char* ssid);
-	bool checkProfile(char* ssid); // check if profile is existed
-	void clearProfiles(void);
+    bool      addProfile      ( char* ssid ); // Open
+    bool      addProfile      ( char* ssid, char* key, int enc_type /*= ENC_TYPE_AUTO*/ ); // TODO allow encryption = auto as default
+    bool      removeProfile   ( char* ssid );
+    bool      checkProfile    ( char* ssid ); // Check if profile exists
+    void      clearProfiles   ( void );
 
+    uint8_t   beginAP         ( char *ssid );                  /* Start WiFi in AP mode with open security */
+    uint8_t   beginAP         ( char *ssid, uint8_t channel ); /* Wifi channel can be 1-12 */
 
-	/* Start Wifi in Access Point, with open security.
-	 * Only one client can connect to the AP at a time.
-	 *
-	 * param ssid: Pointer to the SSID string.
-	 * param channel: Wifi channel to use. Valid values are 1-12.
-	 */
-	uint8_t beginAP(char *ssid);
-	uint8_t beginAP(char *ssid, uint8_t channel);
+    uint8_t   beginProvision  ( char *ssid, char *url );
+    uint8_t   beginProvision  ( char *ssid, char *url, uint8_t channel );
 
-	uint8_t beginProvision(char *ssid, char *url);
-	uint8_t beginProvision(char *ssid, char *url, uint8_t channel);
+    uint32_t  provisioned     ( void );
 
-	uint32_t provisioned();
+    void      config          ( IPAddress local_ip );
+    void      config          ( IPAddress local_ip, IPAddress dns_server );
+    void      config          ( IPAddress local_ip, IPAddress dns_server, IPAddress gateway );
+    void      config          ( IPAddress local_ip, IPAddress dns_server, IPAddress gateway, IPAddress subnet );
 
-	void config(IPAddress local_ip);
-	void config(IPAddress local_ip, IPAddress dns_server);
-	void config(IPAddress local_ip, IPAddress dns_server, IPAddress gateway);
-	void config(IPAddress local_ip, IPAddress dns_server, IPAddress gateway, IPAddress subnet);
+    void      disconnect      ( void );
 
-	void disconnect();
+    uint8_t   *macAddress     ( uint8_t *mac );
 
-	uint8_t *macAddress(uint8_t *mac);
+    uint32_t  localIP         ( void );
+    uint32_t  subnetMask      ( void );
+    uint32_t  gatewayIP       ( void );
 
-	uint32_t localIP();
-	uint32_t subnetMask();
-	uint32_t gatewayIP();
+    char*     SSID            ( void );
+    int32_t   RSSI            ( void );
+    uint32_t  encryptionType  ( void );
+    uint8_t*  BSSID           ( uint8_t* bssid );
 
-	char* SSID();
-	int32_t RSSI();
-	uint32_t encryptionType();
-	uint8_t* BSSID(uint8_t* bssid);
+    int8_t    scanNetworks    ( void );
+    char*     SSID            ( uint8_t pos );
+    int32_t   RSSI            ( uint8_t pos );
+    uint32_t  encryptionType  ( uint8_t pos );
 
-	int8_t scanNetworks();
-	char* SSID(uint8_t pos);
-	int32_t RSSI(uint8_t pos);
-	uint32_t encryptionType(uint8_t pos);
+    uint8_t   status          ( void );
 
-	uint8_t status();
+    int       hostByName      ( const char* hostname, IPAddress& result );
+    int       hostByName      ( const String &hostname, IPAddress& result ) { return hostByName( hostname.c_str(), result ); }
 
-	int hostByName(const char* hostname, IPAddress& result);
-	int hostByName(const String &hostname, IPAddress& result) { return hostByName(hostname.c_str(), result); }
-
-	void refresh(void) {}
+    void      refresh         ( void ) {}
 };
 
 extern WiFiClass WiFi;
