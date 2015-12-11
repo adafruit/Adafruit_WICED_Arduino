@@ -56,7 +56,7 @@ typedef struct ATTR_PACKED
   int16_t  rssi;
   uint32_t max_data_rate;
   uint8_t  network_type;
-  uint32_t security;
+  int32_t  security;
   uint8_t  channel;
   uint8_t  band_2_4ghz;
 } wl_ap_info_t;
@@ -102,7 +102,9 @@ typedef enum {
 
 class WiFiClass
 {
-public:
+private:
+	char _version[9];
+
   wl_ap_info_t _ap_info;
 
 	uint32_t _submask;
@@ -112,6 +114,7 @@ public:
 	wl_mode_t _mode;
 	wl_status_t _status;
 
+public:
 #if 0
 	WiFiClient *_client[TCP_SOCK_MAX];
 #endif
@@ -186,9 +189,6 @@ public:
 	int hostByName(const String &hostname, IPAddress& result) { return hostByName(hostname.c_str(), result); }
 
 	void refresh(void) {}
-
-private:
-	char _version[9];
 };
 
 extern WiFiClass WiFi;
