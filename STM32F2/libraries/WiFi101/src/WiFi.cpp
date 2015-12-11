@@ -45,12 +45,8 @@ char* WiFiClass::firmwareVersion()
 
 uint8_t WiFiClass::begin()
 {
-	// Connect to router:
-	_submask = 0;
-	_gateway = 0;
-	_status = WL_IDLE_STATUS;
-
-	// TODO connect to default SSID
+	// Connect to router using saved profiles
+  _status = (ERROR_NONE == FEATHERLIB->sdep_execute(SDEP_CMD_CONNECT, 0, NULL, NULL, NULL)) ? WL_CONNECTED : WL_CONNECT_FAILED;
 
 	return _status;
 }
@@ -387,6 +383,8 @@ bool WiFiClass::addProfile(char* ssid)
 
 bool WiFiClass::addProfile(char* ssid, char* key, int enc_type)
 {
+  if ( enc_type == ENC_TYPE_AUTO ) return false;
+
   sdep_cmd_para_t para_arr[] =
   {
       { .len = strlen(ssid) + 1 , .p_value = ssid      },
@@ -424,7 +422,7 @@ bool WiFiClass::checkProfile(char* ssid)
 
   return (ERROR_NONE == FEATHERLIB->sdep_execute(SDEP_CMD_WIFI_PROFILE_CHECK,
                                                  strlen(ssid)+1, ssid,
-                                                 NULL, &result) ) ? false : result;
+                                                 NULL, &result) ) ? result : false ;
 }
 
 WiFiClass WiFi;

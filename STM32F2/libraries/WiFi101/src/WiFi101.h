@@ -140,7 +140,7 @@ public:
 	uint8_t begin(const String &ssid, const String &key, int enc_type = ENC_TYPE_AUTO) { return begin(ssid.c_str(), key.c_str(), enc_type); }
 
 	bool addProfile(char* ssid); // open
-	bool addProfile(char* ssid, char* key, int enc_type = ENC_TYPE_AUTO);
+	bool addProfile(char* ssid, char* key, int enc_type /*= ENC_TYPE_AUTO*/); // TODO allow encryption = auto as default
 	bool delProfile(char* ssid);
 	bool checkProfile(char* ssid); // check if profile is existed
 	void clearProfile(void);
