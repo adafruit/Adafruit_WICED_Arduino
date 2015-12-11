@@ -402,7 +402,7 @@ bool WiFiClass::addProfile(char* ssid, char* key, int enc_type)
                                                    NULL, NULL)) ? true : false;
 }
 
-bool WiFiClass::delProfile(char* ssid)
+bool WiFiClass::removeProfile(char* ssid)
 {
   sdep_cmd_para_t para_arr[] =
   {
