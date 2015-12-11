@@ -383,7 +383,11 @@ bool WiFiClass::addProfile(char* ssid)
 
 bool WiFiClass::addProfile(char* ssid, char* key, int enc_type)
 {
-  if ( enc_type == ENC_TYPE_AUTO ) return false;
+  if ( enc_type == ENC_TYPE_AUTO )
+  {
+    Serial.println("Encryption cannot be AUTO for now");
+    return false;
+  }
 
   sdep_cmd_para_t para_arr[] =
   {

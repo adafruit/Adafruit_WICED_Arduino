@@ -1,23 +1,11 @@
 /*
 
- This example connects to an unencrypted Wifi network.
- Then it prints the  MAC address of the Wifi shield,
- the IP address obtained, and other network details.
-
- Circuit:
- * WiFi shield attached
-
- created 13 July 2010
- by dlf (Metodo2 srl)
- modified 31 May 2012
- by Tom Igoe
  */
-#include <SPI.h>
 #include <WiFi101.h>
 
-char ssid[] = "yourNetwork";     //  your network SSID (name)
-char pass[] = "secretPassword";  // your network password
-int status = WL_IDLE_STATUS;     // the Wifi radio's status
+char ssid[]   = "yourNetwork";     //  your network SSID (name)
+char pass[]   = "secretPassword";  // your network password
+int  enc_type =  ENC_TYPE_WPA2_AES;
 
 void setup() {
   //Initialize serial and wait for port to open:
@@ -26,16 +14,26 @@ void setup() {
     delay(1); // wait for serial port to connect. Needed for native USB port only
   }
 
-  // attempt to connect to Wifi network:
-  while ( status != WL_CONNECTED) {
-    Serial.print("Attempting to connect to WPA SSID: ");
-    Serial.println(ssid);
-    // Connect to WPA/WPA2 network:
-    status = WiFi.begin(ssid, pass);
-
-    // wait 10 seconds for connection:
-    //delay(10000);
+  if ( WiFi.checkProfile(ssid) )
+  {
+    Serial.print(ssid);
+    Serial.println(" is already in profile list");
+    
+    // Feather will join quicker due to PMK saving
   }
+  else
+  {
+    Serial.print("Adding ");
+    Serial.print(ssid);
+    Serial.println(" to profile list");
+    
+    WiFi.addProfile(ssid, pass, enc_type);
+  }
+  
+  // attempt to connect to Wifi network:
+  do {
+    Serial.println("Attempting to connect with saved profile");
+  } while( WiFi.begin() != WL_CONNECTED);
   
   // you're connected now, so print out the data:
   Serial.print("You're connected to the network");

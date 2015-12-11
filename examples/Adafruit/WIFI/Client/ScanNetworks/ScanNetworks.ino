@@ -91,20 +91,20 @@ void listNetworks() {
 void printEncryptionType(uint32_t thisType) {
   // read the encryption type and print out the name:
   switch (thisType) {
-    case ENC_TYPE_WEP_PSK:
+    case ENC_TYPE_WEP:
     case ENC_TYPE_WEP_SHARED:
       Serial.println("WEP");
       break;
       
-    case ENC_TYPE_WPA_TKIP_PSK:
-    case ENC_TYPE_WPA_AES_PSK:
+    case ENC_TYPE_WPA_TKIP:
+    case ENC_TYPE_WPA_AES:
       Serial.println("WPA");
       break;
     
       
-    case ENC_TYPE_WPA2_AES_PSK:
-    case ENC_TYPE_WPA2_TKIP_PSK:
-    case ENC_TYPE_WPA2_MIXED_PSK:
+    case ENC_TYPE_WPA2_AES:
+    case ENC_TYPE_WPA2_TKIP:
+    case ENC_TYPE_WPA2_MIXED:
       Serial.println("WPA2");
       break;
       
