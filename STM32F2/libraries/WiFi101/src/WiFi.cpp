@@ -415,7 +415,7 @@ bool WiFiClass::removeProfile(char* ssid)
                                                    NULL, NULL)) ? true : false;
 }
 
-void WiFiClass::clearProfile(void)
+void WiFiClass::clearProfiles(void)
 {
   FEATHERLIB->sdep_execute(SDEP_CMD_WIFI_PROFILE_CLEAR, 0, NULL, NULL, NULL);
 }

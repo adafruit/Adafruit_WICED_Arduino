@@ -143,7 +143,7 @@ public:
 	bool addProfile(char* ssid, char* key, int enc_type /*= ENC_TYPE_AUTO*/); // TODO allow encryption = auto as default
 	bool removeProfile(char* ssid);
 	bool checkProfile(char* ssid); // check if profile is existed
-	void clearProfile(void);
+	void clearProfiles(void);
 
 
 	/* Start Wifi in Access Point, with open security.
