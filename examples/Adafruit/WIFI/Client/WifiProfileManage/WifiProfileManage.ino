@@ -18,8 +18,6 @@ void setup() {
   {
     Serial.print(ssid);
     Serial.println(" is already in profile list");
-    
-    // Feather will join quicker due to PMK saving
   }
   else
   {
