@@ -135,6 +135,7 @@ class WiFiClass
     //uint8_t begin           ( const String &ssid, uint8_t key_idx, const String &key ) { return begin(ssid.c_str(), key_idx, key.c_str()); }
     uint8_t   begin           ( const String &ssid, const String &key, int enc_type = ENC_TYPE_AUTO ) { return begin(ssid.c_str(), key.c_str(), enc_type); }
 
+	  bool      saveProfile     ( void ); // save currently connected AP
     bool      addProfile      ( char* ssid ); // Open
     bool      addProfile      ( char* ssid, char* key, int enc_type /*= ENC_TYPE_AUTO*/ ); // TODO allow encryption = auto as default
     bool      removeProfile   ( char* ssid );

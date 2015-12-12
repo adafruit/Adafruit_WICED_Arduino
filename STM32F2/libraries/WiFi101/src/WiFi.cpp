@@ -57,7 +57,7 @@ uint8_t WiFiClass::begin(const char *ssid)
 
   uint16_t resp_len = sizeof(wl_ap_info_t);
   uint16_t err = FEATHERLIB->sdep_execute(SDEP_CMD_CONNECT,
-                                          strlen(ssid) + 1, ssid,
+                                          strlen(ssid), ssid,
                                           &resp_len, &_ap_info);
 
   _status = (err == ERROR_NONE) ? WL_CONNECTED : WL_CONNECT_FAILED;
@@ -70,9 +70,9 @@ uint8_t WiFiClass::begin(const char *ssid, const char *key, int enc_type)
 
   sdep_cmd_para_t para_arr[] =
   {
-      { .len = strlen(ssid) + 1 , .p_value = ssid      },
-      { .len = strlen(key)  + 1 , .p_value = key       },
-      { .len = 4                , .p_value = &enc_type },
+      { .len = strlen(ssid), .p_value = ssid      },
+      { .len = strlen(key) , .p_value = key       },
+      { .len = 4           , .p_value = &enc_type },
   };
 
   uint16_t resp_len = sizeof(wl_ap_info_t);
@@ -368,11 +368,18 @@ int WiFiClass::hostByName(const char* aHostname, IPAddress& aResult)
   return 1;
 }
 
+bool WiFiClass::saveProfile(void)
+{
+  if ( _status != WL_CONNECTED ) return false;
+
+  return ERROR_NONE == FEATHERLIB->sdep_execute(SDEP_CMD_WIFI_PROFILE_SAVE, 0, NULL, NULL, NULL);
+}
+
 bool WiFiClass::addProfile(char* ssid)
 {
   sdep_cmd_para_t para_arr[] =
   {
-      { .len = strlen(ssid) + 1 , .p_value = ssid      },
+      { .len = strlen(ssid), .p_value = ssid      },
   };
 
   // TODO check case when read bytes < size
@@ -391,9 +398,9 @@ bool WiFiClass::addProfile(char* ssid, char* key, int enc_type)
 
   sdep_cmd_para_t para_arr[] =
   {
-      { .len = strlen(ssid) + 1 , .p_value = ssid      },
-      { .len = strlen(key)  + 1 , .p_value = key       },
-      { .len = 4                , .p_value = &enc_type },
+      { .len = strlen(ssid), .p_value = ssid      },
+      { .len = strlen(key) , .p_value = key       },
+      { .len = 4           , .p_value = &enc_type },
   };
 
   // TODO check case when read bytes < size
@@ -406,7 +413,7 @@ bool WiFiClass::removeProfile(char* ssid)
 {
   sdep_cmd_para_t para_arr[] =
   {
-      { .len = strlen(ssid) + 1 , .p_value = ssid },
+      { .len = strlen(ssid), .p_value = ssid },
   };
 
   // TODO check case when read bytes < size
@@ -425,7 +432,7 @@ bool WiFiClass::checkProfile(char* ssid)
   bool result = false;
 
   return (ERROR_NONE == FEATHERLIB->sdep_execute(SDEP_CMD_WIFI_PROFILE_CHECK,
-                                                 strlen(ssid)+1, ssid,
+                                                 strlen(ssid), ssid,
                                                  NULL, &result) ) ? result : false ;
 }
 

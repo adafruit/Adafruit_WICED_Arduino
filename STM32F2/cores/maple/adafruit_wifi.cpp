@@ -118,8 +118,8 @@ sdep_err_t AdafruitFeather::connectAP(char const* ssid, char const* passwd)
 
   sdep_cmd_para_t para_arr[] =
   {
-      { .len = strlen(ssid)  + 1 , .p_value = ssid   },
-      { .len = strlen(passwd)+ 1 , .p_value = passwd },
+      { .len = strlen(ssid)  , .p_value = ssid   },
+      { .len = strlen(passwd), .p_value = passwd },
   };
 
   uint16_t error = FEATHERLIB->sdep_execute_n(SDEP_CMD_CONNECT,
