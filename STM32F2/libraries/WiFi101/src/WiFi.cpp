@@ -299,7 +299,7 @@ uint8_t* WiFiClass::BSSID(uint8_t* bssid)
   return bssid;
 }
 
-uint32_t WiFiClass::encryptionType()
+int32_t WiFiClass::encryptionType()
 {
   return _ap_info.security;
 }
@@ -340,7 +340,7 @@ int32_t WiFiClass::RSSI(uint8_t pos)
   return p_scan->rssi;
 }
 
-uint32_t WiFiClass::encryptionType(uint8_t pos)
+int32_t WiFiClass::encryptionType(uint8_t pos)
 {
   VERIFY(pos < WIFI_MAX_SCAN_NUM, NULL);
 
@@ -411,15 +411,10 @@ bool WiFiClass::addProfile(char* ssid, char* key, int enc_type)
 
 bool WiFiClass::removeProfile(char* ssid)
 {
-  sdep_cmd_para_t para_arr[] =
-  {
-      { .len = strlen(ssid), .p_value = ssid },
-  };
-
   // TODO check case when read bytes < size
-  return (ERROR_NONE == FEATHERLIB->sdep_execute_n(SDEP_CMD_WIFI_PROFILE_DEL,
-                                                   sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
-                                                   NULL, NULL)) ? true : false;
+  return (ERROR_NONE == FEATHERLIB->sdep_execute(SDEP_CMD_WIFI_PROFILE_DEL,
+                                                 strlen(ssid), ssid,
+                                                 NULL, NULL)) ? true : false;
 }
 
 void WiFiClass::clearProfiles(void)
@@ -435,5 +430,47 @@ bool WiFiClass::checkProfile(char* ssid)
                                                  strlen(ssid), ssid,
                                                  NULL, &result) ) ? result : false ;
 }
+
+char* WiFiClass::profileSSID (uint8_t pos)
+{
+  static char profile_ssid[32+1];
+
+  uint8_t option = 1; // requesting SSID
+
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = 1, .p_value = &pos    },
+      { .len = 1, .p_value = &option },
+  };
+
+  uint16_t len = 0;
+
+  // TODO check case when read bytes < size
+  FEATHERLIB->sdep_execute_n(SDEP_CMD_WIFI_PROFILE_GET,
+                             sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                             &len, profile_ssid);
+
+  return (len > 0) ? profile_ssid : NULL;
+}
+
+int32_t WiFiClass::profileEncryptionType(uint8_t pos)
+{
+  uint8_t option = 2; // requesting Encryption Type
+
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = 1, .p_value = &pos    },
+      { .len = 1, .p_value = &option },
+  };
+
+  int32_t sec_type;
+
+  // TODO check case when read bytes < size
+  return (ERROR_NONE == FEATHERLIB->sdep_execute_n(SDEP_CMD_WIFI_PROFILE_GET,
+                                                   sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                                   NULL, &sec_type)) ? sec_type : -1;
+
+}
+
 
 WiFiClass WiFi;

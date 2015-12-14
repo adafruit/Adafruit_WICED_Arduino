@@ -135,12 +135,14 @@ class WiFiClass
     //uint8_t begin           ( const String &ssid, uint8_t key_idx, const String &key ) { return begin(ssid.c_str(), key_idx, key.c_str()); }
     uint8_t   begin           ( const String &ssid, const String &key, int enc_type = ENC_TYPE_AUTO ) { return begin(ssid.c_str(), key.c_str(), enc_type); }
 
-	  bool      saveProfile     ( void ); // save currently connected AP
+    bool      saveProfile     ( void ); // save currently connected AP
     bool      addProfile      ( char* ssid ); // Open
     bool      addProfile      ( char* ssid, char* key, int enc_type /*= ENC_TYPE_AUTO*/ ); // TODO allow encryption = auto as default
     bool      removeProfile   ( char* ssid );
     bool      checkProfile    ( char* ssid ); // Check if profile exists
     void      clearProfiles   ( void );
+    char*     profileSSID           ( uint8_t pos);
+    int32_t   profileEncryptionType ( uint8_t pos);
 
     uint8_t   beginAP         ( char *ssid );                  /* Start WiFi in AP mode with open security */
     uint8_t   beginAP         ( char *ssid, uint8_t channel ); /* Wifi channel can be 1-12 */
@@ -165,13 +167,13 @@ class WiFiClass
 
     char*     SSID            ( void );
     int32_t   RSSI            ( void );
-    uint32_t  encryptionType  ( void );
+    int32_t   encryptionType  ( void );
     uint8_t*  BSSID           ( uint8_t* bssid );
 
     int8_t    scanNetworks    ( void );
     char*     SSID            ( uint8_t pos );
     int32_t   RSSI            ( uint8_t pos );
-    uint32_t  encryptionType  ( uint8_t pos );
+    int32_t   encryptionType  ( uint8_t pos );
 
     uint8_t   status          ( void );
 
