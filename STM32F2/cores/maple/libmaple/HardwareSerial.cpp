@@ -116,7 +116,7 @@ uint32 HardwareSerial::pending(void) {
     return usart_data_pending(usart_device);
 }
 
-size_t HardwareSerial::write(unsigned char ch) {
+size_t HardwareSerial::write(uint8_t ch) {
   usart_putc(usart_device, ch);
   return 1;
 }

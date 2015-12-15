@@ -66,8 +66,6 @@ public:
 	virtual uint8_t connected();
 	virtual operator bool();
 
-	using Print::write;
-
 	// callback
 	void setReceiveCallback( int (*fp) (void*) );
 	void setDisconnectCallback( int (*fp) (void*));

@@ -43,7 +43,7 @@ char* WiFiClass::firmwareVersion()
 	return _version;
 }
 
-uint8_t WiFiClass::begin()
+uint8_t WiFiClass::begin(void)
 {
 	// Connect to router using saved profiles
   _status = (ERROR_NONE == FEATHERLIB->sdep_execute(SDEP_CMD_CONNECT, 0, NULL, NULL, NULL)) ? WL_CONNECTED : WL_CONNECT_FAILED;
@@ -176,7 +176,7 @@ uint8_t WiFiClass::beginProvision(char *ssid, char *url, uint8_t channel)
 #endif
 }
 
-uint32_t WiFiClass::provisioned()
+uint32_t WiFiClass::provisioned(void)
 {
 	if (_mode == WL_STA_MODE) {
 		return 1;
@@ -240,7 +240,7 @@ void WiFiClass::config(IPAddress local_ip, IPAddress dns_server, IPAddress gatew
 #endif
 }
 
-void WiFiClass::disconnect()
+void WiFiClass::disconnect(void)
 {
   if ( _status != WL_CONNECTED ) return;
 
@@ -254,7 +254,7 @@ uint8_t *WiFiClass::macAddress(uint8_t *mac)
 	return mac;
 }
 
-uint32_t WiFiClass::localIP()
+uint32_t WiFiClass::localIP(void)
 {
   if ( _status != WL_CONNECTED ) return 0;
 
@@ -265,7 +265,7 @@ uint32_t WiFiClass::localIP()
 	return ip_address;
 }
 
-uint32_t WiFiClass::subnetMask()
+uint32_t WiFiClass::subnetMask(void)
 {
   if ( _status != WL_CONNECTED ) return 0;
 
@@ -276,7 +276,7 @@ uint32_t WiFiClass::subnetMask()
   return subnet;
 }
 
-uint32_t WiFiClass::gatewayIP()
+uint32_t WiFiClass::gatewayIP(void)
 {
   if ( _status != WL_CONNECTED ) return 0;
 
@@ -287,7 +287,7 @@ uint32_t WiFiClass::gatewayIP()
   return ip_address;
 }
 
-char* WiFiClass::SSID()
+char* WiFiClass::SSID(void)
 {
   if ( _status != WL_CONNECTED ) return NULL;
 	return _ap_info.ssid;
@@ -299,12 +299,12 @@ uint8_t* WiFiClass::BSSID(uint8_t* bssid)
   return bssid;
 }
 
-int32_t WiFiClass::encryptionType()
+int32_t WiFiClass::encryptionType(void)
 {
   return _ap_info.security;
 }
 
-int32_t WiFiClass::RSSI()
+int32_t WiFiClass::RSSI(void)
 {
   if ( _status != WL_CONNECTED ) return 0;
 
@@ -314,7 +314,7 @@ int32_t WiFiClass::RSSI()
   return rssi;
 }
 
-int8_t WiFiClass::scanNetworks()
+int8_t WiFiClass::scanNetworks(void)
 {
   uint16_t length = sizeof(wl_ap_info_t) * WIFI_MAX_SCAN_NUM;
   VERIFY( ERROR_NONE == FEATHERLIB->sdep_execute(SDEP_CMD_SCAN, 0, NULL, &length, wifi_scan_result), 0);
@@ -349,7 +349,7 @@ int32_t WiFiClass::encryptionType(uint8_t pos)
   return p_scan->security;
 }
 
-uint8_t WiFiClass::status()
+uint8_t WiFiClass::status(void)
 {
 	return _status;
 }

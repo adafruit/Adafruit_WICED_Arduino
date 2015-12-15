@@ -22,12 +22,6 @@
 #define WIFI_H
 
 #include <Arduino.h>
-
-//extern "C" {
-//        #include "driver/include/m2m_wifi.h"
-//        #include "socket/include/socket.h"
-//}
-
 #include "WiFiClient.h"
 //#include "WiFiServer.h"
 
@@ -35,6 +29,7 @@
 #define WIFI_MAX_SSID_LEN         32
 #define WIFI_MAX_PASSPHRASE_LEN   64
 #define WIFI_SCAN_RESULT_LEN      52
+#define WIFI_MAX_PROFILE          5
 
 
 #define SHARED_ENABLED            0x00008000
@@ -48,33 +43,6 @@
 #define TKIP_ENABLED              0x0002
 #define AES_ENABLED               0x0004
 #define WSEC_SWFLAG               0x0008
-
-typedef struct ATTR_PACKED
-{
-  char     ssid[WIFI_MAX_SSID_LEN+1];
-
-  uint8_t  bssid[6];
-  int16_t  rssi;
-  uint32_t max_data_rate;
-  uint8_t  network_type;
-  int32_t  security;
-  uint8_t  channel;
-  uint8_t  band_2_4ghz;
-} wl_ap_info_t;
-
-ASSERT_STATIC(sizeof(wl_ap_info_t) == 52);
-
-typedef enum 
-{
-  WL_NO_SHIELD = 255,
-  WL_IDLE_STATUS = 0,
-  WL_NO_SSID_AVAIL,
-  WL_SCAN_COMPLETED,
-  WL_CONNECTED,
-  WL_CONNECT_FAILED,
-  WL_CONNECTION_LOST,
-  WL_DISCONNECTED
-} wl_status_t;
 
 typedef enum
 {
@@ -97,11 +65,39 @@ typedef enum
 
 typedef enum 
 {
+  WL_NO_SHIELD = 255,
+  WL_IDLE_STATUS = 0,
+  WL_NO_SSID_AVAIL,
+  WL_SCAN_COMPLETED,
+  WL_CONNECTED,
+  WL_CONNECT_FAILED,
+  WL_CONNECTION_LOST,
+  WL_DISCONNECTED
+} wl_status_t;
+
+typedef enum
+{
   WL_RESET_MODE = 0,
   WL_STA_MODE,
   WL_PROV_MODE,
   WL_AP_MODE
 } wl_mode_t;
+
+typedef struct ATTR_PACKED
+{
+  char     ssid[WIFI_MAX_SSID_LEN+1];
+
+  uint8_t  bssid[6];
+  int16_t  rssi;
+  uint32_t max_data_rate;
+  uint8_t  network_type;
+  int32_t  security;
+  uint8_t  channel;
+  uint8_t  band_2_4ghz;
+} wl_ap_info_t;
+
+ASSERT_STATIC(sizeof(wl_ap_info_t) == 52);
+
 
 class WiFiClass
 {

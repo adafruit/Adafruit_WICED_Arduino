@@ -26,6 +26,8 @@
 
 #include "wirish_math.h"
 #include "limits.h"
+#include <stdarg.h>
+#include <stdio.h>
 
 #ifndef LLONG_MAX
 /*
@@ -46,26 +48,17 @@
  * Public methods
  */
 
-size_t Print::write(const char *str) {
+/* default implementation: may be overridden */
+size_t Print::write(const uint8_t *buffer, size_t size) {
 	size_t n = 0;
-    while (*str) {
-        write(*str++);
-		n++;
-    }
+	while (size--) {
+	  write(*buffer++);
+	  n++;
+	}
 	return n;
 }
 
-size_t Print::write(const void *buffer, uint32 size) {
-	size_t n = 0;
-    uint8 *ch = (uint8*)buffer;
-    while (size--) {
-        write(*ch++);
-		n++;
-    }
-	return n;
-}
-
-size_t Print::print(uint8 b, int base) {
+size_t Print::print(uint8_t b, int base) {
     print((uint64)b, base);
 }
 
@@ -101,7 +94,7 @@ size_t Print::print(unsigned long n, int base) {
 size_t Print::print(long long n, int base) {
     if (base == BYTE) 
 	{
-        return write((uint8)n);
+        return write((uint8_t)n);
     }
     if (n < 0) {
         print('-');
@@ -113,7 +106,7 @@ size_t Print::print(long long n, int base) {
 size_t Print::print(unsigned long long n, int base) {
 size_t c=0;
     if (base == BYTE) {
-        c= write((uint8)n);
+        c= write((uint8_t)n);
     } else {
         c= printNumber(n, base);
     }
@@ -162,7 +155,7 @@ size_t Print::println(const char c[]) {
 	return n;
 }
 
-size_t Print::println(uint8 b, int base) {
+size_t Print::println(uint8_t b, int base) {
     size_t n = print(b, base);
 	n += println();
 	return n;
@@ -210,30 +203,28 @@ size_t Print::println(double n, int digits) {
 	return s;
 }
 
-#ifdef SUPPORTS_PRINTF
-#include <stdio.h>
-#include <stdarg.h>
-// Work in progress to support printf.
-// Need to implement stream FILE to write individual chars to chosen serial port
-int Print::printf (__const char *__restrict __format, ...)
- {
-FILE *__restrict __stream;
-     int ret_status = 0;
+size_t Print::printf(const char * format, ...)
+{
+  int ret_status = 0;
 
+  char buf[256];
+  int len;
 
-     va_list args;
-     va_start(args,__format);
-     ret_status = vfprintf(__stream, __format, args);
-     va_end(args);
-     return ret_status;
- }
- #endif
+  va_list ap;
+  va_start(ap, format);
+
+  len = vsnprintf(buf, 256, format, ap);
+  this->write(buf, len);
+
+  va_end(ap);
+  return len;
+}
 
 /*
  * Private methods
  */
 
-size_t Print::printNumber(unsigned long long n, uint8 base) {
+size_t Print::printNumber(unsigned long long n, uint8_t base) {
     unsigned char buf[CHAR_BIT * sizeof(long long)];
     unsigned long i = 0;
 	size_t s=0;
@@ -273,7 +264,7 @@ size_t Print::printNumber(unsigned long long n, uint8 base) {
  *
  * http://kurtstephens.com/files/p372-steele.pdf
  */
-size_t Print::printFloat(double number, uint8 digits) {
+size_t Print::printFloat(double number, uint8_t digits) {
 size_t s=0;
     // Hackish fail-fast behavior for large-magnitude doubles
     if (abs(number) >= LARGE_DOUBLE_TRESHOLD) {
@@ -293,7 +284,7 @@ size_t s=0;
     // Simplistic rounding strategy so that e.g. print(1.999, 2)
     // prints as "2.00"
     double rounding = 0.5;
-    for (uint8 i = 0; i < digits; i++) {
+    for (uint8_t i = 0; i < digits; i++) {
         rounding /= 10.0;
     }
     number += rounding;

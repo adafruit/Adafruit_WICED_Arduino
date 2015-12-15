@@ -13,11 +13,9 @@ void setup() {
     delay(1); // wait for serial port to connect. Needed for native USB port only
   }
 
-  if ( WiFi.checkProfile(ssid) )
-  {
-    Serial.println("Clear all AP profiles");
-    WiFi.clearProfiles();
-  }
+
+  Serial.println("Clear all AP profiles");
+  WiFi.clearProfiles();
   
   // attempt to connect to Wifi network:
   do {
@@ -40,17 +38,25 @@ void setup() {
     Serial.println("Failed");
   }
   
-  Serial.print("Checking ");
-  Serial.print(ssid);
-  Serial.print(" in the AP profile list ... ");
-  if ( WiFi.checkProfile(ssid) )
+  // Print AP profile list
+  Serial.println("Saved AP profile");
+  Serial.println("ID Sec  SSID");
+  for(uint8_t i=0; i<WIFI_MAX_PROFILE; i++)
   {
-    Serial.println("Existed");
-  }else
-  {
-    Serial.println("Not existed");
-  }
+    char * profile_ssid = WiFi.profileSSID(i);
 
+    Serial.printf("%02d ", i);
+    if ( profile_ssid != NULL )
+    {
+      printEncryptionType( WiFi.profileEncryptionType(i) );
+      Serial.print(" ");
+      Serial.println(profile_ssid);
+    }else
+    {
+      Serial.println("Not Available ");
+    }
+  }
+  
   Serial.println("Disconnecting from AP");
   WiFi.disconnect();
   
@@ -123,9 +129,37 @@ void printCurrentNet() {
   Serial.println(rssi);
 
   // print the encryption type:
-  int encryption = WiFi.encryptionType();
-  Serial.print("Encryption Type:");
-  Serial.println(encryption, HEX);
+  Serial.print("Encryption Type: ");
+  printEncryptionType( WiFi.encryptionType() );
   Serial.println();
+}
+
+void printEncryptionType(int32_t thisType) {
+  // read the encryption type and print out the name:
+  switch (thisType) {
+    case ENC_TYPE_WEP:
+    case ENC_TYPE_WEP_SHARED:
+      Serial.print("WEP");
+      break;
+
+    case ENC_TYPE_WPA_TKIP:
+    case ENC_TYPE_WPA_AES:
+      Serial.print("WPA");
+      break;
+
+    case ENC_TYPE_WPA2_AES:
+    case ENC_TYPE_WPA2_TKIP:
+    case ENC_TYPE_WPA2_MIXED:
+      Serial.print("WPA2");
+      break;
+
+    case ENC_TYPE_OPEN:
+      Serial.print("None");
+      break;
+
+//    case ENC_TYPE_AUTO:
+//      Serial.print("Auto");
+//      break;
+  }
 }
 

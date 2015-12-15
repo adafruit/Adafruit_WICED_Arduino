@@ -64,7 +64,7 @@ public:
     virtual void flush(void);
     uint32 pending(void);
     virtual int read(void);
-    virtual size_t write(unsigned char);
+    virtual size_t write(uint8_t);
     using Print::write;
 
 
