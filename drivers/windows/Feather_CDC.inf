@@ -2,6 +2,17 @@
 ; Windows USB CDC ACM Setup File
 ; Copyright (c) 2000 Microsoft Corporation
 
+;------------------------------------------------------------------------------
+;  String Definitions
+;------------------------------------------------------------------------------
+[Strings]
+MFGFILENAME  = "Adafruit WICED Feather"
+MFGNAME      = "Adafruit Industrials"
+SERVICE      = "USB RS-232 Emulation Driver"
+DESCRIPTION1 = "WICED Feather Serial"
+DESCRIPTION2 = "WICED Feather ATParser"
+DeviceID1    = "USB\VID_239A&PID_0009"
+DeviceID2    = "USB\VID_239A&PID_8009"
 
 [Version]
 Signature="$Windows NT$"
@@ -33,7 +44,7 @@ usbser.sys,,,0x20
 
 [DriverInstall.NT.AddReg]
 HKR,,DevLoader,,*ntkern
-HKR,,NTMPDriver,,%DRIVERFILENAME%.sys
+HKR,,NTMPDriver,,usbser.sys
 HKR,,EnumPropPages32,,"MsPorts.dll,SerialPortPropPageProvider"
 
 [DriverInstall.NT.Services]
@@ -44,7 +55,7 @@ DisplayName=%SERVICE%
 ServiceType=1 ; SERVICE_KERNEL_DRIVER
 StartType=3 ; SERVICE_DEMAND_START
 ErrorControl=1 ; SERVICE_ERROR_NORMAL
-ServiceBinary=%12%\%DRIVERFILENAME%.sys
+ServiceBinary=%12%\usbser.sys
 
 ;------------------------------------------------------------------------------
 ;  Vista-64bit Sections
@@ -56,11 +67,11 @@ CopyFiles=DriverCopyFiles.NTamd64
 AddReg=DriverInstall.NTamd64.AddReg
 
 [DriverCopyFiles.NTamd64]
-%DRIVERFILENAME%.sys,,,0x20
+usbser.sys,,,0x20
 
 [DriverInstall.NTamd64.AddReg]
 HKR,,DevLoader,,*ntkern
-HKR,,NTMPDriver,,%DRIVERFILENAME%.sys
+HKR,,NTMPDriver,,usbser.sys
 HKR,,EnumPropPages32,,"MsPorts.dll,SerialPortPropPageProvider"
 
 [DriverInstall.NTamd64.Services]
@@ -71,7 +82,7 @@ DisplayName=%SERVICE%
 ServiceType=1 ; SERVICE_KERNEL_DRIVER
 StartType=3 ; SERVICE_DEMAND_START
 ErrorControl=1 ; SERVICE_ERROR_NORMAL
-ServiceBinary=%12%\%DRIVERFILENAME%.sys
+ServiceBinary=%12%\usbser.sys
 
 
 ;------------------------------------------------------------------------------
@@ -86,24 +97,9 @@ ServiceBinary=%12%\%DRIVERFILENAME%.sys
 [SourceDisksFiles]
 [SourceDisksNames]
 [DeviceList]
-%DESCRIPTION1%=DriverInstall, USB\VID_239A&PID_0009&MI_00
-%DESCRIPTION2%=DriverInstall, USB\VID_239A&PID_0009&MI_02
-
+%DESCRIPTION1%=DriverInstall, %DeviceID1%&MI_00, %DeviceID2%&MI_00
+%DESCRIPTION2%=DriverInstall, %DeviceID1%&MI_02, %DeviceID2%&MI_02
 
 [DeviceList.NTamd64]
-%DESCRIPTION1%=DriverInstall, USB\VID_239A&PID_0009&MI_00
-%DESCRIPTION2%=DriverInstall, USB\VID_239A&PID_0009&MI_02
-
-;------------------------------------------------------------------------------
-;  String Definitions
-;------------------------------------------------------------------------------
-;Modify these strings to customize your device
-;------------------------------------------------------------------------------
-[Strings]
-MFGFILENAME="Adafruit Feather"
-DRIVERFILENAME ="usbser"
-MFGNAME="Adafruit Industrials"
-INSTDISK="Adafruit Feather driver"
-SERVICE="USB RS-232 Emulation Driver"
-DESCRIPTION1="Feather Serial"
-DESCRIPTION2="Feather AT Parser"
+%DESCRIPTION1%=DriverInstall, %DeviceID1%&MI_00, %DeviceID2%&MI_00
+%DESCRIPTION2%=DriverInstall, %DeviceID1%&MI_02, %DeviceID2%&MI_02
