@@ -49,8 +49,10 @@
 /* If you define ERROR_LED_PORT and ERROR_LED_PIN, then a failed
  * ASSERT() will also throb() an LED connected to that port and pin.
  */
+#if 0
 #if defined(ERROR_LED_PORT) && defined(ERROR_LED_PIN)
 #define HAVE_ERROR_LED
+#endif
 #endif
 
 /**

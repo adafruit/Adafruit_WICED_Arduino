@@ -14,13 +14,14 @@
 */
 
 // Variables:
+int ledPin = BOARD_LED_PIN;
 int previousMillis = 0;        // will store the last time the LED was updated
 int interval = 1000;           // interval at which to blink (in milliseconds)
 
 void setup() 
 {
   // Set up the built-in LED pin as output:
-  pinMode(PB5, OUTPUT);
+  pinMode(ledPin, OUTPUT);
 }
 
 void loop() 
@@ -34,6 +35,6 @@ void loop()
     previousMillis = millis();
 
     // If the LED is off, turn it on, and vice-versa:
-    digitalWrite(PB5,!digitalRead(PB5));// Turn the LED from off to on, or on to off
+    digitalWrite(ledPin,!digitalRead(ledPin));// Turn the LED from off to on, or on to off
   }
 }

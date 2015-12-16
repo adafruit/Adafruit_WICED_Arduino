@@ -44,7 +44,7 @@
 // that use SPI (Bluefruit LE SPI Friend).
 // ----------------------------------------------------------------------------------------------
 #ifdef ARDUINO_STM32F2_FEATHER
-  #define BLUEFRUIT_SPI_CS               PA15
+  #define BLUEFRUIT_SPI_CS               PA1
   #define BLUEFRUIT_SPI_IRQ              PC5
   #define BLUEFRUIT_SPI_RST              PC3  // Optional but recommended, set to -1 if unused
 #else

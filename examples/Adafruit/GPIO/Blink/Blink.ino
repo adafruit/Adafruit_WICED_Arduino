@@ -16,8 +16,7 @@
   
  */
 
-//int ledPin = PA1;
-int ledPin = PB5;
+int ledPin = PA15;
 
 // the setup function runs once when you press reset or power the board
 void setup() 

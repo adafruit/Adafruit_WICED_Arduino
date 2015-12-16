@@ -1,5 +1,5 @@
 int irqpin = PC5;
-int ledpin = PB5;
+int ledpin = BOARD_LED_PIN;
 
 volatile int ledstate = LOW;
 

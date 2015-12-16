@@ -26,7 +26,7 @@
 
 const int analogInPin = PC3; // Analog input pin that the potentiometer
                              // is attached to
-const int pwmOutPin   = PB5; // PWM pin that the LED is attached to
+const int pwmOutPin   = BOARD_LED_PIN; // PWM pin that the LED is attached to
 
 // These variables will change:
 int sensorValue = 0;        // value read from the pot

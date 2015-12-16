@@ -54,13 +54,8 @@ enum {
   PG0,PG1,PG2,PG3,PG4,PG5,PG6,PG7,PG8,PG9,PG10,PG11,PG12,PG13,PG14,PG15
 };
 
-#if 0
-  #define BOARD_LED_PIN         PA1
-  #define BOARD_BUTTON_PIN      PA0
-#else
-  #define BOARD_LED_PIN         PB5
-  #define BOARD_BUTTON_PIN      PB3
-#endif
+#define BOARD_LED_PIN         PA15
+#define BOARD_BUTTON_PIN      PC5
 
 #define BOARD_NR_USARTS         3
 #define BOARD_USART1_TX_PIN     PA9
@@ -85,7 +80,7 @@ enum {
 #define MISO     PA6
 #define MOSI     PA7
 
-#define BOARD_SPI3_NSS_PIN      PA15
+#define BOARD_SPI3_NSS_PIN      PA4 // address conflict SPI1
 #define BOARD_SPI3_SCK_PIN      PB3
 #define BOARD_SPI3_MISO_PIN     PB4
 #define BOARD_SPI3_MOSI_PIN     PB5
