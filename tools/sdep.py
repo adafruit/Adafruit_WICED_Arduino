@@ -75,8 +75,8 @@ ERROR_UNFINISHED         = 10
 # Configuration
 #******************************************************************************
 USB_VID = 0x239A
-USB_PID = 0x0009
-USB_PID_MSC = 0x8009
+USB_PID = 0x0010
+USB_PID_MSC = 0x8010
 USB_DFU_PID = 0x0008
 
 SDEP_DEBUG = 0
@@ -108,8 +108,8 @@ class Sdep(object):
         if cmd_id > SDEP_CMD_NVM_RESET:
             return
 
-        # sys command will try to run system command with normal mode USB_VID = 0x0009
-        # if device is not found, it will try to run with dfu mode USB_VID = 0x0008
+        # sys command will try to run system command with normal mode USB_VID
+        # if device is not found, it will try to run with dfu mode USB_DFU_PID
         usbdev = usb.core.find(idVendor=USB_VID, idProduct=USB_PID, backend=backend)
         if usbdev is None:
             #try with MSC enabled PID

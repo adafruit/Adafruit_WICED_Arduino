@@ -9,10 +9,10 @@ menu.section=Section
 
 feather.name=Adafruit WICED Feather
 feather.vid.0=0x239A
-feather.pid.0=0x0009
+feather.pid.0=0x0010
 
 feather.vid.1=0x239A
-feather.pid.1=0x8009
+feather.pid.1=0x8010
 
 ## Building
 ## -------------------------

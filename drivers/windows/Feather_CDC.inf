@@ -11,8 +11,8 @@ MFGNAME      = "Adafruit Industrials"
 SERVICE      = "USB RS-232 Emulation Driver"
 DESCRIPTION1 = "WICED Feather Serial"
 DESCRIPTION2 = "WICED Feather ATParser"
-DeviceID1    = "USB\VID_239A&PID_0009"
-DeviceID2    = "USB\VID_239A&PID_8009"
+DeviceID1    = "USB\VID_239A&PID_0010"
+DeviceID2    = "USB\VID_239A&PID_8010"
 
 [Version]
 Signature="$Windows NT$"
