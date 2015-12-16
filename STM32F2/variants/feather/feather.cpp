@@ -48,14 +48,13 @@ void boardInit(void) {
 //	gpio_set_af_mode(GPIOC, 9, 3);
 
 	// remap TIMER3 to PB4,5,0,1
-	gpio_set_af_mode(GPIOB,  4, 2);
-	gpio_set_af_mode(GPIOB,  5, 2);
+//	gpio_set_af_mode(GPIOB,  4, 2);
+//	gpio_set_af_mode(GPIOB,  5, 2);
 //	gpio_set_af_mode(GPIOB,  0, 2);
 //	gpio_set_af_mode(GPIOB,  1, 2);
 
 	//gpio_set_af_mode(GPIOA, 2, 7);
 	//gpio_set_af_mode(GPIOA, 3, 7);
-
 
 	return;
 }
@@ -116,51 +115,6 @@ extern const stm32_pin_info PIN_MAP[BOARD_NR_GPIO_PINS] = {
     {GPIOC,   NULL, ADC1,  5, 0,   15}, /* D37/PC5  */
     {GPIOC, TIMER8, NULL,  6, 1, ADCx}, /* D38/PC6  */
     {GPIOC, TIMER8, NULL,  7, 2, ADCx}, /* D39/PC7  */
-
-#if 0
-    {GPIOC, TIMER8, NULL,  8, 3, ADCx}, /* D40/PC8  */
-    {GPIOC, TIMER8, NULL,  9, 4, ADCx}, /* D41/PC9  */
-    {GPIOC,   NULL, NULL, 10, 0, ADCx}, /* D42/PC10 */
-    {GPIOC,   NULL, NULL, 11, 0, ADCx}, /* D43/PC11 */
-    {GPIOC,   NULL, NULL, 12, 0, ADCx}, /* D44/PC12 */
-    {GPIOC,   NULL, NULL, 13, 0, ADCx}, /* D45/PC13 */
-    {GPIOC,   NULL, NULL, 14, 0, ADCx}, /* D46/PC14 */
-    {GPIOC,   NULL, NULL, 15, 0, ADCx}, /* D47/PC15 */
-
-    {GPIOD,   NULL, NULL,  0, 0, ADCx}, /* D48/PD0  */
-    {GPIOD,   NULL, NULL,  1, 0, ADCx}, /* D49/PD1  */
-    {GPIOD,   NULL, NULL,  2, 0, ADCx}, /* D50/PD2  */
-    {GPIOD,   NULL, NULL,  3, 0, ADCx}, /* D51/PD3  */
-    {GPIOD,   NULL, NULL,  4, 0, ADCx}, /* D52/PD4  */
-    {GPIOD,   NULL, NULL,  5, 0, ADCx}, /* D53/PD5  */
-    {GPIOD,   NULL, NULL,  6, 0, ADCx}, /* D54/PD6  */
-    {GPIOD,   NULL, NULL,  7, 0, ADCx}, /* D55/PD7  */
-    {GPIOD,   NULL, NULL,  8, 0, ADCx}, /* D56/PD8  */
-    {GPIOD,   NULL, NULL,  9, 0, ADCx}, /* D57/PD9  */
-    {GPIOD,   NULL, NULL, 10, 0, ADCx}, /* D58/PD10 */
-    {GPIOD,   NULL, NULL, 11, 0, ADCx}, /* D59/PD11 */
-    {GPIOD, TIMER4, NULL, 12, 1, ADCx}, /* D60/PD12 */  // remap in
-    {GPIOD, TIMER4, NULL, 13, 2, ADCx}, /* D61/PD13 */  // remap in
-    {GPIOD, TIMER4, NULL, 14, 3, ADCx}, /* D62/PD14 */  // remap in
-    {GPIOD, TIMER4, NULL, 15, 4, ADCx}, /* D63/PD15 */  // remap in
-
-    {GPIOE,   NULL, NULL,  0, 0, ADCx}, /* D64/PE0  */
-    {GPIOE,   NULL, NULL,  1, 0, ADCx}, /* D65/PE1  */
-    {GPIOE,   NULL, NULL,  2, 0, ADCx}, /* D66/PE2  */
-    {GPIOE,   NULL, NULL,  3, 0, ADCx}, /* D67/PE3  */
-    {GPIOE,   NULL, NULL,  4, 0, ADCx}, /* D68/PE4  */
-    {GPIOE,   NULL, NULL,  5, 0, ADCx}, /* D69/PE5  */
-    {GPIOE,   NULL, NULL,  6, 0, ADCx}, /* D70/PE6  */
-    {GPIOE,   NULL, NULL,  7, 0, ADCx}, /* D71/PE7  */
-    {GPIOE,   NULL, NULL,  8, 0, ADCx}, /* D72/PE8  */
-    {GPIOE, TIMER1, NULL,  9, 1, ADCx}, /* D73/PE9  */  // remap in
-    {GPIOE,   NULL, NULL, 10, 0, ADCx}, /* D74/PE10 */
-    {GPIOE, TIMER1, NULL, 11, 2, ADCx}, /* D75/PE11 */  // remap in
-    {GPIOE,   NULL, NULL, 12, 0, ADCx}, /* D76/PE12 */
-    {GPIOE, TIMER1, NULL, 13, 3, ADCx}, /* D77/PE13 */  // remap in
-    {GPIOE, TIMER1, NULL, 14, 4, ADCx}, /* D78/PE14 */  // remap in
-    {GPIOE,   NULL, NULL, 15, 0, ADCx}  /* D79/PE15 */
-#endif
 };
 
 extern const uint8 boardPWMPins[BOARD_NR_PWM_PINS] __FLASH__ = {
