@@ -11,6 +11,9 @@ feather.name=Adafruit WICED Feather
 feather.vid.0=0x239A
 feather.pid.0=0x0009
 
+feather.vid.1=0x239A
+feather.pid.1=0x8009
+
 ## Building
 ## -------------------------
 feather.build.mcu=cortex-m3
@@ -22,8 +25,8 @@ feather.build.variant=feather
 feather.build.variant_system_lib=lib_feather.a
 feather.build.vect=VECT_TAB_BASE
 feather.build.density=STM32_HIGH_DENSITY
-feather.build.error_led_port=GPIOD
-feather.build.error_led_pin=14
+feather.build.error_led_port=GPIOA
+feather.build.error_led_pin=15
 #feather.build.gcc_ver=gcc-arm-none-eabi-4.8.3-2014q1
 
 ## Uploader

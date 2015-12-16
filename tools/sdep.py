@@ -76,6 +76,7 @@ ERROR_UNFINISHED         = 10
 #******************************************************************************
 USB_VID = 0x239A
 USB_PID = 0x0009
+USB_PID_MSC = 0x8009
 USB_DFU_PID = 0x0008
 
 SDEP_DEBUG = 0
@@ -111,10 +112,13 @@ class Sdep(object):
         # if device is not found, it will try to run with dfu mode USB_VID = 0x0008
         usbdev = usb.core.find(idVendor=USB_VID, idProduct=USB_PID, backend=backend)
         if usbdev is None:
-            usbdev = usb.core.find(idVendor=USB_VID, idProduct=USB_DFU_PID, backend=backend)
+            #try with MSC enabled PID
+            usbdev = usb.core.find(idVendor=USB_VID, idProduct=USB_PID_MSC, backend=backend)
             if usbdev is None:
-                print "Unable to connect to feather board"
-                sys.exit(1)
+                usbdev = usb.core.find(idVendor=USB_VID, idProduct=USB_DFU_PID, backend=backend)
+                if usbdev is None:
+                    print "Unable to connect to feather board"
+                    sys.exit(1)
         usbdev.ctrl_transfer( 0x40, SDEP_MSGTYPE_COMMAND, cmd_id)
 
         # in system command, only info has response data
@@ -126,8 +130,11 @@ class Sdep(object):
         # find our device
         usbdev = usb.core.find(idVendor=USB_VID, idProduct=USB_PID)
         if usbdev is None:
-            print "Unable to connect to feather board"
-            sys.exit(1)
+            #try with MSC enabled PID
+            usbdev = usb.core.find(idVendor=USB_VID, idProduct=USB_PID_MSC, backend=backend)
+            if usbdev is None:
+                print "Unable to connect to feather board"
+                sys.exit(1)
 
         # Send command phase
         # Uncomment to print out command bytes
