@@ -40,7 +40,8 @@
 #include <Arduino.h>
 #include <Client.h>
 #include <IPAddress.h>
-#include <WiFiClient.h>
+#include <WiFi101.h>
+
 
 class HTTPClient : public WiFiClient {
 

@@ -34,7 +34,6 @@
 */
 /**************************************************************************/
 
-#include "WiFi101.h"
 #include "AdafruitNet.h"
 
 #define HTTP_GET      "GET"

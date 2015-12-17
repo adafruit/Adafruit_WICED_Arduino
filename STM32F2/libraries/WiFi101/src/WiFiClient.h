@@ -23,8 +23,6 @@
 #include <Arduino.h>
 #include <Client.h>
 #include <IPAddress.h>
-//#include "socket/include/socket_buffer.h"
-
 
 enum
 {
@@ -50,11 +48,13 @@ public:
 
 	uint8_t status();
 	void usePacketBuffering(bool isEnable);
-	
+
 	int connectSSL(IPAddress ip, uint16_t port);
 	int connectSSL(const char* host, uint16_t port);
+
 	virtual int connect(IPAddress ip, uint16_t port);
 	virtual int connect(const char* host, uint16_t port);
+
 	virtual size_t write(uint8_t);
 	virtual size_t write(const uint8_t *buf, size_t size);
 	virtual int available();
@@ -70,7 +70,7 @@ public:
 	void setReceiveCallback( int (*fp) (void*) );
 	void setDisconnectCallback( int (*fp) (void*));
 
-private:
+protected:
 	uint32_t _tcp_handle;
 
 	// buffer written until network packet is full ~1500 or flush() is called

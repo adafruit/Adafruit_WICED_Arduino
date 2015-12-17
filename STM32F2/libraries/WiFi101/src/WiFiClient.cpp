@@ -155,12 +155,14 @@ int WiFiClient::connect(IPAddress ip, uint16_t port)
     uint32_t timeout_ms;
   } sdep_tcp_connect_t;
 
-  sdep_tcp_connect_t connect_input;
-  connect_input.interface  = WIFI_INTERFACE_STATION;
-  connect_input.is_tls     = false;
-  connect_input.ipv4       = (uint32_t) ip;
-  connect_input.port       = port;
-  connect_input.timeout_ms = _timeout;
+  sdep_tcp_connect_t connect_input =
+  {
+      .interface  = WIFI_INTERFACE_STATION ,
+      .is_tls     = false                  ,
+      .ipv4       = (uint32_t) ip          ,
+      .port       = port                   ,
+      .timeout_ms = _timeout
+  };
 
   int err = FEATHERLIB->sdep_execute(SDEP_CMD_TCP_CONNECT, sizeof(sdep_tcp_connect_t), &connect_input, NULL, &_tcp_handle);
   VERIFY( err == ERROR_NONE, -err);
