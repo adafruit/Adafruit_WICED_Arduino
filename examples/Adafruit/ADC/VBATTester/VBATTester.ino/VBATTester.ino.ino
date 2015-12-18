@@ -15,7 +15,12 @@
   Assuming a LIPO can go from as low as 3.2V completely drained to
   4.2V fully charged, and adding a small margin of error we get:
 
-  LIPO Power (3.2-4.3V) = 1985 - 2668
+  LIPO Power (3.2-4.25V) = 1985 - 2637
+
+  When no LIPO is attached, the output of the LIPO charger will
+  output ~4.3V, which means any value > ~2670 on the ADC likely
+  means there is no LIPO battery connected and we are running from
+  USB power.
 
   created 18 Dec. 2015
   by K. Townsend (KTOWN)
@@ -52,7 +57,19 @@ void loop()
   Serial.print(vbatFloat/1000, 4); // Adjust to display in volts
   Serial.print("V (");
   Serial.print(vbatADC);
-  Serial.println(")");  
-  delay(250);
+  Serial.print(") - ");
+
+  // Display the power source
+  if (vbatADC > 2670)
+  {
+    Serial.println("USB Power");
+  }
+  else
+  {
+    Serial.println("LIPO Power");
+  }
+
+  // Wait a bit before the next sample
+  delay(500);
 }
 
