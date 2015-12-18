@@ -49,8 +49,8 @@ public:
 	uint8_t status();
 	void usePacketBuffering(bool isEnable);
 
-	int connectSSL(IPAddress ip, uint16_t port);
-	int connectSSL(const char* host, uint16_t port);
+	int connectSSL(IPAddress ip, uint16_t port, char const* common_name = NULL);
+	int connectSSL(const char* host, uint16_t port, char const* common_name = NULL);
 
 	virtual int connect(IPAddress ip, uint16_t port);
 	virtual int connect(const char* host, uint16_t port);

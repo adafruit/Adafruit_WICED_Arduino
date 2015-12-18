@@ -117,22 +117,40 @@ void WiFiClient::usePacketBuffering(bool isEnable)
   _packet_buffering = isEnable;
 }
 
-int WiFiClient::connectSSL(const char* host, uint16_t port)
+int WiFiClient::connectSSL(const char* host, uint16_t port, char const* common_name)
 {
   IPAddress ip;
 
   int err = WiFi.hostByName(host, ip);
   VERIFY( err == 1, err);
 
-	return this->connectSSL(ip, port);
+	return this->connectSSL(ip, port, common_name);
 }
 
-int WiFiClient::connectSSL(IPAddress ip, uint16_t port)
+int WiFiClient::connectSSL(IPAddress ip, uint16_t port, char const* common_name)
 {
-  return 0;
-#if 0
-  return connect(ip, port, SOCKET_FLAGS_SSL, 0);
-#endif
+  uint32_t ipv4 = (uint32_t) ip;
+  uint8_t is_tls = 1;
+
+  uint8_t namelen = (common_name ? strlen(common_name) : 0);
+
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = 4       , .p_value = &ipv4       },
+      { .len = 2       , .p_value = &port       },
+      { .len = 1       , .p_value = &is_tls     },
+      { .len = 4       , .p_value = &_timeout   },
+      { .len = namelen , .p_value = common_name },
+  };
+
+  int err = FEATHERLIB->sdep_execute_n(SDEP_CMD_TCP_CONNECT,
+                                       sizeof(para_arr)/sizeof(sdep_cmd_para_t) - (common_name ? 0 : 1), para_arr,
+                                       NULL, &_tcp_handle);
+  VERIFY( err == ERROR_NONE, -err);
+
+  this->install_callback();
+
+  return 1;
 }
 
 int WiFiClient::connect(const char* host, uint16_t port)
@@ -147,24 +165,20 @@ int WiFiClient::connect(const char* host, uint16_t port)
 
 int WiFiClient::connect(IPAddress ip, uint16_t port)
 {
-  typedef struct ATTR_PACKED {
-    uint8_t  interface;
-    uint8_t  is_tls;
-    uint32_t ipv4;
-    uint16_t port;
-    uint32_t timeout_ms;
-  } sdep_tcp_connect_t;
+  uint32_t ipv4 = (uint32_t) ip;
+  uint8_t is_tls = 0;
 
-  sdep_tcp_connect_t connect_input =
+  sdep_cmd_para_t para_arr[] =
   {
-      .interface  = WIFI_INTERFACE_STATION ,
-      .is_tls     = false                  ,
-      .ipv4       = (uint32_t) ip          ,
-      .port       = port                   ,
-      .timeout_ms = _timeout
+      { .len = 4, .p_value = &ipv4     },
+      { .len = 2, .p_value = &port     },
+      { .len = 1, .p_value = &is_tls   },
+      { .len = 4, .p_value = &_timeout },
   };
 
-  int err = FEATHERLIB->sdep_execute(SDEP_CMD_TCP_CONNECT, sizeof(sdep_tcp_connect_t), &connect_input, NULL, &_tcp_handle);
+  int err = FEATHERLIB->sdep_execute_n(SDEP_CMD_TCP_CONNECT,
+                                       sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                       NULL, &_tcp_handle);
   VERIFY( err == ERROR_NONE, -err);
 
   this->install_callback();
