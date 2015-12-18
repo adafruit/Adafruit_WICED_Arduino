@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*!
-    @file     WiFiWebClientSSL.ino
+    @file     WebClientSSL.ino
     @author   hathach
 
     @section LICENSE
@@ -41,8 +41,8 @@ char ssid[] = "yourNetwork";     //  your network SSID (name)
 char pass[] = "secretPassword";  // your network password (use for WPA, or use as key for WEP)
 int keyIndex = 0;            // your network key Index number (needed only for WEP)
 
-char server[] = "www.adafruit.com";
-char uri[]    = "/testwifi/index.html";
+char server[] = "twitter.com";
+char uri[]    = "/";
 
 // Initialize the Ethernet client library
 // with the IP address and port of the server
@@ -52,26 +52,44 @@ HTTPClient client;
 void setup() {
   //Initialize serial and wait for port to open:
   Serial.begin(9600);
-  while (!Serial) {
+  while (!Serial) 
+  {
     // wait for serial port to connect. Needed for native USB port only
     delay(1);
   }
-
+  
+  if ( !WiFi.checkProfile(ssid) )
+  {
+    WiFi.addProfile(ssid, pass, ENC_TYPE_WPA2_AES);
+  }
+  
+  do {
+    Serial.println("Attempting to connect");
+  } while( WiFi.begin() != WL_CONNECTED);
+  
+#if 0
   // attempt to connect to Wifi network:
   do {
-    Serial.println("Attempting to connect with saved profile");
+    Serial.println("Attempting to connect");
   } while( WiFi.begin(ssid, pass) != WL_CONNECTED);
-  
+#endif
+
   Serial.println("Connected to wifi");
   printWifiStatus();
 
   Serial.println("\nStarting connection to server...");
-  // if you get a connection, report back via serial:
-  if (client.connect(server, 80)) {
+
+  client.setTimeout(10000);
+  int err = client.connectSSL(server, 443);
+  if ( err > 0) {
     Serial.println("connected to server");
     
     // Make a HTTP request:
     client.get(server, uri);
+  }else
+  {
+    Serial.println("failed to connect");
+    Serial.printf("error = %d", err); 
   }
 }
 
