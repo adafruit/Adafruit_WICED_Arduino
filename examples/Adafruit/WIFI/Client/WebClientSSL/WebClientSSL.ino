@@ -41,8 +41,8 @@ char ssid[] = "yourNetwork";     //  your network SSID (name)
 char pass[] = "secretPassword";  // your network password (use for WPA, or use as key for WEP)
 int keyIndex = 0;            // your network key Index number (needed only for WEP)
 
-char server[] = "twitter.com";
-char uri[]    = "/";
+char server[] = "github.com";
+char uri[]    = "/adafruit";
 
 // Initialize the Ethernet client library
 // with the IP address and port of the server
