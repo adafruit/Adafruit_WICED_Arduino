@@ -7,7 +7,7 @@
 ;------------------------------------------------------------------------------
 [Strings]
 MFGFILENAME  = "Adafruit WICED Feather"
-MFGNAME      = "Adafruit Industrials"
+MFGNAME      = "Adafruit Industries"
 SERVICE      = "USB RS-232 Emulation Driver"
 DESCRIPTION1 = "WICED Feather Serial"
 DESCRIPTION2 = "WICED Feather ATParser"
