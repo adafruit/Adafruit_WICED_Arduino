@@ -91,6 +91,7 @@ typedef enum {
   SDEP_CMD_HTTPSREQUEST        = 0x0036, /**< HTTPs Request                        */
   SDEP_CMD_ASYNCHTTPREQUEST    = 0x0037, /**< Async HTTP Request                   */
   SDEP_CMD_ASYNCHTTPSREQUEST   = 0x0038, /**< Async HTTPS Request                  */
+  SDEP_CMD_HTTPSENDREQUEST     = 0x0039, /**< Send HTTP Request (HTTP Class)       */
 
   /* DEBUG Commands */
   SDEP_CMD_STACKDUMP           = 0x0040, /**< Dump the stack                       */
@@ -149,6 +150,11 @@ typedef enum {
 enum {
   GET_METHOD    = 0x01,
   POST_METHOD   = 0x02,
+};
+
+enum {
+  DISABLE       = 0x00,
+  ENABLE        = 0x01,
 };
 
 typedef uint16_t sdep_err_t;
