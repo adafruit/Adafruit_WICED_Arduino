@@ -128,7 +128,7 @@ Note: The error at the end can be ignored, and is related to a problem with the 
 
 **Q:** When I try to flash using USB DFU I get the following error from feather_dfu.py: `Traceback (most recent call last): File "...\hardware\Adafruit_WICED_Arduino/tools/feather_dfu.py", line 1, in <module> import usb.backend.libusb1`?
 
-**A:** This is probably caused by an old version of pysub.  Update your pyusb version via the following command:
+**A:** This is probably caused by an old version of pysub.  Update your pyusb version to 1.0b or higher via the following command:
 
 ```
 pip install --upgrade pyusb
