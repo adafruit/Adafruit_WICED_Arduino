@@ -115,3 +115,9 @@ dfu-util: Error during download get_status
 ```
 
 Note: The error at the end can be ignored, and is related to a problem with the dfu utility.
+
+## Frequently Asked Questions
+
+**Q1:** When I try to build I'm getting `Cannot run program "{runtime.tools.arm-none-eabi-gcc.path}\bin\arm-none-eabi-g++" (in directory "."): CreateProcess error=2, The system cannot find the file specified`?
+
+**A1:** This is probably because you don't have the ARM Cortex M3 toolchain installed.  Install the necessary GCC toolchain for ARM from the Arduino Board Manager via: **Tools->Board->Board Manager** then download **Arduino SAM Boards (32-bits ARM Cortex-M3)**
