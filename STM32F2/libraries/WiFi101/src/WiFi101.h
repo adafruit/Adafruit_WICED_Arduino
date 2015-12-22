@@ -177,6 +177,8 @@ class WiFiClass
     int       hostByName      ( const String &hostname, IPAddress& result ) { return hostByName( hostname.c_str(), result ); }
 
     void      refresh         ( void ) {}
+
+    bool      setRootCertificates(char const* root_certs_chain);
 };
 
 extern WiFiClass WiFi;

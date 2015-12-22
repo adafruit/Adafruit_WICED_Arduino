@@ -472,5 +472,18 @@ int32_t WiFiClass::profileEncryptionType(uint8_t pos)
 
 }
 
+bool WiFiClass::setRootCertificates(char const* root_certs_chain)
+{
+  uint16_t len = (root_certs_chain ? strlen(root_certs_chain) : 0 );
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = len, .p_value = root_certs_chain },
+  };
+
+  return (ERROR_NONE == FEATHERLIB->sdep_execute_n(SDEP_CMD_TLS_SET_ROOT_CERTS,
+                                                   sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                                   NULL, NULL) );
+}
+
 
 WiFiClass WiFi;

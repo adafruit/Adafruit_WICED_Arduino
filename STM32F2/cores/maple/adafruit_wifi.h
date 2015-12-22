@@ -79,6 +79,7 @@ typedef enum {
   SDEP_CMD_WIFI_PROFILE_CHECK  = 0x0029, ///< Check if a network profile existed
   SDEP_CMD_WIFI_PROFILE_SAVE   = 0x002A, ///< Save the current connect AP to profile list
   SDEP_CMD_WIFI_PROFILE_GET    = 0x002B, ///< Get AP's profile info
+  SDEP_CMD_TLS_SET_ROOT_CERTS  = 0x002C, ///< Set ROOT CA Chain
 
   /* Network Commands */
   SDEP_CMD_PING                = 0x0030, /**< Ping                                 */
