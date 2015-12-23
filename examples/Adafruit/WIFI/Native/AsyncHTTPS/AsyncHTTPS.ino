@@ -47,10 +47,10 @@
 #include "adafruit_wifi.h"
 #include "certificate.h"
 
-#define WLAN_SSID            "thach"
-#define WLAN_PASS            "hoangthach"
+#define WLAN_SSID            "SSID"
+#define WLAN_PASS            "PASSWORD"
 
-#define URL                  "https://192.168.0.20:4443/text_1KB.txt"
+#define URL                  "https://IPADDRESS:4443/text_1KB.txt"
 #define CONTENT              ""
 #define METHOD               GET_METHOD
 

@@ -36,13 +36,31 @@
 
 #include <WiFi101.h>
 #include <AdafruitNet.h>
+#include "certificates.h"
 
 char ssid[] = "yourNetwork";     //  your network SSID (name)
 char pass[] = "secretPassword";  // your network password (use for WPA, or use as key for WEP)
 int keyIndex = 0;            // your network key Index number (needed only for WEP)
 
-char server[] = "github.com";
-char uri[]    = "/adafruit";
+char uri[]    = "/";
+
+#define SERVER_ID    3
+
+#if SERVER_ID == 1
+  char server[] = "adafruit.com";
+#elif SERVER_ID == 2
+  char server[] = "facebook.com";
+#elif SERVER_ID == 3
+  char server[] = "github.com";
+#elif SERVER_ID == 4
+  char server[] = "twitter.com";
+#elif SERVER_ID == 5
+  char server[] = "www.google.com";
+#elif SERVER_ID == 6
+  char server[] = "www.yahoo.com";
+#else
+  #error Server is not definedz
+#endif
 
 // Initialize the Ethernet client library
 // with the IP address and port of the server
@@ -51,7 +69,7 @@ HTTPClient client;
 
 void setup() {
   //Initialize serial and wait for port to open:
-  Serial.begin(9600);
+  Serial.begin(115200);
   while (!Serial) 
   {
     // wait for serial port to connect. Needed for native USB port only
@@ -60,6 +78,7 @@ void setup() {
   
   if ( !WiFi.checkProfile(ssid) )
   {
+    WiFi.clearProfiles();
     WiFi.addProfile(ssid, pass, ENC_TYPE_WPA2_AES);
   }
   
@@ -77,9 +96,18 @@ void setup() {
   Serial.println("Connected to wifi");
   printWifiStatus();
 
+  Serial1.print("Setting Root CA chain ");
+  if ( WiFi.setRootCertificates(root_certs) )
+  {
+    Serial1.println("done");
+  }else
+  {
+    Serial1.println("failed");
+  }
+  
   Serial.println("\nStarting connection to server...");
 
-  client.setTimeout(10000);
+  client.setTimeout(30000);
   int err = client.connectSSL(server, 443);
   if ( err > 0) {
     Serial.println("connected to server");
