@@ -39,24 +39,22 @@
 
 #include <Arduino.h>
 
+typedef enum {
+  IDLE,
+  REQUEST_SENT,
+  RESPONSE_CODE_READ,
+  HEADER_PASSED,
+} httpState_t;
+
 class AdafruitHTTP
 {
 private:
-  typedef enum {
-    IDLE,
-    REQUEST_SENT,
-    RESPONSE_CODE_READ,
-    HEADER_READ,
-    CONTENT_READING
-  } httpState_t;
-
   httpState_t http_state;
   uint32_t    http_handle;
   uint32_t    timeout;
   uint32_t    cert_addr;
   uint8_t     isTLSEnable;
-  uint16_t    contentLength;
-  uint16_t    byteRead;
+  uint32_t    byteRead;
 
   int (*rx_callback) (void *);
   void reset();
@@ -70,12 +68,13 @@ public:
   void disableTLS();
   int  sendRequest(const char* url, const char* content, uint8_t method);
   int  getResponseCode();
-  int  skipResponseHeader();
-  bool complete();
+  int  skipHeader();
+  int  extractHeader(const char* header_name, char* value);
   int  read();
   int  read(uint8_t *buf, size_t size);
   int  available();
   void close();
+  httpState_t getState();
 
   // callback
   void setReceivedCallback( int (*fp) (void*) );

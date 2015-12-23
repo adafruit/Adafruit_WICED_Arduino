@@ -55,7 +55,6 @@ void AdafruitHTTP::reset()
 {
   http_state    = IDLE;
   http_handle   = 0;
-  contentLength = 0;
   byteRead      = 0;
 }
 
@@ -96,9 +95,9 @@ int AdafruitHTTP::sendRequest(const char* url, const char* content, uint8_t meth
       { .len = content_len, .p_value = content      },
       { .len = 1,           .p_value = &method      },
       { .len = 4,           .p_value = &timeout     },
-      { .len = 4,           .p_value = &rx_callback },
-      { .len = 4,           .p_value = &cert_addr   },
       { .len = 1,           .p_value = &isTLSEnable },
+      { .len = 4,           .p_value = &cert_addr   },
+      { .len = 4,           .p_value = &rx_callback },
   };
 
   int error = FEATHERLIB->sdep_execute_n(SDEP_CMD_HTTPSENDREQUEST,
@@ -113,26 +112,58 @@ int AdafruitHTTP::getResponseCode()
 {
   if (http_state != REQUEST_SENT) return (-1);
 
-  const char* responseCodePrefix = "HTTP/*.* ";
-  const char* p_prefix = responseCodePrefix;
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = 4, .p_value = &http_handle },
+      { .len = 4, .p_value = &timeout     },
+  };
 
-  http_state = RESPONSE_CODE_READ;
-  return 0;
+  uint16_t responseCode;
+  int error = FEATHERLIB->sdep_execute_n(SDEP_CMD_HTTPRESPONSECODE,
+                                         sizeof(para_arr)/sizeof(sdep_cmd_para_t),
+                                         para_arr, NULL, &responseCode);
+
+  if (error == ERROR_NONE)
+  {
+    http_state = RESPONSE_CODE_READ;
+    return responseCode;
+  }
+  return (-1);
 }
 
-int AdafruitHTTP::skipResponseHeader()
+int AdafruitHTTP::extractHeader(const char* header_name, char* value)
 {
   if (http_state != RESPONSE_CODE_READ) return (-1);
 
-  const char* contentLengthPrefix = "Content-Length: ";
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = 4,                   .p_value = &http_handle },
+      { .len = 4,                   .p_value = &timeout     },
+      { .len = strlen(header_name), .p_value = header_name  },
+  };
 
-  http_state = HEADER_READ;
-  return 0;
+  int error = FEATHERLIB->sdep_execute_n(SDEP_CMD_HTTPEXTRACTHEADER,
+                                         sizeof(para_arr)/sizeof(sdep_cmd_para_t),
+                                         para_arr, NULL, value);
+  return error;
 }
 
-bool AdafruitHTTP::complete()
+int AdafruitHTTP::skipHeader()
 {
-  return (byteRead >= contentLength);
+  if (http_state != RESPONSE_CODE_READ) return (-1);
+
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = 4, .p_value = &http_handle },
+      { .len = 4, .p_value = &timeout     },
+  };
+
+  int error = FEATHERLIB->sdep_execute_n(SDEP_CMD_HTTPSKIPHEADER,
+                                         sizeof(para_arr)/sizeof(sdep_cmd_para_t),
+                                         para_arr, NULL, NULL);
+
+  if (error == ERROR_NONE) http_state = HEADER_PASSED;
+  return error;
 }
 
 int AdafruitHTTP::read()
@@ -144,7 +175,7 @@ int AdafruitHTTP::read()
 
   if (this->read(&b, 1) > 0)
   {
-    if (http_state == CONTENT_READING) byteRead++;
+    if (http_state == HEADER_PASSED) byteRead++;
     return b;
   }
   else
@@ -168,7 +199,7 @@ int AdafruitHTTP::read(uint8_t* buf, size_t size)
   VERIFY(ERROR_NONE == FEATHERLIB->sdep_execute_n(SDEP_CMD_TCP_READ,
                                                   sizeof(para_arr)/sizeof(sdep_cmd_para_t),
                                                   para_arr, &size16, buf), -1);
-  if (http_state == CONTENT_READING) byteRead += size;
+  if (http_state == HEADER_PASSED) byteRead += size;
   return size;
 }
 
@@ -193,4 +224,9 @@ void AdafruitHTTP::close()
 
   FEATHERLIB->sdep_execute(SDEP_CMD_TCP_CLOSE, 4, &http_handle, NULL, NULL);
   this->reset();
+}
+
+httpState_t AdafruitHTTP::getState()
+{
+  return http_state;
 }
