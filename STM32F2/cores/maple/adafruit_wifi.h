@@ -89,8 +89,8 @@ typedef enum {
   SDEP_CMD_HTTPPOST            = 0x0034, /**< HTTP Post                            */
   SDEP_CMD_HTTPREQUEST         = 0x0035, /**< HTTP Request                         */
   SDEP_CMD_HTTPSREQUEST        = 0x0036, /**< HTTPs Request                        */
-  SDEP_CMD_ASYNCHTTPREQUEST    = 0x0037, /**< Async HTTP Request                   */
-  SDEP_CMD_ASYNCHTTPSREQUEST   = 0x0038, /**< Async HTTPS Request                  */
+  SDEP_CMD_HTTPREQUESTWITHCB   = 0x0037, /**< Async HTTP Request                   */
+  SDEP_CMD_HTTPSREQUESTWITHCB  = 0x0038, /**< Async HTTPS Request                  */
   SDEP_CMD_HTTPSENDREQUEST     = 0x0039, /**< Send HTTP Request (HTTP Class)       */
   SDEP_CMD_HTTPRESPONSECODE    = 0x003A, /**< Get response code                    */
   SDEP_CMD_HTTPEXTRACTHEADER   = 0x003B, /**< Extract HTTP header                  */
@@ -201,8 +201,8 @@ public:
 
   sdep_err_t httpRequest(const char* url, const char* content, uint8_t method, uint32_t buffer_length, uint8_t* buffer);
   sdep_err_t httpsRequest(const char* url, const char* ca_cert, const char* content, uint8_t method, uint32_t buffer_length, uint8_t* buffer);
-  sdep_err_t asyncHttpRequest(const char* url, const char* content, uint8_t method);
-  sdep_err_t asyncHttpsRequest(const char* url, const char* ca_cert, const char* content, uint8_t method);
+  sdep_err_t httpRequestWithCallback(const char* url, const char* content, uint8_t method);
+  sdep_err_t httpsRequestWithCallback(const char* url, const char* ca_cert, const char* content, uint8_t method);
   void       addHttpDataReceivedCallBack(ada_http_callback ada_httpCallback = NULL);
 
 //  /* DEBUG Commands */

@@ -17,7 +17,7 @@ extern \"C\"\r\n\
 {\r\n\
 #endif\r\n\
 \r\n")
-             
+
 f_out.write("const char ")
 f_out.write(sys.argv[2])
 f_out.write("[] =")
@@ -36,6 +36,6 @@ f_out.write(
 #endif\r\n\
 \r\n\
 #endif /* ifndef _CERTIFICATE_H_ */")
-                 
+
 f_in.close()
 f_out.close()
