@@ -175,8 +175,6 @@ extern "C"
 class AdafruitFeather
 {
 private:
-  void init();
-
   ada_http_callback  ada_http_rx_callback;
   ada_mqtt_callback  ada_mqtt_evt_callback;
 
