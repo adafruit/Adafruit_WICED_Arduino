@@ -67,8 +67,8 @@ public:
 	virtual operator bool();
 
 	// callback
-	void setReceiveCallback( int (*fp) (void*) );
-	void setDisconnectCallback( int (*fp) (void*));
+	void setReceiveCallback( int (*fp) (void*, void*) );
+	void setDisconnectCallback( int (*fp) (void*, void*));
 
 protected:
 	uint32_t _tcp_handle;
@@ -77,8 +77,8 @@ protected:
 	// default is false
 	bool     _packet_buffering;
 
-	int (*_disconnect_callback) (void *);
-	int (*_rx_callback) (void *);
+	int (*_disconnect_callback) (void *, void*);
+	int (*_rx_callback) (void *, void*);
 
 	void install_callback(void);
 };

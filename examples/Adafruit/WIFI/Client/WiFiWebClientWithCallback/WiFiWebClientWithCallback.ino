@@ -33,9 +33,10 @@ char server[] = "www.adafruit.com";
 // that you want to connect to (port 80 is default for HTTP):
 WiFiClient client;
 
-int receive_callback(void* arg)
+int receive_callback(void* arg1, void* arg2)
 {
-  (void) arg; // reserve for future
+  (void) arg1; // reserve for future
+  (void) arg2; // reserve for future
   
   Serial.println("receive callback");
   
@@ -49,9 +50,10 @@ int receive_callback(void* arg)
   return 0;
 }
 
-int disconnect_callback(void* arg)
+int disconnect_callback(void* arg1, void* arg2)
 {
-  (void) arg;
+  (void) arg1; // reserve for future
+  (void) arg2; // reserve for future
   
   Serial.println();
   Serial.println("disconnect_callback.");

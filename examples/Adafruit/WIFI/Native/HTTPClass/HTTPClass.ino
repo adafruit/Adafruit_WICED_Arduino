@@ -48,9 +48,10 @@ int connectAP()
   return error;
 }
 
-int receive_callback(void* arg)
+int receive_callback(void* arg1, void* arg2)
 {
-  (void) arg; // reserve for future
+  (void) arg1; // reserve for future
+  (void) arg2; // reserve for future
   
   Serial.println("receive callback");
   

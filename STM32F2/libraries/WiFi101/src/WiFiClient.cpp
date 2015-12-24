@@ -95,7 +95,7 @@ void WiFiClient::install_callback(void)
 
 }
 
-void WiFiClient::setReceiveCallback( int (*fp) (void*) )
+void WiFiClient::setReceiveCallback( int (*fp) (void*, void*) )
 {
   _rx_callback = fp;
 
@@ -103,7 +103,7 @@ void WiFiClient::setReceiveCallback( int (*fp) (void*) )
   if ( _tcp_handle != 0 ) this->install_callback();
 }
 
-void WiFiClient::setDisconnectCallback( int (*fp) (void*))
+void WiFiClient::setDisconnectCallback( int (*fp) (void*, void*))
 {
   _disconnect_callback = fp;
 
