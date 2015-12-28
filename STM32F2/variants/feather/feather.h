@@ -80,6 +80,8 @@ enum {
 #define MISO     PA6
 #define MOSI     PA7
 
+#define WAKE                    PA0
+
 #define BOARD_SPI3_NSS_PIN      PA4 // address conflict SPI1
 #define BOARD_SPI3_SCK_PIN      PB3
 #define BOARD_SPI3_MISO_PIN     PB4
