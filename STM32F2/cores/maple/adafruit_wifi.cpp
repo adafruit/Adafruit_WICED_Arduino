@@ -961,7 +961,8 @@ sdep_err_t AdafruitFeather::httpsRequestWithCallback(const char* url, const char
   if (url == NULL || strlen(url) == 0) return ERROR_INVALIDPARAMETER;
   if (method != GET_METHOD && method != POST_METHOD) return ERROR_INVALIDPARAMETER;
 
-  uint32_t cert_addr = (uint32_t)ca_cert;
+  uint32_t cert_addr = 0;
+  if (ca_cert != NULL) cert_addr = (uint32_t)ca_cert;
 
   uint16_t paylen = strlen(url) + sizeof(cert_addr) + 3; // 2 null terminators & 1 byte for METHOD
   if ( (content != NULL) && (strlen(content) > 0) )

@@ -42,7 +42,6 @@
 typedef enum {
   IDLE,
   REQUEST_SENT,
-  RESPONSE_CODE_READ,
   HEADER_PASSED,
 } httpState_t;
 
@@ -66,15 +65,17 @@ public:
   void deinitCACerts();
   void enableTLS();
   void disableTLS();
+  void setTimeout(uint32_t ms);
   int  sendRequest(const char* url, const char* content, uint8_t method);
+  long getPacketDataLength();
   int  getResponseCode();
+  int  extractHeaderValue(const char* header_name, char* value);
+  int  endOfHeaderReached();
   int  skipHeader();
-  int  extractHeader(const char* header_name, char* value);
   int  read();
   int  read(uint8_t *buf, size_t size);
   int  available();
   void close();
-  httpState_t getState();
 
   // callback
   void setReceivedCallback( int (*fp) (void*) );

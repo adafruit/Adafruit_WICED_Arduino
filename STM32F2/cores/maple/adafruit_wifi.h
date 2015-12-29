@@ -92,9 +92,11 @@ typedef enum {
   SDEP_CMD_HTTPREQUESTWITHCB   = 0x0037, /**< Async HTTP Request                   */
   SDEP_CMD_HTTPSREQUESTWITHCB  = 0x0038, /**< Async HTTPS Request                  */
   SDEP_CMD_HTTPSENDREQUEST     = 0x0039, /**< Send HTTP Request (HTTP Class)       */
-  SDEP_CMD_HTTPRESPONSECODE    = 0x003A, /**< Get response code                    */
-  SDEP_CMD_HTTPEXTRACTHEADER   = 0x003B, /**< Extract HTTP header                  */
-  SDEP_CMD_HTTPSKIPHEADER      = 0x003C, /**< Skip HTTP header                     */
+  SDEP_CMD_HTTPDATALENGTH      = 0x003A, /**< Get the length of packet's data      */
+  SDEP_CMD_HTTPRESPONSECODE    = 0x003B, /**< Get response code                    */
+  SDEP_CMD_HTTPEXTRACTHEADER   = 0x003C, /**< Extract HTTP header                  */
+  SDEP_CMD_HTTPENDOFHEADER     = 0x003D, /**< Check if end of HTTP header reached  */
+  SDEP_CMD_HTTPSKIPHEADER      = 0x003E, /**< Skip HTTP header                     */
 
   /* DEBUG Commands */
   SDEP_CMD_STACKDUMP           = 0x0040, /**< Dump the stack                       */
