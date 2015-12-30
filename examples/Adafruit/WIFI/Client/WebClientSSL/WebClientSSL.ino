@@ -48,14 +48,14 @@
 #include <AdafruitNet.h>
 #include "certificates.h"
 
-char ssid[] = "thach";     //  your network SSID (name)
-char pass[] = "hoangthach";  // your network password (use for WPA, or use as key for WEP)
+char ssid[] = "yourNetwork";     //  your network SSID (name)
+char pass[] = "secretPassword";  // your network password (use for WPA, or use as key for WEP)
 int keyIndex = 0;            // your network key Index number (needed only for WEP)
 
 char uri[]    = "/";
 
 // Change the SERVER_ID to match the generated certificates.h
-#define SERVER_ID    6
+#define SERVER_ID    1
 
 #if SERVER_ID == 1
   char server[] = "www.adafruit.com";
