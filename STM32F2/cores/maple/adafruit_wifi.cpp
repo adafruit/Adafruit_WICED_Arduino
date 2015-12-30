@@ -50,17 +50,8 @@ AdafruitFeather feather;
 /******************************************************************************/
 AdafruitFeather::AdafruitFeather(void)
 {
-//  init();
-}
-
-/******************************************************************************/
-/*!
-    @brief Initialization if necessary
-*/
-/******************************************************************************/
-void AdafruitFeather::init()
-{
-
+  ada_http_rx_callback = NULL;
+  ada_http_rx_callback = NULL;
 }
 
 /******************************************************************************/
@@ -911,7 +902,7 @@ sdep_err_t AdafruitFeather::httpsRequest(const char* url, const char* ca_cert,
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitFeather::asyncHttpRequest(const char* url, const char* content, uint8_t method)
+sdep_err_t AdafruitFeather::httpRequestWithCallback(const char* url, const char* content, uint8_t method)
 {
   if (url == NULL || strlen(url) == 0) return ERROR_INVALIDPARAMETER;
   if (method != GET_METHOD && method != POST_METHOD) return ERROR_INVALIDPARAMETER;
@@ -941,7 +932,7 @@ sdep_err_t AdafruitFeather::asyncHttpRequest(const char* url, const char* conten
   /* Method */
   *p_payload = method;
 
-  sdep_err_t error =  FEATHERLIB->sdep_execute(SDEP_CMD_ASYNCHTTPREQUEST, paylen,
+  sdep_err_t error =  FEATHERLIB->sdep_execute(SDEP_CMD_HTTPREQUESTWITHCB, paylen,
                                                payload, NULL, NULL);
   free(payload);
   return error;
@@ -964,13 +955,14 @@ sdep_err_t AdafruitFeather::asyncHttpRequest(const char* url, const char* conten
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitFeather::asyncHttpsRequest(const char* url, const char* ca_cert,
-                                              const char* content, uint8_t method)
+sdep_err_t AdafruitFeather::httpsRequestWithCallback(const char* url, const char* ca_cert,
+                                                     const char* content, uint8_t method)
 {
   if (url == NULL || strlen(url) == 0) return ERROR_INVALIDPARAMETER;
   if (method != GET_METHOD && method != POST_METHOD) return ERROR_INVALIDPARAMETER;
 
-  uint32_t cert_addr = (uint32_t)ca_cert;
+  uint32_t cert_addr = 0;
+  if (ca_cert != NULL) cert_addr = (uint32_t)ca_cert;
 
   uint16_t paylen = strlen(url) + sizeof(cert_addr) + 3; // 2 null terminators & 1 byte for METHOD
   if ( (content != NULL) && (strlen(content) > 0) )
@@ -1001,7 +993,7 @@ sdep_err_t AdafruitFeather::asyncHttpsRequest(const char* url, const char* ca_ce
   /* Method */
   *p_payload = method;
 
-  sdep_err_t error =  FEATHERLIB->sdep_execute(SDEP_CMD_ASYNCHTTPSREQUEST, paylen,
+  sdep_err_t error =  FEATHERLIB->sdep_execute(SDEP_CMD_HTTPSREQUESTWITHCB, paylen,
                                                payload, NULL, NULL);
   free(payload);
   return error;

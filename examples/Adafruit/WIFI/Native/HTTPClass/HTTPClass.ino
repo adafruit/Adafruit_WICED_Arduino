@@ -1,22 +1,67 @@
 /*
-  Adafruit HTTP Class Example
+  AdafruitHTTP Class Example:
+  This example demonstrates the use of AdafruitHTTP Class to send HTTP request
+
+  1. Add your AP details via WLAN_SSID and WLAN_PASS in this sketch
+
+  2. Add the URL of the server, request content & HTTP method
+
+  3. Set attributes for AdafruitHTTP class in setup() function:
+     - Set timeout
+     - Register the async callback handler
+     - Init Root CA Certificate Chain (used when TLS enabled)
+     - Enable/disable TLS
+
+  4. Run the example and open serial monitor to see the response
+
+  Notes: The number of callbacks depends on the implementation of each server.
+  In the callback function, all of these following operations can be performed:
+
+  -  Extract the response status code
+        int responseCode;
+        responseCode = adaHttp.getResponseCode();
+        Serial.println(responseCode, DEC);
+
+  -  Extract the header values
+        char contentLength[8];
+        if (adaHttp.extractHeaderValue("Content-Length", contentLength) == 0)
+        {
+          Serial.print(F("Content-Length: "));
+          Serial.println(contentLength);
+        }
+
+  -  Print the entire header by checking endOfHeaderReached()
+        while (!adaHttp.endOfHeaderReached())
+        {
+          char c = adaHttp.read();
+          Serial.write(c);
+        }
+
+  -  Or skip the response header
+        adaHttp.skipHeader();
+
+  -  Print the entire response to serial monitor
+        while (adaHttp.available())
+        {
+          char c = adaHttp.read();
+          Serial.write(c);
+        }
 
   author: huynguyen
  */
 
 #include "adafruit_http.h"
+#include "certificate.h"
 
 #define WLAN_SSID            "SSID"
 #define WLAN_PASS            "PASSWORD"
 
-#define URL                  "IPADDRESS:8000/text_100B.txt"
+#define URL                  "github.com"
 #define CONTENT              ""
 #define METHOD               GET_METHOD
 
 
 int           wifi_error  = -1;    // FAIL
-unsigned long crc         = ~0L;
-int           data_found  = 0;
 AdafruitHTTP  adaHttp;
 
 /**************************************************************************/
@@ -48,6 +93,7 @@ int connectAP()
   return error;
 }
 
+<<<<<<< HEAD
 int receive_callback(void* arg1, void* arg2)
 {
   (void) arg1; // reserve for future
@@ -58,10 +104,53 @@ int receive_callback(void* arg1, void* arg2)
   // if there are incoming bytes available
   // from the server, read them and print them:
   while (adaHttp.available()) {
+=======
+/**************************************************************************/
+/*!
+    @brief This function is called whenever a new packet is received due to
+           the adaHttp.sendRequest function
+*/
+/**************************************************************************/
+int receive_callback(void* arg)
+{
+  (void) arg; // reserve for future
+
+  Serial.println("\r\nReceive callback");
+
+  int responseCode;
+  if ( (responseCode = adaHttp.getResponseCode()) > 0)
+  {
+    Serial.print(F("Response code: "));
+    Serial.println(responseCode, DEC);
+  }
+
+  // Extract "Content-type" header value
+  char contentType[30];
+  if (adaHttp.extractHeaderValue("Content-Type", contentType) == 0)
+  {
+    Serial.print(F("Content-Type: "));
+    Serial.println(contentType);
+  }
+
+  // Extract "Content-length" header value
+  char contentLength[8];
+  if (adaHttp.extractHeaderValue("Content-length", contentLength) == 0)
+  {
+    Serial.print(F("Content-length: "));
+    Serial.println(contentLength);
+  }
+
+  // Skip the response header
+  adaHttp.skipHeader();
+
+  // Read the content of response
+  while (adaHttp.available())
+  {
+>>>>>>> 04965d0c2b6e3f27fe3078c4befa9301a60f40bf
     char c = adaHttp.read();
     Serial.write(c);
   }
-  
+
   return 0;
 }
 
@@ -72,18 +161,23 @@ int receive_callback(void* arg1, void* arg2)
 /**************************************************************************/
 void setup()
 {
-  // If you want to use LED for debug
-  pinMode(BOARD_LED_PIN, OUTPUT);
-  
-  // wait for Serial
-  while (!Serial) delay(1);
+  //Initialize serial and wait for port to open:
+  while (!Serial)
+  {
+    // wait for serial port to connect. Needed for native USB port only
+    delay(1);
+  }
 
   Serial.println(F("Adafruit HTTP Class Example\r\n"));
 
   // Register the async callback handler
   adaHttp.setReceivedCallback(receive_callback);
 
-//  adaHttp.enableTLS();
+  // Init Root CA Certificate Chain
+  adaHttp.initCACerts(ca_cert);
+
+  // Enable TLS
+  adaHttp.enableTLS();
 
   // Try to connect to the access point
   wifi_error = connectAP();
@@ -94,12 +188,9 @@ void setup()
     @brief  The loop function runs over and over again forever
 */
 /**************************************************************************/
-void loop() 
+void loop()
 {
   // put your main code here, to run repeatedly
-  Serial.println(F("Toggle LED"));
-  togglePin(BOARD_LED_PIN);
-   
   if (wifi_error == 0)
   {
     int http_error;
@@ -111,5 +202,5 @@ void loop()
   }
 
   Serial.println(F("\r\n"));
-  delay(10000);
+  delay(30000);
 }
