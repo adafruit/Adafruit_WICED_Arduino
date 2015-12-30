@@ -34,32 +34,45 @@
 */
 /**************************************************************************/
 
+/* How to run this example
+* 1. Change ssid/pass to match your network
+* 2. Choose the SERVER_ID or use your own server e.g www.adafruit.com
+* 3. cd to this folder & and get_certificates.py script as follows
+*      $ python get_certificates.py www.adafruit.com
+* 4. The script will genearate certificates.h contains certificate chain
+* of the server. You may need to close and re-open this sketch to reload
+* 5. Compile and run this sketch
+*/
+
 #include <WiFi101.h>
 #include <AdafruitNet.h>
 #include "certificates.h"
 
-char ssid[] = "yourNetwork";     //  your network SSID (name)
-char pass[] = "secretPassword";  // your network password (use for WPA, or use as key for WEP)
+char ssid[] = "thach";     //  your network SSID (name)
+char pass[] = "hoangthach";  // your network password (use for WPA, or use as key for WEP)
 int keyIndex = 0;            // your network key Index number (needed only for WEP)
 
 char uri[]    = "/";
 
-#define SERVER_ID    3
+// Change the SERVER_ID to match the generated certificates.h
+#define SERVER_ID    6
 
 #if SERVER_ID == 1
-  char server[] = "adafruit.com";
+  char server[] = "www.adafruit.com";
 #elif SERVER_ID == 2
-  char server[] = "facebook.com";
+  char server[] = "www.facebook.com";
 #elif SERVER_ID == 3
   char server[] = "github.com";
 #elif SERVER_ID == 4
+  // hanged when print binary data
   char server[] = "twitter.com";
 #elif SERVER_ID == 5
+  // cannot connect
   char server[] = "www.google.com";
 #elif SERVER_ID == 6
   char server[] = "www.yahoo.com";
 #else
-  #error Server is not definedz
+  #error Server is not defined
 #endif
 
 // Initialize the Ethernet client library
@@ -68,14 +81,15 @@ char uri[]    = "/";
 HTTPClient client;
 
 void setup() {
-  //Initialize serial and wait for port to open:
+  //Initialize Serial and wait for port to open:
   Serial.begin(115200);
   while (!Serial) 
   {
-    // wait for serial port to connect. Needed for native USB port only
+    // wait for Serial port to connect. Needed for native USB port only
     delay(1);
   }
   
+  // Connect using saved profile since it re-connect much quicker
   if ( !WiFi.checkProfile(ssid) )
   {
     WiFi.clearProfiles();
@@ -85,29 +99,24 @@ void setup() {
   do {
     Serial.println("Attempting to connect");
   } while( WiFi.begin() != WL_CONNECTED);
-  
-#if 0
-  // attempt to connect to Wifi network:
-  do {
-    Serial.println("Attempting to connect");
-  } while( WiFi.begin(ssid, pass) != WL_CONNECTED);
-#endif
 
   Serial.println("Connected to wifi");
   printWifiStatus();
 
-  Serial1.print("Setting Root CA chain ");
-  if ( WiFi.setRootCertificates(root_certs) )
+  // Setting Certificates chain of the server
+  Serial.print("Setting Root CA chain ... ");
+  if ( WiFi.setRootCertificatesDER(root_certs, sizeof(root_certs)) )
   {
-    Serial1.println("done");
+    Serial.println("done");
   }else
   {
-    Serial1.println("failed");
+    Serial.println("failed");
   }
-  
-  Serial.println("\nStarting connection to server...");
 
-  client.setTimeout(30000);
+  Serial.print("\nStarting connection to server...");
+  Serial.println(server);
+
+  client.setTimeout(10000);
   int err = client.connectSSL(server, 443);
   if ( err > 0) {
     Serial.println("connected to server");

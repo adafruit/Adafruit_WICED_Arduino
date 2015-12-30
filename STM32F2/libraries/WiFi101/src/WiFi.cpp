@@ -469,15 +469,14 @@ int32_t WiFiClass::profileEncryptionType(uint8_t pos)
   return (ERROR_NONE == FEATHERLIB->sdep_execute_n(SDEP_CMD_WIFI_PROFILE_GET,
                                                    sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
                                                    NULL, &sec_type)) ? sec_type : -1;
-
 }
 
-bool WiFiClass::setRootCertificates(char const* root_certs_chain)
+bool WiFiClass::setRootCertificatesPEM(char const* root_certs_pem)
 {
-  uint16_t len = (root_certs_chain ? strlen(root_certs_chain) : 0 );
+  uint16_t len = (root_certs_pem ? strlen(root_certs_pem) : 0 );
   sdep_cmd_para_t para_arr[] =
   {
-      { .len = len, .p_value = root_certs_chain },
+      { .len = len, .p_value = root_certs_pem },
   };
 
   return (ERROR_NONE == FEATHERLIB->sdep_execute_n(SDEP_CMD_TLS_SET_ROOT_CERTS,
@@ -485,5 +484,16 @@ bool WiFiClass::setRootCertificates(char const* root_certs_chain)
                                                    NULL, NULL) );
 }
 
+bool WiFiClass::setRootCertificatesDER(uint8_t const* root_certs_der, uint32_t len)
+{
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = len, .p_value = root_certs_der },
+  };
+
+  return (ERROR_NONE == FEATHERLIB->sdep_execute_n(SDEP_CMD_TLS_SET_ROOT_CERTS,
+                                                   sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                                   NULL, NULL) );
+}
 
 WiFiClass WiFi;

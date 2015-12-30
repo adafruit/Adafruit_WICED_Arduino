@@ -178,7 +178,8 @@ class WiFiClass
 
     void      refresh         ( void ) {}
 
-    bool      setRootCertificates(char const* root_certs_chain);
+    bool      setRootCertificatesPEM(char const* root_certs_pem);
+    bool      setRootCertificatesDER(uint8_t const* root_certs_der, uint32_t len);
 };
 
 extern WiFiClass WiFi;

@@ -20,15 +20,6 @@
 #include "WiFi101.h"
 #include "WiFiClient.h"
 
-WiFiClient::WiFiClient()
-{
-  _tcp_handle        = 0;
-  _packet_buffering = false;
-
-  _disconnect_callback = NULL;
-  _rx_callback         = NULL;
-}
-
 #if 0
 WiFiClient::WiFiClient(uint8_t sock, uint8_t parentsock)
 {
@@ -76,6 +67,15 @@ WiFiClient::WiFiClient(const WiFiClient& other)
 	m2m_wifi_handle_events(NULL);
 }
 #endif
+
+WiFiClient::WiFiClient()
+{
+  _tcp_handle        = 0;
+  _packet_buffering = false;
+
+  _disconnect_callback = NULL;
+  _rx_callback         = NULL;
+}
 
 void WiFiClient::install_callback(void)
 {
