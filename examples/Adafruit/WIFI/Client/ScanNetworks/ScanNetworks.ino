@@ -75,14 +75,9 @@ void listNetworks() {
   Serial.println(numSsid);
 
   // print the network number and name for each network found:
+  Serial.printf("ID SSID                 Signal Encryption\n");
   for (int thisNet = 0; thisNet < numSsid; thisNet++) {
-    Serial.print(thisNet);
-    Serial.print(") ");
-    Serial.print(WiFi.SSID(thisNet));
-    Serial.print("\tSignal: ");
-    Serial.print(WiFi.RSSI(thisNet));
-    Serial.print(" dBm");
-    Serial.print("\tEncryption: ");
+    Serial.printf("%02d %-20s %02d dBm ", thisNet, WiFi.SSID(thisNet), WiFi.RSSI(thisNet));
     printEncryptionType(WiFi.encryptionType(thisNet));
     Serial.flush();
   }
