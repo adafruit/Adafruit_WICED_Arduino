@@ -1,5 +1,5 @@
 /*
-  WiFiUdp.h - Library for Arduino Wifi shield.
+  WiFiFeatherUdp.h - Library for Arduino Wifi shield.
   Copyright (c) 2011-2014 Arduino.  All right reserved.
 
   This library is free software; you can redistribute it and/or
@@ -17,8 +17,8 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef WIFIUDP_H
-#define WIFIUDP_H
+#ifndef WIFIFEATHERUDP_H
+#define WIFIFEATHERUDP_H
 
 #include <Udp.h>
 
@@ -78,4 +78,4 @@ public:
 
 };
 
-#endif /* WIFIUDP_H */
+#endif /* WIFIFEATHERUDP_H */

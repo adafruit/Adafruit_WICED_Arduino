@@ -15,7 +15,7 @@
 
 #include <SPI.h>
 #include <WiFiFeather.h>
-#include <WiFiUdp.h>
+#include <WiFiFeatherUdp.h>
 
 int status = WL_IDLE_STATUS;
 char ssid[] = "yourNetwork"; //  your network SSID (name)

@@ -1,5 +1,5 @@
 /*
-  WiFiUdp.cpp - Library for Arduino Wifi shield.
+  WiFiFeatherUdp.cpp - Library for Arduino Wifi shield.
   Copyright (c) 2011-2014 Arduino.  All right reserved.
 
   This library is free software; you can redistribute it and/or
@@ -19,7 +19,7 @@
 
 #include <string.h>
 #include "WiFiFeather.h"
-#include "WiFiUdp.h"
+#include "WiFiFeatherUdp.h"
 #include "WiFiFeatherClient.h"
 //#include "WiFiServer.h"
 
