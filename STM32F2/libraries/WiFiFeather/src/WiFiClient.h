@@ -17,8 +17,8 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef WIFICLIENT_H
-#define WIFICLIENT_H
+#ifndef WIFIFEATHERCLIENT_H
+#define WIFIFEATHERCLIENT_H
 
 #include <Arduino.h>
 #include <Client.h>
@@ -83,4 +83,4 @@ protected:
 	void install_callback(void);
 };
 
-#endif /* WIFICLIENT_H */
+#endif /* WIFIFEATHERCLIENT_H */
