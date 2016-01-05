@@ -2,7 +2,11 @@
   WICED Feather Tester
 
   Tests every pin on the Adafruit WICED Feather board
+
+  The following libraries are required to use this sketch:
   
+  - Adafruit_GPS
+    
   created 28 Dec. 2015
   by K. Townsend (KTOWN)
 */
@@ -40,7 +44,8 @@ void display_menu()
   Serial.println("Select a test to run:");
   Serial.println("");
   Serial.println("[1]  - ADC Input Test");
-  Serial.println("[2]  - GPS Test - UART1");
+  Serial.println("[2]  - VBAT Test (SJ1 Closed)");
+  Serial.println("[3]  - GPS Test - UART1");
   Serial.println("");
   Serial.println("Enter you selection in the Serial Monitor and press <enter>");
   Serial.println("");
@@ -103,6 +108,52 @@ void run_adc_test()
 
 */
 /**************************************************************************/
+void run_vbat_test()
+{
+  float vbatLSB   = 0.80566F;  // mV per LSB to convert raw values to volts
+
+  // Set the pin to ADC
+  pinMode(PA1, INPUT_ANALOG);
+
+  Serial.println("VBAT Tester");
+  Serial.println("-------------------------------------------------------------------------------");
+  Serial.println("This reads the voltage level on the JST connector, and requires that SJ1 is ");
+  Serial.println("soldered closed on the bottom of the PCB (to route VBAT through the 10K+10K");
+  Serial.println("volage divider and into pin A1)");
+  Serial.println("");
+
+  // Read the analog in value (twice since the very first reading can be off):
+  int vbatADC = analogRead(PA1);
+  vbatADC = analogRead(PA1);
+
+  // Multiply the ADC by mV per LSB, and then
+  // double the output to compensate for the
+  // 10K+10K voltage divider
+  float vbatFloat = ((float)vbatADC * vbatLSB) * 2.0F;
+
+  // Print the results to the serial monitor:
+  Serial.print("VBAT = " );
+  Serial.print(vbatFloat/1000, 4); // Adjust to display in volts
+  Serial.print("V (");
+  Serial.print(vbatADC);
+  Serial.print(") - ");
+
+  // Display the power source
+  if (vbatADC > 2650)
+  {
+    Serial.println("USB Power");
+  }
+  else
+  {
+    Serial.println("LIPO Power");
+  }  
+}
+
+/**************************************************************************/
+/*!
+
+*/
+/**************************************************************************/
 void run_gps_test()
 {
   Serial.println("GPS Test");
@@ -148,6 +199,9 @@ void loop()
         run_adc_test();
         break;
       case 2:
+        run_vbat_test();
+        break;
+      case 3:
         run_gps_test();
         break;
       default:
