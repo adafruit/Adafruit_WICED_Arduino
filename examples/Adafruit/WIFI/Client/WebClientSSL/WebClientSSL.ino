@@ -44,7 +44,7 @@
 * 5. Compile and run this sketch
 */
 
-#include <WiFi101.h>
+#include <WiFiFeather.h>
 #include <AdafruitNet.h>
 #include "certificates.h"
 

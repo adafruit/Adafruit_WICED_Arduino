@@ -18,7 +18,7 @@
 */
 
 #include <string.h>
-#include "WiFi101.h"
+#include "WiFiFeather.h"
 #include "WiFiUdp.h"
 #include "WiFiClient.h"
 //#include "WiFiServer.h"
