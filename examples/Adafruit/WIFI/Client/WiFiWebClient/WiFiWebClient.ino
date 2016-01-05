@@ -19,7 +19,7 @@
  by Tom Igoe
  */
 
-#include <WiFi101.h>
+#include <WiFiFeather.h>
 
 char ssid[] = "yourNetwork";     //  your network SSID (name)
 char pass[] = "secretPassword";  // your network password (use for WPA, or use as key for WEP)

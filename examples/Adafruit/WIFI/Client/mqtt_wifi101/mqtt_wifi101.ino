@@ -9,7 +9,7 @@
   Derived from the code written by Limor Fried/Ladyada for Adafruit Industries.
   MIT license, all text above must be included in any redistribution
  ****************************************************/
-#include <WiFi101.h>
+#include <WiFiFeather.h>
 #include "Adafruit_MQTT.h"
 #include "Adafruit_MQTT_Client.h"
 
@@ -27,7 +27,7 @@ char pass[] = "secretPassword";  // your network password (use for WPA, or use a
 
 /************ Global State (you don't need to change this!) ******************/
 
-//Set up the wifi101 client
+//Set up the WiFiFeather client
 WiFiClient client;
 
 // Store the MQTT server, client ID, username, and password in flash memory.

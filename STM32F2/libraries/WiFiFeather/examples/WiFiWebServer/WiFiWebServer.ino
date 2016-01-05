@@ -19,7 +19,7 @@
  */
 
 #include <SPI.h>
-#include <WiFi101.h>
+#include <WiFiFeather.h>
 
 
 char ssid[] = "yourNetwork";      // your network SSID (name)

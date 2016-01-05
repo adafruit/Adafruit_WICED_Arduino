@@ -45,6 +45,7 @@
 */
 
 #include <WiFiFeather.h>
+#include <WiFiClient.h>
 #include <AdafruitNet.h>
 #include "certificates.h"
 

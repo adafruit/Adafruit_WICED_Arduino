@@ -1,15 +1,15 @@
 /*
- * This example check if the firmware loaded on the Wifi101
+ * This example check if the firmware loaded on the WiFiFeather
  * shield is updated.
  *
  * Circuit:
- * - WiFi101 Shield attached
+ * - WiFiFeather Shield attached
  *
  * Created 29 July 2015 by Cristian Maglie
  * This code is in the public domain.
  */
 #include <SPI.h>
-#include <WiFi101.h>
+#include <WiFiFeather.h>
 
 void setup() {
   // Initialize serial
@@ -19,7 +19,7 @@ void setup() {
   }
 
   // Print a welcome message
-  Serial.println("WiFi101 firmware check.");
+  Serial.println("WiFiFeather firmware check.");
   Serial.println();
 
   // Print firmware version on the shield

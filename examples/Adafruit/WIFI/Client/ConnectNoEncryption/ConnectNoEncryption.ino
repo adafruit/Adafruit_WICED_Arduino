@@ -13,7 +13,7 @@
  by Tom Igoe
  */
 #include <SPI.h>
-#include <WiFi101.h>
+#include <WiFiFeather.h>
 
 char ssid[] = "yourNetwork";     // the name of your network
 int status = WL_IDLE_STATUS;     // the Wifi radio's status

@@ -16,7 +16,7 @@
 
 
 #include <SPI.h>
-#include <WiFi101.h>
+#include <WiFiFeather.h>
 
 void setup() {
   //Initialize serial and wait for port to open:

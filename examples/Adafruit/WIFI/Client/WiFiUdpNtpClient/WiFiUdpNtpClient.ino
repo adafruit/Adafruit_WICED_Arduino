@@ -17,7 +17,7 @@
  */
 
 #include <SPI.h>
-#include <WiFi101.h>
+#include <WiFiFeather.h>
 #include <WiFiUdp.h>
 
 int status = WL_IDLE_STATUS;

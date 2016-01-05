@@ -1,5 +1,5 @@
 /*
-  WiFi.h - Library for Arduino Wifi shield.
+  WiFiFeather.h - Library for Arduino Wifi shield.
   Copyright (c) 2011-2014 Arduino.  All right reserved.
   Copyright (c) 2015 Adafruit Industries. All rights reserved.
 
@@ -18,8 +18,8 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef WIFI_H
-#define WIFI_H
+#ifndef WIFIFEATHER_H
+#define WIFIFEATHER_H
 
 #include <Arduino.h>
 #include "WiFiClient.h"
@@ -184,4 +184,4 @@ class WiFiClass
 
 extern WiFiClass WiFi;
 
-#endif /* WIFI_H */
+#endif /* WIFIFEATHER_H */
