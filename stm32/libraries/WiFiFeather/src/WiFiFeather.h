@@ -22,7 +22,7 @@
 #define WIFIFEATHER_H
 
 #include <Arduino.h>
-#include "WiFiClient.h"
+#include "WiFiFeatherClient.h"
 //#include "WiFiServer.h"
 
 #define WIFI_FIRMWARE_REQUIRED    "0.1.0"

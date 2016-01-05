@@ -20,7 +20,7 @@
 #include <string.h>
 #include "WiFiFeather.h"
 #include "WiFiUdp.h"
-#include "WiFiClient.h"
+#include "WiFiFeatherClient.h"
 //#include "WiFiServer.h"
 
 /* Constructor. */

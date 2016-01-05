@@ -1,5 +1,5 @@
 /*
-  WiFiClient.cpp - Library for Arduino Wifi shield.
+  WiFiFeatherClient.cpp - Library for Arduino Wifi shield.
   Copyright (c) 2011-2014 Arduino.  All right reserved.
 
   This library is free software; you can redistribute it and/or
@@ -18,7 +18,7 @@
 */
 
 #include "WiFiFeather.h"
-#include "WiFiClient.h"
+#include "WiFiFeatherClient.h"
 
 #if 0
 WiFiClient::WiFiClient(uint8_t sock, uint8_t parentsock)
