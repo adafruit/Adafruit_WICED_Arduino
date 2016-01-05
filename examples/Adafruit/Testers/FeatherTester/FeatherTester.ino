@@ -125,7 +125,7 @@ void loop()
   while((Serial.peek() != 255) && !selection)
   {
     char incoming = Serial.read();
-    if (isdigit(incoming))
+    if (isDigit(incoming))
     {
       // Append the current digit to the string placeholder
       user_input += (char)incoming;
