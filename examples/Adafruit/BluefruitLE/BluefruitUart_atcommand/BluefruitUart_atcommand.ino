@@ -14,7 +14,7 @@
 
 #include <Arduino.h>
 #include <SPI.h>
-#if not defined (_VARIANT_ARDUINO_DUE_X_) && not defined (_VARIANT_ARDUINO_ZERO_) && not defined (ARDUINO_STM32F2_FEATHER)
+#if not defined (_VARIANT_ARDUINO_DUE_X_) && not defined (_VARIANT_ARDUINO_ZERO_) && not defined (ARDUINO_STM32_FEATHER)
   #include <SoftwareSerial.h>
 #endif
 

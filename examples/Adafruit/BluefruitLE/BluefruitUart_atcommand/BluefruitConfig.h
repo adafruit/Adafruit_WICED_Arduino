@@ -22,7 +22,7 @@
 // The following macros declare the HW serial port you are using. Uncomment
 // this line if you are connecting the BLE to Leonardo/Micro or Flora
 // ----------------------------------------------------------------------------------------------
-#ifdef ARDUINO_STM32F2_FEATHER
+#ifdef ARDUINO_STM32_FEATHER
   #define BLUEFRUIT_HWSERIAL_NAME      Serial2
 #elif defined Serial1    // this makes it not complain on compilation if there's no Serial1
   #define BLUEFRUIT_HWSERIAL_NAME      Serial1
@@ -43,7 +43,7 @@
 // using HW SPI.  This should be used with nRF51822 based Bluefruit LE modules
 // that use SPI (Bluefruit LE SPI Friend).
 // ----------------------------------------------------------------------------------------------
-#ifdef ARDUINO_STM32F2_FEATHER
+#ifdef ARDUINO_STM32_FEATHER
   #define BLUEFRUIT_SPI_CS               PA1
   #define BLUEFRUIT_SPI_IRQ              PC5
   #define BLUEFRUIT_SPI_RST              PC3  // Optional but recommended, set to -1 if unused
