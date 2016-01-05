@@ -18,7 +18,7 @@
   LIPO Power (3.2-4.25V) = 1985 - 2637
 
   When no LIPO is attached, the output of the LIPO charger will
-  output ~4.3V, which means any value > ~2670 on the ADC likely
+  output ~4.3V, which means any value > ~2650 on the ADC likely
   means there is no LIPO battery connected and we are running from
   USB power.
 
@@ -60,7 +60,7 @@ void loop()
   Serial.print(") - ");
 
   // Display the power source
-  if (vbatADC > 2670)
+  if (vbatADC > 2650)
   {
     Serial.println("USB Power");
   }
