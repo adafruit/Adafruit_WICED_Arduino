@@ -201,6 +201,19 @@ sdep_err_t AdafruitFeather::stopAP(void)
 
 /******************************************************************************/
 /*!
+    @brief  Returns the current RSSI level
+
+    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
+            a specific error if something went wrong.
+*/
+/******************************************************************************/
+sdep_err_t AdafruitFeather::getRSSI(int8_t *rssi)
+{
+  return FEATHERLIB->sdep_execute(SDEP_CMD_WIFI_GET_RSSI, 0, NULL, NULL, (uint8_t*)rssi);
+}
+
+/******************************************************************************/
+/*!
     @brief  Return the results from an ICMP ping against a specified IP address
 
     @param[in]      ip_address_str    String of ip address (e.g. "192.168.1.100")

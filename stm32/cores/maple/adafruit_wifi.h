@@ -192,6 +192,7 @@ public:
   sdep_err_t startAP(char* ssid, char* passwd);
   sdep_err_t startAP(void);
   sdep_err_t stopAP(void);
+  sdep_err_t getRSSI(int8_t *rssi);
 
   /* Network Commands */
   sdep_err_t ping(char* ip_address_str, uint8_t* response_time);
