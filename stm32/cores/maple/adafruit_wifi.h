@@ -184,6 +184,7 @@ public:
   AdafruitFeather(void);
 
   sdep_err_t randomNumber(uint32_t* random32bit);
+  sdep_err_t factoryReset(void);
 
   /* WiFi Commands */
   sdep_err_t scan(uint16_t* length, uint8_t* ap_details);

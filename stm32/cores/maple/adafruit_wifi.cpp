@@ -71,6 +71,20 @@ sdep_err_t AdafruitFeather::randomNumber(uint32_t* random32bit)
 
 /******************************************************************************/
 /*!
+    @brief  Performs a factory reset
+
+    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
+            a specific error if something went wrong.
+*/
+/******************************************************************************/
+sdep_err_t AdafruitFeather::factoryReset(void)
+{
+  return FEATHERLIB->sdep_execute(SDEP_CMD_FACTORYRESET, 0, NULL, NULL, NULL);
+}
+
+
+/******************************************************************************/
+/*!
     @brief  Starts scanning for WiFi APs in range
 
     @param[out]     length      Length of ap_details buffer
