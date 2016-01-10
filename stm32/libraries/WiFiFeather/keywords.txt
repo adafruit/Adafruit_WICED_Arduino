@@ -41,6 +41,20 @@ WiFiServer	KEYWORD2
 WiFiUDP	KEYWORD2
 WiFiSSLClient	KEYWORD2
 printf	KEYWORD2
+usePacketBuffering	KEYWORD2
+firmwareVersion	KEYWORD2
+saveProfile	KEYWORD2
+addProfile	KEYWORD2
+removeProfile	KEYWORD2
+checkProfile	KEYWORD2
+clearProfiles	KEYWORD2
+profileSSID	KEYWORD2
+profileEncryptionType	KEYWORD2
+beginAP	KEYWORD2
+config	KEYWORD2
+scanNetworks	KEYWORD2
+hostByName	KEYWORD2
+
 
 #######################################
 # Constants (LITERAL1)

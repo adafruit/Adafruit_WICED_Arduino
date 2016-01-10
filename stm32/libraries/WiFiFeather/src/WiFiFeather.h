@@ -120,7 +120,6 @@ class WiFiClass
 
     /* Public functions */
     int       init            ( void ) { return 1; }
-
     char*     firmwareVersion ( void );
 
     uint8_t   begin           ( void );
