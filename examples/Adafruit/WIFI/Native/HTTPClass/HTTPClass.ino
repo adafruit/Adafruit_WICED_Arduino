@@ -93,27 +93,16 @@ int connectAP()
   return error;
 }
 
-<<<<<<< HEAD
-int receive_callback(void* arg1, void* arg2)
-{
-  (void) arg1; // reserve for future
-  (void) arg2; // reserve for future
-  
-  Serial.println("receive callback");
-  
-  // if there are incoming bytes available
-  // from the server, read them and print them:
-  while (adaHttp.available()) {
-=======
 /**************************************************************************/
 /*!
     @brief This function is called whenever a new packet is received due to
            the adaHttp.sendRequest function
 */
 /**************************************************************************/
-int receive_callback(void* arg)
+int receive_callback(void* arg1, void* arg2)
 {
-  (void) arg; // reserve for future
+  (void) arg1; // reserve for future
+  (void) arg2; // reserve for future
 
   Serial.println("\r\nReceive callback");
 
@@ -146,7 +135,6 @@ int receive_callback(void* arg)
   // Read the content of response
   while (adaHttp.available())
   {
->>>>>>> 04965d0c2b6e3f27fe3078c4befa9301a60f40bf
     char c = adaHttp.read();
     Serial.write(c);
   }

@@ -267,7 +267,7 @@ int AdafruitHTTP::available()
   return result;
 }
 
-void AdafruitHTTP::setReceivedCallback( int (*fp) (void*) )
+void AdafruitHTTP::setReceivedCallback( int (*fp) (void*, void*) )
 {
   rx_callback = fp;
 }

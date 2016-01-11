@@ -55,7 +55,7 @@ private:
   uint8_t     isTLSEnable;
   uint32_t    byteRead;
 
-  int (*rx_callback) (void *);
+  int (*rx_callback) (void *, void*);
   void reset();
 
 public:
@@ -78,7 +78,7 @@ public:
   void close();
 
   // callback
-  void setReceivedCallback( int (*fp) (void*) );
+  void setReceivedCallback( int (*fp) (void*, void*) );
 };
 
 #endif
