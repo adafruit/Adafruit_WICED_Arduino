@@ -53,13 +53,14 @@
 #include "adafruit_http.h"
 #include "certificate.h"
 
-#define WLAN_SSID            "SSID"
-#define WLAN_PASS            "PASSWORD"
+#define WLAN_SSID           "SSID"
+#define WLAN_PASS           "PASSWORD"
 
-#define URL                  "github.com"
+#define URL                 "www.adafruit.com/testwifi/index.html"
 #define CONTENT              ""
 #define METHOD               GET_METHOD
 
+#define ENABLE_TLS           0
 
 int           wifi_error  = -1;    // FAIL
 AdafruitHTTP  adaHttp;
@@ -161,11 +162,13 @@ void setup()
   // Register the async callback handler
   adaHttp.setReceivedCallback(receive_callback);
 
-  // Init Root CA Certificate Chain
-  adaHttp.initCACerts(ca_cert);
-
-  // Enable TLS
-  adaHttp.enableTLS();
+  #if ENABLE_TLS
+    // Init Root CA Certificate Chain
+    adaHttp.initCACerts(ca_cert);
+  
+    // Enable TLS
+    adaHttp.enableTLS();
+  #endif
 
   // Try to connect to the access point
   wifi_error = connectAP();
