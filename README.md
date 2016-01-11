@@ -1,65 +1,89 @@
 # Adafruit WICED Arduino
 
-This private repo contains files used for the WICED/STM32F205 and Arduino IDE integration work.  
+This repository contains files used for the Adafruit WICED Feather WiFi board,
+and allows the WICED Feather to be used within the Arduino IDE.
 
-These files will eventually end up in the /hardware folder of the Arduino IDE.
-
-## Preparing the Hardware
-
-This library will require that the WICED firmware and USB DFU bootloader has already been flashed to the device via the [Adafruit_BroadcomWiFi_Core](https://github.com/adafruit/Adafruit_BroadcomWiFi_Core) repo.
-
-From the **development** branch, run `make clean all flash-all` in the `projects/adafruittest` folder with a Segger J-Link connected.  Be sure to connect VTRef to 3.3V on the WICED development board in addition to the SWDIO, SWCLK and Reset pins.
+These files should be placed in the `hardware` folder of the Arduino IDE, as
+detailed below:
 
 ## Arduino Setup
 
-- Create a **hardware** folder in `~/Documents/Arduino` (OS X) or `My Documents\Arduino` (Windows) if it doesn't already exist
-- Clone this repo to the root of the hardware folder, or download as a .zip and unzip it in `hardware/Adafruit_WICED_Arduino`
+- Create a **hardware** folder in `~/Documents/Arduino` (OS X) or
+  `My Documents\Arduino` (Windows) if it doesn't already exist
+- Clone this repo to the root of the hardware folder, or download as a .zip and
+  unzip it in `hardware/Adafruit_WICED_Arduino`
 
 	```
-	git clone git@github.com:adafruit/Adafruit_WICED_Arduino.git
+	git clone https://github.com/adafruit/Adafruit_WICED_Arduino.git
 	```
 
 - Install the necessary GCC toolchain for ARM: Tools->Board->Board Manager --> Download **Arduino SAM Boards (32-bits ARM Cortex-M3)**
 - Restart the Arduino IDE
 - Install [dfu-util](http://dfu-util.sourceforge.net/)
 
-	On OS X you can install dfu-util via:
+	On **OS X** you can install dfu-util via:
 	```
 	brew install dfu-util
 	```
-	On Windows dfu-util.exe is already added in the `tools/windows/dfu-util`. To install driver for bootloader, you can use [Zadig](http://zadig.akeo.ie/) to map the DFU device to libusb or choose windows driver in `drivers/windows` 
-	
-- Install Python 2.7, python-pip, pyusb, click (we use a python script to flash the boards for now)
+
+	On **Windows** dfu-util.exe already exists in `tools/windows/dfu-util`.
+
+  To install the drivers for the bootloader on Windows, you can use the .inf
+  files in in `drivers/windows`.
+
+- Install Python 2.7, python-pip, pyusb, click (we use `tools/feather_dfu.py`
+  to flash the device over USB DFU from the Arduino IDE):
 
 	```
 	pip install --pre pyusb
 	pip install click
 	```
 
-- Install [AdaLink](https://github.com/adafruit/Adafruit_Adalink), which is used to flash the bootloader
+- Install [AdaLink](https://github.com/adafruit/Adafruit_Adalink), which is
+  used to flash the bootloader (optional)
 
-## Burnning bootloader
+## Flashing the Bootloader (Optional)
 
-This requires either jlink or stlink v2 as programmer.
+This library requires the USB DFU bootloader to have previously been flashed
+to the device.
 
-- In the "Tools > Board" menu select **Adafruit Feather** as the hardware target
-- In "Tools > Programmer", select either **Jlink with Adalink** or **Stlink v2 with Adalink**
+All devices ship from Adafruit with the bootloader in place and you should
+almost never have to worry about flashing this yourself, but if necessary you
+can reflash the bootloader using a Segger J-Link or an ST ST-Link/V2:
 
-then select "Tools > Burn bootloader", this will also perform a whole chip erased (which does take some time).
+- In the **Tools > Board** menu select **Adafruit WICED Feather**
+- Select the appropriate debugger in **Tools > Programmer** (ex.: `JLink with AdaLink`)
+- Connect the debug probe to the SWD pins on the modules (including setting
+  the VTRef pin to 3.3V if you are using a Segger J-Link)
+- Select **Burn Bootloader**
+
+Note that this will also perform a full flash erase, which may take some time.
+
+For internal development (if you have access to the NDA restricted [Adafruit_BroadcomWiFi_Core](https://github.com/adafruit/Adafruit_BroadcomWiFi_Core)
+repo), go to the **development** branch, and run `make clean all flash-all` in
+the `projects/adafruittest` folder with a Segger J-Link connected.  Be sure to
+connect VTRef to 3.3V on the WICED development board in addition to the SWDIO,
+SWCLK and Reset pins.
 
 ## Flashing featherlib
 
-After burning bootloader, you need to flash featherlib which contain all Adafruit wifi library. It resides on a different flash bank than Arduino sketch and only need to be flashed once.
+Once the bootloader is in place, you need to flash featherlib which contains
+the Adafruit WiFi library. It resides on a different flash bank than the Arduino
+sketch and only needs to be flashed once, unless an update is available at
+which point it should be flashed again.
 
-- Choose "Tools > Section > Featherlib"
-- Click on upload icon to start uploading featherlib/featherlib.bin (Arduino will try to compile the current sketch, but it is really irrelevant)
+- Choose **Tools > Section > Featherlib**
+- Click the upload icon to start uploading `featherlib/featherlib.bin`
+  (Arduino will try to compile the current sketch, but it is irrelevant)
 
-It will take awhile to upload featherlib due to its massive size.
+It will take a moment to upload featherlib due to the file size.
 
 ## Building a Project
 
-- Click the "File > Open ..." menu item and load the **blink.ino** sketch in the hardware folder created above (`Adafruit_WICED_Arduino/examples/Digital/Blink/Blink.ino`)
-- Build then flash the sketch as normal. You don't need to select a specific debugger since USB-DFU should run via a Python script:
+- Click the **File > Open ...** menu item and load your sketch
+- Make sure the Section is set to `User Code` in **Tools > Section**
+- Build then flash the sketch as normal. You don't need to select a specific
+  debugger since USB-DFU should run via a Python script:
 
 ```
 Sketch uses 15,148 bytes (1%) of program storage space. Maximum is 1,048,576 bytes.
