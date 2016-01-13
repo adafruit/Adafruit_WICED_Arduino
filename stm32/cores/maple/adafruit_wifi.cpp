@@ -167,24 +167,18 @@ sdep_err_t AdafruitFeather::disconnectAP(void)
 /******************************************************************************/
 sdep_err_t AdafruitFeather::startAP(char* ssid, char* passwd)
 {
-  if (ssid == NULL || ssid == "") return ERROR_INVALIDPARAMETER;
+  if (ssid == NULL || ssid == "" || passwd == NULL) return ERROR_INVALIDPARAMETER;
 
-  uint16_t payload_len = strlen(ssid);
-  if (passwd != NULL) payload_len += strlen(passwd) + 1;
-
-  char* payload = (char*)malloc(payload_len);
-
-  strcpy(payload, ssid);
-  if (passwd != NULL)
+  sdep_cmd_para_t para_arr[] =
   {
-    strcat(payload, ",");
-    strcat(payload, passwd);
-  }
+      { .len = strlen(ssid)  , .p_value = ssid   },
+      { .len = strlen(passwd), .p_value = passwd },
+  };
 
-  sdep_err_t error = FEATHERLIB->sdep_execute(SDEP_CMD_APSTART, payload_len,
-                                              (uint8_t*)payload, NULL, NULL);
-  free(payload);
-  return error;
+  uint16_t err = FEATHERLIB->sdep_execute_n(SDEP_CMD_APSTART,
+                                            sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                            NULL, NULL);
+  return err;
 }
 
 /******************************************************************************/
