@@ -199,7 +199,7 @@ public:
   /* Network Commands */
   sdep_err_t ping(char* ip_address_str, uint8_t* response_time);
   sdep_err_t ping(uint8_t* ip_address, uint8_t* response_time);
-  sdep_err_t dnsLookup(char* dns, uint8_t* ipv4_address);
+  sdep_err_t dnsLookup(const char* dns, uint8_t* ipv4_address);
   sdep_err_t getTime(char* iso8601_time);
   sdep_err_t httpGetUri(char* uri, uint16_t* length, uint8_t* response);
   sdep_err_t httpPost(char* uri, uint16_t* length, uint8_t* response);

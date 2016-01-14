@@ -38,6 +38,7 @@
 #define _ADAFRUIT_TCP_H_
 
 #include <Arduino.h>
+#include <IPAddress.h>
 
 typedef enum {
   IDLE,
@@ -57,7 +58,8 @@ private:
   void reset();
 
 public:
-  AdafruitTCP(uint16_t socket_number);
+  //AdafruitTCP(uint16_t socket_number);
+  AdafruitTCP(void);
 
   void setTimeout(uint32_t ms);
   int  read();
@@ -65,6 +67,10 @@ public:
   int  write(const char* content, uint16_t len);
   int  available();
   void close();
+  void flush(void);
+
+  bool connect(IPAddress ip, uint16_t port);
+	bool connect(const char* host, uint16_t port);
 
   // callback
   void setReceivedCallback( int (*fp) (void*, void*) );

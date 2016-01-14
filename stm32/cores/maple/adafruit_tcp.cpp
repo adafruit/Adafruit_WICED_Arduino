@@ -42,11 +42,12 @@
     @brief Instantiates a new instance of the AdafruitTCP class
 */
 /******************************************************************************/
-AdafruitTCP::AdafruitTCP(uint16_t socket_number)
+//AdafruitTCP::AdafruitTCP(uint16_t socket_number)
+AdafruitTCP::AdafruitTCP(void)
 {
   rx_callback   = NULL;
   timeout       = 1000;
-  socket        = socket_number;
+//  socket        = socket_number;
   this->reset();
 }
 
@@ -72,6 +73,37 @@ void AdafruitTCP::setTimeout(uint32_t ms)
   timeout = ms;
 }
 
+bool AdafruitTCP::connect(IPAddress ip, uint16_t port)
+{
+  uint32_t ipv4 = (uint32_t) ip;
+  uint8_t is_tls = 0;
+
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = 4, .p_value = &ipv4     },
+      { .len = 2, .p_value = &port     },
+      { .len = 1, .p_value = &is_tls   },
+      { .len = 4, .p_value = &this->timeout },
+  };
+
+  int err = FEATHERLIB->sdep_execute_n(SDEP_CMD_TCP_CONNECT,
+                                       sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                       NULL, &this->tcp_handle);
+  VERIFY(err == ERROR_NONE, false);
+
+//  this->install_callback();
+
+  return true;
+}
+
+bool AdafruitTCP::connect(const char* host, uint16_t port)
+{
+  uint8_t ipv4[4];
+  VERIFY(ERROR_NONE == feather.dnsLookup(host, ipv4), false);
+
+  return this->connect( IPAddress(ipv4), port);
+}
+
 /******************************************************************************/
 /*!
     @brief  Reads a single byte from the response stream
@@ -85,7 +117,6 @@ int AdafruitTCP::read()
   if ( tcp_handle == 0 ) return (-1);
 
   uint8_t b;
-  return ( this->read(&b, 1) > 0 ) ? b : (-1);
 
   if (this->read(&b, 1) > 0)
   {
@@ -131,12 +162,30 @@ int AdafruitTCP::read(uint8_t* buf, size_t size)
 /******************************************************************************/
 int AdafruitTCP::write(const char* content, uint16_t len)
 {
-  if (tcp_handle != 0) this->close();
+  if (tcp_handle != 0) return 0; //this->close();
 
-  // ToDo!
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = 4  , .p_value = &tcp_handle},
+      { .len = len, .p_value = content    }
+  };
 
-  //if (error == ERROR_NONE) tcp_state = REQUEST_SENT;
-  //return error;
+  VERIFY(ERROR_NONE == FEATHERLIB->sdep_execute_n(SDEP_CMD_TCP_WRITE,
+                                                sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                                NULL, NULL), 0);
+  this->flush();
+}
+
+
+void AdafruitTCP::flush()
+{
+  if ( tcp_handle == 0 ) return;
+
+  // flush is flush read !!!!
+  FEATHERLIB->sdep_execute(SDEP_CMD_TCP_FLUSH, 4, &tcp_handle, NULL, NULL);
+
+//	while (available())
+//		read();
 }
 
 /******************************************************************************/

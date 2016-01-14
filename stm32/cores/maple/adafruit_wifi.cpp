@@ -309,10 +309,10 @@ sdep_err_t AdafruitFeather::ping(uint8_t* ip_address, uint8_t* response_time)
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitFeather::dnsLookup(char* dns, uint8_t* ipv4_address)
+sdep_err_t AdafruitFeather::dnsLookup(char const * dns, uint8_t* ipv4_address)
 {
   return FEATHERLIB->sdep_execute(SDEP_CMD_DNSLOOKUP, strlen(dns),
-                                  (uint8_t*)dns, NULL, ipv4_address);
+                                  dns, NULL, ipv4_address);
 }
 
 /******************************************************************************/
