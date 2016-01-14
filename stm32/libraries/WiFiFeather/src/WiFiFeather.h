@@ -139,8 +139,9 @@ class WiFiClass
     char*     profileSSID           ( uint8_t pos);
     int32_t   profileEncryptionType ( uint8_t pos);
 
-    uint8_t   beginAP         ( char *ssid );                  /* Start WiFi in AP mode with open security */
-    uint8_t   beginAP         ( char *ssid, uint8_t channel ); /* Wifi channel can be 1-12 */
+    bool      beginAP         ( char *ssid );                  /* Start WiFi in AP mode with open security */
+    bool      beginAP         ( char *ssid, char* passwd, int enc_type = ENC_TYPE_WPA2_AES );   /* Start WiFi in AP mode with open security */
+//    uint8_t   beginAP         ( char *ssid, uint8_t channel ); /* Wifi channel can be 1-12 */
 
     uint8_t   beginProvision  ( char *ssid, char *url );
     uint8_t   beginProvision  ( char *ssid, char *url, uint8_t channel );

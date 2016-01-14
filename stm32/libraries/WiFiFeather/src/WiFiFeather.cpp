@@ -84,49 +84,33 @@ uint8_t WiFiClass::begin(const char *ssid, const char *key, int enc_type)
 	return _status;
 }
 
-uint8_t WiFiClass::beginAP(char *ssid)
+bool WiFiClass::beginAP(char *ssid)
 {
-	return beginAP(ssid, 1);
+  if (ssid == NULL || ssid == "") return false;
+
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = strlen(ssid)  , .p_value = ssid   },
+  };
+
+  uint16_t err = FEATHERLIB->sdep_execute_n(SDEP_CMD_APSTART,
+                                            sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                            NULL, NULL);
 }
 
-uint8_t WiFiClass::beginAP(char *ssid, uint8_t channel)
+bool WiFiClass::beginAP( char *ssid, char* passwd, int enc_type)
 {
-  return 0;
-#if 0
-	tstrM2MAPConfig strM2MAPConfig;
+  if (ssid == NULL || ssid == "" || passwd == NULL) return false;
 
-	if (!_init) {
-		init();
-	}
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = strlen(ssid)  , .p_value = ssid   },
+      { .len = strlen(passwd), .p_value = passwd },
+  };
 
-	// Enter Access Point mode:
-	memset(&strM2MAPConfig, 0x00, sizeof(tstrM2MAPConfig));
-	strcpy((char *)&strM2MAPConfig.au8SSID, ssid);
-	strM2MAPConfig.u8ListenChannel = channel;
-	strM2MAPConfig.u8SecType = M2M_WIFI_SEC_OPEN;
-	strM2MAPConfig.au8DHCPServerIP[0] = 0xC0; /* 192 */
-	strM2MAPConfig.au8DHCPServerIP[1] = 0xA8; /* 168 */
-	strM2MAPConfig.au8DHCPServerIP[2] = 0x01; /* 1 */
-	strM2MAPConfig.au8DHCPServerIP[3] = 0x01; /* 1 */
-	if (m2m_wifi_enable_ap(&strM2MAPConfig) < 0) {
-		_status = WL_CONNECT_FAILED;
-		return _status;
-	}
-	_status = WL_CONNECTED;
-	_mode = WL_AP_MODE;
-
-	memset(_ssid, 0, M2M_MAX_SSID_LEN);
-	memcpy(_ssid, ssid, strlen(ssid));
-	m2m_memcpy((uint8 *)&_localip, (uint8 *)&strM2MAPConfig.au8DHCPServerIP[0], 4);
-	_submask = 0x00FFFFFF;
-	_gateway = _localip;
-
-	// WiFi led ON.
-	m2m_periph_gpio_set_val(M2M_PERIPH_GPIO15, 0);
-
-	return _status;
-#endif
-
+  uint16_t err = FEATHERLIB->sdep_execute_n(SDEP_CMD_APSTART,
+                                            sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                            NULL, NULL);
 }
 
 uint8_t WiFiClass::beginProvision(char *ssid, char *url)
