@@ -91,7 +91,7 @@ bool AdafruitTCP::connect(IPAddress ip, uint16_t port)
                                        NULL, &this->tcp_handle);
   VERIFY(err == ERROR_NONE, false);
 
-//  this->install_callback();
+  this->install_callback();
 
   return true;
 }
@@ -203,6 +203,23 @@ int AdafruitTCP::available()
   return result;
 }
 
+void AdafruitTCP::install_callback(void)
+{
+  if (disconnect_callback == NULL && rx_callback == NULL) return;
+
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = 4, .p_value = &tcp_handle         },
+      { .len = 4, .p_value = &disconnect_callback },
+      { .len = 4, .p_value = &rx_callback         },
+  };
+
+  // TODO check case when read bytes < size
+  FEATHERLIB->sdep_execute_n(SDEP_CMD_TCP_SET_CALLBACK,
+                             sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                             NULL, NULL);
+}
+
 /******************************************************************************/
 /*!
     @brief  Sets the data received callback for the user code
@@ -211,6 +228,11 @@ int AdafruitTCP::available()
 void AdafruitTCP::setReceivedCallback( int (*fp) (void*, void*) )
 {
   rx_callback = fp;
+}
+
+void AdafruitTCP::setDisconnectCallback( int (*fp) (void*, void*))
+{
+  disconnect_callback = fp;
 }
 
 /******************************************************************************/

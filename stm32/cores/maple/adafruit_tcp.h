@@ -55,6 +55,8 @@ private:
   uint16_t    socket;
 
   int (*rx_callback) (void *, void*);
+  int (*disconnect_callback) (void *, void*);
+  void install_callback(void);
   void reset();
 
 public:
@@ -74,6 +76,7 @@ public:
 
   // callback
   void setReceivedCallback( int (*fp) (void*, void*) );
+  void setDisconnectCallback( int (*fp) (void*, void*));
 };
 
 #endif
