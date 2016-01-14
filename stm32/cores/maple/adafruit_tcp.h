@@ -54,29 +54,30 @@ private:
   uint32_t    bytesRead;
   uint16_t    socket;
 
-  int (*rx_callback) (void *, void*);
-  int (*disconnect_callback) (void *, void*);
-  void install_callback(void);
-  void reset();
+  // Callback signatures
+  int (*rx_callback)         ( void *, void * );
+  int (*disconnect_callback) ( void *, void * );
+
+  void install_callback ( void );
+  void reset ( void );
 
 public:
-  //AdafruitTCP(uint16_t socket_number);
-  AdafruitTCP(void);
+  AdafruitTCP ( void );
 
-  void setTimeout(uint32_t ms);
-  int  read();
-  int  read(uint8_t *buf, size_t size);
-  int  write(const char* content, uint16_t len);
-  int  available();
-  void close();
-  void flush(void);
+  void setTimeout ( uint32_t ms );
+  int  read       ( void );
+  int  read       ( uint8_t * buf, size_t size );
+  int  write      ( const char * content, uint16_t len );
+  int  available  ( void );
+  void close      ( void );
+  void flush      ( void );
 
-  bool connect(IPAddress ip, uint16_t port);
-	bool connect(const char* host, uint16_t port);
+  bool connect ( IPAddress ip, uint16_t port );
+  bool connect ( const char * host, uint16_t port );
 
-  // callback
-  void setReceivedCallback( int (*fp) (void*, void*) );
-  void setDisconnectCallback( int (*fp) (void*, void*));
+  // Set callback handlers
+  void setReceivedCallback   ( int (*fp) (void*, void*) );
+  void setDisconnectCallback ( int (*fp) (void*, void*) );
 };
 
 #endif

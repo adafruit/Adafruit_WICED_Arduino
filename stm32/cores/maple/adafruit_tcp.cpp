@@ -33,7 +33,6 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 /**************************************************************************/
-
 #include "adafruit_wifi.h"
 #include "adafruit_tcp.h"
 
@@ -42,12 +41,10 @@
     @brief Instantiates a new instance of the AdafruitTCP class
 */
 /******************************************************************************/
-//AdafruitTCP::AdafruitTCP(uint16_t socket_number)
 AdafruitTCP::AdafruitTCP(void)
 {
   rx_callback   = NULL;
   timeout       = 1000;
-//  socket        = socket_number;
   this->reset();
 }
 
@@ -73,6 +70,11 @@ void AdafruitTCP::setTimeout(uint32_t ms)
   timeout = ms;
 }
 
+/******************************************************************************/
+/*!
+    @brief
+*/
+/******************************************************************************/
 bool AdafruitTCP::connect(IPAddress ip, uint16_t port)
 {
   uint32_t ipv4 = (uint32_t) ip;
@@ -96,6 +98,11 @@ bool AdafruitTCP::connect(IPAddress ip, uint16_t port)
   return true;
 }
 
+/******************************************************************************/
+/*!
+    @brief
+*/
+/******************************************************************************/
 bool AdafruitTCP::connect(const char* host, uint16_t port)
 {
   uint8_t ipv4[4];
@@ -176,7 +183,11 @@ int AdafruitTCP::write(const char* content, uint16_t len)
   this->flush();
 }
 
-
+/******************************************************************************/
+/*!
+    @brief
+*/
+/******************************************************************************/
 void AdafruitTCP::flush()
 {
   if ( tcp_handle == 0 ) return;
@@ -203,6 +214,11 @@ int AdafruitTCP::available()
   return result;
 }
 
+/******************************************************************************/
+/*!
+    @brief  Passes the callback references to the lower WiFi layer
+*/
+/******************************************************************************/
 void AdafruitTCP::install_callback(void)
 {
   if (disconnect_callback == NULL && rx_callback == NULL) return;
@@ -230,6 +246,11 @@ void AdafruitTCP::setReceivedCallback( int (*fp) (void*, void*) )
   rx_callback = fp;
 }
 
+/******************************************************************************/
+/*!
+    @brief  Sets the disconnect callback for the user code
+*/
+/******************************************************************************/
 void AdafruitTCP::setDisconnectCallback( int (*fp) (void*, void*))
 {
   disconnect_callback = fp;
