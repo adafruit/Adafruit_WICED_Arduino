@@ -44,7 +44,7 @@
 AdafruitTCP::AdafruitTCP(void)
 {
   rx_callback   = NULL;
-  timeout       = 1000;
+//  timeout       = 1000;
   this->reset();
 }
 
@@ -65,10 +65,10 @@ void AdafruitTCP::reset()
     @brief
 */
 /******************************************************************************/
-void AdafruitTCP::setTimeout(uint32_t ms)
-{
-  timeout = ms;
-}
+//void AdafruitTCP::setTimeout(uint32_t ms)
+//{
+//  timeout = ms;
+//}
 
 /******************************************************************************/
 /*!
@@ -85,12 +85,12 @@ bool AdafruitTCP::connect(IPAddress ip, uint16_t port)
       { .len = 4, .p_value = &ipv4     },
       { .len = 2, .p_value = &port     },
       { .len = 1, .p_value = &is_tls   },
-      { .len = 4, .p_value = &this->timeout },
+      { .len = 4, .p_value = &_timeout },
   };
 
   int err = FEATHERLIB->sdep_execute_n(SDEP_CMD_TCP_CONNECT,
                                        sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
-                                       NULL, &this->tcp_handle);
+                                       NULL, &tcp_handle);
   VERIFY(err == ERROR_NONE, false);
 
   this->install_callback();
@@ -105,10 +105,10 @@ bool AdafruitTCP::connect(IPAddress ip, uint16_t port)
 /******************************************************************************/
 bool AdafruitTCP::connect(const char* host, uint16_t port)
 {
-  uint8_t ipv4[4];
-  VERIFY(ERROR_NONE == feather.dnsLookup(host, ipv4), false);
+  uint32_t ipv4;
+  VERIFY(ERROR_NONE == feather.dnsLookup(host, (uint8_t*)&ipv4), false);
 
-  return this->connect( IPAddress(ipv4), port);
+  return this->connect( IPAddress(ipv4) , port);
 }
 
 /******************************************************************************/
@@ -151,7 +151,7 @@ int AdafruitTCP::read(uint8_t* buf, size_t size)
   {
       { .len = 4, .p_value = &tcp_handle },
       { .len = 2, .p_value = &size16      },
-      { .len = 4, .p_value = &timeout     },
+      { .len = 4, .p_value = &_timeout     },
   };
 
   // TODO check case when read bytes < size
@@ -164,12 +164,22 @@ int AdafruitTCP::read(uint8_t* buf, size_t size)
 
 /******************************************************************************/
 /*!
-    @brief  Writes the specified bumber of bytes
+    @brief  Writes a byte
 */
 /******************************************************************************/
-int AdafruitTCP::write(const char* content, uint16_t len)
+size_t AdafruitTCP::write( uint8_t b)
 {
-  if (tcp_handle != 0) return 0; //this->close();
+  return write(&b, 1);
+}
+
+/******************************************************************************/
+/*!
+    @brief  Writes the specified number of bytes
+*/
+/******************************************************************************/
+size_t AdafruitTCP::write(const uint8_t* content, size_t len)
+{
+  if (tcp_handle == 0) return 0; //this->close();
 
   sdep_cmd_para_t para_arr[] =
   {
@@ -178,9 +188,11 @@ int AdafruitTCP::write(const char* content, uint16_t len)
   };
 
   VERIFY(ERROR_NONE == FEATHERLIB->sdep_execute_n(SDEP_CMD_TCP_WRITE,
-                                                sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
-                                                NULL, NULL), 0);
+                                                  sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                                  NULL, NULL), 0);
   this->flush();
+
+  return len;
 }
 
 /******************************************************************************/
@@ -212,6 +224,29 @@ int AdafruitTCP::available()
   VERIFY(ERROR_NONE == FEATHERLIB->sdep_execute(SDEP_CMD_TCP_AVAILABLE, 4, &tcp_handle, NULL, &result), 0);
 
   return result;
+}
+
+/******************************************************************************/
+/*!
+    @brief
+*/
+/******************************************************************************/
+int AdafruitTCP::peek()
+{
+  if ( tcp_handle == 0 ) return EOF;
+
+  uint8_t ch;
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = 4, .p_value = &tcp_handle },
+      { .len = 4, .p_value = &_timeout    },
+  };
+
+  VERIFY(ERROR_NONE == FEATHERLIB->sdep_execute_n(SDEP_CMD_TCP_PEEK,
+                                                sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                                NULL, &ch), -1);
+
+  return (int) ch;
 }
 
 /******************************************************************************/
