@@ -44,7 +44,6 @@
 AdafruitTCP::AdafruitTCP(void)
 {
   rx_callback   = NULL;
-//  timeout       = 1000;
   this->reset();
 }
 
@@ -59,16 +58,6 @@ void AdafruitTCP::reset()
   tcp_handle   = 0;
   bytesRead    = 0;
 }
-
-/******************************************************************************/
-/*!
-    @brief
-*/
-/******************************************************************************/
-//void AdafruitTCP::setTimeout(uint32_t ms)
-//{
-//  timeout = ms;
-//}
 
 /******************************************************************************/
 /*!
@@ -207,8 +196,8 @@ void AdafruitTCP::flush()
   // flush is flush read !!!!
   FEATHERLIB->sdep_execute(SDEP_CMD_TCP_FLUSH, 4, &tcp_handle, NULL, NULL);
 
-//	while (available())
-//		read();
+//  while (available())
+//    read();
 }
 
 /******************************************************************************/

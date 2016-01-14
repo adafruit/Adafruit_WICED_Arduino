@@ -50,7 +50,6 @@ class AdafruitTCP : public Stream
 private:
   tcpState_t  tcp_state;
   uint32_t    tcp_handle;
-//  uint32_t    timeout;
   uint32_t    bytesRead;
 
   // Callback signatures
@@ -63,17 +62,16 @@ private:
 public:
   AdafruitTCP ( void );
 
-//  void setTimeout ( uint32_t ms );
   virtual int    read       ( void );
   virtual int    read       ( uint8_t * buf, size_t size );
   virtual size_t write      ( uint8_t );
-	virtual size_t write      ( const uint8_t *content, size_t len );
+  virtual size_t write      ( const uint8_t *content, size_t len );
   virtual int    available  ( void );
   virtual int    peek       ( void );
   virtual void   close      ( void );
   virtual void   flush      ( void );
 
-	using Print::write;
+  using Print::write;
 
   bool connect ( IPAddress ip, uint16_t port );
   bool connect ( const char * host, uint16_t port );
