@@ -52,7 +52,6 @@ private:
   uint32_t    tcp_handle;
   uint32_t    timeout;
   uint32_t    bytesRead;
-  uint16_t    socket;
 
   // Callback signatures
   int (*rx_callback)         ( void *, void * );
