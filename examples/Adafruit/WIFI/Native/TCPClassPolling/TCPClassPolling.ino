@@ -1,9 +1,6 @@
 #include "adafruit_wifi.h"
 #include "adafruit_tcp.h"
 
-// Set this to 1 to use callbacks, or 0 to poll for data/events
-#define USE_CALLBACKS  (1)
-
 char const     ssid[ ]   = "SSIDNAME";             // Your network SSID (name)
 char const     pass[ ]   = "PASSWORD";             // Your network password (use for WPA, or use as key for WEP)
 char const     server[ ] = "www.adafruit.com";     // The TCP server to connect to
@@ -11,39 +8,6 @@ const uint16_t port      = 80;                     // The TCP port to use
 char const     page[ ]   = "/testwifi/index.html"; // The HTTP resource to request
 
 AdafruitTCP adatcp;
-
-#if USE_CALLBACKS
-int receive_callback(void* arg1, void* arg2)
-{
-  (void) arg1; // reserved for future use
-  (void) arg2; // reserved for future use
-
-  Serial.println("Receive callback");
-
-  // if there are incoming bytes available
-  // from the server, read then print them:
-  while (adatcp.available())
-  {
-    char c = adatcp.read();
-    Serial.write(c);
-  }
-
-  return 0;
-}
-
-int disconnect_callback(void* arg1, void* arg2)
-{
-  (void) arg1; // reserved for future use
-  (void) arg2; // reserved for future use
-
-  Serial.println();
-  Serial.println("disconnect_callback.");
-
-  adatcp.close();
-
-  return 0;
-}
-#endif
 
 void setup()
 {
@@ -55,11 +19,7 @@ void setup()
     ; // wait for Serial port to connect. Needed for native USB port only
   }
 
-  #if USE_CALLBACKS
-  Serial.println("TCP Example With Callback\r\n");
-  #else
   Serial.println("TCP Example With Polling\r\n");
-  #endif
 
   // Attempt to connect to the Wifi network:
   do
@@ -70,12 +30,6 @@ void setup()
 
   Serial.println("Connected to WiFi");
   Serial.println("\nStarting connection to server...");
-
-  #if USE_CALLBACKS
-  // Install callback
-  adatcp.setReceivedCallback(receive_callback);
-  adatcp.setDisconnectCallback(disconnect_callback);
-  #endif
 
   // If we can connect to the TCP Server, report it via Serial.print
   if (adatcp.connect(server, port))
@@ -98,7 +52,6 @@ void setup()
 
 void loop()
 {
-  #if !(USE_CALLBACKS)
   // If there are incoming bytes available
   // from the server, read then print them:
   while (adatcp.available())
@@ -117,5 +70,4 @@ void loop()
     // Do nothing forevermore:
     while (true) delay(1);
   }
-  #endif
 }
