@@ -117,6 +117,110 @@ uint8_t* AdafruitFeather::macAddress(uint8_t *mac)
 	return mac;
 }
 
+
+bool AdafruitFeather::saveConnectedProfile(void)
+{
+  if ( !_connected ) return false;
+
+  return ERROR_NONE == FEATHERLIB->sdep_execute(SDEP_CMD_WIFI_PROFILE_SAVE, 0, NULL, NULL, NULL);
+}
+
+bool AdafruitFeather::addProfile(char* ssid)
+{
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = strlen(ssid), .p_value = ssid      },
+  };
+
+  // TODO check case when read bytes < size
+  return (ERROR_NONE == FEATHERLIB->sdep_execute_n(SDEP_CMD_WIFI_PROFILE_ADD,
+                                                   sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                                   NULL, NULL)) ? true : false;
+}
+
+bool AdafruitFeather::addProfile(char* ssid, char* key, int enc_type)
+{
+  if ( enc_type == ENC_TYPE_AUTO )
+  {
+    Serial.println("Encryption cannot be AUTO for now");
+    return false;
+  }
+
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = strlen(ssid), .p_value = ssid      },
+      { .len = strlen(key) , .p_value = key       },
+      { .len = 4           , .p_value = &enc_type },
+  };
+
+  // TODO check case when read bytes < size
+  return (ERROR_NONE == FEATHERLIB->sdep_execute_n(SDEP_CMD_WIFI_PROFILE_ADD,
+                                                   sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                                   NULL, NULL)) ? true : false;
+}
+
+bool AdafruitFeather::removeProfile(char* ssid)
+{
+  // TODO check case when read bytes < size
+  return (ERROR_NONE == FEATHERLIB->sdep_execute(SDEP_CMD_WIFI_PROFILE_DEL,
+                                                 strlen(ssid), ssid,
+                                                 NULL, NULL)) ? true : false;
+}
+
+void AdafruitFeather::clearProfiles(void)
+{
+  FEATHERLIB->sdep_execute(SDEP_CMD_WIFI_PROFILE_CLEAR, 0, NULL, NULL, NULL);
+}
+
+bool AdafruitFeather::checkProfile(char* ssid)
+{
+  bool result = false;
+
+  return (ERROR_NONE == FEATHERLIB->sdep_execute(SDEP_CMD_WIFI_PROFILE_CHECK,
+                                                 strlen(ssid), ssid,
+                                                 NULL, &result) ) ? result : false ;
+}
+
+char* AdafruitFeather::profileSSID (uint8_t pos)
+{
+  static char profile_ssid[32+1];
+
+  uint8_t option = 1; // requesting SSID
+
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = 1, .p_value = &pos    },
+      { .len = 1, .p_value = &option },
+  };
+
+  uint16_t len = 0;
+
+  // TODO check case when read bytes < size
+  FEATHERLIB->sdep_execute_n(SDEP_CMD_WIFI_PROFILE_GET,
+                             sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                             &len, profile_ssid);
+
+  return (len > 0) ? profile_ssid : NULL;
+}
+
+int32_t AdafruitFeather::profileEncryptionType(uint8_t pos)
+{
+  uint8_t option = 2; // requesting Encryption Type
+
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = 1, .p_value = &pos    },
+      { .len = 1, .p_value = &option },
+  };
+
+  int32_t sec_type;
+
+  // TODO check case when read bytes < size
+  return (ERROR_NONE == FEATHERLIB->sdep_execute_n(SDEP_CMD_WIFI_PROFILE_GET,
+                                                   sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                                   NULL, &sec_type)) ? sec_type : -1;
+}
+
 /******************************************************************************/
 /*!
     @brief  Return a 32-bit random number

@@ -125,6 +125,17 @@ public:
   //bool   connect           ( const String &ssid ) { return connect(ssid.c_str()); }
   //bool   connect           ( const String &ssid, const String &key, int enc_type = ENC_TYPE_AUTO ) { return connect(ssid.c_str(), key.c_str(), enc_type); }
 
+  // Profile functions
+  bool      saveConnectedProfile  ( void ); // save currently connected AP
+  bool      addProfile            ( char* ssid ); // Open
+  bool      addProfile            ( char* ssid, char* key, int enc_type);
+  bool      removeProfile         ( char* ssid );
+  bool      checkProfile          ( char* ssid ); // Check if profile exists
+  void      clearProfiles         ( void );
+  char*     profileSSID           ( uint8_t pos);
+  int32_t   profileEncryptionType ( uint8_t pos);
+
+
   uint8_t   *macAddress     ( uint8_t *mac );
 
   /* WiFi Commands */

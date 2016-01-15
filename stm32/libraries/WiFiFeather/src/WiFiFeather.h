@@ -132,7 +132,7 @@ class WiFiClass
 
     bool      saveProfile     ( void ); // save currently connected AP
     bool      addProfile      ( char* ssid ); // Open
-    bool      addProfile      ( char* ssid, char* key, int enc_type /*= ENC_TYPE_AUTO*/ ); // TODO allow encryption = auto as default
+    bool      addProfile      ( char* ssid, char* key, int enc_type);
     bool      removeProfile   ( char* ssid );
     bool      checkProfile    ( char* ssid ); // Check if profile exists
     void      clearProfiles   ( void );
