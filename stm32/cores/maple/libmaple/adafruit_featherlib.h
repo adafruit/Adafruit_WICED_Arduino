@@ -39,6 +39,7 @@
 
 #include <stdint.h>
 #include "compiler.h"
+#include "assertion.h"
 #include "adafruit_constants.h"
 
 #ifdef __cplusplus

@@ -52,6 +52,45 @@ AdafruitFeather::AdafruitFeather(void)
 {
   ada_http_rx_callback = NULL;
   ada_http_rx_callback = NULL;
+
+  _connected = false;
+  memclr(&_ap_info, sizeof(wl_ap_info_t));
+}
+
+
+bool AdafruitFeather::connect(void)
+{
+	// Connect using saved profiles
+  _connected = (ERROR_NONE == FEATHERLIB->sdep_execute(SDEP_CMD_CONNECT, 0, NULL, NULL, NULL));
+	return _connected;
+}
+
+bool AdafruitFeather::connect(const char *ssid)
+{
+  VERIFY(ssid != NULL && strlen(ssid) > 0, false);
+
+  uint16_t resp_len = sizeof(wl_ap_info_t);
+  _connected = (ERROR_NONE == FEATHERLIB->sdep_execute(SDEP_CMD_CONNECT, strlen(ssid), ssid,
+                                                       &resp_len, &_ap_info));
+	return _connected;
+}
+
+bool AdafruitFeather::connect(const char *ssid, const char *key, int enc_type)
+{
+  VERIFY(ssid != NULL && strlen(ssid) > 0, false);
+
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = strlen(ssid), .p_value = ssid      },
+      { .len = strlen(key) , .p_value = key       },
+      { .len = 4           , .p_value = &enc_type },
+  };
+
+  uint16_t resp_len = sizeof(wl_ap_info_t);
+  _connected = (ERROR_NONE == FEATHERLIB->sdep_execute_n(SDEP_CMD_CONNECT, sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                                         &resp_len, &_ap_info));
+
+	return _connected;
 }
 
 /******************************************************************************/

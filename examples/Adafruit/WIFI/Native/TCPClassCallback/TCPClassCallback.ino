@@ -5,7 +5,7 @@ char const     ssid[ ]   = "SSIDNAME";             // Your network SSID (name)
 char const     pass[ ]   = "PASSWORD";             // Your network password (use for WPA, or use as key for WEP)
 char const     server[ ] = "www.adafruit.com";     // The TCP server to connect to
 const uint16_t port      = 80;                     // The TCP port to use
-char const     page[ ]   = "/testwifi/index.html"; // The HTTP resource to request
+char const     page[ ]   = "/testwifi/index.html"; // The HTTP resource to request
 
 AdafruitTCP adatcp;
 
@@ -57,7 +57,7 @@ void setup()
   {
     Serial.print("Attempting to connect to: ");
     Serial.println(ssid);
-  } while( feather.connectAP(ssid, pass) != ERROR_NONE ) ;
+  } while( !feather.connect(ssid, pass) ) ;
 
   Serial.println("Connected to WiFi");
   Serial.println("\nStarting connection to server...");
@@ -71,7 +71,7 @@ void setup()
   {
     Serial.println("Connected to server");
     // Make an HTTP request:
-    adatcp.print("GET "); adatcp.print(page); adatcp.println(" HTTP/1.1");
+    adatcp.printf("GET %s HTTP/1.1\r\n", page);
     adatcp.print("Host: "); adatcp.println(server);
     adatcp.println("Connection: close");
     adatcp.println();
