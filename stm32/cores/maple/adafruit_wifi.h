@@ -125,10 +125,14 @@ public:
   //bool   connect           ( const String &ssid ) { return connect(ssid.c_str()); }
   //bool   connect           ( const String &ssid, const String &key, int enc_type = ENC_TYPE_AUTO ) { return connect(ssid.c_str(), key.c_str(), enc_type); }
 
+  uint8_t   *macAddress     ( uint8_t *mac );
+
   /* WiFi Commands */
-  sdep_err_t scan(uint16_t* length, uint8_t* ap_details);
+  int scanNetworks(wl_ap_info_t ap_list[], uint8_t max_ap);
+
   sdep_err_t connectAP(char const* ssid, char const* passwd);
   sdep_err_t disconnectAP(void);
+
   sdep_err_t startAP(char* ssid, char* passwd);
   sdep_err_t startAP(void);
   sdep_err_t stopAP(void);

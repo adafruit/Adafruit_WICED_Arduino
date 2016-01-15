@@ -57,14 +57,22 @@ AdafruitFeather::AdafruitFeather(void)
   memclr(&_ap_info, sizeof(wl_ap_info_t));
 }
 
-
+/******************************************************************************/
+/*!
+    @brief Connect using saved profiles
+*/
+/******************************************************************************/
 bool AdafruitFeather::connect(void)
 {
-	// Connect using saved profiles
   _connected = (ERROR_NONE == FEATHERLIB->sdep_execute(SDEP_CMD_CONNECT, 0, NULL, NULL, NULL));
 	return _connected;
 }
 
+/******************************************************************************/
+/*!
+    @brief Connect to an open SSID
+*/
+/******************************************************************************/
 bool AdafruitFeather::connect(const char *ssid)
 {
   VERIFY(ssid != NULL && strlen(ssid) > 0, false);
@@ -75,6 +83,11 @@ bool AdafruitFeather::connect(const char *ssid)
 	return _connected;
 }
 
+/******************************************************************************/
+/*!
+    @brief Connect to an encrypted SSID
+*/
+/******************************************************************************/
 bool AdafruitFeather::connect(const char *ssid, const char *key, int enc_type)
 {
   VERIFY(ssid != NULL && strlen(ssid) > 0, false);
@@ -91,6 +104,17 @@ bool AdafruitFeather::connect(const char *ssid, const char *key, int enc_type)
                                                          &resp_len, &_ap_info));
 
 	return _connected;
+}
+
+/******************************************************************************/
+/*!
+    @brief Get the MAC Address of the WiFi
+*/
+/******************************************************************************/
+uint8_t* AdafruitFeather::macAddress(uint8_t *mac)
+{
+	FEATHERLIB->sdep_execute(SDEP_CMD_GET_MAC_ADDRESS, 0, NULL, NULL, mac);
+	return mac;
 }
 
 /******************************************************************************/
@@ -121,22 +145,22 @@ sdep_err_t AdafruitFeather::factoryReset(void)
   return FEATHERLIB->sdep_execute(SDEP_CMD_FACTORYRESET, 0, NULL, NULL, NULL);
 }
 
-
 /******************************************************************************/
 /*!
     @brief  Starts scanning for WiFi APs in range
 
-    @param[out]     length      Length of ap_details buffer
+    @param[out] ap_list  List of scanned AP
+    @param[out] max_ap   Number of AP that the buffer can hold
 
-    @param[out]     ap_details  A buffer storing scanned AP information
-
-    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
-            a specific error if something went wrong.
+    @return     Number of scanned AP
 */
 /******************************************************************************/
-sdep_err_t AdafruitFeather::scan(uint16_t* length, uint8_t* ap_details)
+int AdafruitFeather::scanNetworks(wl_ap_info_t ap_list[], uint8_t max_ap)
 {
-  return FEATHERLIB->sdep_execute(SDEP_CMD_SCAN, 0, NULL, length, ap_details);
+  uint16_t length = max_ap*sizeof(wl_ap_info_t);
+  VERIFY( ERROR_NONE == FEATHERLIB->sdep_execute(SDEP_CMD_SCAN, 0, NULL, &length, ap_list), 0);
+
+  return length/sizeof(wl_ap_info_t);
 }
 
 /******************************************************************************/
