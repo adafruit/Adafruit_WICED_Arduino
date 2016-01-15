@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*!
-    @file     Adafruit_FIFO.h
+    @file     adafruit_fifo.h
     @author   hathach
 
     @section LICENSE
