@@ -86,10 +86,11 @@ enum
  */
 typedef enum
 {
-  ERROR_NONE              = 0x0000,
-  ERROR_INVALID_SSID      = 0x8005,  /**< .connectAP etc. */
-  ERROR_INVALIDPARAMETER  = 0x8025,
-  ERROR_NO_MEMORY         = 0x80AA   /**< Temporary */
+  ERROR_NONE                   = 0x0000,
+  ERROR_AUTHENTICATION_FAILED  = 0x03EE,  /**< WWD Authentication error: .connectAP */
+  ERROR_INVALID_SSID           = 0x8005,  /**< .connectAP etc. */
+  ERROR_INVALIDPARAMETER       = 0x8025,
+  ERROR_NO_MEMORY              = 0x80AA   /**< Temporary */
 } err_t;
 
 /**
