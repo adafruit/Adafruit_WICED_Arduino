@@ -8,8 +8,8 @@
 
 #include "adafruit_wifi.h"
 
-#define WLAN_SSID            "SSID of AP"
-#define WLAN_PASS            "Password of AP"
+#define WLAN_SSID            "yourSSID"
+#define WLAN_PASS            "yourPassword"
 
 #define BUFFER_LENGTH        (2048)
 
@@ -28,34 +28,6 @@
 
 int wifi_error = -1; // FAIL
 uint8_t result_buf[BUFFER_LENGTH];
-/**************************************************************************/
-/*!
-    @brief  Connect to pre-specified AP
-
-    @return Error code
-*/
-/**************************************************************************/
-int connectAP()
-{
-  // Attempt to connect to an AP
-  Serial.print(F("Attempting to connect to: "));
-  Serial.println(WLAN_SSID);
-
-  int error = feather.connectAP(WLAN_SSID, WLAN_PASS);
-
-  if (error == 0)
-  {
-    Serial.println(F("Connected!"));
-  }
-  else
-  {
-    Serial.print(F("Failed! Error: "));
-    Serial.println(error, HEX);
-  }
-  Serial.println("");
-
-  return error;
-}
 
 /**************************************************************************/
 /*!
@@ -64,7 +36,7 @@ int connectAP()
 /**************************************************************************/
 void setup()
 {
-  // If you want to use LED for debug
+  // Setup LED for blinking
   pinMode(BOARD_LED_PIN, OUTPUT);
   
   // wait for Serial
@@ -72,7 +44,20 @@ void setup()
 
   Serial.println(F("HTTP Example\r\n"));
 
-  wifi_error = connectAP();
+  // Attempt to connect to an AP
+  Serial.print("Attempting to connect to: ");
+  Serial.println(WLAN_SSID);
+
+  if ( feather.connect(WLAN_SSID, WLAN_PASS) )
+  {
+    Serial.println(F("Connected!"));
+  }
+  else
+  {
+    Serial.print(F("Failed! Error: "));
+    Serial.println(feather.errno(), HEX);
+  }
+  Serial.println("");
 }
 
 /**************************************************************************/
@@ -80,12 +65,11 @@ void setup()
     @brief  The loop function runs over and over again forever
 */
 /**************************************************************************/
-void loop() {
-  // put your main code here, to run repeatedly
-  Serial.println(F("Toggle LED"));
+void loop()
+{
   togglePin(BOARD_LED_PIN);
   
-  if (wifi_error == 0)
+  if ( feather.connected() )
   {
     int http_error = -1;
     if ( (http_error = feather.httpRequest(URL, CONTENT, METHOD, BUFFER_LENGTH, result_buf) ) == 0)

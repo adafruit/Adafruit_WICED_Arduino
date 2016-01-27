@@ -12,6 +12,9 @@
 
 #include "adafruit_wifi.h"
 
+#define WLAN_SSID            "yourSSID"
+#define WLAN_PASS            "yourPassword"
+
 /**************************************************************************/
 /*!
     @brief  The setup function runs once when reset the board    
@@ -22,7 +25,7 @@ void setup()
   pinMode(BOARD_LED_PIN, OUTPUT);
   
   // initialize serial port for input and output
-//  Serial.begin(11500);
+  Serial.begin(11500);
 
   // wait for Serial
   while (!Serial) delay(1);
@@ -34,15 +37,11 @@ void setup()
 */
 /**************************************************************************/
 void loop() {
-  // Connect to an AP
-  char* ssid = "ADAFRUIT";
-  char* pass = "12345678";
-  if (feather.connectAP(ssid, pass) == ERROR_NONE)
+  // Connect to AP
+  if ( feather.connect(WLAN_SSID, WLAN_PASS) )
   {
     Serial.print("Connected to AP with SSID = ");
-    Serial.print(ssid);
-    Serial.print(" and PASSWORD = ");
-    Serial.println(pass);
+    Serial.print(WLAN_SSID);
 
     uint8_t ping_time[4];
     char* ip = "207.58.139.247";
@@ -56,19 +55,19 @@ void loop() {
     else
       Serial.println("Ping Error!");
 
-    uint8_t ipv4[4];
+    IPAddress ipv4;
     char* dns = "adafruit.com";
-    if (feather.dnsLookup(dns, ipv4) == ERROR_NONE)
+    if ( feather.hostByName(dns, ipv4) )
     {
       Serial.print("The IPv4 address of domain name \"");
       Serial.print(dns); Serial.print("\": ");
-      Serial.print(ipv4[3]); Serial.print(".");
-      Serial.print(ipv4[2]); Serial.print(".");
-      Serial.print(ipv4[1]); Serial.print(".");
-      Serial.println(ipv4[0]);
+      Serial.println(ipv4);
     }
     else
-      Serial.println("DNS Lookup Error!");
+    {
+      Serial.print("DNS Lookup Error!: ");
+      Serial.println(feather.errno(), HEX);
+    }
 
     char iso8601_time[27];  // Length of UTC day and time in
                             // ISO 8601 standard is 28 bytes (including '\0')
