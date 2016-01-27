@@ -242,7 +242,7 @@ int32_t AdafruitFeather::profileEncryptionType(uint8_t pos)
 
     @param[in]      hostname        hostname to lookup
 
-    @return Resolved IPAdress, if faield INADDR_NONE(0.0.0.) is returned
+    @return Resolved IPAdress, if failed INADDR_NONE(0.0.0.) is returned
 */
 /******************************************************************************/
 IPAddress AdafruitFeather::hostByName( const char* hostname)
@@ -275,6 +275,46 @@ bool AdafruitFeather::hostByName( const char* hostname, IPAddress& result)
 
   return true;
 }
+
+/******************************************************************************/
+/*!
+    @brief  Return the results from an ICMP ping against a host
+
+    @param[in]  host      Can be a hostname (e.g "adafruit.com") or IP address
+                          in string formet (e.g "8.8.8.8")
+
+    @return Response time in milliseconds, 0 if failed
+*/
+/******************************************************************************/
+uint32_t AdafruitFeather::ping(char const* host)
+{
+  // Resolve IP
+  IPAddress ipaddr = this->hostByName(host);
+  if (ipaddr == INADDR_NONE) return 0;
+
+  return this->ping(ipaddr);
+}
+
+/******************************************************************************/
+/*!
+    @brief  Return the results from an ICMP ping against a specified IP address
+
+    @param[in]  ipaddr   IP address
+
+    @return Response time in milliseconds, 0 if failed
+*/
+/******************************************************************************/
+uint32_t AdafruitFeather::ping(IPAddress ipaddr)
+{
+  uint32_t response_time;
+  uint32_t ipv4 = (uint32_t) ipaddr;
+
+  _errno = FEATHERLIB->sdep_execute(SDEP_CMD_PING, 4, &ipv4,
+                                                   NULL, &response_time);
+
+  return (ERROR_NONE == _errno) ? response_time : 0;
+}
+
 
 /******************************************************************************/
 /*!
@@ -454,86 +494,6 @@ sdep_err_t AdafruitFeather::getIPAddress(uint32_t *addr)
   return FEATHERLIB->sdep_execute(SDEP_CMD_GET_IPV4_ADDRESS, 1, &interface, NULL, addr);
 }
 
-/******************************************************************************/
-/*!
-    @brief  Return the results from an ICMP ping against a specified IP address
-
-    @param[in]      ip_address_str    String of ip address (e.g. "192.168.1.100")
-
-    @param[out]     response_time     The ping response time
-
-    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
-            a specific error if something went wrong.
-*/
-/******************************************************************************/
-sdep_err_t AdafruitFeather::ping(char* ip_address_str, uint8_t* response_time)
-{
-  uint8_t payload[4] = {0};
-  char* ptr_ip = ip_address_str;
-
-  // Parse IP address string and check if the IP address is valid
-  // The valid IP address is stored in payload buffer
-  uint8_t index = 0;
-  while (*ptr_ip)
-  {
-    if (*ptr_ip >= '0' && *ptr_ip <= '9')
-    {
-      if (index > 3) return ERROR_INVALIDPARAMETER;
-      payload[index] *= 10;
-      payload[index] += *ptr_ip - '0';
-    }
-    else if (*ptr_ip == '.')
-    {
-      index++;
-    }
-    else return ERROR_INVALIDPARAMETER;
-    ptr_ip++;
-  }
-
-  return FEATHERLIB->sdep_execute(SDEP_CMD_PING, 4, payload, NULL, response_time);
-}
-
-/******************************************************************************/
-/*!
-    @brief  Return the results from an ICMP ping against a specified IP address
-
-    @param[in]      ip_address        An array of 4 bytes IP address
-
-    @param[out]     response_time     The ping response time
-
-    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
-            a specific error if something went wrong.
-*/
-/******************************************************************************/
-sdep_err_t AdafruitFeather::ping(uint8_t* ip_address, uint8_t* response_time)
-{
-  // Check if IP address is valid
-  for (int i = 0; i < 3; i++)
-  {
-    if (ip_address[i] > 255) return ERROR_INVALIDPARAMETER;
-  }
-
-  return FEATHERLIB->sdep_execute(SDEP_CMD_PING, 4, ip_address, NULL, response_time);
-}
-
-/******************************************************************************/
-/*!
-    @brief  Performs DNS lookup of a specified domain name for its IPv4 IP address
-
-    @param[in]      dns             The domain name to lookup
-
-    @param[out]     ipv4_address    IPv4 IP address that is associated with
-                                    the requested domain name
-
-    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
-            a specific error if something went wrong.
-*/
-/******************************************************************************/
-sdep_err_t AdafruitFeather::dnsLookup(char const * dns, uint8_t* ipv4_address)
-{
-  return FEATHERLIB->sdep_execute(SDEP_CMD_DNSLOOKUP, strlen(dns),
-                                  dns, NULL, ipv4_address);
-}
 
 /******************************************************************************/
 /*!

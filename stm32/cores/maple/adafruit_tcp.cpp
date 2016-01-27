@@ -94,10 +94,11 @@ bool AdafruitTCP::connect(IPAddress ip, uint16_t port)
 /******************************************************************************/
 bool AdafruitTCP::connect(const char* host, uint16_t port)
 {
-  uint32_t ipv4;
-  VERIFY(ERROR_NONE == feather.dnsLookup(host, (uint8_t*)&ipv4), false);
+  IPAddress ip;
 
-  return this->connect( IPAddress(ipv4) , port);
+  VERIFY( feather.hostByName(host, ip), false );
+
+  return this->connect(ip, port);
 }
 
 /******************************************************************************/

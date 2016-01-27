@@ -63,15 +63,47 @@ void loop()
 { 
   if ( feather.connected() )
   {
-    // Resolve hostname
-    IPAddress ip = feather.hostByName(target_hostname);
-    Serial.print(target_hostname);
-    Serial.print(": ");
-    Serial.println(ip);
-    
-    
+    uint8_t resp_ms;
+
+    // Ping hostname
+    Serial.printf("Pinging %s : ", target_hostname);
+    resp_ms = feather.ping(target_hostname);
+    if (resp_ms != 0)
+    {
+      Serial.printf("time = %d ms", resp_ms);
+    }else
+    {
+      Serial.printf("error = 0x%04X", feather.errno());
+    }
+    Serial.println();
+
+    // Ping IP Address in String format
+    Serial.printf("Pinging %s : ", target_ip_str);
+    resp_ms = feather.ping(target_ip_str);
+    if (resp_ms != 0)
+    {
+      Serial.printf("time = %d ms", resp_ms);
+    }else
+    {
+      Serial.printf("error = 0x%04X", feather.errno());
+    }
+    Serial.println();
+
+    // Ping specific IP Address
+    Serial.printf("Pinging %s : ", target_ip.toCharArray());
+    resp_ms = feather.ping(target_ip);
+    if (resp_ms != 0)
+    {
+      Serial.printf("time = %d ms", resp_ms);
+    }else
+    {
+      Serial.printf("error = 0x%04X", feather.errno());
+    }
+    Serial.println();
   }
 
-  Serial.println(F("\r\n"));
+  Serial.println();
+  Serial.println("Try again in 10 seconds");
+  Serial.println();
   delay(10000);
 }

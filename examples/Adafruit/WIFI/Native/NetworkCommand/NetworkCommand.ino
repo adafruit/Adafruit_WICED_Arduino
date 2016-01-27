@@ -23,7 +23,7 @@
 void setup()
 {
   pinMode(BOARD_LED_PIN, OUTPUT);
-  
+
   // initialize serial port for input and output
   Serial.begin(11500);
 

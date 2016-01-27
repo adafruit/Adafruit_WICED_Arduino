@@ -157,14 +157,14 @@ public:
   sdep_err_t getIPAddress(uint32_t *addr);
 
   /* Network Commands */
-  sdep_err_t dnsLookup(const char* dns, uint8_t* ipv4_address);
-
   IPAddress  hostByName( const char* hostname);
   bool       hostByName( const char* hostname, IPAddress& result );
   bool       hostByName( const String &hostname, IPAddress& result ) { return hostByName( hostname.c_str(), result ); }
 
-  sdep_err_t ping(char* ip_address_str, uint8_t* response_time);
-  sdep_err_t ping(uint8_t* ip_address, uint8_t* response_time);
+  // TODO more advanced ping command
+  uint32_t   ping(char const* host);
+  uint32_t   ping(IPAddress ip);
+
   sdep_err_t getTime(char* iso8601_time);
   sdep_err_t httpGetUri(char* uri, uint16_t* length, uint8_t* response);
   sdep_err_t httpPost(char* uri, uint16_t* length, uint8_t* response);
