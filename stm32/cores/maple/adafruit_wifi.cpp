@@ -122,6 +122,61 @@ uint8_t* AdafruitFeather::macAddress(uint8_t *mac)
 	return mac;
 }
 
+uint32_t AdafruitFeather::localIP (void)
+{
+  uint8_t interface = WIFI_INTERFACE_STATION;
+  uint32_t ipv4 = 0;
+
+  _errno = FEATHERLIB->sdep_execute(SDEP_CMD_GET_IPV4_ADDRESS, 1, &interface, NULL, &ipv4);
+	return ipv4;
+}
+
+uint32_t AdafruitFeather::subnetMask (void)
+{
+  uint8_t interface = WIFI_INTERFACE_STATION;
+  uint32_t subnet = 0;
+
+  _errno = FEATHERLIB->sdep_execute(SDEP_CMD_GET_NETMASK, 1, &interface, NULL, &subnet);
+  return subnet;
+}
+
+uint32_t AdafruitFeather::gatewayIP (void)
+{
+  uint8_t interface   = WIFI_INTERFACE_STATION;
+  uint32_t ipv4 = 0;
+
+  _errno = FEATHERLIB->sdep_execute(SDEP_CMD_GET_GATEWAY_ADDRESS, 1, &interface, NULL, &ipv4);
+  return ipv4;
+}
+
+char* AdafruitFeather::SSID (void)
+{
+  if ( !_connected ) return NULL;
+	return _ap_info.ssid;
+}
+
+uint8_t* AdafruitFeather::BSSID (uint8_t* bssid)
+{
+  if ( !_connected ) return NULL;
+  memcpy(bssid, _ap_info.bssid, 6);
+  return bssid;
+}
+
+int32_t AdafruitFeather::encryptionType (void)
+{
+  if ( !_connected ) return 0;
+  return _ap_info.security;
+}
+
+int32_t AdafruitFeather::RSSI (void)
+{
+  if ( !_connected ) return 0;
+
+  int32_t rssi;
+  _errno = FEATHERLIB->sdep_execute(SDEP_CMD_WIFI_GET_RSSI, 0, NULL, NULL, &rssi);
+
+  return rssi;
+}
 
 bool AdafruitFeather::saveConnectedProfile(void)
 {

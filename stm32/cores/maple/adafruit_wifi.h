@@ -143,6 +143,15 @@ public:
 
 
   uint8_t   *macAddress     ( uint8_t *mac );
+  uint32_t  localIP         ( void );
+  uint32_t  subnetMask      ( void );
+  uint32_t  gatewayIP       ( void );
+
+  char*     SSID            ( void );
+  int32_t   RSSI            ( void );
+  int32_t   encryptionType  ( void );
+  uint8_t*  BSSID           ( uint8_t* bssid );
+
 
   /* WiFi Commands */
   int scanNetworks(wl_ap_info_t ap_list[], uint8_t max_ap);
