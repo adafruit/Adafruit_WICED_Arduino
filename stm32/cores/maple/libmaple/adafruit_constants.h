@@ -87,6 +87,8 @@ enum
 typedef enum
 {
   ERROR_NONE                   = 0x0000,
+  ERROR_NOT_CONNECTED          = 0x0020,
+
   ERROR_AUTHENTICATION_FAILED  = 0x03EE,  /**< WWD Authentication error: .connectAP */
   ERROR_INVALID_SSID           = 0x8005,  /**< .connectAP etc. */
   ERROR_INVALIDPARAMETER       = 0x8025,

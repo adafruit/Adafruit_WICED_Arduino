@@ -41,6 +41,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include "Arduino.h"
+#include <IPAddress.h>
 #include "adafruit_constants.h"
 #include "adafruit_featherlib.h"
 
@@ -103,6 +104,8 @@ extern "C"
 class AdafruitFeather
 {
 private:
+  sdep_err_t    _errno;
+
   wl_ap_info_t  _ap_info;
   bool          _connected;
 
@@ -124,6 +127,9 @@ public:
   //bool connect           ( const String &ssid, uint8_t key_idx, const String &key ) { return connect(ssid.c_str(), key_idx, key.c_str()); }
   //bool   connect           ( const String &ssid ) { return connect(ssid.c_str()); }
   //bool   connect           ( const String &ssid, const String &key, int enc_type = ENC_TYPE_AUTO ) { return connect(ssid.c_str(), key.c_str(), enc_type); }
+
+  bool connected(void) { return _connected; }
+  sdep_err_t errno(void)  { return _errno; }
 
   // Profile functions
   bool      saveConnectedProfile  ( void ); // save currently connected AP
@@ -151,9 +157,14 @@ public:
   sdep_err_t getIPAddress(uint32_t *addr);
 
   /* Network Commands */
+  sdep_err_t dnsLookup(const char* dns, uint8_t* ipv4_address);
+
+  IPAddress  hostByName( const char* hostname);
+  bool       hostByName( const char* hostname, IPAddress& result );
+  bool       hostByName( const String &hostname, IPAddress& result ) { return hostByName( hostname.c_str(), result ); }
+
   sdep_err_t ping(char* ip_address_str, uint8_t* response_time);
   sdep_err_t ping(uint8_t* ip_address, uint8_t* response_time);
-  sdep_err_t dnsLookup(const char* dns, uint8_t* ipv4_address);
   sdep_err_t getTime(char* iso8601_time);
   sdep_err_t httpGetUri(char* uri, uint16_t* length, uint8_t* response);
   sdep_err_t httpPost(char* uri, uint16_t* length, uint8_t* response);
