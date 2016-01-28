@@ -59,6 +59,41 @@ AdafruitFeather::AdafruitFeather(void)
 
 /******************************************************************************/
 /*!
+    @brief  Performs a factory reset: Erase Arduino code and Set NVM to defaults
+*/
+/******************************************************************************/
+void AdafruitFeather::factoryReset(void)
+{
+  FEATHERLIB->sdep_execute(SDEP_CMD_FACTORYRESET, 0, NULL, NULL, NULL);
+}
+
+/******************************************************************************/
+/*!
+    @brief  Set NVM to defaults
+*/
+/******************************************************************************/
+void AdafruitFeather::nvmReset(void)
+{
+  FEATHERLIB->sdep_execute(SDEP_CMD_NVM_RESET, 0, NULL, NULL, NULL);
+}
+
+/******************************************************************************/
+/*!
+    @brief  Return a 32-bit random number
+
+    @param[out]     random32bit       The returned 32-bit random number
+
+    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
+            a specific error if something went wrong.
+*/
+/******************************************************************************/
+sdep_err_t AdafruitFeather::randomNumber(uint32_t* random32bit)
+{
+  return FEATHERLIB->sdep_execute(SDEP_CMD_RANDOMNUMBER, 0, NULL, NULL, (uint8_t*)random32bit);
+}
+
+/******************************************************************************/
+/*!
     @brief Connect using saved profiles
 */
 /******************************************************************************/
@@ -122,6 +157,11 @@ uint8_t* AdafruitFeather::macAddress(uint8_t *mac)
 	return mac;
 }
 
+/******************************************************************************/
+/*!
+    @brief Get local IP
+*/
+/******************************************************************************/
 uint32_t AdafruitFeather::localIP (void)
 {
   uint8_t interface = WIFI_INTERFACE_STATION;
@@ -131,6 +171,11 @@ uint32_t AdafruitFeather::localIP (void)
 	return ipv4;
 }
 
+/******************************************************************************/
+/*!
+    @brief Get subnet mask
+*/
+/******************************************************************************/
 uint32_t AdafruitFeather::subnetMask (void)
 {
   uint8_t interface = WIFI_INTERFACE_STATION;
@@ -140,6 +185,11 @@ uint32_t AdafruitFeather::subnetMask (void)
   return subnet;
 }
 
+/******************************************************************************/
+/*!
+    @brief Get gateway IP
+*/
+/******************************************************************************/
 uint32_t AdafruitFeather::gatewayIP (void)
 {
   uint8_t interface   = WIFI_INTERFACE_STATION;
@@ -149,12 +199,22 @@ uint32_t AdafruitFeather::gatewayIP (void)
   return ipv4;
 }
 
+/******************************************************************************/
+/*!
+    @brief Get current connected AP's SSID
+*/
+/******************************************************************************/
 char* AdafruitFeather::SSID (void)
 {
   if ( !_connected ) return NULL;
 	return _ap_info.ssid;
 }
 
+/******************************************************************************/
+/*!
+    @brief Get current connected AP's BSSID
+*/
+/******************************************************************************/
 uint8_t* AdafruitFeather::BSSID (uint8_t* bssid)
 {
   if ( !_connected ) return NULL;
@@ -162,12 +222,23 @@ uint8_t* AdafruitFeather::BSSID (uint8_t* bssid)
   return bssid;
 }
 
+/******************************************************************************/
+/*!
+    @brief Get current connected AP's encryption type
+*/
+/******************************************************************************/
 int32_t AdafruitFeather::encryptionType (void)
 {
   if ( !_connected ) return 0;
   return _ap_info.security;
 }
 
+/******************************************************************************/
+/*!
+    @brief Get RSSI of the currently connected AP
+    @return RSSI value or 0 if not connected
+*/
+/******************************************************************************/
 int32_t AdafruitFeather::RSSI (void)
 {
   if ( !_connected ) return 0;
@@ -370,35 +441,6 @@ uint32_t AdafruitFeather::ping(IPAddress ipaddr)
   return (ERROR_NONE == _errno) ? response_time : 0;
 }
 
-
-/******************************************************************************/
-/*!
-    @brief  Return a 32-bit random number
-
-    @param[out]     random32bit       The returned 32-bit random number
-
-    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
-            a specific error if something went wrong.
-*/
-/******************************************************************************/
-sdep_err_t AdafruitFeather::randomNumber(uint32_t* random32bit)
-{
-  return FEATHERLIB->sdep_execute(SDEP_CMD_RANDOMNUMBER, 0, NULL, NULL, (uint8_t*)random32bit);
-}
-
-/******************************************************************************/
-/*!
-    @brief  Performs a factory reset
-
-    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
-            a specific error if something went wrong.
-*/
-/******************************************************************************/
-sdep_err_t AdafruitFeather::factoryReset(void)
-{
-  return FEATHERLIB->sdep_execute(SDEP_CMD_FACTORYRESET, 0, NULL, NULL, NULL);
-}
-
 /******************************************************************************/
 /*!
     @brief  Starts scanning for WiFi APs in range
@@ -457,9 +499,10 @@ sdep_err_t AdafruitFeather::connectAP(char const* ssid, char const* passwd)
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitFeather::disconnectAP(void)
+void AdafruitFeather::disconnect(void)
 {
-  return FEATHERLIB->sdep_execute(SDEP_CMD_DISCONNECT, 0, NULL, NULL, NULL);
+  _errno = FEATHERLIB->sdep_execute(SDEP_CMD_DISCONNECT, 0, NULL, NULL, NULL);
+  _connected = !(_errno == ERROR_NONE);
 }
 
 /******************************************************************************/
@@ -521,34 +564,6 @@ sdep_err_t AdafruitFeather::stopAP(void)
 {
   return FEATHERLIB->sdep_execute(SDEP_CMD_APSTOP, 0, NULL, NULL, NULL);
 }
-
-/******************************************************************************/
-/*!
-    @brief  Returns the current RSSI level
-
-    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
-            a specific error if something went wrong.
-*/
-/******************************************************************************/
-sdep_err_t AdafruitFeather::getRSSI(int8_t *rssi)
-{
-  return FEATHERLIB->sdep_execute(SDEP_CMD_WIFI_GET_RSSI, 0, NULL, NULL, (uint8_t*)rssi);
-}
-
-/******************************************************************************/
-/*!
-    @brief  Returns the current IP address
-
-    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
-            a specific error if something went wrong.
-*/
-/******************************************************************************/
-sdep_err_t AdafruitFeather::getIPAddress(uint32_t *addr)
-{
-  uint8_t interface   = WIFI_INTERFACE_STATION;
-  return FEATHERLIB->sdep_execute(SDEP_CMD_GET_IPV4_ADDRESS, 1, &interface, NULL, addr);
-}
-
 
 /******************************************************************************/
 /*!

@@ -116,7 +116,8 @@ public:
   AdafruitFeather(void);
 
   sdep_err_t randomNumber(uint32_t* random32bit);
-  sdep_err_t factoryReset(void);
+  void factoryReset(void);
+  void nvmReset(void);
 
   // Connect to a WiFi
   bool   connect           ( void );
@@ -157,13 +158,11 @@ public:
   int scanNetworks(wl_ap_info_t ap_list[], uint8_t max_ap);
 
   sdep_err_t connectAP(char const* ssid, char const* passwd);
-  sdep_err_t disconnectAP(void);
+  void disconnect(void);
 
   sdep_err_t startAP(char* ssid, char* passwd);
   sdep_err_t startAP(void);
   sdep_err_t stopAP(void);
-  sdep_err_t getRSSI(int8_t *rssi);
-  sdep_err_t getIPAddress(uint32_t *addr);
 
   /* Network Commands */
   IPAddress  hostByName( const char* hostname);

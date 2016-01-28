@@ -43,32 +43,6 @@ void loop() {
     Serial.print("Connected to AP with SSID = ");
     Serial.print(WLAN_SSID);
 
-    uint8_t ping_time[4];
-    char* ip = "207.58.139.247";
-    if (feather.ping(ip, ping_time) == ERROR_NONE)
-    {
-      uint32_t time;
-      memcpy(&time, &ping_time[0], sizeof(time));
-      Serial.print("Given IP address = "); Serial.println(ip);
-      Serial.print("Ping time = "); Serial.print(time); Serial.println(" ms");
-    }
-    else
-      Serial.println("Ping Error!");
-
-    IPAddress ipv4;
-    char* dns = "adafruit.com";
-    if ( feather.hostByName(dns, ipv4) )
-    {
-      Serial.print("The IPv4 address of domain name \"");
-      Serial.print(dns); Serial.print("\": ");
-      Serial.println(ipv4);
-    }
-    else
-    {
-      Serial.print("DNS Lookup Error!: ");
-      Serial.println(feather.errno(), HEX);
-    }
-
     char iso8601_time[27];  // Length of UTC day and time in
                             // ISO 8601 standard is 28 bytes (including '\0')
     if (feather.getTime(iso8601_time) == ERROR_NONE)
@@ -86,14 +60,9 @@ void loop() {
     Serial.println("Connect Error!");
 
   // Stop AP mode
-  if (feather.disconnectAP() == ERROR_NONE)
-  {
-    Serial.println("Disconnected from AP");
-  }
-  else
-    Serial.println("Disconnect Error!");
-
-  Serial.println("");
+  feather.disconnect();
+  Serial.println("Disconnected from AP");
+  Serial.println();
   togglePin(BOARD_LED_PIN);
   delay(10000);   // Delay 10 seconds before next loop
 }

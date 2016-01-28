@@ -74,13 +74,8 @@ void loop() {
 
     Serial.println("\r\n");
 
-    // Stop AP mode
-    if (feather.disconnectAP() == ERROR_NONE)
-    {
-      Serial.println("Disconnected from AP");
-    }
-    else
-      Serial.println("Disconnect Error!");
+    feather.disconnect();
+    Serial.println("Disconnected from AP");
   }
   else
     Serial.println("Connect Error!");
