@@ -33,6 +33,8 @@ void loop() {
   Serial.println("Scanning available networks...");
   listNetworks();
 
+  Serial.println();
+  Serial.println("Try again in 10 seconds");
   delay(10000);
 }
 
@@ -66,36 +68,40 @@ void listNetworks() {
   Serial.println(numSsid);
 
   // print the network number and name for each network found:
-  Serial.printf("ID SSID                 Signal  Encryption\n");
+  Serial.printf("ID SSID                 Enc  Ch Strength\n");
   for (int i = 0; i < numSsid; i++) {
-    Serial.printf("%02d %-20s %02d dBm ", i, scan_result[i].ssid, scan_result[i].rssi);
-    printEncryptionType( scan_result[i].security );
-    Serial.flush();
+    Serial.printf("%02d %-20s %s %02d %02d dBm", 
+                  i, scan_result[i].ssid, 
+                  getEncryptionType( scan_result[i].security ),
+                  scan_result[i].channel,
+                  scan_result[i].rssi);
+    Serial.println();
   }
 }
 
-void printEncryptionType(int32_t thisType) {
+char* getEncryptionType(int32_t thisType) 
+{
   // read the encryption type and print out the name:
   switch (thisType) {
     case ENC_TYPE_WEP:
     case ENC_TYPE_WEP_SHARED:
-      Serial.println("WEP");
+      return "WEP";
     break;
       
     case ENC_TYPE_WPA_TKIP:
     case ENC_TYPE_WPA_AES:
     case ENC_TYPE_WPA_MIXED:
-      Serial.println("WPA");
+      return "WPA";
     break;
     
     case ENC_TYPE_WPA2_AES:
     case ENC_TYPE_WPA2_TKIP:
     case ENC_TYPE_WPA2_MIXED:
-      Serial.println("WPA2");
+      return "WPA2";
     break;
       
     case ENC_TYPE_OPEN:
-      Serial.println("None");
+      return "Open";
     break;
       
 //    case ENC_TYPE_AUTO:
