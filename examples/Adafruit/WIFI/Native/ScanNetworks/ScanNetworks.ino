@@ -76,6 +76,7 @@ void listNetworks() {
                   scan_result[i].channel,
                   scan_result[i].rssi);
     Serial.println();
+    Serial.flush();
   }
 }
 
