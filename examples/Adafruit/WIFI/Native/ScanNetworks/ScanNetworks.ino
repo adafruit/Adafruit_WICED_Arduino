@@ -76,7 +76,7 @@ void listNetworks() {
 
   // print the network number and name for each network found:
   Serial.printf("ID SSID                 Enc  Ch Strength\n");
-  for (int i = 0; i < numSsid; i++) {
+  for (int i = 0; i < min(3,numSsid); i++) {
     Serial.printf("%02d %-20s %s %02d %02d dBm", 
                   i, scan_result[i].ssid, 
                   getEncryptionType( scan_result[i].security ),
