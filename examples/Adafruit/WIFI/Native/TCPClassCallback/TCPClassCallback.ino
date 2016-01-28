@@ -35,7 +35,7 @@ int disconnect_callback(void* arg1, void* arg2)
   Serial.println();
   Serial.println("disconnect_callback.");
 
-  adatcp.close();
+  adatcp.stop();
 
   return 0;
 }
@@ -46,8 +46,8 @@ void setup()
   Serial.begin(115200);
   while (!Serial)
   {
+    // wait for Serial port to connect. Needed for native USB port only
     delay(1);
-    ; // wait for Serial port to connect. Needed for native USB port only
   }
 
   Serial.println("TCP Example With Callback\r\n");
@@ -59,7 +59,7 @@ void setup()
     Serial.println(ssid);
   } while( !feather.connect(ssid, pass) ) ;
 
-  Serial.println("Connected to WiFi");
+  Serial.println("Connected!");
   Serial.println("\nStarting connection to server...");
 
   // Install callback

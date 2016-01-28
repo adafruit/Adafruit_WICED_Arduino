@@ -38,6 +38,7 @@
 #define _ADAFRUIT_TCP_H_
 
 #include <Arduino.h>
+#include <Client.h>
 #include <IPAddress.h>
 
 typedef enum {
@@ -45,11 +46,16 @@ typedef enum {
   REQUEST_SENT
 } tcpState_t;
 
-class AdafruitTCP : public Stream
+class AdafruitTCP : public Client
 {
 protected:
-  uint32_t    _tcp_handle;
-  uint32_t    bytesRead;
+  sdep_err_t _errno;
+  uint32_t   _tcp_handle;
+  uint32_t   bytesRead;
+
+  // buffer written until network packet is full ~1500 or flush() is called
+  // default is false
+	bool     _packet_buffering;
 
   // Callback signatures
   int (*rx_callback)         ( void *, void * );
@@ -61,19 +67,26 @@ protected:
 public:
   AdafruitTCP ( void );
 
+  sdep_err_t  errno(void) { return _errno; }
+  void usePacketBuffering(bool enable);
+
+  // Client API
+  virtual int  connect ( IPAddress ip, uint16_t port );
+  virtual int  connect ( const char * host, uint16_t port );
+  virtual void stop    ( void );
+  virtual uint8_t connected( void );
+  virtual operator bool() { return _tcp_handle != 0; }
+
+  // Stream API
   virtual int    read       ( void );
   virtual int    read       ( uint8_t * buf, size_t size );
   virtual size_t write      ( uint8_t );
   virtual size_t write      ( const uint8_t *content, size_t len );
   virtual int    available  ( void );
   virtual int    peek       ( void );
-  virtual void   close      ( void );
   virtual void   flush      ( void );
 
   using Print::write;
-
-  bool connect ( IPAddress ip, uint16_t port );
-  bool connect ( const char * host, uint16_t port );
 
   // Set callback handlers
   void setReceivedCallback   ( int (*fp) (void*, void*) );

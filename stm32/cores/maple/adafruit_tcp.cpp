@@ -54,8 +54,14 @@ AdafruitTCP::AdafruitTCP(void)
 /******************************************************************************/
 void AdafruitTCP::reset()
 {
-  _tcp_handle   = 0;
-  bytesRead    = 0;
+  _tcp_handle       = 0;
+  bytesRead         = 0;
+  _packet_buffering = false;
+}
+
+void AdafruitTCP::usePacketBuffering(bool enable)
+{
+  _packet_buffering = enable;
 }
 
 /******************************************************************************/
@@ -63,7 +69,7 @@ void AdafruitTCP::reset()
     @brief
 */
 /******************************************************************************/
-bool AdafruitTCP::connect(IPAddress ip, uint16_t port)
+int AdafruitTCP::connect(IPAddress ip, uint16_t port)
 {
   uint32_t ipv4 = (uint32_t) ip;
   uint8_t is_tls = 0;
@@ -76,10 +82,10 @@ bool AdafruitTCP::connect(IPAddress ip, uint16_t port)
       { .len = 4, .p_value = &_timeout },
   };
 
-  int err = FEATHERLIB->sdep_execute_n(SDEP_CMD_TCP_CONNECT,
-                                       sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
-                                       NULL, &_tcp_handle);
-  VERIFY(err == ERROR_NONE, false);
+  _errno = FEATHERLIB->sdep_execute_n(SDEP_CMD_TCP_CONNECT,
+                                      sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                      NULL, &_tcp_handle);
+  VERIFY(_errno == ERROR_NONE, false);
 
   this->install_callback();
 
@@ -91,13 +97,24 @@ bool AdafruitTCP::connect(IPAddress ip, uint16_t port)
     @brief
 */
 /******************************************************************************/
-bool AdafruitTCP::connect(const char* host, uint16_t port)
+int AdafruitTCP::connect(const char* host, uint16_t port)
 {
   IPAddress ip;
 
   VERIFY( feather.hostByName(host, ip), false );
 
   return this->connect(ip, port);
+}
+
+/******************************************************************************/
+/*!
+    @brief
+*/
+/******************************************************************************/
+uint8_t AdafruitTCP::connected()
+{
+  // Handle not zero --> still connected
+  return ( _tcp_handle != 0 ) ? 1 : 0;
 }
 
 /******************************************************************************/
@@ -110,17 +127,8 @@ bool AdafruitTCP::connect(const char* host, uint16_t port)
 /******************************************************************************/
 int AdafruitTCP::read()
 {
-  if ( _tcp_handle == 0 ) return (-1);
-
   uint8_t b;
-
-  if (this->read(&b, 1) > 0)
-  {
-    bytesRead++;
-    return b;
-  }
-  else
-    return (-1);
+  return ( this->read(&b, 1) > 0 ) ? b : EOF;
 }
 
 /******************************************************************************/
@@ -132,7 +140,7 @@ int AdafruitTCP::read()
 /******************************************************************************/
 int AdafruitTCP::read(uint8_t* buf, size_t size)
 {
-  if ( _tcp_handle == 0 ) return (-1);
+  if ( _tcp_handle == 0 ) return 0;
 
   uint16_t size16 = (uint16_t) size;
 
@@ -144,10 +152,12 @@ int AdafruitTCP::read(uint8_t* buf, size_t size)
   };
 
   // TODO check case when read bytes < size
-  VERIFY(ERROR_NONE == FEATHERLIB->sdep_execute_n(SDEP_CMD_TCP_READ,
-                                                  sizeof(para_arr)/sizeof(sdep_cmd_para_t),
-                                                  para_arr, &size16, buf), -1);
+  _errno = FEATHERLIB->sdep_execute_n(SDEP_CMD_TCP_READ,
+                                      sizeof(para_arr)/sizeof(sdep_cmd_para_t),
+                                      para_arr, &size16, buf);
+  VERIFY(ERROR_NONE == _errno, 0);
   bytesRead += size;
+
   return size;
 }
 
@@ -168,7 +178,7 @@ size_t AdafruitTCP::write( uint8_t b)
 /******************************************************************************/
 size_t AdafruitTCP::write(const uint8_t* content, size_t len)
 {
-  if (_tcp_handle == 0) return 0; //this->close();
+  if (_tcp_handle == 0) return 0;
 
   sdep_cmd_para_t para_arr[] =
   {
@@ -176,10 +186,13 @@ size_t AdafruitTCP::write(const uint8_t* content, size_t len)
       { .len = len, .p_value = content    }
   };
 
-  VERIFY(ERROR_NONE == FEATHERLIB->sdep_execute_n(SDEP_CMD_TCP_WRITE,
-                                                  sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
-                                                  NULL, NULL), 0);
-  this->flush();
+  _errno = FEATHERLIB->sdep_execute_n(SDEP_CMD_TCP_WRITE,
+                                      sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                      NULL, NULL);
+  VERIFY(ERROR_NONE == _errno, 0);
+
+  // if packet is not buffered --> send out immediately
+  if (!_packet_buffering) this->flush();
 
   return len;
 }
@@ -193,11 +206,11 @@ void AdafruitTCP::flush()
 {
   if ( _tcp_handle == 0 ) return;
 
-  // flush is flush read !!!!
-  FEATHERLIB->sdep_execute(SDEP_CMD_TCP_FLUSH, 4, &_tcp_handle, NULL, NULL);
+  // flush write
+  _errno = FEATHERLIB->sdep_execute(SDEP_CMD_TCP_FLUSH, 4, &_tcp_handle, NULL, NULL);
 
-//  while (available())
-//    read();
+  // TODO should we flush read bytes as well ??
+  //while (available()) read();
 }
 
 /******************************************************************************/
@@ -210,7 +223,8 @@ int AdafruitTCP::available()
   if ( _tcp_handle == 0 ) return 0;
 
   uint8_t result;
-  VERIFY(ERROR_NONE == FEATHERLIB->sdep_execute(SDEP_CMD_TCP_AVAILABLE, 4, &_tcp_handle, NULL, &result), 0);
+  _errno = FEATHERLIB->sdep_execute(SDEP_CMD_TCP_AVAILABLE, 4, &_tcp_handle, NULL, &result);
+  VERIFY(ERROR_NONE == _errno, 0);
 
   return result;
 }
@@ -231,10 +245,10 @@ int AdafruitTCP::peek()
       { .len = 4, .p_value = &_timeout    },
   };
 
-  VERIFY(ERROR_NONE == FEATHERLIB->sdep_execute_n(SDEP_CMD_TCP_PEEK,
-                                                sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
-                                                NULL, &ch), -1);
-
+  _errno = FEATHERLIB->sdep_execute_n(SDEP_CMD_TCP_PEEK,
+                                      sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                      NULL, &ch);
+  VERIFY(ERROR_NONE == _errno, EOF);
   return (int) ch;
 }
 
@@ -255,9 +269,9 @@ void AdafruitTCP::install_callback(void)
   };
 
   // TODO check case when read bytes < size
-  FEATHERLIB->sdep_execute_n(SDEP_CMD_TCP_SET_CALLBACK,
-                             sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
-                             NULL, NULL);
+  _errno = FEATHERLIB->sdep_execute_n(SDEP_CMD_TCP_SET_CALLBACK,
+                                      sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                      NULL, NULL);
 }
 
 /******************************************************************************/
@@ -285,10 +299,10 @@ void AdafruitTCP::setDisconnectCallback( int (*fp) (void*, void*))
     @brief  Closes the TCP socket and resets any counters
 */
 /******************************************************************************/
-void AdafruitTCP::close()
+void AdafruitTCP::stop()
 {
   if ( _tcp_handle == 0 ) return;
 
-  FEATHERLIB->sdep_execute(SDEP_CMD_TCP_CLOSE, 4, &_tcp_handle, NULL, NULL);
+  _errno = FEATHERLIB->sdep_execute(SDEP_CMD_TCP_CLOSE, 4, &_tcp_handle, NULL, NULL);
   this->reset();
 }
