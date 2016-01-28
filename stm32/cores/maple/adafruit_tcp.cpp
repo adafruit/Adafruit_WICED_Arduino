@@ -54,8 +54,7 @@ AdafruitTCP::AdafruitTCP(void)
 /******************************************************************************/
 void AdafruitTCP::reset()
 {
-  tcp_state    = IDLE;
-  tcp_handle   = 0;
+  _tcp_handle   = 0;
   bytesRead    = 0;
 }
 
@@ -79,7 +78,7 @@ bool AdafruitTCP::connect(IPAddress ip, uint16_t port)
 
   int err = FEATHERLIB->sdep_execute_n(SDEP_CMD_TCP_CONNECT,
                                        sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
-                                       NULL, &tcp_handle);
+                                       NULL, &_tcp_handle);
   VERIFY(err == ERROR_NONE, false);
 
   this->install_callback();
@@ -111,7 +110,7 @@ bool AdafruitTCP::connect(const char* host, uint16_t port)
 /******************************************************************************/
 int AdafruitTCP::read()
 {
-  if ( tcp_handle == 0 ) return (-1);
+  if ( _tcp_handle == 0 ) return (-1);
 
   uint8_t b;
 
@@ -133,13 +132,13 @@ int AdafruitTCP::read()
 /******************************************************************************/
 int AdafruitTCP::read(uint8_t* buf, size_t size)
 {
-  if ( tcp_handle == 0 ) return (-1);
+  if ( _tcp_handle == 0 ) return (-1);
 
   uint16_t size16 = (uint16_t) size;
 
   sdep_cmd_para_t para_arr[] =
   {
-      { .len = 4, .p_value = &tcp_handle },
+      { .len = 4, .p_value = &_tcp_handle },
       { .len = 2, .p_value = &size16      },
       { .len = 4, .p_value = &_timeout     },
   };
@@ -169,11 +168,11 @@ size_t AdafruitTCP::write( uint8_t b)
 /******************************************************************************/
 size_t AdafruitTCP::write(const uint8_t* content, size_t len)
 {
-  if (tcp_handle == 0) return 0; //this->close();
+  if (_tcp_handle == 0) return 0; //this->close();
 
   sdep_cmd_para_t para_arr[] =
   {
-      { .len = 4  , .p_value = &tcp_handle},
+      { .len = 4  , .p_value = &_tcp_handle},
       { .len = len, .p_value = content    }
   };
 
@@ -192,10 +191,10 @@ size_t AdafruitTCP::write(const uint8_t* content, size_t len)
 /******************************************************************************/
 void AdafruitTCP::flush()
 {
-  if ( tcp_handle == 0 ) return;
+  if ( _tcp_handle == 0 ) return;
 
   // flush is flush read !!!!
-  FEATHERLIB->sdep_execute(SDEP_CMD_TCP_FLUSH, 4, &tcp_handle, NULL, NULL);
+  FEATHERLIB->sdep_execute(SDEP_CMD_TCP_FLUSH, 4, &_tcp_handle, NULL, NULL);
 
 //  while (available())
 //    read();
@@ -208,10 +207,10 @@ void AdafruitTCP::flush()
 /******************************************************************************/
 int AdafruitTCP::available()
 {
-  if ( tcp_handle == 0 ) return 0;
+  if ( _tcp_handle == 0 ) return 0;
 
   uint8_t result;
-  VERIFY(ERROR_NONE == FEATHERLIB->sdep_execute(SDEP_CMD_TCP_AVAILABLE, 4, &tcp_handle, NULL, &result), 0);
+  VERIFY(ERROR_NONE == FEATHERLIB->sdep_execute(SDEP_CMD_TCP_AVAILABLE, 4, &_tcp_handle, NULL, &result), 0);
 
   return result;
 }
@@ -223,12 +222,12 @@ int AdafruitTCP::available()
 /******************************************************************************/
 int AdafruitTCP::peek()
 {
-  if ( tcp_handle == 0 ) return EOF;
+  if ( _tcp_handle == 0 ) return EOF;
 
   uint8_t ch;
   sdep_cmd_para_t para_arr[] =
   {
-      { .len = 4, .p_value = &tcp_handle },
+      { .len = 4, .p_value = &_tcp_handle },
       { .len = 4, .p_value = &_timeout    },
   };
 
@@ -250,7 +249,7 @@ void AdafruitTCP::install_callback(void)
 
   sdep_cmd_para_t para_arr[] =
   {
-      { .len = 4, .p_value = &tcp_handle         },
+      { .len = 4, .p_value = &_tcp_handle         },
       { .len = 4, .p_value = &disconnect_callback },
       { .len = 4, .p_value = &rx_callback         },
   };
@@ -288,8 +287,8 @@ void AdafruitTCP::setDisconnectCallback( int (*fp) (void*, void*))
 /******************************************************************************/
 void AdafruitTCP::close()
 {
-  if ( tcp_handle == 0 ) return;
+  if ( _tcp_handle == 0 ) return;
 
-  FEATHERLIB->sdep_execute(SDEP_CMD_TCP_CLOSE, 4, &tcp_handle, NULL, NULL);
+  FEATHERLIB->sdep_execute(SDEP_CMD_TCP_CLOSE, 4, &_tcp_handle, NULL, NULL);
   this->reset();
 }

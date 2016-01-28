@@ -47,9 +47,8 @@ typedef enum {
 
 class AdafruitTCP : public Stream
 {
-private:
-  tcpState_t  tcp_state;
-  uint32_t    tcp_handle;
+protected:
+  uint32_t    _tcp_handle;
   uint32_t    bytesRead;
 
   // Callback signatures
