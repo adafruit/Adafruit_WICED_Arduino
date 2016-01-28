@@ -17,13 +17,6 @@
 #define MAX_SCAN_NUM   20
 wl_ap_info_t scan_result[MAX_SCAN_NUM];
 
-const char OPEN_STR[] = "OPEN";
-const char WEP_STR[] = "WEP";
-const char WPA_STR[] = "WPA";
-const char WPA2_STR[] = "WPA2";
-
-
-
 void setup() {
   //Initialize serial and wait for port to open:
   Serial.begin(9600);
@@ -76,14 +69,14 @@ void listNetworks() {
 
   // print the network number and name for each network found:
   Serial.printf("ID SSID                 Enc  Ch Strength\n");
-  for (int i = 0; i < min(3,numSsid); i++) {
-    Serial.printf("%02d %-20s %s %02d %02d dBm", 
-                  i, scan_result[i].ssid, 
+  for (int i = 0; i < numSsid; i++) {
+    Serial.printf("%02d %-20s %-04s %02d %02d dBm", 
+                  i,
+                  (scan_result[i].ssid[i] == 0) ? "*" : scan_result[i].ssid, // hidden SSID display as "*"
                   getEncryptionType( scan_result[i].security ),
                   scan_result[i].channel,
                   scan_result[i].rssi);
     Serial.println();
-    Serial.flush();
   }
 }
 
@@ -93,28 +86,28 @@ char const* getEncryptionType(int32_t thisType)
   switch (thisType) {
     case ENC_TYPE_WEP:
     case ENC_TYPE_WEP_SHARED:
-      return WEP_STR;
+      return "WEP";
     break;
       
     case ENC_TYPE_WPA_TKIP:
     case ENC_TYPE_WPA_AES:
     case ENC_TYPE_WPA_MIXED:
-      return WPA_STR;
+      return "WPA";
     break;
     
     case ENC_TYPE_WPA2_AES:
     case ENC_TYPE_WPA2_TKIP:
     case ENC_TYPE_WPA2_MIXED:
-      return WPA2_STR;
+      return "WPA2";
     break;
       
     case ENC_TYPE_OPEN:
-      return OPEN_STR;
+      return "OPEN";
     break;
       
-//    case ENC_TYPE_AUTO:
-//      Serial.println("Auto");
-//      break;
+    default:
+      return "OTHER";
+    break;
   }
 }
 
