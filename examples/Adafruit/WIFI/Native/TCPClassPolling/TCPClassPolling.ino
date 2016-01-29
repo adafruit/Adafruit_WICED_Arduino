@@ -5,7 +5,7 @@ char const     ssid[ ]   = "SSIDNAME";             // Your network SSID (name)
 char const     pass[ ]   = "PASSWORD";             // Your network password (use for WPA, or use as key for WEP)
 char const     server[ ] = "www.adafruit.com";     // The TCP server to connect to
 const uint16_t port      = 80;                     // The TCP port to use
-char const     page[ ]   = "/testwifi/index.html"; // The HTTP resource to request
+char const     page[ ]   = "/testwifi/index.html"; // The HTTP resource to request
 
 AdafruitTCP adatcp;
 
