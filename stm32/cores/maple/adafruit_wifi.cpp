@@ -54,6 +54,7 @@ AdafruitFeather::AdafruitFeather(void)
   ada_http_rx_callback = NULL;
 
   _connected = false;
+  _errno      = ERROR_NONE;
   memclr(&_ap_info, sizeof(wl_ap_info_t));
 }
 

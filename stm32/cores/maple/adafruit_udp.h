@@ -38,33 +38,60 @@
 #define _ADAFRUIT_UDP_H_
 
 #include <Arduino.h>
+#include <Udp.h>
 
-typedef enum {
-  IDLE,
-  REQUEST_SENT
-} udpState_t;
+#define ADAFRUIT_UDP_TIMEOUT  1000
 
-class AdafruitUDP
+class AdafruitUDP : public UDP
 {
-private:
-  udpState_t  udp_state;
-  uint32_t    udp_handle;
-  uint32_t    timeout;
-  uint32_t    bytesRead;
-  uint16_t    socket;
+protected:
+  uint32_t    _udp_handle;
+
+	uint16_t    _rcvPort;
+	uint32_t    _rcvIP;
+
+	uint16_t    _sndPort;
+	uint32_t    _sndIP;
+
+  sdep_err_t  _errno;
+  uint32_t    _bytesRead;
 
   int (*rx_callback) (void *, void*);
-  void reset();
+  void reset(void);
 
 public:
-  AdafruitUDP(uint16_t socket_number);
+  AdafruitUDP();
 
-  void setTimeout(uint32_t ms);
-  int  read();
-  int  read(uint8_t *buf, size_t size);
-  int  write(const char* content, uint16_t len);
-  int  available();
-  void close();
+  sdep_err_t errno(void)  { return _errno; }
+
+  // UDP API
+  virtual uint8_t begin(uint16_t port);
+  virtual void stop();
+
+  virtual int beginPacket(IPAddress ip, uint16_t port);
+  virtual int beginPacket(const char *host, uint16_t port);
+  virtual int endPacket();
+  virtual int parsePacket();
+
+  virtual IPAddress remoteIP();
+  virtual uint16_t remotePort();
+
+  // Stream API
+  virtual int read();
+  virtual int read(unsigned char* buffer, size_t len);
+  virtual int read(char* buffer, size_t len)
+  {
+    return this->read( (unsigned char*) buffer, len );
+  }
+
+  virtual int peek();
+  virtual int available();
+
+  virtual void flush();
+  virtual size_t write(uint8_t byte);
+  virtual size_t write(const uint8_t *buffer, size_t size);
+
+  using Print::write;
 
   // callback
   void setReceivedCallback( int (*fp) (void*, void*) );

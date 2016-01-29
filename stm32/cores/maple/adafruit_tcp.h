@@ -37,6 +37,7 @@
 #ifndef _ADAFRUIT_TCP_H_
 #define _ADAFRUIT_TCP_H_
 
+#include "adafruit_wifi.h"
 #include <Arduino.h>
 #include <Client.h>
 #include <IPAddress.h>
@@ -46,7 +47,7 @@ class AdafruitTCP : public Client
 protected:
   sdep_err_t _errno;
   uint32_t   _tcp_handle;
-  uint32_t   bytesRead;
+  uint32_t   _bytesRead;
 
   // buffer written until network packet is full ~1500 or flush() is called
   // default is false
@@ -68,6 +69,7 @@ public:
   // Client API
   virtual int  connect ( IPAddress ip, uint16_t port );
   virtual int  connect ( const char * host, uint16_t port );
+
   virtual void stop    ( void );
   virtual uint8_t connected( void );
   virtual operator bool() { return _tcp_handle != 0; }

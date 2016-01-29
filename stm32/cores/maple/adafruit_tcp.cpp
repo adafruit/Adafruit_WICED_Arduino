@@ -33,6 +33,7 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 /**************************************************************************/
+
 #include "adafruit_wifi.h"
 #include "adafruit_tcp.h"
 
@@ -55,8 +56,9 @@ AdafruitTCP::AdafruitTCP(void)
 void AdafruitTCP::reset()
 {
   _tcp_handle       = 0;
-  bytesRead         = 0;
+  _bytesRead        = 0;
   _packet_buffering = false;
+  _errno            = ERROR_NONE;
 }
 
 void AdafruitTCP::usePacketBuffering(bool enable)
@@ -156,7 +158,7 @@ int AdafruitTCP::read(uint8_t* buf, size_t size)
                                       sizeof(para_arr)/sizeof(sdep_cmd_para_t),
                                       para_arr, &size16, buf);
   VERIFY(ERROR_NONE == _errno, 0);
-  bytesRead += size;
+  _bytesRead += size;
 
   return size;
 }

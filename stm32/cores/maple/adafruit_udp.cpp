@@ -36,17 +36,15 @@
 
 #include "adafruit_wifi.h"
 #include "adafruit_udp.h"
-
 /******************************************************************************/
 /*!
     @brief Instantiates a new instance of the AdafruitUDP class
 */
 /******************************************************************************/
-AdafruitUDP::AdafruitUDP(uint16_t socket_number)
+AdafruitUDP::AdafruitUDP()
 {
-  rx_callback   = NULL;
-  timeout       = 1000;
-  socket        = socket_number;
+  rx_callback = NULL;
+  _timeout    = ADAFRUIT_UDP_TIMEOUT;
   this->reset();
 }
 
@@ -55,45 +53,118 @@ AdafruitUDP::AdafruitUDP(uint16_t socket_number)
     @brief
 */
 /******************************************************************************/
-void AdafruitUDP::reset()
+void AdafruitUDP::reset(void)
 {
-  udp_state    = IDLE;
-  udp_handle   = 0;
-  bytesRead    = 0;
+  _udp_handle = 0;
+  _bytesRead  = 0;
+
+  _rcvPort    = 0;
+  _rcvIP      = 0;
+
+  _sndIP      = 0;
+  _sndPort    = 0;
+
+  _errno      = ERROR_NONE;
 }
 
 /******************************************************************************/
 /*!
-    @brief
+    @brief Start UDP socket, listening at local port
 */
 /******************************************************************************/
-void AdafruitUDP::setTimeout(uint32_t ms)
+uint8_t AdafruitUDP::begin(uint16_t port)
 {
-  timeout = ms;
+  uint8_t interface = WIFI_INTERFACE_STATION;
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = 1, .p_value = &interface },
+      { .len = 2, .p_value = &port      },
+  };
+
+  _errno = FEATHERLIB->sdep_execute_n(SDEP_CMD_UDP_CREATE,
+                                      sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                      NULL, &_udp_handle);
+  return ERROR_NONE == _errno;
+}
+
+/******************************************************************************/
+/*!
+    @brief Stop UDP socket, release all resources
+*/
+/******************************************************************************/
+void AdafruitUDP::stop()
+{
+  if (_udp_handle == 0) return;
+
+  _errno = FEATHERLIB->sdep_execute(SDEP_CMD_UDP_CLOSE, 4, &_udp_handle, NULL, NULL);
+  this->reset();
+}
+
+/******************************************************************************/
+/*!
+    @brief  It starts processing the next available incoming packet, checks for
+            the presence of a UDP packet, and reports the size. must be called before
+            reading the buffer with UDP.read().
+*/
+/******************************************************************************/
+int AdafruitUDP::parsePacket()
+{
+  if (_udp_handle == 0) return 0;
+
+  struct ATTR_PACKED {
+    uint32_t remote_ip;
+    uint16_t remote_port;
+    uint32_t packet_size;
+  } response;
+
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = 4   , .p_value = &_udp_handle },
+      { .len = 4   , .p_value = &_timeout    },
+  };
+
+  _errno = FEATHERLIB->sdep_execute_n(SDEP_CMD_UDP_PACKET_INFO,
+                                      sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                      NULL, &response);
+  VERIFY(ERROR_NONE == _errno, 0);
+
+  _rcvIP   = response.remote_ip;
+  _rcvPort = response.remote_port;
+
+  return (int) response.packet_size;
+}
+
+/******************************************************************************/
+/*!
+    @brief  Get remote IP
+*/
+/******************************************************************************/
+IPAddress  AdafruitUDP::remoteIP()
+{
+	return _rcvIP;
+}
+
+/******************************************************************************/
+/*!
+    @brief  Get remote Port
+*/
+/******************************************************************************/
+uint16_t  AdafruitUDP::remotePort()
+{
+	return _rcvPort;
 }
 
 /******************************************************************************/
 /*!
     @brief  Reads a single byte from the response stream
 
-    @return Returns -1 if no data was available, or the total number of bytes
-            read so far if a byte was able to be read.
+    @return Returns -1 if no data was available
 */
 /******************************************************************************/
 int AdafruitUDP::read()
 {
-  if ( udp_handle == 0 ) return (-1);
-
   uint8_t b;
-  return ( this->read(&b, 1) > 0 ) ? b : (-1);
-
-  if (this->read(&b, 1) > 0)
-  {
-    bytesRead++;
-    return b;
-  }
-  else
-    return (-1);
+  return ( this->read(&b, 1) > 0 ) ? (int) b : EOF;
 }
 
 /******************************************************************************/
@@ -103,40 +174,49 @@ int AdafruitUDP::read()
     @return The total number of bytes read so far
 */
 /******************************************************************************/
-int AdafruitUDP::read(uint8_t* buf, size_t size)
+int AdafruitUDP::read(unsigned char* buf, size_t size)
 {
-  if ( udp_handle == 0 ) return (-1);
+  if ( _udp_handle == 0 ) return 0;
 
   uint16_t size16 = (uint16_t) size;
-
   sdep_cmd_para_t para_arr[] =
   {
-      { .len = 4, .p_value = &udp_handle },
+      { .len = 4, .p_value = &_udp_handle },
       { .len = 2, .p_value = &size16      },
-      { .len = 4, .p_value = &timeout     },
+      { .len = 4, .p_value = &_timeout     },
   };
 
   // TODO check case when read bytes < size
-  VERIFY(ERROR_NONE == FEATHERLIB->sdep_execute_n(SDEP_CMD_UDP_READ,
-                                                  sizeof(para_arr)/sizeof(sdep_cmd_para_t),
-                                                  para_arr, &size16, buf), -1);
-  bytesRead += size;
+  _errno = FEATHERLIB->sdep_execute_n(SDEP_CMD_UDP_READ,
+                                      sizeof(para_arr)/sizeof(sdep_cmd_para_t),
+                                      para_arr, &size16, buf);
+  VERIFY(ERROR_NONE == _errno, -1);
+
+  _bytesRead += size;
   return size;
 }
 
 /******************************************************************************/
 /*!
-    @brief  Writes the specified bumber of bytes
+    @brief  Returns the first bytes without removing it from FIFO
 */
 /******************************************************************************/
-int AdafruitUDP::write(const char* content, uint16_t len)
+int AdafruitUDP::peek()
 {
-  if (udp_handle != 0) this->close();
+  if ( _udp_handle == 0 ) return EOF;
 
-  // ToDo!
+  uint8_t data;
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = 4, .p_value = &_udp_handle },
+      { .len = 4, .p_value = &_timeout    },
+  };
 
-  //if (error == ERROR_NONE) udp_state = REQUEST_SENT;
-  //return error;
+  _errno = FEATHERLIB->sdep_execute_n(SDEP_CMD_UDP_PEEK,
+                                      sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                      NULL, &data);
+  VERIFY(ERROR_NONE == _errno, -1);
+  return (int) data;
 }
 
 /******************************************************************************/
@@ -146,12 +226,100 @@ int AdafruitUDP::write(const char* content, uint16_t len)
 /******************************************************************************/
 int AdafruitUDP::available()
 {
-  if ( udp_handle == 0 ) return 0;
+  if ( _udp_handle == 0 ) return 0;
 
   uint8_t result;
-  VERIFY(ERROR_NONE == FEATHERLIB->sdep_execute(SDEP_CMD_UDP_AVAILABLE, 4, &udp_handle, NULL, &result), 0);
+  _errno = FEATHERLIB->sdep_execute(SDEP_CMD_UDP_AVAILABLE, 4, &_udp_handle, NULL, &result);
+  VERIFY(ERROR_NONE == _errno, 0);
 
   return result;
+}
+
+/******************************************************************************/
+/*!
+    @brief  Starts a connection to write UDP data to the remote connection
+*/
+/******************************************************************************/
+int AdafruitUDP::beginPacket(const char *host, uint16_t port)
+{
+	IPAddress ip;
+	if ( !feather.hostByName(host, ip) ) return 0;
+
+	return this->beginPacket(ip, port);
+}
+
+/******************************************************************************/
+/*!
+    @brief  Starts a connection to write UDP data to the remote connection
+*/
+/******************************************************************************/
+int AdafruitUDP::beginPacket(IPAddress ip, uint16_t port)
+{
+	_sndIP = (uint32_t) ip;
+	_sndPort = port;
+
+	return 1;
+}
+
+/******************************************************************************/
+/*!
+    @brief  Called after writing UDP data to the remote connection.
+*/
+/******************************************************************************/
+int AdafruitUDP::endPacket()
+{
+  _sndIP = 0;
+  _sndPort = 0;
+
+	return 1;
+}
+
+
+/******************************************************************************/
+/*!
+    @brief  Writes a byte
+*/
+/******************************************************************************/
+size_t AdafruitUDP::write(uint8_t byte)
+{
+  return write(&byte, 1);
+}
+
+/******************************************************************************/
+/*!
+    @brief  Writes the specified umber of bytes
+*/
+/******************************************************************************/
+size_t AdafruitUDP::write(const uint8_t* buffer, size_t size)
+{
+  if (_udp_handle == 0 || _sndIP == 0 || _sndPort == 0) return 0;
+
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = 4   , .p_value = &_udp_handle },
+      { .len = 4   , .p_value = &_sndIP      },
+      { .len = 2   , .p_value = &_sndPort    },
+      { .len = size, .p_value = buffer       }
+  };
+
+  _errno = FEATHERLIB->sdep_execute_n(SDEP_CMD_UDP_WRITE,
+                                      sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                      NULL, NULL);
+  VERIFY(ERROR_NONE == _errno, 0);
+
+  return size;
+}
+
+/******************************************************************************/
+/*!
+    @brief  Flush
+*/
+/******************************************************************************/
+void AdafruitUDP::flush()
+{
+  if (_udp_handle == 0) return;
+
+  _errno = FEATHERLIB->sdep_execute(SDEP_CMD_UDP_FLUSH, 4, &_udp_handle, NULL, NULL);
 }
 
 /******************************************************************************/
@@ -162,17 +330,4 @@ int AdafruitUDP::available()
 void AdafruitUDP::setReceivedCallback( int (*fp) (void*, void*) )
 {
   rx_callback = fp;
-}
-
-/******************************************************************************/
-/*!
-    @brief  Closes the UDP socket and resets any counters
-*/
-/******************************************************************************/
-void AdafruitUDP::close()
-{
-  if ( udp_handle == 0 ) return;
-
-  FEATHERLIB->sdep_execute(SDEP_CMD_UDP_CLOSE, 4, &udp_handle, NULL, NULL);
-  this->reset();
 }

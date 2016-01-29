@@ -1,5 +1,6 @@
-#include "adafruit_wifi.h"
-#include "adafruit_tcp.h"
+
+#include <adafruit_wifi.h>
+#include <adafruit_tcp.h>
 
 char const     ssid[ ]   = "SSIDNAME";             // Your network SSID (name)
 char const     pass[ ]   = "PASSWORD";             // Your network password (use for WPA, or use as key for WEP)
