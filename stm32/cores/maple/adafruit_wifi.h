@@ -115,22 +115,28 @@ private:
 public:
   AdafruitFeather(void);
 
-  sdep_err_t randomNumber(uint32_t* random32bit);
   void factoryReset(void);
   void nvmReset(void);
+  sdep_err_t errno (void)  { return _errno; }
+  sdep_err_t randomNumber(uint32_t* random32bit);
+
 
   // Connect to a WiFi
-  bool   connect           ( void );
-  bool   connect           ( const char *ssid );
-  bool   connect           ( const char *ssid, const char *key, int enc_type = ENC_TYPE_AUTO );
-  //bool connect           ( const char *ssid, uint8_t key_idx, const char* key );
+  bool connect   ( void );
+  bool connect   ( const char *ssid );
+  bool connect   ( const char *ssid, const char *key, int enc_type = ENC_TYPE_AUTO );
 
-  //bool connect           ( const String &ssid, uint8_t key_idx, const String &key ) { return connect(ssid.c_str(), key_idx, key.c_str()); }
-  //bool   connect           ( const String &ssid ) { return connect(ssid.c_str()); }
-  //bool   connect           ( const String &ssid, const String &key, int enc_type = ENC_TYPE_AUTO ) { return connect(ssid.c_str(), key.c_str(), enc_type); }
+  bool begin     (void) { return this->connect(); }
+  bool begin     (const char *ssid ) { return this->connect(ssid); }
+  bool begin     ( const char *ssid, const char *key, int enc_type = ENC_TYPE_AUTO ) { return this->connect(ssid, key, enc_type); }
 
-  bool connected(void) { return _connected; }
-  sdep_err_t errno(void)  { return _errno; }
+  //bool connect ( const char *ssid, uint8_t key_idx, const char* key );
+
+  //bool connect ( const String &ssid, uint8_t key_idx, const String &key ) { return connect(ssid.c_str(), key_idx, key.c_str()); }
+  //bool connect ( const String &ssid ) { return connect(ssid.c_str()); }
+  //bool connect ( const String &ssid, const String &key, int enc_type = ENC_TYPE_AUTO ) { return connect(ssid.c_str(), key.c_str(), enc_type); }
+
+  bool connected (void) { return _connected; }
 
   // Profile functions
   bool      saveConnectedProfile  ( void ); // save currently connected AP
