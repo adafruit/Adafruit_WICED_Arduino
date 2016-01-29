@@ -15,8 +15,8 @@ void setup()
   Serial.begin(115200);
   while (!Serial)
   {
+    // wait for Serial port to connect. Needed for native USB port only
     delay(1);
-    ; // wait for Serial port to connect. Needed for native USB port only
   }
 
   Serial.println("TCP Example With Polling\r\n");
@@ -26,9 +26,9 @@ void setup()
   {
     Serial.print("Attempting to connect to: ");
     Serial.println(ssid);
-  } while( feather.connectAP(ssid, pass) != ERROR_NONE ) ;
+  } while( !feather.connect(ssid, pass) ) ;
 
-  Serial.println("Connected to WiFi");
+  Serial.println("Connected!");
   Serial.println("\nStarting connection to server...");
 
   // If we can connect to the TCP Server, report it via Serial.print
@@ -65,7 +65,7 @@ void loop()
   {
     Serial.println();
     Serial.println("Disconnecting from server.");
-    adatcp.close();
+    adatcp.stop();
 
     // Do nothing forevermore:
     while (true) delay(1);

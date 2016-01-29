@@ -41,11 +41,6 @@
 #include <Client.h>
 #include <IPAddress.h>
 
-typedef enum {
-  IDLE,
-  REQUEST_SENT
-} tcpState_t;
-
 class AdafruitTCP : public Client
 {
 protected:
