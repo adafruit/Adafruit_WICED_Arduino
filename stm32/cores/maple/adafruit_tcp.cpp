@@ -73,6 +73,8 @@ void AdafruitTCP::usePacketBuffering(bool enable)
 /******************************************************************************/
 int AdafruitTCP::connect(IPAddress ip, uint16_t port)
 {
+  if ( !feather.connected() ) return 0;
+
   uint32_t ipv4 = (uint32_t) ip;
   uint8_t is_tls = 0;
 

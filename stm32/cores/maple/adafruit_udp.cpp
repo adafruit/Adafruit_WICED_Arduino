@@ -74,6 +74,8 @@ void AdafruitUDP::reset(void)
 /******************************************************************************/
 uint8_t AdafruitUDP::begin(uint16_t port)
 {
+  if ( !feather.connected() ) return 0;
+
   uint8_t interface = WIFI_INTERFACE_STATION;
   sdep_cmd_para_t para_arr[] =
   {
