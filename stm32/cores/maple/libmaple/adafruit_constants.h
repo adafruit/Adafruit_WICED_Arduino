@@ -107,9 +107,11 @@ typedef enum
 {
   ERROR_NONE                   = 0x0000,
   ERROR_NOT_CONNECTED          = 0x0020,
-
-  ERROR_AUTHENTICATION_FAILED  = 0x03EE,  /**< WWD Authentication error: .connectAP */
-  ERROR_INVALID_SSID           = 0x8005,  /**< .connectAP etc. */
+  ERROR_INVALID_KEY            = 0x03EC,  /**< WWD 1004, Invalid AP Password */
+  ERROR_AUTHENTICATION_FAILED  = 0x03EE,  /**< WWD 1006, Authentication error */
+  ERROR_NETWORK_NOT_FOUND      = 0x0400,  /**< WWD 1024, likely a range issue */
+  ERROR_UNABLE_TO_JOIN         = 0x0401,  /**< WWD 1025, likely a range issue */
+  ERROR_INVALID_SSID           = 0x8005,  /**< SSID not found in AP scan */
   ERROR_INVALIDPARAMETER       = 0x8025,
   ERROR_NO_MEMORY              = 0x80AA   /**< Temporary */
 } err_t;
