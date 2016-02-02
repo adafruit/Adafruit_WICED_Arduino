@@ -56,17 +56,18 @@
 
 //------------- Arduino Shared Structure -------------//
 #define CFG_ARDUINO_CODE_MAGIC    0xDEC0DED
+#define CFG_ARUDINO_CODE_VERSION  "0.1.0"
 
 typedef struct ATTR_ALIGNED(512)
 {
   // Static Information
   uint32_t arduino_magic;
-  uint32_t arduino_version;
-  uint8_t  reserved[56];
+  char     version_str[8];
+  uint8_t  reserved[52];
 
   void (*startup) (void);
 
-  // Peripheral Interrupt
+  // Peripheral
   uint32_t reserved2[16];
 
   // USBCDC callback

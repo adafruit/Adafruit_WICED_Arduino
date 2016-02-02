@@ -40,6 +40,10 @@
 #include <string.h>
 #include <stdlib.h>
 
+extern "C"
+{
+  extern adafruit_arduino_t const adafruit_arduino;
+}
 
 AdafruitFeather feather;
 
@@ -92,19 +96,9 @@ void AdafruitFeather::nvmReset(void)
     @brief  Get bootloader version in string format
 */
 /******************************************************************************/
-char* AdafruitFeather::bootloaderVersion (void)
+char const* AdafruitFeather::bootloaderVersion (void)
 {
   return this->_boot_version;
-}
-
-/******************************************************************************/
-/*!
-    @brief  Get firmware version in string format
-*/
-/******************************************************************************/
-char* AdafruitFeather::firmwareVersion (void)
-{
-  return this->_fw_version;
 }
 
 /******************************************************************************/
@@ -112,9 +106,29 @@ char* AdafruitFeather::firmwareVersion (void)
     @brief  Get sdk version in string format
 */
 /******************************************************************************/
-char* AdafruitFeather::sdkVersion (void)
+char const* AdafruitFeather::sdkVersion (void)
 {
   return this->_sdk_version;
+}
+
+/******************************************************************************/
+/*!
+    @brief  Get firmware version in string format
+*/
+/******************************************************************************/
+char const* AdafruitFeather::firmwareVersion (void)
+{
+  return this->_fw_version;
+}
+
+/******************************************************************************/
+/*!
+    @brief  Get Arduino Library in string format
+*/
+/******************************************************************************/
+char const* AdafruitFeather::arduinoVersion ( void )
+{
+  return adafruit_arduino.version_str;
 }
 
 

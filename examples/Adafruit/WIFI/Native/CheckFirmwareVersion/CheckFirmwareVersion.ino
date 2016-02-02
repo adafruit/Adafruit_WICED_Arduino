@@ -26,14 +26,17 @@ void setup()
 // the loop function runs over and over again forever
 void loop() 
 {
-  Serial.print("Bootloader version: ");
+  Serial.print("Bootloader version      : ");
   Serial.println(feather.bootloaderVersion());
+
+  Serial.print("SDK version             : ");
+  Serial.println(feather.sdkVersion());
   
-  Serial.print("Firmware version  : ");
+  Serial.print("Firmware version        : ");
   Serial.println(feather.firmwareVersion());
 
-  Serial.print("SDK version       : ");
-  Serial.println(feather.sdkVersion());
+  Serial.print("Arduino library version : ");
+  Serial.println(feather.arduinoVersion());
   
   Serial.println();
   Serial.println("Print again in 10 seconds");

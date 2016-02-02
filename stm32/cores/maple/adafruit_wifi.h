@@ -124,11 +124,10 @@ public:
   sdep_err_t errno (void)  { return _errno; }
   sdep_err_t randomNumber(uint32_t* random32bit);
 
-  char*     bootloaderVersion ( void );
-  char*     firmwareVersion   ( void );
-  char*     sdkVersion        ( void );
-
-
+  char const* bootloaderVersion ( void );
+  char const* sdkVersion        ( void );
+  char const* firmwareVersion   ( void );
+  char const* arduinoVersion    ( void );
 
   // Connect to a WiFi
   bool connect   ( void );
