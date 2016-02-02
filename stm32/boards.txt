@@ -16,6 +16,7 @@ feather.pid.1=0x8010
 
 ## Building
 ## -------------------------
+feather.build.board=STM32_FEATHER
 feather.build.mcu=cortex-m3
 feather.build.f_cpu=120000000L
 feather.build.core=maple
@@ -27,7 +28,6 @@ feather.build.vect=VECT_TAB_BASE
 feather.build.density=STM32_HIGH_DENSITY
 feather.build.error_led_port=GPIOA
 feather.build.error_led_pin=15
-#feather.build.gcc_ver=gcc-arm-none-eabi-4.8.3-2014q1
 
 ## Uploader
 ## -------------------------
@@ -46,15 +46,25 @@ feather.menu.section.usercode.upload.maximum_size=131072
 #feather.menu.section.usercode.upload.ram.maximum_size=16384
 #feather.menu.section.usercode.upload.flash.maximum_size=1048576
 
-## Feather Lib section
+## Feather Lib (Release) section
 ## -------------------------
-feather.menu.section.featherlib=WICED Feather Lib
+feather.menu.section.featherlib=Feather Lib (Release)
 feather.menu.section.featherlib.upload.subcommand=featherlib_upgrade
 feather.menu.section.featherlib.upload.binfile={runtime.platform.path}/featherlib/featherlib.bin
 feather.menu.section.featherlib.upload.address=0x08010000
 feather.menu.section.featherlib.upload.maximum_size=851968
 #feather.menu.section.featherlib.upload.ram.maximum_size=114688
 #feather.menu.section.featherlib.upload.flash.maximum_size=1048576
+
+## Feather Lib (Beta) section
+## -------------------------
+feather.menu.section.featherlib_beta=Feather Lib (Beta)
+feather.menu.section.featherlib_beta.upload.subcommand=featherlib_upgrade
+feather.menu.section.featherlib_beta.upload.binfile={runtime.platform.path}/featherlib/featherlib_beta.bin
+feather.menu.section.featherlib_beta.upload.address=0x08010000
+feather.menu.section.featherlib_beta.upload.maximum_size=851968
+#feather.menu.section.featherlib_beta.upload.ram.maximum_size=114688
+#feather.menu.section.featherlib_beta.upload.flash.maximum_size=1048576
 
 ## Factory reset section
 ## -------------------------

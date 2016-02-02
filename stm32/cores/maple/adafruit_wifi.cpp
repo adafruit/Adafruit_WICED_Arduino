@@ -56,6 +56,15 @@ AdafruitFeather::AdafruitFeather(void)
   _connected = false;
   _errno      = ERROR_NONE;
   memclr(&_ap_info, sizeof(wl_ap_info_t));
+
+  uint8_t boot_version[4] = { U32_TO_U8S_BE(FEATHERLIB->firmware_version) };
+	sprintf(_boot_version, "%d.%d.%d", boot_version[0], boot_version[1], boot_version[2]);
+
+  uint8_t fw_version[4] = { U32_TO_U8S_BE(FEATHERLIB->firmware_version) };
+	sprintf(_fw_version, "%d.%d.%d", fw_version[0], fw_version[1], fw_version[2]);
+
+	uint8_t sdk_version[4] = { U32_TO_U8S_BE(FEATHERLIB->sdk_version) };
+	sprintf(_sdk_version, "%d.%d.%d", sdk_version[0], sdk_version[1], sdk_version[2]);
 }
 
 /******************************************************************************/
@@ -77,6 +86,37 @@ void AdafruitFeather::nvmReset(void)
 {
   FEATHERLIB->sdep_execute(SDEP_CMD_NVM_RESET, 0, NULL, NULL, NULL);
 }
+
+/******************************************************************************/
+/*!
+    @brief  Get bootloader version in string format
+*/
+/******************************************************************************/
+char* AdafruitFeather::bootloaderVersion (void)
+{
+  return this->_boot_version;
+}
+
+/******************************************************************************/
+/*!
+    @brief  Get firmware version in string format
+*/
+/******************************************************************************/
+char* AdafruitFeather::firmwareVersion (void)
+{
+  return this->_fw_version;
+}
+
+/******************************************************************************/
+/*!
+    @brief  Get sdk version in string format
+*/
+/******************************************************************************/
+char* AdafruitFeather::sdkVersion (void)
+{
+  return this->_sdk_version;
+}
+
 
 /******************************************************************************/
 /*!

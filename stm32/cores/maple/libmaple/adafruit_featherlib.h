@@ -99,7 +99,8 @@ typedef struct ATTR_ALIGNED(512)
   char     mcu_str[12];            // e.g "ST32F205RGY"
   char     firmware_builddate[12]; // e.g "Dec 07 2015"
 
-  uint8_t  reserved[80];
+  uint32_t sdk_version;
+  uint8_t  reserved[76];
 
   // SDEP Command
   err_t (*sdep_execute) (uint16_t  cmd_id     ,

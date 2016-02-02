@@ -104,6 +104,10 @@ extern "C"
 class AdafruitFeather
 {
 private:
+  char          _boot_version[8];
+  char          _fw_version[8];
+  char          _sdk_version[8];
+
   sdep_err_t    _errno;
 
   wl_ap_info_t  _ap_info;
@@ -119,6 +123,11 @@ public:
   void nvmReset(void);
   sdep_err_t errno (void)  { return _errno; }
   sdep_err_t randomNumber(uint32_t* random32bit);
+
+  char*     bootloaderVersion ( void );
+  char*     firmwareVersion   ( void );
+  char*     sdkVersion        ( void );
+
 
 
   // Connect to a WiFi
