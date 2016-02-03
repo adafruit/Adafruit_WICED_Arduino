@@ -26,6 +26,12 @@ const char target_ip_str[] = "8.8.8.8";
 // Ping target by IPAddress object
 IPAddress target_ip(8, 8, 4, 4);
 
+
+void disconnect_callback(void)
+{
+  Serial.println("disconnect_callback(): Disconnected");
+}
+
 /**************************************************************************/
 /*!
     @brief  The setup function runs once when reset the board
@@ -38,6 +44,9 @@ void setup()
 
   Serial.println(F("Ping Example\r\n"));
 
+  // Set disconnection callback
+  feather.setDisconnectCallback(disconnect_callback);
+  
   // Attempt to connect to an AP
   Serial.print("Attempting to connect to: ");
   Serial.println(WLAN_SSID);
@@ -100,10 +109,10 @@ void loop()
       Serial.printf("error = 0x%04X", feather.errno());
     }
     Serial.println();
-  }
 
-  Serial.println();
-  Serial.println("Try again in 10 seconds");
-  Serial.println();
-  delay(10000);
+    Serial.println();
+    Serial.println("Try again in 10 seconds");
+    Serial.println();
+    delay(10000);
+  }
 }

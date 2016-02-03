@@ -60,27 +60,34 @@
 
 typedef struct ATTR_ALIGNED(512)
 {
-  // Static Information
+  // 0 - 63
   uint32_t arduino_magic;
   char     version_str[8];
-  uint8_t  reserved[52];
+  uint8_t  reserved1[52];
 
+  // 64 - 127
   void (*startup) (void);
+  uint32_t reserved2[15];
 
-  // Peripheral
-  uint32_t reserved2[16];
-
-  // USBCDC callback
+  // 128 - 191
+  uint32_t reserved3;
   void (*cdc_serial_event_cb)(uint32_t eid, void* p_data);
-
-  // HTTP callback
   void (*http_callback)(uint8_t* data, uint16_t data_length, uint16_t avail);
-
-  // MQTT callback
   void (*mqtt_callback)(mqtt_evt_opcode_t event, uint16_t len, uint8_t* data);
+
+  uint32_t reserved4[12];
+
+  // 192 - 255
+  void (*wifi_connect_callback)(void); // not used for now
+  void (*wifi_disconnect_callback)(void);
+  uint32_t reserved5[14];
+
+  // 256 - 512
+  uint32_t reserved6[64];
 
 }adafruit_arduino_t;
 
+ASSERT_STATIC( sizeof(adafruit_arduino_t) == 512 );
 
 //------------- Featherlib Shared Structure -------------//
 typedef struct
@@ -132,6 +139,8 @@ typedef struct ATTR_ALIGNED(512)
 
   //
 }adafruit_featherlib_t;
+
+ASSERT_STATIC( sizeof(adafruit_featherlib_t) == 512 );
 
 #define FEATHERLIB_BASE    ((uint32_t) 0x8010200)
 #define FEATHERLIB         ((adafruit_featherlib_t const*) FEATHERLIB_BASE)

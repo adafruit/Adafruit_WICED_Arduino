@@ -54,12 +54,13 @@ AdafruitFeather feather;
 /******************************************************************************/
 AdafruitFeather::AdafruitFeather(void)
 {
-  ada_http_rx_callback = NULL;
-  ada_http_rx_callback = NULL;
-
   _connected = false;
   _errno      = ERROR_NONE;
   memclr(&_ap_info, sizeof(wl_ap_info_t));
+
+  ada_http_rx_callback = NULL;
+  ada_http_rx_callback = NULL;
+  wlan_disconnect_callback = NULL;
 
   uint8_t boot_version[4] = { U32_TO_U8S_BE(FEATHERLIB->firmware_version) };
 	sprintf(_boot_version, "%d.%d.%d", boot_version[0], boot_version[1], boot_version[2]);
@@ -1361,6 +1362,38 @@ void AdafruitFeather::addHttpDataReceivedCallBack(ada_http_callback ada_httpCall
 void AdafruitFeather::addMqttCallBack(ada_mqtt_callback ada_mqttCallback)
 {
   ada_mqtt_evt_callback = ada_mqttCallback;
+}
+
+
+//--------------------------------------------------------------------+
+// Callbacks
+//--------------------------------------------------------------------+
+/******************************************************************************/
+/*!
+    @brief This callback is invoked when WIFI_INTERFACE_STATION is up
+*/
+/******************************************************************************/
+//void adafruit_wifi_connect_callback(void)
+//{
+//  feather._connected = true;
+//  if ( feather.wlan_connect_callback )
+//  {
+//    feather.wlan_connect_callback();
+//  }
+//}
+
+/******************************************************************************/
+/*!
+    @brief This callback is invoked when WIFI_INTERFACE_STATION is down
+*/
+/******************************************************************************/
+void adafruit_wifi_disconnect_callback(void)
+{
+  feather._connected = false;
+  if ( feather.wlan_disconnect_callback )
+  {
+    feather.wlan_disconnect_callback();
+  }
 }
 
 /******************************************************************************/

@@ -87,19 +87,24 @@ typedef struct ATTR_PACKED
   uint8_t  band_2_4ghz;
 } wl_ap_info_t;
 
-ASSERT_STATIC(sizeof(wl_ap_info_t) == 52);
+ASSERT_STATIC( sizeof(wl_ap_info_t) == 52 );
 
 typedef uint16_t sdep_err_t;
 
 extern "C"
 {
+  void adafruit_wifi_connect_callback(void);
+  void adafruit_wifi_disconnect_callback(void);
+
   void http_rx_callback (uint8_t* data, uint16_t data_length, uint16_t avail);
   void mqtt_evt_callback(mqtt_evt_opcode_t event, uint16_t len, uint8_t* data);
 
-  /* Callback prototypes */
-  typedef void (*ada_http_callback)(uint8_t* data, uint16_t data_length, uint16_t avail);
-  typedef void (*ada_mqtt_callback)(mqtt_evt_opcode_t event, uint16_t len, uint8_t* data);
 }
+
+/* Callback prototypes */
+typedef void (*ada_http_callback)(uint8_t* data, uint16_t data_length, uint16_t avail);
+typedef void (*ada_mqtt_callback)(mqtt_evt_opcode_t event, uint16_t len, uint8_t* data);
+
 
 class AdafruitFeather
 {
@@ -115,6 +120,9 @@ private:
 
   ada_http_callback  ada_http_rx_callback;
   ada_mqtt_callback  ada_mqtt_evt_callback;
+
+//  void (*wlan_connect_callback)(void);
+  void (*wlan_disconnect_callback)(void);
 
 public:
   AdafruitFeather(void);
@@ -156,7 +164,7 @@ public:
   char*     profileSSID           ( uint8_t pos);
   int32_t   profileEncryptionType ( uint8_t pos);
 
-
+  // Info functions
   uint8_t   *macAddress     ( uint8_t *mac );
   uint32_t  localIP         ( void );
   uint32_t  subnetMask      ( void );
@@ -167,6 +175,16 @@ public:
   int32_t   encryptionType  ( void );
   uint8_t*  BSSID           ( uint8_t* bssid );
 
+  // Callback
+//  void setConnectCallback( void (*fp) (void));
+//  {
+//    wlan_connect_callback = fp;
+//  }
+
+  void setDisconnectCallback( void (*fp) (void))
+  {
+    wlan_disconnect_callback = fp;
+  }
 
   /* WiFi Commands */
   int scanNetworks(wl_ap_info_t ap_list[], uint8_t max_ap);
@@ -228,6 +246,7 @@ public:
   /* callback from featherlib */
   friend void http_rx_callback (uint8_t* data, uint16_t data_length, uint16_t avail);
   friend void mqtt_evt_callback(mqtt_evt_opcode_t event, uint16_t len, uint8_t* data);
+  friend void adafruit_wifi_disconnect_callback(void);
 };
 
 extern AdafruitFeather feather;

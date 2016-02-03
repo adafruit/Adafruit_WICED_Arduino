@@ -55,6 +55,13 @@
 #define AES_ENABLED               0x0004
 #define WSEC_SWFLAG               0x0008
 
+enum
+{
+  WIFI_INTERFACE_STATION = 0,
+  WIFI_INTERFACE_AP      = 1,
+  WIFI_INTERFACE_P2P     = 2,
+};
+
 typedef enum
 {
   ENC_TYPE_AUTO       = -1,                                               /**< Auto detection                         */
@@ -92,12 +99,6 @@ typedef enum
   ENC_TYPE_IBSS_OPEN      = ( IBSS_ENABLED )
 } wl_enc_type_t;
 
-enum
-{
-  WIFI_INTERFACE_STATION = 0,
-  WIFI_INTERFACE_AP      = 1,
-  WIFI_INTERFACE_P2P     = 2,
-};
 
 /**
  * @enum err_t

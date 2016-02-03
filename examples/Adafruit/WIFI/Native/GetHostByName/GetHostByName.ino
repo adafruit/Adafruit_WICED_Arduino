@@ -23,6 +23,11 @@ const char target_hostname[] = "adafruit.com";
 // target by IP String
 const char target_ip_str[] = "8.8.8.8";
 
+void disconnect_callback(void)
+{
+  Serial.println("disconnect_callback(): Disconnected");
+}
+
 /**************************************************************************/
 /*!
     @brief  The setup function runs once when reset the board
@@ -30,10 +35,15 @@ const char target_ip_str[] = "8.8.8.8";
 /**************************************************************************/
 void setup()
 {
+  Serial.begin(115200);
+  
   // wait for Serial
   while (!Serial) delay(1);
 
   Serial.println(F("Ping Example\r\n"));
+
+  // Set disconnection callback
+  feather.setDisconnectCallback(disconnect_callback);
 
   // Attempt to connect to an AP
   Serial.print("Attempting to connect to: ");
@@ -72,10 +82,10 @@ void loop()
     Serial.print(target_ip_str);
     Serial.print(": ");
     Serial.println(ipaddr);
+
+    Serial.println();
+    Serial.println("Try again in 10 seconds");
+    Serial.println();
+    delay(10000);
   }
-  
-  Serial.println();
-  Serial.println("Try again in 10 seconds");
-  Serial.println();
-  delay(10000);
 }
