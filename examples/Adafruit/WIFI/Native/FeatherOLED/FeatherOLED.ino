@@ -41,10 +41,8 @@ bool mqtt_connected = false;
     @return Error code
 */
 /**************************************************************************/
-err_t connectAP()
-{
-  err_t err = ERROR_NONE;
-    
+bool connectAP()
+{   
   oled.refreshIcons();
   oled.clearMsgArea();
   oled.println("Connecting to ...");
@@ -65,36 +63,44 @@ err_t connectAP()
   else
   {
     /* Display the error message */
-    err = feather.errno();
+    err_t err = feather.errno();
     oled.setConnected(false);
     oled.refreshIcons();
     oled.clearMsgArea();
     oled.println("Connection Error:");
-    switch (err)
-    {
-      case ERROR_INVALID_SSID:
-        // SSID wasn't found when scanning for APs
-        oled.println("Invalid SSID");
-        break;
-      case ERROR_INVALID_KEY:
-        // Invalid SSID passkey
-        oled.println("Invalid Password");
-        break;
-      case ERROR_AUTHENTICATION_FAILED:
-      case ERROR_NETWORK_NOT_FOUND:
-      case ERROR_UNABLE_TO_JOIN:
-        // AP is likely just out of working range for a reliable connection
-        oled.println("Unable to Join");
-        break;
-      default:
-        oled.print("ERROR ID: 0x");
-        oled.println(err, HEX);
-        break;
-    }
+    oled.print(feather.errstr());
+    oled.print(" (");
+    oled.print(feather.errno());
+    oled.println(")");
+    
+//    switch (err)
+//    {
+//      case ERROR_WWD_ACCESS_POINT_NOT_FOUND:
+//        // SSID wasn't found when scanning for APs
+//        oled.println("Invalid SSID");
+//        break;
+//      case ERROR_WWD_INVALID_KEY:
+//        // Invalid SSID passkey
+//        oled.println("Invalid Password");
+//        break;
+//      case ERROR_WWD_AUTHENTICATION_FAILED:
+//      case ERROR_WWD_NETWORK_NOT_FOUND:
+//      case ERROR_WWD_UNABLE_TO_JOIN:
+//        // AP is likely just out of working range for a reliable connection
+//        oled.println("Unable to Join");
+//        break;
+//      default:
+//        oled.print("ERROR ID: 0x");
+//        oled.println(err, HEX);
+//        break;
+//    }
+    
     oled.display();
+
+    return false;
   }
 
-  return err;
+  return true;
 }
 
 #if MQTT_ENABLED
@@ -232,7 +238,7 @@ void setup()
   oled.clearMsgArea();
 
   // Try to connect to the AP
-  if (connectAP() != ERROR_NONE)
+  if ( !connectAP() )
   {
     // Enter a while(1) loop here since any connection error
     // is handled in .connectAP() above

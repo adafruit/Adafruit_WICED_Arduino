@@ -89,8 +89,8 @@ void AdafruitHTTP::setTimeout(uint32_t ms)
 int AdafruitHTTP::sendRequest(const char* url, const char* content, uint8_t method)
 {
   if (http_handle != 0) this->close();
-  if (url == NULL || url == "") return ERROR_INVALIDPARAMETER;
-  if (method != GET_METHOD && method != POST_METHOD) return ERROR_INVALIDPARAMETER;
+  if (url == NULL || url == "") return ERROR_SDEP_INVALIDPARAMETER;
+  if (method != GET_METHOD && method != POST_METHOD) return ERROR_SDEP_INVALIDPARAMETER;
   uint16_t content_len = 0;
   if (content != NULL) content_len = strlen(content);
 

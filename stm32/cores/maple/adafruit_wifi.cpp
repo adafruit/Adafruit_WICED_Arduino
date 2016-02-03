@@ -551,7 +551,7 @@ int AdafruitFeather::scanNetworks(wl_ap_info_t ap_list[], uint8_t max_ap)
 /******************************************************************************/
 err_t AdafruitFeather::connectAP(char const* ssid, char const* passwd)
 {
-  if (ssid == NULL || ssid == "") return ERROR_INVALIDPARAMETER;
+  if (ssid == NULL || ssid == "") return ERROR_SDEP_INVALIDPARAMETER;
 
   sdep_cmd_para_t para_arr[] =
   {
@@ -646,7 +646,7 @@ bool AdafruitFeather::setRootCertificatesDER(uint8_t const* root_certs_der, uint
 /******************************************************************************/
 err_t AdafruitFeather::startAP(char* ssid, char* passwd)
 {
-  if (ssid == NULL || ssid == "" || passwd == NULL) return ERROR_INVALIDPARAMETER;
+  if (ssid == NULL || ssid == "" || passwd == NULL) return ERROR_SDEP_INVALIDPARAMETER;
 
   sdep_cmd_para_t para_arr[] =
   {
@@ -740,7 +740,7 @@ err_t AdafruitFeather::httpGetUri(char* uri, uint16_t* length, uint8_t* response
 /******************************************************************************/
 err_t AdafruitFeather::httpPost(char* uri, uint16_t* length, uint8_t* response)
 {
-  if (uri == NULL) return ERROR_INVALIDPARAMETER;
+  if (uri == NULL) return ERROR_SDEP_INVALIDPARAMETER;
 
   return FEATHERLIB->sdep_execute(SDEP_CMD_HTTPPOST, strlen(uri),
                                   (uint8_t*)uri, length, response);
@@ -768,7 +768,7 @@ err_t AdafruitFeather::httpPost(char* uri, uint16_t* length, uint8_t* response)
 /******************************************************************************/
 err_t AdafruitFeather::mqttLastWill(bool isOnlineTopic, char* topic, char* value, uint8_t qos, uint8_t retain)
 {
-  if (topic == NULL) return ERROR_INVALIDPARAMETER;
+  if (topic == NULL) return ERROR_SDEP_INVALIDPARAMETER;
 
   uint16_t lastWillMessage_len = strlen(topic) + 6; // isOnlineTopic, qos, retain & 3 commas
   if (value != NULL) lastWillMessage_len += strlen(value);
@@ -866,7 +866,7 @@ err_t AdafruitFeather::mqttGenerateRandomID(char* clientID, uint8_t length)
 err_t AdafruitFeather::mqttConnect(char* host, uint16_t port, char* clientID,
                                         char* username, char* password)
 {
-  if (host == NULL || host == "") return ERROR_INVALIDPARAMETER;
+  if (host == NULL || host == "") return ERROR_SDEP_INVALIDPARAMETER;
 
   char p_port[6];
   utoa(port, p_port, 10);
@@ -951,7 +951,7 @@ err_t AdafruitFeather::mqttConnect(char* host, uint16_t port, char* clientID,
 err_t AdafruitFeather::mqttTLSConnect(char* host, uint16_t port, char* clientID,
                                            char* username, char* password, const char* ca_cert)
 {
-  if (host == NULL || host == "") return ERROR_INVALIDPARAMETER;
+  if (host == NULL || host == "") return ERROR_SDEP_INVALIDPARAMETER;
 
   char p_port[6];
   utoa(port, p_port, 10);
@@ -1039,7 +1039,7 @@ err_t AdafruitFeather::mqttDisconnect(void)
 /******************************************************************************/
 err_t AdafruitFeather::mqttPublish(char* topic, char* value, uint8_t qos, uint8_t retain)
 {
-  if (topic == NULL) return ERROR_INVALIDPARAMETER;
+  if (topic == NULL) return ERROR_SDEP_INVALIDPARAMETER;
 
   uint16_t publishedMessage_len = strlen(topic) + 5; // qos, retain & 3 commas
   if (value != NULL) publishedMessage_len += strlen(value);
@@ -1082,7 +1082,7 @@ err_t AdafruitFeather::mqttPublish(char* topic, char* value, uint8_t qos, uint8_
 /******************************************************************************/
 err_t AdafruitFeather::mqttSubscribe(char* topic, uint8_t qos)
 {
-  if (topic == NULL) return ERROR_INVALIDPARAMETER;
+  if (topic == NULL) return ERROR_SDEP_INVALIDPARAMETER;
 
   uint16_t subTopic_len = strlen(topic) + 2; // qos & a comma
   char* subTopic = (char*)malloc(subTopic_len);
@@ -1111,7 +1111,7 @@ err_t AdafruitFeather::mqttSubscribe(char* topic, uint8_t qos)
 /******************************************************************************/
 err_t AdafruitFeather::mqttUnsubscribe(char* topic)
 {
-  if (topic == NULL || topic[0] == 0) return ERROR_INVALIDPARAMETER;
+  if (topic == NULL || topic[0] == 0) return ERROR_SDEP_INVALIDPARAMETER;
 
   return FEATHERLIB->sdep_execute(SDEP_CMD_MQTTUNSUBSCRIBE, strlen(topic),
                                   (uint8_t*)topic, NULL, NULL);
@@ -1199,8 +1199,8 @@ err_t AdafruitFeather::irqClear(void)
 err_t AdafruitFeather::httpRequest(const char* url, const char* content, uint8_t method,
                                         uint32_t buffer_length, uint8_t* buffer)
 {
-  if (url == NULL || url == "") return ERROR_INVALIDPARAMETER;
-  if (method != GET_METHOD && method != POST_METHOD) return ERROR_INVALIDPARAMETER;
+  if (url == NULL || url == "") return ERROR_SDEP_INVALIDPARAMETER;
+  if (method != GET_METHOD && method != POST_METHOD) return ERROR_SDEP_INVALIDPARAMETER;
 
   uint16_t paylen = strlen(url) + sizeof(buffer_length) + 3; // 2 null terminators & 1 byte for METHOD
   if (content != NULL) paylen += strlen(content);
@@ -1252,8 +1252,8 @@ err_t AdafruitFeather::httpsRequest(const char* url, const char* ca_cert,
                                          const char* content, uint8_t method,
                                          uint32_t buffer_length, uint8_t* buffer)
 {
-  if (url == NULL || url == "") return ERROR_INVALIDPARAMETER;
-  if (method != GET_METHOD && method != POST_METHOD) return ERROR_INVALIDPARAMETER;
+  if (url == NULL || url == "") return ERROR_SDEP_INVALIDPARAMETER;
+  if (method != GET_METHOD && method != POST_METHOD) return ERROR_SDEP_INVALIDPARAMETER;
 
   uint32_t cert_addr = (uint32_t)ca_cert;
 
@@ -1310,8 +1310,8 @@ err_t AdafruitFeather::httpsRequest(const char* url, const char* ca_cert,
 /******************************************************************************/
 err_t AdafruitFeather::httpRequestWithCallback(const char* url, const char* content, uint8_t method)
 {
-  if (url == NULL || strlen(url) == 0) return ERROR_INVALIDPARAMETER;
-  if (method != GET_METHOD && method != POST_METHOD) return ERROR_INVALIDPARAMETER;
+  if (url == NULL || strlen(url) == 0) return ERROR_SDEP_INVALIDPARAMETER;
+  if (method != GET_METHOD && method != POST_METHOD) return ERROR_SDEP_INVALIDPARAMETER;
 
   uint16_t paylen = strlen(url) + 3; // 2 null terminators & 1 byte for METHOD
   if ( (content != NULL) && (strlen(content) > 0) )
@@ -1364,8 +1364,8 @@ err_t AdafruitFeather::httpRequestWithCallback(const char* url, const char* cont
 err_t AdafruitFeather::httpsRequestWithCallback(const char* url, const char* ca_cert,
                                                      const char* content, uint8_t method)
 {
-  if (url == NULL || strlen(url) == 0) return ERROR_INVALIDPARAMETER;
-  if (method != GET_METHOD && method != POST_METHOD) return ERROR_INVALIDPARAMETER;
+  if (url == NULL || strlen(url) == 0) return ERROR_SDEP_INVALIDPARAMETER;
+  if (method != GET_METHOD && method != POST_METHOD) return ERROR_SDEP_INVALIDPARAMETER;
 
   uint32_t cert_addr = 0;
   if (ca_cert != NULL) cert_addr = (uint32_t)ca_cert;

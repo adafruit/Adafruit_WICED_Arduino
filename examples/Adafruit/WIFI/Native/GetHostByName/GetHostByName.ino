@@ -40,7 +40,7 @@ bool connectAP(void)
   }
   else
   {
-    Serial.printf("Failed! %s (0x%04X)", feather.errstr(), feather.errno());
+    Serial.printf("Failed! %s (%d)", feather.errstr(), feather.errno());
     Serial.println();
   }
   Serial.println("");

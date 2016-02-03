@@ -106,15 +106,17 @@ typedef enum
  */
 typedef enum
 {
-  ERROR_NONE                   = 0x0000,
-  ERROR_OUT_OF_HEAP_SPACE      = 0x0008,
-  ERROR_NOT_CONNECTED          = 0x0020,
-  ERROR_INVALID_KEY            = 0x03EC,  /**< WWD 1004, Invalid AP Password */
-  ERROR_AUTHENTICATION_FAILED  = 0x03EE,  /**< WWD 1006, Authentication error */
-  ERROR_NETWORK_NOT_FOUND      = 0x0400,  /**< WWD 1024, likely a range issue */
-  ERROR_UNABLE_TO_JOIN         = 0x0401,  /**< WWD 1025, likely a range issue */
-  ERROR_INVALID_SSID           = 0x8005,  /**< SSID not found in AP scan */
-  ERROR_INVALIDPARAMETER       = 0x8025,
+  ERROR_NONE                       = 0,
+  ERROR_OUT_OF_HEAP_SPACE          = 8,
+  ERROR_NOT_CONNECTED              = 20,
+
+  ERROR_WWD_INVALID_KEY            = 1004,  /**< WWD 1004, Invalid AP Password */
+  ERROR_WWD_AUTHENTICATION_FAILED  = 1006,  /**< WWD 1006, Authentication error */
+  ERROR_WWD_NETWORK_NOT_FOUND      = 1024,  /**< WWD 1024, likely a range issue */
+  ERROR_WWD_UNABLE_TO_JOIN         = 1025,  /**< WWD 1025, likely a range issue */
+  ERROR_WWD_ACCESS_POINT_NOT_FOUND = 1066,
+
+  ERROR_SDEP_INVALIDPARAMETER      = 30002,
 } err_t;
 
 /**
