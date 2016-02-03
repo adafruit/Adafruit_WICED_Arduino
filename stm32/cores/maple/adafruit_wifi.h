@@ -139,6 +139,7 @@ public:
   err_t       errno (void)  { return _errno; }
   char const* errstr(void);
 
+  // TODO change return type to bool
   err_t randomNumber(uint32_t* random32bit);
 
   char const* bootloaderVersion ( void );

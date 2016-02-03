@@ -105,7 +105,7 @@ void AdafruitFeather::factoryReset(void)
 /******************************************************************************/
 void AdafruitFeather::nvmReset(void)
 {
-  FEATHERLIB->sdep_execute(SDEP_CMD_NVM_RESET, 0, NULL, NULL, NULL);
+  sdep(SDEP_CMD_NVM_RESET, 0, NULL, NULL, NULL);
 }
 
 char const* AdafruitFeather::errstr(void)
@@ -169,7 +169,8 @@ char const* AdafruitFeather::arduinoVersion ( void )
 /******************************************************************************/
 err_t AdafruitFeather::randomNumber(uint32_t* random32bit)
 {
-  return FEATHERLIB->sdep_execute(SDEP_CMD_RANDOMNUMBER, 0, NULL, NULL, (uint8_t*)random32bit);
+  sdep(SDEP_CMD_RANDOMNUMBER, 0, NULL, NULL, (uint8_t*)random32bit);
+  return _errno;
 }
 
 /******************************************************************************/
@@ -228,7 +229,7 @@ bool AdafruitFeather::connect(const char *ssid, const char *key, int enc_type)
 /******************************************************************************/
 uint8_t* AdafruitFeather::macAddress(uint8_t *mac)
 {
-	_errno = FEATHERLIB->sdep_execute(SDEP_CMD_GET_MAC_ADDRESS, 0, NULL, NULL, mac);
+	sdep(SDEP_CMD_GET_MAC_ADDRESS, 0, NULL, NULL, mac);
 	return mac;
 }
 
@@ -242,7 +243,7 @@ uint32_t AdafruitFeather::localIP (void)
   uint8_t interface = WIFI_INTERFACE_STATION;
   uint32_t ipv4 = 0;
 
-  _errno = FEATHERLIB->sdep_execute(SDEP_CMD_GET_IPV4_ADDRESS, 1, &interface, NULL, &ipv4);
+  sdep(SDEP_CMD_GET_IPV4_ADDRESS, 1, &interface, NULL, &ipv4);
 	return ipv4;
 }
 
@@ -256,7 +257,7 @@ uint32_t AdafruitFeather::subnetMask (void)
   uint8_t interface = WIFI_INTERFACE_STATION;
   uint32_t subnet = 0;
 
-  _errno = FEATHERLIB->sdep_execute(SDEP_CMD_GET_NETMASK, 1, &interface, NULL, &subnet);
+  sdep(SDEP_CMD_GET_NETMASK, 1, &interface, NULL, &subnet);
   return subnet;
 }
 
@@ -270,7 +271,7 @@ uint32_t AdafruitFeather::gatewayIP (void)
   uint8_t interface   = WIFI_INTERFACE_STATION;
   uint32_t ipv4 = 0;
 
-  _errno = FEATHERLIB->sdep_execute(SDEP_CMD_GET_GATEWAY_ADDRESS, 1, &interface, NULL, &ipv4);
+  sdep(SDEP_CMD_GET_GATEWAY_ADDRESS, 1, &interface, NULL, &ipv4);
   return ipv4;
 }
 
@@ -319,7 +320,7 @@ int32_t AdafruitFeather::RSSI (void)
   if ( !_connected ) return 0;
 
   int32_t rssi;
-  _errno = FEATHERLIB->sdep_execute(SDEP_CMD_WIFI_GET_RSSI, 0, NULL, NULL, &rssi);
+  sdep(SDEP_CMD_WIFI_GET_RSSI, 0, NULL, NULL, &rssi);
 
   return rssi;
 }
@@ -328,9 +329,7 @@ bool AdafruitFeather::saveConnectedProfile(void)
 {
   if ( !_connected ) return false;
 
-  _errno = FEATHERLIB->sdep_execute(SDEP_CMD_WIFI_PROFILE_SAVE, 0, NULL, NULL, NULL);
-
-  return (ERROR_NONE == _errno);
+  return sdep(SDEP_CMD_WIFI_PROFILE_SAVE, 0, NULL, NULL, NULL);
 }
 
 bool AdafruitFeather::addProfile(char* ssid)
@@ -340,12 +339,9 @@ bool AdafruitFeather::addProfile(char* ssid)
       { .len = strlen(ssid), .p_value = ssid      },
   };
 
-  _errno = FEATHERLIB->sdep_execute_n(SDEP_CMD_WIFI_PROFILE_ADD,
-                                      sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
-                                      NULL, NULL);
-
-  // TODO check case when read bytes < size
-  return (ERROR_NONE == _errno);
+  return sdep_n(SDEP_CMD_WIFI_PROFILE_ADD,
+                sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                NULL, NULL);
 }
 
 bool AdafruitFeather::addProfile(char* ssid, char* key, int enc_type)
@@ -363,37 +359,28 @@ bool AdafruitFeather::addProfile(char* ssid, char* key, int enc_type)
       { .len = 4           , .p_value = &enc_type },
   };
 
-  _errno = FEATHERLIB->sdep_execute_n(SDEP_CMD_WIFI_PROFILE_ADD,
-                                      sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
-                                      NULL, NULL);
-
-  // TODO check case when read bytes < size
-  return (ERROR_NONE == _errno) ? true : false;
+  return sdep_n(SDEP_CMD_WIFI_PROFILE_ADD,
+                sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                NULL, NULL);
 }
 
 bool AdafruitFeather::removeProfile(char* ssid)
 {
-  // TODO check case when read bytes < size
-  _errno = FEATHERLIB->sdep_execute(SDEP_CMD_WIFI_PROFILE_DEL,
-                                    strlen(ssid), ssid,
-                                    NULL, NULL);
-  return (ERROR_NONE == _errno);
+  return sdep(SDEP_CMD_WIFI_PROFILE_DEL,
+              strlen(ssid), ssid,
+              NULL, NULL);
 }
 
 void AdafruitFeather::clearProfiles(void)
 {
-  _errno = FEATHERLIB->sdep_execute(SDEP_CMD_WIFI_PROFILE_CLEAR, 0, NULL, NULL, NULL);
+  sdep(SDEP_CMD_WIFI_PROFILE_CLEAR, 0, NULL, NULL, NULL);
 }
 
 bool AdafruitFeather::checkProfile(char* ssid)
 {
   bool result = false;
-
-  _errno = FEATHERLIB->sdep_execute(SDEP_CMD_WIFI_PROFILE_CHECK,
-                                    strlen(ssid), ssid,
-                                    NULL, &result);
-
-  return (ERROR_NONE == _errno) ? result : false;
+  sdep(SDEP_CMD_WIFI_PROFILE_CHECK, strlen(ssid), ssid, NULL, &result);
+  return result;
 }
 
 char* AdafruitFeather::profileSSID (uint8_t pos)
@@ -410,10 +397,9 @@ char* AdafruitFeather::profileSSID (uint8_t pos)
 
   uint16_t len = 0;
 
-  // TODO check case when read bytes < size
-  _errno = FEATHERLIB->sdep_execute_n(SDEP_CMD_WIFI_PROFILE_GET,
-                                      sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
-                                      &len, profile_ssid);
+  sdep_n(SDEP_CMD_WIFI_PROFILE_GET,
+         sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+         &len, profile_ssid);
 
   return (len > 0) ? profile_ssid : NULL;
 }
@@ -430,11 +416,9 @@ int32_t AdafruitFeather::profileEncryptionType(uint8_t pos)
 
   int32_t sec_type;
 
-  // TODO check case when read bytes < size
-  _errno = FEATHERLIB->sdep_execute_n(SDEP_CMD_WIFI_PROFILE_GET,
-                                      sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
-                                      NULL, &sec_type);
-  return (ERROR_NONE == _errno) ? sec_type : -1;
+  return sdep_n(SDEP_CMD_WIFI_PROFILE_GET,
+                sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                NULL, &sec_type) ? sec_type : -1;
 }
 
 /******************************************************************************/
@@ -468,12 +452,9 @@ bool AdafruitFeather::hostByName( const char* hostname, IPAddress& result)
   VERIFY(_connected, false);
 
   uint32_t ip_addr = 0;
-  _errno = FEATHERLIB->sdep_execute(SDEP_CMD_DNSLOOKUP, strlen(hostname), hostname, NULL, &ip_addr);
-
-  VERIFY(ERROR_NONE == _errno, false);
+  VERIFY( sdep(SDEP_CMD_DNSLOOKUP, strlen(hostname), hostname, NULL, &ip_addr), false);
 
   result = ip_addr;
-
   return true;
 }
 
@@ -510,10 +491,7 @@ uint32_t AdafruitFeather::ping(IPAddress ipaddr)
   uint32_t response_time;
   uint32_t ipv4 = (uint32_t) ipaddr;
 
-  _errno = FEATHERLIB->sdep_execute(SDEP_CMD_PING, 4, &ipv4,
-                                                   NULL, &response_time);
-
-  return (ERROR_NONE == _errno) ? response_time : 0;
+  return sdep(SDEP_CMD_PING, 4, &ipv4, NULL, &response_time) ? response_time : 0;
 }
 
 /******************************************************************************/
@@ -529,8 +507,7 @@ uint32_t AdafruitFeather::ping(IPAddress ipaddr)
 int AdafruitFeather::scanNetworks(wl_ap_info_t ap_list[], uint8_t max_ap)
 {
   uint16_t length = max_ap*sizeof(wl_ap_info_t);
-  _errno = FEATHERLIB->sdep_execute(SDEP_CMD_SCAN, 0, NULL, &length, ap_list);
-  VERIFY( ERROR_NONE == _errno, 0);
+  VERIFY( sdep(SDEP_CMD_SCAN, 0, NULL, &length, ap_list), 0);
 
   return length/sizeof(wl_ap_info_t);
 }
@@ -576,8 +553,7 @@ err_t AdafruitFeather::connectAP(char const* ssid, char const* passwd)
 /******************************************************************************/
 void AdafruitFeather::disconnect(void)
 {
-  _errno = FEATHERLIB->sdep_execute(SDEP_CMD_DISCONNECT, 0, NULL, NULL, NULL);
-  _connected = !(_errno == ERROR_NONE);
+  _connected = !sdep(SDEP_CMD_DISCONNECT, 0, NULL, NULL, NULL);
 }
 
 /******************************************************************************/
@@ -597,15 +573,10 @@ void AdafruitFeather::disconnect(void)
 bool AdafruitFeather::setRootCertificatesPEM(char const* root_certs_pem)
 {
   uint16_t len = (root_certs_pem ? strlen(root_certs_pem) : 0 );
-  sdep_cmd_para_t para_arr[] =
-  {
-      { .len = len, .p_value = root_certs_pem },
-  };
 
-  _errno = FEATHERLIB->sdep_execute(SDEP_CMD_TLS_SET_ROOT_CERTS,
-                                    len, root_certs_pem,
-                                    NULL, NULL);
-  return (ERROR_NONE == _errno);
+  return sdep(SDEP_CMD_TLS_SET_ROOT_CERTS,
+              len, root_certs_pem,
+              NULL, NULL);
 }
 
 /******************************************************************************/
@@ -620,10 +591,9 @@ bool AdafruitFeather::setRootCertificatesPEM(char const* root_certs_pem)
 /******************************************************************************/
 bool AdafruitFeather::setRootCertificatesDER(uint8_t const* root_certs_der, uint32_t len)
 {
-  _errno = FEATHERLIB->sdep_execute(SDEP_CMD_TLS_SET_ROOT_CERTS,
-                                    len, root_certs_der,
-                                    NULL, NULL);
-  return (ERROR_NONE == _errno);
+  return sdep(SDEP_CMD_TLS_SET_ROOT_CERTS,
+              len, root_certs_der,
+              NULL, NULL);
 }
 
 /******************************************************************************/
