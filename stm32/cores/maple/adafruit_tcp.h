@@ -37,15 +37,14 @@
 #ifndef _ADAFRUIT_TCP_H_
 #define _ADAFRUIT_TCP_H_
 
-#include "adafruit_wifi.h"
 #include <Arduino.h>
 #include <Client.h>
 #include <IPAddress.h>
+#include "adafruit_wifi.h"
 
-class AdafruitTCP : public Client
+class AdafruitTCP : public Client, public AdafruitSDEP
 {
 protected:
-  err_t     _errno;
   uint32_t  _tcp_handle;
   uint32_t  _bytesRead;
 
@@ -63,12 +62,17 @@ protected:
 public:
   AdafruitTCP ( void );
 
-  err_t  errno(void) { return _errno; }
   void usePacketBuffering(bool enable);
 
   // Client API
   virtual int     connect ( IPAddress ip, uint16_t port );
   virtual int     connect ( const char * host, uint16_t port );
+
+  int connectSSL(IPAddress ip, uint16_t port);
+	int connectSSL(const char* host, uint16_t port);
+
+//  int connectSSL(IPAddress ip, uint16_t port, char const* common_name = NULL);
+//	int connectSSL(const char* host, uint16_t port, char const* common_name = NULL);
 
   virtual uint8_t connected( void );
   virtual void    stop    ( void );
