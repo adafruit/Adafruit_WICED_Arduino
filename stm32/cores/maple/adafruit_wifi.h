@@ -40,12 +40,12 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
-#include "Arduino.h"
+#include <Arduino.h>
 #include <IPAddress.h>
+
 #include "adafruit_constants.h"
 #include "adafruit_featherlib.h"
-
-ASSERT_STATIC( sizeof(err_t) == 2 );
+#include "adafruit_sdep.h"
 
 /**
  * Maximum packet size for one access point (52 bytes)
@@ -105,8 +105,7 @@ extern "C"
 typedef void (*ada_http_callback)(uint8_t* data, uint16_t data_length, uint16_t avail);
 typedef void (*ada_mqtt_callback)(mqtt_evt_opcode_t event, uint16_t len, uint8_t* data);
 
-
-class AdafruitFeather
+class AdafruitFeather : public AdafruitSDEP
 {
 private:
   char          _boot_version[8];
@@ -114,7 +113,6 @@ private:
   char          _sdk_version[8];
 
   wl_ap_info_t  _ap_info;
-  err_t         _errno;
   bool          _connected;
 
   ada_http_callback  ada_http_rx_callback;
@@ -123,21 +121,11 @@ private:
 //  void (*wlan_connect_callback)(void);
   void (*wlan_disconnect_callback)(void);
 
-  bool sdep(uint16_t cmd_id      ,
-            uint16_t  paylen     , void const* parameter,
-            uint16_t* result_len , void* result_buffer);
-
-  bool sdep_n(uint16_t  cmd_id       ,
-              uint8_t   para_count   , sdep_cmd_para_t const* para_arr,
-              uint16_t* p_result_len , void* p_result);
-
 public:
   AdafruitFeather(void);
 
   void factoryReset(void);
   void nvmReset(void);
-  err_t       errno (void)  { return _errno; }
-  char const* errstr(void);
 
   // TODO change return type to bool
   err_t randomNumber(uint32_t* random32bit);

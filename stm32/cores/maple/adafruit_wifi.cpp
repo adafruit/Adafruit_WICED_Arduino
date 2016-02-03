@@ -55,7 +55,6 @@ AdafruitFeather feather;
 AdafruitFeather::AdafruitFeather(void)
 {
   _connected = false;
-  _errno      = ERROR_NONE;
   memclr(&_ap_info, sizeof(wl_ap_info_t));
 
   ada_http_rx_callback = NULL;
@@ -70,22 +69,6 @@ AdafruitFeather::AdafruitFeather(void)
 
 	uint8_t sdk_version[4] = { U32_TO_U8S_BE(FEATHERLIB->sdk_version) };
 	sprintf(_sdk_version, "%d.%d.%d", sdk_version[0], sdk_version[1], sdk_version[2]);
-}
-
-bool AdafruitFeather::sdep(uint16_t cmd_id      ,
-                           uint16_t  paylen     , void const* parameter,
-                           uint16_t* result_len , void* result_buffer)
-{
-  this->_errno = FEATHERLIB->sdep_execute(cmd_id, paylen, parameter, result_len, result_buffer);
-  return (ERROR_NONE == this->_errno);
-}
-
-bool AdafruitFeather::sdep_n(uint16_t  cmd_id       ,
-                             uint8_t   para_count   , sdep_cmd_para_t const* para_arr,
-                             uint16_t* p_result_len , void* p_result)
-{
-  this->_errno = FEATHERLIB->sdep_execute_n(cmd_id, para_count, para_arr, p_result_len, p_result);
-  return (ERROR_NONE == this->_errno);
 }
 
 /******************************************************************************/
@@ -106,14 +89,6 @@ void AdafruitFeather::factoryReset(void)
 void AdafruitFeather::nvmReset(void)
 {
   sdep(SDEP_CMD_NVM_RESET, 0, NULL, NULL, NULL);
-}
-
-char const* AdafruitFeather::errstr(void)
-{
-  char const* p_str = NULL;
-  FEATHERLIB->sdep_execute(SDEP_CMD_ERROR_STRING, sizeof(err_t), &_errno, NULL, &p_str);
-
-  return p_str ? p_str : "Unknown Error";
 }
 
 /******************************************************************************/
