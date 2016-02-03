@@ -102,10 +102,49 @@ int AdafruitTCP::connect(IPAddress ip, uint16_t port)
 int AdafruitTCP::connect(const char* host, uint16_t port)
 {
   IPAddress ip;
-
   VERIFY( feather.hostByName(host, ip), false );
-
   return this->connect(ip, port);
+}
+
+/******************************************************************************/
+/*!
+    @brief
+*/
+/******************************************************************************/
+int AdafruitTCP::connectSSL(IPAddress ip, uint16_t port)
+{
+  uint32_t ipv4 = (uint32_t) ip;
+  uint8_t is_tls = 1;
+
+//  uint8_t namelen = (common_name ? strlen(common_name) : 0);
+
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = 4 , .p_value = &ipv4       },
+      { .len = 2 , .p_value = &port       },
+      { .len = 1 , .p_value = &is_tls     },
+      { .len = 4 , .p_value = &_timeout   },
+      //{ .len = namelen , .p_value = common_name },
+  };
+
+  VERIFY( sdep_n(SDEP_CMD_TCP_CONNECT,
+                 sizeof(para_arr)/sizeof(sdep_cmd_para_t) /*- (common_name ? 0 : 1)*/, para_arr,
+                 NULL, &_tcp_handle), false);
+
+  this->install_callback();
+  return true;
+}
+
+/******************************************************************************/
+/*!
+    @brief
+*/
+/******************************************************************************/
+int AdafruitTCP::connectSSL(const char* host, uint16_t port)
+{
+  IPAddress ip;
+  VERIFY( feather.hostByName(host, ip), false );
+  return this->connectSSL(ip, port);
 }
 
 /******************************************************************************/

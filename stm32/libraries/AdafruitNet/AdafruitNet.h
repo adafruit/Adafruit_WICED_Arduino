@@ -40,10 +40,12 @@
 #include <Arduino.h>
 #include <Client.h>
 #include <IPAddress.h>
-#include <WiFiFeather.h>
+#include <adafruit_wifi.h>
+#include <adafruit_tcp.h>
 
 
-class HTTPClient : public WiFiClient {
+class HTTPClient : public AdafruitTCP
+{
 
 public:
 	HTTPClient();
