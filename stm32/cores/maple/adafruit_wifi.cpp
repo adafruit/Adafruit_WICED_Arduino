@@ -108,6 +108,14 @@ void AdafruitFeather::nvmReset(void)
   FEATHERLIB->sdep_execute(SDEP_CMD_NVM_RESET, 0, NULL, NULL, NULL);
 }
 
+char const* AdafruitFeather::errstr(void)
+{
+  char const* p_str = NULL;
+  FEATHERLIB->sdep_execute(SDEP_CMD_ERROR_STRING, sizeof(err_t), &_errno, NULL, &p_str);
+
+  return p_str ? p_str : "Unknown Error";
+}
+
 /******************************************************************************/
 /*!
     @brief  Get bootloader version in string format
