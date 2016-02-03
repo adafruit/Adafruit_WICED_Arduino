@@ -107,6 +107,7 @@ typedef enum
 typedef enum
 {
   ERROR_NONE                   = 0x0000,
+  ERROR_OUT_OF_HEAP_SPACE      = 0x0008,
   ERROR_NOT_CONNECTED          = 0x0020,
   ERROR_INVALID_KEY            = 0x03EC,  /**< WWD 1004, Invalid AP Password */
   ERROR_AUTHENTICATION_FAILED  = 0x03EE,  /**< WWD 1006, Authentication error */
@@ -114,7 +115,6 @@ typedef enum
   ERROR_UNABLE_TO_JOIN         = 0x0401,  /**< WWD 1025, likely a range issue */
   ERROR_INVALID_SSID           = 0x8005,  /**< SSID not found in AP scan */
   ERROR_INVALIDPARAMETER       = 0x8025,
-  ERROR_NO_MEMORY              = 0x80AA   /**< Temporary */
 } err_t;
 
 /**
@@ -126,6 +126,7 @@ typedef enum {
   SDEP_CMD_DFU                 = 0x0003, /**< Go into DFU mode                     */          //!< SDEP_CMD_DFU
   SDEP_CMD_INFO                = 0x0004, /**< System information                   */          //!< SDEP_CMD_INFO
   SDEP_CMD_NVM_RESET           = 0x0005, /**< Reset NVM/DCT setting                */          //!< SDEP_CMD_NVM_RESET
+  SDEP_CMD_ERROR_STRING        = 0x0006, /**< Get descriptive error string         */
 
   /* GPIO Command */
   SDEP_CMD_GPIO                = 0x0010, /**< Set GPIO                             */          //!< SDEP_CMD_GPIO

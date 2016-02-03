@@ -45,6 +45,8 @@
 #include "adafruit_constants.h"
 #include "adafruit_featherlib.h"
 
+ASSERT_STATIC( sizeof(err_t) == 2 );
+
 /**
  * Maximum packet size for one access point (52 bytes)
  *     1  byte        : length of SSID
@@ -89,8 +91,6 @@ typedef struct ATTR_PACKED
 
 ASSERT_STATIC( sizeof(wl_ap_info_t) == 52 );
 
-typedef uint16_t sdep_err_t;
-
 extern "C"
 {
   void adafruit_wifi_connect_callback(void);
@@ -113,9 +113,8 @@ private:
   char          _fw_version[8];
   char          _sdk_version[8];
 
-  sdep_err_t    _errno;
-
   wl_ap_info_t  _ap_info;
+  err_t         _errno;
   bool          _connected;
 
   ada_http_callback  ada_http_rx_callback;
@@ -124,13 +123,23 @@ private:
 //  void (*wlan_connect_callback)(void);
   void (*wlan_disconnect_callback)(void);
 
+  bool sdep(uint16_t cmd_id      ,
+            uint16_t  paylen     , void const* parameter,
+            uint16_t* result_len , void* result_buffer);
+
+  bool sdep_n(uint16_t  cmd_id       ,
+              uint8_t   para_count   , sdep_cmd_para_t const* para_arr,
+              uint16_t* p_result_len , void* p_result);
+
 public:
   AdafruitFeather(void);
 
   void factoryReset(void);
   void nvmReset(void);
-  sdep_err_t errno (void)  { return _errno; }
-  sdep_err_t randomNumber(uint32_t* random32bit);
+  err_t       errno (void)  { return _errno; }
+  char const* errstr(void);
+
+  err_t randomNumber(uint32_t* random32bit);
 
   char const* bootloaderVersion ( void );
   char const* sdkVersion        ( void );
@@ -153,6 +162,7 @@ public:
   //bool connect ( const String &ssid, const String &key, int enc_type = ENC_TYPE_AUTO ) { return connect(ssid.c_str(), key.c_str(), enc_type); }
 
   bool connected (void) { return _connected; }
+  void disconnect(void);
 
   // Profile functions
   bool      saveConnectedProfile  ( void ); // save currently connected AP
@@ -189,12 +199,11 @@ public:
   /* WiFi Commands */
   int scanNetworks(wl_ap_info_t ap_list[], uint8_t max_ap);
 
-  sdep_err_t connectAP(char const* ssid, char const* passwd);
-  void disconnect(void);
+  err_t connectAP(char const* ssid, char const* passwd);
 
-  sdep_err_t startAP(char* ssid, char* passwd);
-  sdep_err_t startAP(void);
-  sdep_err_t stopAP(void);
+  err_t startAP(char* ssid, char* passwd);
+  err_t startAP(void);
+  err_t stopAP(void);
 
   /* Network Commands */
   IPAddress  hostByName( const char* hostname);
@@ -205,43 +214,46 @@ public:
   uint32_t   ping(char const* host);
   uint32_t   ping(IPAddress ip);
 
-  sdep_err_t getTime(char* iso8601_time);
-  sdep_err_t httpGetUri(char* uri, uint16_t* length, uint8_t* response);
-  sdep_err_t httpPost(char* uri, uint16_t* length, uint8_t* response);
+  bool      setRootCertificatesPEM(char const* root_certs_pem);
+  bool      setRootCertificatesDER(uint8_t const* root_certs_der, uint32_t len);
 
-  sdep_err_t httpRequest(const char* url, const char* content, uint8_t method, uint32_t buffer_length, uint8_t* buffer);
-  sdep_err_t httpsRequest(const char* url, const char* ca_cert, const char* content, uint8_t method, uint32_t buffer_length, uint8_t* buffer);
-  sdep_err_t httpRequestWithCallback(const char* url, const char* content, uint8_t method);
-  sdep_err_t httpsRequestWithCallback(const char* url, const char* ca_cert, const char* content, uint8_t method);
+  err_t getTime(char* iso8601_time);
+  err_t httpGetUri(char* uri, uint16_t* length, uint8_t* response);
+  err_t httpPost(char* uri, uint16_t* length, uint8_t* response);
+
+  err_t httpRequest(const char* url, const char* content, uint8_t method, uint32_t buffer_length, uint8_t* buffer);
+  err_t httpsRequest(const char* url, const char* ca_cert, const char* content, uint8_t method, uint32_t buffer_length, uint8_t* buffer);
+  err_t httpRequestWithCallback(const char* url, const char* content, uint8_t method);
+  err_t httpsRequestWithCallback(const char* url, const char* ca_cert, const char* content, uint8_t method);
   void       addHttpDataReceivedCallBack(ada_http_callback ada_httpCallback = NULL);
 
 //  /* DEBUG Commands */
-//  sdep_err_t stackDump();
-//  sdep_err_t stackSize();
-//  sdep_err_t heapDump();
-//  sdep_err_t heapSize();
-//  sdep_err_t threadList();
+//  err_t stackDump();
+//  err_t stackSize();
+//  err_t heapDump();
+//  err_t heapSize();
+//  err_t threadList();
 //
 //  /* SPI Flash Commands */
-//  sdep_err_t sflashFormat();
-//  sdep_err_t sflashList();
+//  err_t sflashFormat();
+//  err_t sflashList();
 
   /* MQTT Commands */
-  sdep_err_t mqttLastWill(bool isOnlineTopic, char* topic, char* value, uint8_t qos, uint8_t retain);
-  sdep_err_t mqttGenerateRandomID(char* clientID, uint8_t length);
-  sdep_err_t mqttConnect(char* host, uint16_t port, char* clientID, char* username, char* password);
-  sdep_err_t mqttTLSConnect(char* host, uint16_t port, char* clientID, char *username, char* password, const char* ca_cert);
-  sdep_err_t mqttDisconnect(void);
-  sdep_err_t mqttPublish(char* topic, char* value, uint8_t qos, uint8_t retain);
-  sdep_err_t mqttSubscribe(char* topic, uint8_t qos);
-  sdep_err_t mqttUnsubscribe(char* topic);
+  err_t mqttLastWill(bool isOnlineTopic, char* topic, char* value, uint8_t qos, uint8_t retain);
+  err_t mqttGenerateRandomID(char* clientID, uint8_t length);
+  err_t mqttConnect(char* host, uint16_t port, char* clientID, char* username, char* password);
+  err_t mqttTLSConnect(char* host, uint16_t port, char* clientID, char *username, char* password, const char* ca_cert);
+  err_t mqttDisconnect(void);
+  err_t mqttPublish(char* topic, char* value, uint8_t qos, uint8_t retain);
+  err_t mqttSubscribe(char* topic, uint8_t qos);
+  err_t mqttUnsubscribe(char* topic);
   void       addMqttCallBack(ada_mqtt_callback ada_mqttCallback = NULL);
 
   /* IRQ Commands */
-  sdep_err_t irqRead(uint16_t* response_length, uint8_t* response);
-  sdep_err_t irqCount(uint16_t* n_items);
-  sdep_err_t irqAvailable(uint16_t* n_available);
-  sdep_err_t irqClear(void);
+  err_t irqRead(uint16_t* response_length, uint8_t* response);
+  err_t irqCount(uint16_t* n_items);
+  err_t irqAvailable(uint16_t* n_available);
+  err_t irqClear(void);
 
   /* callback from featherlib */
   friend void http_rx_callback (uint8_t* data, uint16_t data_length, uint16_t avail);

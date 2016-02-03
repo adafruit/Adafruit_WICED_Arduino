@@ -40,7 +40,7 @@ void setup()
   // wait for Serial
   while (!Serial) delay(1);
 
-  Serial.println(F("Ping Example\r\n"));
+  Serial.println("GetHostByName Example\r\n");
 
   // Set disconnection callback
   feather.setDisconnectCallback(disconnect_callback);

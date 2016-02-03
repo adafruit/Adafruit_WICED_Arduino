@@ -41,9 +41,9 @@ bool mqtt_connected = false;
     @return Error code
 */
 /**************************************************************************/
-sdep_err_t connectAP()
+err_t connectAP()
 {
-  sdep_err_t err = ERROR_NONE;
+  err_t err = ERROR_NONE;
     
   oled.refreshIcons();
   oled.clearMsgArea();

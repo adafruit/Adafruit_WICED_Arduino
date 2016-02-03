@@ -45,16 +45,16 @@
 class AdafruitUDP : public UDP
 {
 protected:
-  uint32_t    _udp_handle;
+  uint32_t  _udp_handle;
 
-	uint16_t    _rcvPort;
-	uint32_t    _rcvIP;
+	uint16_t  _rcvPort;
+	uint32_t  _rcvIP;
 
-	uint16_t    _sndPort;
-	uint32_t    _sndIP;
+	uint16_t  _sndPort;
+	uint32_t  _sndIP;
 
-  sdep_err_t  _errno;
-  uint32_t    _bytesRead;
+  err_t     _errno;
+  uint32_t  _bytesRead;
 
   int (*rx_callback) (void *, void*);
   void reset(void);
@@ -62,7 +62,7 @@ protected:
 public:
   AdafruitUDP();
 
-  sdep_err_t errno(void)  { return _errno; }
+  err_t errno(void)  { return _errno; }
 
   // UDP API
   virtual uint8_t begin(uint16_t port);

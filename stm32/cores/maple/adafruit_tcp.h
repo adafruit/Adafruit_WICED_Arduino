@@ -45,9 +45,9 @@
 class AdafruitTCP : public Client
 {
 protected:
-  sdep_err_t _errno;
-  uint32_t   _tcp_handle;
-  uint32_t   _bytesRead;
+  err_t     _errno;
+  uint32_t  _tcp_handle;
+  uint32_t  _bytesRead;
 
   // buffer written until network packet is full ~1500 or flush() is called
   // default is false
@@ -63,15 +63,16 @@ protected:
 public:
   AdafruitTCP ( void );
 
-  sdep_err_t  errno(void) { return _errno; }
+  err_t  errno(void) { return _errno; }
   void usePacketBuffering(bool enable);
 
   // Client API
-  virtual int  connect ( IPAddress ip, uint16_t port );
-  virtual int  connect ( const char * host, uint16_t port );
+  virtual int     connect ( IPAddress ip, uint16_t port );
+  virtual int     connect ( const char * host, uint16_t port );
 
-  virtual void stop    ( void );
   virtual uint8_t connected( void );
+  virtual void    stop    ( void );
+
   virtual operator bool() { return _tcp_handle != 0; }
 
   // Stream API

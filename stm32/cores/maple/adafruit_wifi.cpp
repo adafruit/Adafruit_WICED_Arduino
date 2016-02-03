@@ -72,6 +72,22 @@ AdafruitFeather::AdafruitFeather(void)
 	sprintf(_sdk_version, "%d.%d.%d", sdk_version[0], sdk_version[1], sdk_version[2]);
 }
 
+bool AdafruitFeather::sdep(uint16_t cmd_id      ,
+                           uint16_t  paylen     , void const* parameter,
+                           uint16_t* result_len , void* result_buffer)
+{
+  this->_errno = FEATHERLIB->sdep_execute(cmd_id, paylen, parameter, result_len, result_buffer);
+  return (ERROR_NONE == this->_errno);
+}
+
+bool AdafruitFeather::sdep_n(uint16_t  cmd_id       ,
+                             uint8_t   para_count   , sdep_cmd_para_t const* para_arr,
+                             uint16_t* p_result_len , void* p_result)
+{
+  this->_errno = FEATHERLIB->sdep_execute_n(cmd_id, para_count, para_arr, p_result_len, p_result);
+  return (ERROR_NONE == this->_errno);
+}
+
 /******************************************************************************/
 /*!
     @brief  Performs a factory reset: Erase Arduino code and Set NVM to defaults
@@ -79,7 +95,7 @@ AdafruitFeather::AdafruitFeather(void)
 /******************************************************************************/
 void AdafruitFeather::factoryReset(void)
 {
-  FEATHERLIB->sdep_execute(SDEP_CMD_FACTORYRESET, 0, NULL, NULL, NULL);
+  sdep(SDEP_CMD_FACTORYRESET, 0, NULL, NULL, NULL);
 }
 
 /******************************************************************************/
@@ -143,7 +159,7 @@ char const* AdafruitFeather::arduinoVersion ( void )
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitFeather::randomNumber(uint32_t* random32bit)
+err_t AdafruitFeather::randomNumber(uint32_t* random32bit)
 {
   return FEATHERLIB->sdep_execute(SDEP_CMD_RANDOMNUMBER, 0, NULL, NULL, (uint8_t*)random32bit);
 }
@@ -156,8 +172,7 @@ sdep_err_t AdafruitFeather::randomNumber(uint32_t* random32bit)
 bool AdafruitFeather::connect(void)
 {
   // TODO get ap info
-  _errno = FEATHERLIB->sdep_execute(SDEP_CMD_CONNECT, 0, NULL, NULL, NULL);
-  _connected = (ERROR_NONE == _errno);
+  _connected = sdep(SDEP_CMD_CONNECT, 0, NULL, NULL, NULL);
 	return _connected;
 }
 
@@ -171,10 +186,8 @@ bool AdafruitFeather::connect(const char *ssid)
   VERIFY(ssid != NULL && strlen(ssid) > 0, false);
 
   uint16_t resp_len = sizeof(wl_ap_info_t);
-
-  _errno = FEATHERLIB->sdep_execute(SDEP_CMD_CONNECT, strlen(ssid), ssid,
-                                                      &resp_len, &_ap_info);
-  _connected = (ERROR_NONE == _errno);
+  _connected = sdep(SDEP_CMD_CONNECT, strlen(ssid), ssid,
+                                      &resp_len, &_ap_info);
 	return _connected;
 }
 
@@ -195,10 +208,8 @@ bool AdafruitFeather::connect(const char *ssid, const char *key, int enc_type)
   };
 
   uint16_t resp_len = sizeof(wl_ap_info_t);
-  _errno = FEATHERLIB->sdep_execute_n(SDEP_CMD_CONNECT, sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
-                                                        &resp_len, &_ap_info);
-
-  _connected = (ERROR_NONE == _errno);
+  _connected = sdep_n(SDEP_CMD_CONNECT, sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                        &resp_len, &_ap_info);
 	return _connected;
 }
 
@@ -530,7 +541,7 @@ int AdafruitFeather::scanNetworks(wl_ap_info_t ap_list[], uint8_t max_ap)
             The passwd could be NULL or empty string if it does not exist
 */
 /******************************************************************************/
-sdep_err_t AdafruitFeather::connectAP(char const* ssid, char const* passwd)
+err_t AdafruitFeather::connectAP(char const* ssid, char const* passwd)
 {
   if (ssid == NULL || ssid == "") return ERROR_INVALIDPARAMETER;
 
@@ -540,7 +551,7 @@ sdep_err_t AdafruitFeather::connectAP(char const* ssid, char const* passwd)
       { .len = strlen(passwd), .p_value = passwd },
   };
 
-  uint16_t error = FEATHERLIB->sdep_execute_n(SDEP_CMD_CONNECT,
+  err_t error = FEATHERLIB->sdep_execute_n(SDEP_CMD_CONNECT,
                                               sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
                                               NULL, NULL);
 
@@ -563,6 +574,52 @@ void AdafruitFeather::disconnect(void)
 
 /******************************************************************************/
 /*!
+    @brief  Set Root CA certificates in PEM format. PEM format is base64 encoded,
+            and in form
+
+            -----BEGIN CERTIFICATE-----
+            ..........KEYS.............
+            -----END CERTIFICATE-----
+
+    @note   Feather works natively with DER (binary) format, therefore it will convert
+    PEM --> DER format and need to malloc 2-3KB of SRAM hold the result. To save
+    Memory usage, please consider to use the PEM format.
+*/
+/******************************************************************************/
+bool AdafruitFeather::setRootCertificatesPEM(char const* root_certs_pem)
+{
+  uint16_t len = (root_certs_pem ? strlen(root_certs_pem) : 0 );
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = len, .p_value = root_certs_pem },
+  };
+
+  _errno = FEATHERLIB->sdep_execute(SDEP_CMD_TLS_SET_ROOT_CERTS,
+                                    len, root_certs_pem,
+                                    NULL, NULL);
+  return (ERROR_NONE == _errno);
+}
+
+/******************************************************************************/
+/*!
+    @brief  Set Root CA certificates in DER format. DER format is binary format,
+            and is the native format that Feather works with.
+
+    @note   Feather works natively with DER (binary) format, therefore it will work
+    on the DER format as it is. This typically saves 2-3KB of SRAM comparing to the
+    PEM counterpart.
+*/
+/******************************************************************************/
+bool AdafruitFeather::setRootCertificatesDER(uint8_t const* root_certs_der, uint32_t len)
+{
+  _errno = FEATHERLIB->sdep_execute(SDEP_CMD_TLS_SET_ROOT_CERTS,
+                                    len, root_certs_der,
+                                    NULL, NULL);
+  return (ERROR_NONE == _errno);
+}
+
+/******************************************************************************/
+/*!
     @brief  Starts AP mode on the module, causing the module to advertise a new
             Wireless network and SSID, etc.
 
@@ -579,7 +636,7 @@ void AdafruitFeather::disconnect(void)
             The passwd could be NULL or empty string if it does not exist
 */
 /******************************************************************************/
-sdep_err_t AdafruitFeather::startAP(char* ssid, char* passwd)
+err_t AdafruitFeather::startAP(char* ssid, char* passwd)
 {
   if (ssid == NULL || ssid == "" || passwd == NULL) return ERROR_INVALIDPARAMETER;
 
@@ -589,9 +646,9 @@ sdep_err_t AdafruitFeather::startAP(char* ssid, char* passwd)
       { .len = strlen(passwd), .p_value = passwd },
   };
 
-  uint16_t err = FEATHERLIB->sdep_execute_n(SDEP_CMD_APSTART,
-                                            sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
-                                            NULL, NULL);
+  err_t err = FEATHERLIB->sdep_execute_n(SDEP_CMD_APSTART,
+                                         sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
+                                         NULL, NULL);
   return err;
 }
 
@@ -603,7 +660,7 @@ sdep_err_t AdafruitFeather::startAP(char* ssid, char* passwd)
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitFeather::startAP(void)
+err_t AdafruitFeather::startAP(void)
 {
   return FEATHERLIB->sdep_execute(SDEP_CMD_APSTART, 0, NULL, NULL, NULL);
 }
@@ -616,7 +673,7 @@ sdep_err_t AdafruitFeather::startAP(void)
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitFeather::stopAP(void)
+err_t AdafruitFeather::stopAP(void)
 {
   return FEATHERLIB->sdep_execute(SDEP_CMD_APSTOP, 0, NULL, NULL, NULL);
 }
@@ -632,7 +689,7 @@ sdep_err_t AdafruitFeather::stopAP(void)
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitFeather::getTime(char* iso8601_time)
+err_t AdafruitFeather::getTime(char* iso8601_time)
 {
 
   return FEATHERLIB->sdep_execute(SDEP_CMD_GETTIME, 0, NULL, NULL, (uint8_t*)iso8601_time);
@@ -652,7 +709,7 @@ sdep_err_t AdafruitFeather::getTime(char* iso8601_time)
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitFeather::httpGetUri(char* uri, uint16_t* length, uint8_t* response)
+err_t AdafruitFeather::httpGetUri(char* uri, uint16_t* length, uint8_t* response)
 {
   return FEATHERLIB->sdep_execute(SDEP_CMD_HTTPGETURI, strlen(uri),
                                   (uint8_t*)uri, length, response);
@@ -673,7 +730,7 @@ sdep_err_t AdafruitFeather::httpGetUri(char* uri, uint16_t* length, uint8_t* res
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitFeather::httpPost(char* uri, uint16_t* length, uint8_t* response)
+err_t AdafruitFeather::httpPost(char* uri, uint16_t* length, uint8_t* response)
 {
   if (uri == NULL) return ERROR_INVALIDPARAMETER;
 
@@ -701,7 +758,7 @@ sdep_err_t AdafruitFeather::httpPost(char* uri, uint16_t* length, uint8_t* respo
             e.g. "topic/adafruit,offline,1,0"
 */
 /******************************************************************************/
-sdep_err_t AdafruitFeather::mqttLastWill(bool isOnlineTopic, char* topic, char* value, uint8_t qos, uint8_t retain)
+err_t AdafruitFeather::mqttLastWill(bool isOnlineTopic, char* topic, char* value, uint8_t qos, uint8_t retain)
 {
   if (topic == NULL) return ERROR_INVALIDPARAMETER;
 
@@ -728,7 +785,7 @@ sdep_err_t AdafruitFeather::mqttLastWill(bool isOnlineTopic, char* topic, char* 
   utoa(retain, str, 10);
   strcat(lastWillMessage, str);
 
-  sdep_err_t error = FEATHERLIB->sdep_execute(SDEP_CMD_MQTTLASTWILL, lastWillMessage_len,
+  err_t error = FEATHERLIB->sdep_execute(SDEP_CMD_MQTTLASTWILL, lastWillMessage_len,
                                               (uint8_t*)lastWillMessage, NULL, NULL);
   free(lastWillMessage);
   return error;
@@ -746,7 +803,7 @@ sdep_err_t AdafruitFeather::mqttLastWill(bool isOnlineTopic, char* topic, char* 
             a specific error if something went wrong.
 */
 /**************************************************************************/
-sdep_err_t AdafruitFeather::mqttGenerateRandomID(char* clientID, uint8_t length)
+err_t AdafruitFeather::mqttGenerateRandomID(char* clientID, uint8_t length)
 {
   static const char alphanum[] =
       "0123456789"
@@ -754,7 +811,7 @@ sdep_err_t AdafruitFeather::mqttGenerateRandomID(char* clientID, uint8_t length)
       "abcdefghijklmnopqrstuvwxyz";
 
   uint8_t i;
-  sdep_err_t error;
+  err_t error;
   uint32_t random32bit;
   for (i = 0; i < length; i++)
   {
@@ -798,7 +855,7 @@ sdep_err_t AdafruitFeather::mqttGenerateRandomID(char* clientID, uint8_t length)
             the default port (1883) is used.
 */
 /******************************************************************************/
-sdep_err_t AdafruitFeather::mqttConnect(char* host, uint16_t port, char* clientID,
+err_t AdafruitFeather::mqttConnect(char* host, uint16_t port, char* clientID,
                                         char* username, char* password)
 {
   if (host == NULL || host == "") return ERROR_INVALIDPARAMETER;
@@ -814,7 +871,7 @@ sdep_err_t AdafruitFeather::mqttConnect(char* host, uint16_t port, char* clientI
   if (password != NULL) mqttServer_len += strlen(password);
 
   uint8_t* payload = (uint8_t*)malloc(mqttServer_len);
-  if (payload == NULL) return ERROR_NO_MEMORY;
+  if (payload == NULL) return ERROR_OUT_OF_HEAP_SPACE;
 
   uint8_t* p_payload = payload;
   p_payload[0] = 0;
@@ -845,7 +902,7 @@ sdep_err_t AdafruitFeather::mqttConnect(char* host, uint16_t port, char* clientI
 
   memcpy(p_payload, (uint8_t*)password, strlen(password));
 
-  sdep_err_t error =  FEATHERLIB->sdep_execute(SDEP_CMD_MQTTCONNECT, mqttServer_len,
+  err_t error =  FEATHERLIB->sdep_execute(SDEP_CMD_MQTTCONNECT, mqttServer_len,
                                                payload, NULL, NULL);
   free(payload);
   return error;
@@ -883,7 +940,7 @@ sdep_err_t AdafruitFeather::mqttConnect(char* host, uint16_t port, char* clientI
             the default port (8883) is used.
 */
 /******************************************************************************/
-sdep_err_t AdafruitFeather::mqttTLSConnect(char* host, uint16_t port, char* clientID,
+err_t AdafruitFeather::mqttTLSConnect(char* host, uint16_t port, char* clientID,
                                            char* username, char* password, const char* ca_cert)
 {
   if (host == NULL || host == "") return ERROR_INVALIDPARAMETER;
@@ -899,7 +956,7 @@ sdep_err_t AdafruitFeather::mqttTLSConnect(char* host, uint16_t port, char* clie
   if (password != NULL) mqttServer_len += strlen(password);
 
   uint8_t* payload = (uint8_t*)malloc(mqttServer_len);
-  if (payload == NULL) return ERROR_NO_MEMORY;
+  if (payload == NULL) return ERROR_OUT_OF_HEAP_SPACE;
 
   uint8_t* p_payload = payload;
 
@@ -933,7 +990,7 @@ sdep_err_t AdafruitFeather::mqttTLSConnect(char* host, uint16_t port, char* clie
 
   memcpy(p_payload, (uint8_t*)password, strlen(password));
 
-  sdep_err_t error =  FEATHERLIB->sdep_execute(SDEP_CMD_MQTTCONNECT, mqttServer_len,
+  err_t error =  FEATHERLIB->sdep_execute(SDEP_CMD_MQTTCONNECT, mqttServer_len,
                                                payload, NULL, NULL);
   free(payload);
   return error;
@@ -947,7 +1004,7 @@ sdep_err_t AdafruitFeather::mqttTLSConnect(char* host, uint16_t port, char* clie
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitFeather::mqttDisconnect(void)
+err_t AdafruitFeather::mqttDisconnect(void)
 {
   return FEATHERLIB->sdep_execute(SDEP_CMD_MQTTDISCONNECT, 0, NULL, NULL, NULL);
 }
@@ -972,7 +1029,7 @@ sdep_err_t AdafruitFeather::mqttDisconnect(void)
             e.g. "topic/adafruit,hello,1,0"
 */
 /******************************************************************************/
-sdep_err_t AdafruitFeather::mqttPublish(char* topic, char* value, uint8_t qos, uint8_t retain)
+err_t AdafruitFeather::mqttPublish(char* topic, char* value, uint8_t qos, uint8_t retain)
 {
   if (topic == NULL) return ERROR_INVALIDPARAMETER;
 
@@ -991,7 +1048,7 @@ sdep_err_t AdafruitFeather::mqttPublish(char* topic, char* value, uint8_t qos, u
   utoa(retain, str, 10);
   strcat(publishedMessage, str);
 
-  sdep_err_t error = FEATHERLIB->sdep_execute(SDEP_CMD_MQTTPUBLISH, publishedMessage_len,
+  err_t error = FEATHERLIB->sdep_execute(SDEP_CMD_MQTTPUBLISH, publishedMessage_len,
                                               (uint8_t*)publishedMessage, NULL, NULL);
   free(publishedMessage);
   return error;
@@ -1015,7 +1072,7 @@ sdep_err_t AdafruitFeather::mqttPublish(char* topic, char* value, uint8_t qos, u
             Incoming messages will be handled using ASYNC FIFO & callback function
 */
 /******************************************************************************/
-sdep_err_t AdafruitFeather::mqttSubscribe(char* topic, uint8_t qos)
+err_t AdafruitFeather::mqttSubscribe(char* topic, uint8_t qos)
 {
   if (topic == NULL) return ERROR_INVALIDPARAMETER;
 
@@ -1028,7 +1085,7 @@ sdep_err_t AdafruitFeather::mqttSubscribe(char* topic, uint8_t qos)
   utoa(qos, str, 10);
   strcat(subTopic, str);
 
-  sdep_err_t error = FEATHERLIB->sdep_execute(SDEP_CMD_MQTTSUBSCRIBE, subTopic_len,
+  err_t error = FEATHERLIB->sdep_execute(SDEP_CMD_MQTTSUBSCRIBE, subTopic_len,
                                               (uint8_t*)subTopic, NULL, NULL);
   free(subTopic);
   return error;
@@ -1044,7 +1101,7 @@ sdep_err_t AdafruitFeather::mqttSubscribe(char* topic, uint8_t qos)
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitFeather::mqttUnsubscribe(char* topic)
+err_t AdafruitFeather::mqttUnsubscribe(char* topic)
 {
   if (topic == NULL || topic[0] == 0) return ERROR_INVALIDPARAMETER;
 
@@ -1064,7 +1121,7 @@ sdep_err_t AdafruitFeather::mqttUnsubscribe(char* topic)
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitFeather::irqRead(uint16_t* response_length, uint8_t* response)
+err_t AdafruitFeather::irqRead(uint16_t* response_length, uint8_t* response)
 {
   return FEATHERLIB->sdep_execute(SDEP_CMD_IRQREAD, 0, NULL, response_length, response);
 }
@@ -1079,7 +1136,7 @@ sdep_err_t AdafruitFeather::irqRead(uint16_t* response_length, uint8_t* response
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitFeather::irqCount(uint16_t* n_items)
+err_t AdafruitFeather::irqCount(uint16_t* n_items)
 {
   return FEATHERLIB->sdep_execute(SDEP_CMD_IRQCOUNT, 0, NULL, NULL, (uint8_t*)n_items);
 }
@@ -1094,7 +1151,7 @@ sdep_err_t AdafruitFeather::irqCount(uint16_t* n_items)
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitFeather::irqAvailable(uint16_t* n_available)
+err_t AdafruitFeather::irqAvailable(uint16_t* n_available)
 {
   return FEATHERLIB->sdep_execute(SDEP_CMD_IRQAVAIL, 0, NULL, NULL, (uint8_t*)n_available);
 }
@@ -1107,7 +1164,7 @@ sdep_err_t AdafruitFeather::irqAvailable(uint16_t* n_available)
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitFeather::irqClear(void)
+err_t AdafruitFeather::irqClear(void)
 {
   return FEATHERLIB->sdep_execute(SDEP_CMD_IRQCLEAR, 0, NULL, NULL, NULL);
 }
@@ -1131,7 +1188,7 @@ sdep_err_t AdafruitFeather::irqClear(void)
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitFeather::httpRequest(const char* url, const char* content, uint8_t method,
+err_t AdafruitFeather::httpRequest(const char* url, const char* content, uint8_t method,
                                         uint32_t buffer_length, uint8_t* buffer)
 {
   if (url == NULL || url == "") return ERROR_INVALIDPARAMETER;
@@ -1155,7 +1212,7 @@ sdep_err_t AdafruitFeather::httpRequest(const char* url, const char* content, ui
   *p_payload++ = method;
   memcpy(p_payload, (uint8_t*)&buffer_length, sizeof(buffer_length));
 
-  sdep_err_t error =  FEATHERLIB->sdep_execute(SDEP_CMD_HTTPREQUEST, paylen,
+  err_t error =  FEATHERLIB->sdep_execute(SDEP_CMD_HTTPREQUEST, paylen,
                                                payload, NULL, buffer);
   free(payload);
   return error;
@@ -1183,7 +1240,7 @@ sdep_err_t AdafruitFeather::httpRequest(const char* url, const char* content, ui
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitFeather::httpsRequest(const char* url, const char* ca_cert,
+err_t AdafruitFeather::httpsRequest(const char* url, const char* ca_cert,
                                          const char* content, uint8_t method,
                                          uint32_t buffer_length, uint8_t* buffer)
 {
@@ -1222,7 +1279,7 @@ sdep_err_t AdafruitFeather::httpsRequest(const char* url, const char* ca_cert,
   /* Length of output buffer */
   memcpy(p_payload, (uint8_t*)&buffer_length, sizeof(buffer_length));
 
-  sdep_err_t error =  FEATHERLIB->sdep_execute(SDEP_CMD_HTTPSREQUEST, paylen,
+  err_t error =  FEATHERLIB->sdep_execute(SDEP_CMD_HTTPSREQUEST, paylen,
                                                payload, NULL, buffer);
   free(payload);
   return error;
@@ -1243,7 +1300,7 @@ sdep_err_t AdafruitFeather::httpsRequest(const char* url, const char* ca_cert,
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitFeather::httpRequestWithCallback(const char* url, const char* content, uint8_t method)
+err_t AdafruitFeather::httpRequestWithCallback(const char* url, const char* content, uint8_t method)
 {
   if (url == NULL || strlen(url) == 0) return ERROR_INVALIDPARAMETER;
   if (method != GET_METHOD && method != POST_METHOD) return ERROR_INVALIDPARAMETER;
@@ -1273,7 +1330,7 @@ sdep_err_t AdafruitFeather::httpRequestWithCallback(const char* url, const char*
   /* Method */
   *p_payload = method;
 
-  sdep_err_t error =  FEATHERLIB->sdep_execute(SDEP_CMD_HTTPREQUESTWITHCB, paylen,
+  err_t error =  FEATHERLIB->sdep_execute(SDEP_CMD_HTTPREQUESTWITHCB, paylen,
                                                payload, NULL, NULL);
   free(payload);
   return error;
@@ -1296,7 +1353,7 @@ sdep_err_t AdafruitFeather::httpRequestWithCallback(const char* url, const char*
             a specific error if something went wrong.
 */
 /******************************************************************************/
-sdep_err_t AdafruitFeather::httpsRequestWithCallback(const char* url, const char* ca_cert,
+err_t AdafruitFeather::httpsRequestWithCallback(const char* url, const char* ca_cert,
                                                      const char* content, uint8_t method)
 {
   if (url == NULL || strlen(url) == 0) return ERROR_INVALIDPARAMETER;
@@ -1334,7 +1391,7 @@ sdep_err_t AdafruitFeather::httpsRequestWithCallback(const char* url, const char
   /* Method */
   *p_payload = method;
 
-  sdep_err_t error =  FEATHERLIB->sdep_execute(SDEP_CMD_HTTPSREQUESTWITHCB, paylen,
+  err_t error =  FEATHERLIB->sdep_execute(SDEP_CMD_HTTPSREQUESTWITHCB, paylen,
                                                payload, NULL, NULL);
   free(payload);
   return error;

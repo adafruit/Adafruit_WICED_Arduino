@@ -112,12 +112,12 @@ typedef struct ATTR_ALIGNED(512)
 
   // SDEP Command
   err_t (*sdep_execute) (uint16_t  cmd_id     ,
-                            uint16_t   paylen     , void const* parameter,
-                            uint16_t* result_len , void* result_buffer);
+                         uint16_t  paylen    , void const* parameter,
+                         uint16_t* result_len , void* result_buffer);
 
-  err_t (*sdep_execute_n)(uint16_t cmd_id,
-                          uint8_t para_count, sdep_cmd_para_t const* para_arr,
-                          uint16_t* p_result_len, void* p_result);
+  err_t (*sdep_execute_n)(uint16_t  cmd_id       ,
+                          uint8_t   para_count   , sdep_cmd_para_t const* para_arr,
+                          uint16_t* p_result_len , void* p_result);
 
   uint32_t sdep_reserved[6];
 
