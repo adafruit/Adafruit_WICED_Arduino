@@ -21,7 +21,7 @@
   Adafruit_TSL2561_Unified tsl = Adafruit_TSL2561_Unified(TSL2561_ADDR_FLOAT, 12345);
 #endif
 
-#define MQTT_ENABLED              1
+#define MQTT_ENABLED              0
 #define MQTT_HOST                 "io.adafruit.com"
 #define MQTT_PORT                 1883
 #define MQTT_AIOUSERNAME          "AIOUSERNAME"
@@ -62,41 +62,33 @@ bool connectAP()
   }
   else
   {
-    /* Display the error message */
+    // Display the error message
     err_t err = feather.errno();
     oled.setConnected(false);
     oled.refreshIcons();
     oled.clearMsgArea();
     oled.println("Connection Error:");
-    oled.print(feather.errstr());
-    oled.print(" (");
-    oled.print(feather.errno());
-    oled.println(")");
-    
-//    switch (err)
-//    {
-//      case ERROR_WWD_ACCESS_POINT_NOT_FOUND:
-//        // SSID wasn't found when scanning for APs
-//        oled.println("Invalid SSID");
-//        break;
-//      case ERROR_WWD_INVALID_KEY:
-//        // Invalid SSID passkey
-//        oled.println("Invalid Password");
-//        break;
-//      case ERROR_WWD_AUTHENTICATION_FAILED:
-//      case ERROR_WWD_NETWORK_NOT_FOUND:
-//      case ERROR_WWD_UNABLE_TO_JOIN:
-//        // AP is likely just out of working range for a reliable connection
-//        oled.println("Unable to Join");
-//        break;
-//      default:
-//        oled.print("ERROR ID: 0x");
-//        oled.println(err, HEX);
-//        break;
-//    }
-    
+    switch (err)
+    {
+      case ERROR_WWD_ACCESS_POINT_NOT_FOUND:
+        // SSID wasn't found when scanning for APs
+        oled.println("Invalid SSID");
+        break;
+      case ERROR_WWD_INVALID_KEY:
+        // Invalid SSID passkey
+        oled.println("Invalid Password");
+        break;
+      default:
+        // The most likely cause of errors at this point is that
+        // you are just out of the device/AP operating range
+        oled.print(feather.errno());
+        oled.print(":");
+        oled.println(feather.errstr());
+        oled.refreshIcons(); // Refresh icons in case the text ran over
+        break;
+    }    
     oled.display();
-
+    // Return false to indicate that we received an error (available in feather.errno)
     return false;
   }
 
