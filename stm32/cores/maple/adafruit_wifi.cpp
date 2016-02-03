@@ -573,10 +573,7 @@ void AdafruitFeather::disconnect(void)
 bool AdafruitFeather::setRootCertificatesPEM(char const* root_certs_pem)
 {
   uint16_t len = (root_certs_pem ? strlen(root_certs_pem) : 0 );
-
-  return sdep(SDEP_CMD_TLS_SET_ROOT_CERTS,
-              len, root_certs_pem,
-              NULL, NULL);
+  return sdep(SDEP_CMD_TLS_SET_ROOT_CERTS, len, root_certs_pem, NULL, NULL);
 }
 
 /******************************************************************************/
@@ -591,9 +588,7 @@ bool AdafruitFeather::setRootCertificatesPEM(char const* root_certs_pem)
 /******************************************************************************/
 bool AdafruitFeather::setRootCertificatesDER(uint8_t const* root_certs_der, uint32_t len)
 {
-  return sdep(SDEP_CMD_TLS_SET_ROOT_CERTS,
-              len, root_certs_der,
-              NULL, NULL);
+  return sdep(SDEP_CMD_TLS_SET_ROOT_CERTS, len, root_certs_der, NULL, NULL);
 }
 
 /******************************************************************************/
@@ -669,7 +664,6 @@ err_t AdafruitFeather::stopAP(void)
 /******************************************************************************/
 err_t AdafruitFeather::getTime(char* iso8601_time)
 {
-
   return FEATHERLIB->sdep_execute(SDEP_CMD_GETTIME, 0, NULL, NULL, (uint8_t*)iso8601_time);
 }
 
