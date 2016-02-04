@@ -113,6 +113,11 @@ typedef enum WiringPinMode {
 void pinMode(uint8 pin, WiringPinMode mode);
 
 /**
+ * Return name of the pin e.g "PA15"
+ */
+char const* pinName(uint8_t pin);
+
+/**
  * Writes a (digital) value to a pin.  The pin must have its
  * mode set to OUTPUT or OUTPUT_OPEN_DRAIN.
  *

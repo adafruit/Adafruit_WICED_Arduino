@@ -41,33 +41,18 @@
 #include "adc.h"
 #include "timer.h"
 
-static void setupFlash(void);
-static void setupClocks(void);
-static void setupNVIC(void);
 static void setupADC(void);
 static void setupTimers(void);
+static void adcDefaultConfig(const adc_dev* dev);
+static void timerDefaultConfig(timer_dev*);
 
-void init(void) {
-#if 0 // [ADAFRUIT] most of MCU core setup is done in featherlib
-  setupFlash();
-
-  setupClocks();
-    setupNVIC();
-  systick_init(SYSTICK_RELOAD_VAL);
-  gpio_init_all();
-
-#ifdef STM32F2
-  rcc_clk_enable(RCC_SYSCFG);
-#else
-    afio_init();
-#endif
-
-#endif
-
-    SetupClockAdafruitFeather();
-    boardInit();
-    setupADC();
-    setupTimers();
+void init(void)
+{
+  // ADAFRUIT: most of MCU core setup is done in featherlib
+  SetupClockAdafruitFeather();
+  boardInit();
+  setupADC();
+  setupTimers();
 }
 
 /* You could farm this out to the files in boards/ if e.g. it takes
@@ -81,58 +66,15 @@ bool boardUsesPin(uint8 pin) {
     return false;
 }
 
-static void setupFlash(void) {
-#ifndef STM32F2
-  // for F2 and F4 CPUs this is done in SetupClock...(), e.g. in SetupClock168MHz()
-    flash_enable_prefetch();
-    flash_set_latency(FLASH_WAIT_STATE_2);
-#endif
-}
-
-/*
- * Clock setup.  Note that some of this only takes effect if we're
- * running bare metal and the bootloader hasn't done it for us
- * already.
- *
- * If you change this function, you MUST change the file-level Doxygen
- * comment above.
- */
-static void setupClocks() {
-    rcc_clk_init(RCC_CLKSRC_PLL, RCC_PLLSRC_HSE, RCC_PLLMUL_9);
-    rcc_set_prescaler(RCC_PRESCALER_AHB, RCC_AHB_SYSCLK_DIV_1);
-    rcc_set_prescaler(RCC_PRESCALER_APB1, RCC_APB1_HCLK_DIV_2);
-    rcc_set_prescaler(RCC_PRESCALER_APB2, RCC_APB2_HCLK_DIV_1);
-}
-
-#if 0
-static void setupNVIC() {
-#ifdef VECT_TAB_FLASH
-    nvic_init(USER_ADDR_ROM, 0);
-#elif defined VECT_TAB_RAM
-    nvic_init(USER_ADDR_RAM, 0);
-#elif defined VECT_TAB_BASE
-    nvic_init((uint32)0x08000000, 0);
-#else
-#error "You must select a base address for the vector table."
-#endif
-}
-#endif
-
-static void adcDefaultConfig(const adc_dev* dev);
-
 static void setupADC() {
-#ifdef STM32F2
   setupADC_F2();
-#else
-  rcc_set_prescaler(RCC_PRESCALER_ADC, RCC_ADCPRE_PCLK_DIV_6);
-#endif
-    adc_foreach(adcDefaultConfig);
+  adc_foreach(adcDefaultConfig);
 }
 
-static void timerDefaultConfig(timer_dev*);
 
 static void setupTimers() {
-    timer_foreach(timerDefaultConfig);
+  timer_init_all();
+  timer_foreach(timerDefaultConfig);
 }
 
 static void adcDefaultConfig(const adc_dev *dev) {

@@ -39,8 +39,13 @@
 
 #include "wirish_types.h"
 
-//static void initSRAMChip(void);
-void boardInit(void) {
+void boardInit(void)
+{
+//  gpio_set_af_mode(GPIOA, 0, 3);
+	//gpio_set_af_mode(GPIOA, 2, 7);
+	//gpio_set_af_mode(GPIOA, 3, 7);
+  gpio_set_af_mode(GPIOA, 15, 1);
+
 	// remap TIMER8 to PC6-9
 //	gpio_set_af_mode(GPIOC, 6, 3);
 	gpio_set_af_mode(GPIOC, 7, 3);
@@ -53,25 +58,10 @@ void boardInit(void) {
 //	gpio_set_af_mode(GPIOB,  0, 2);
 //	gpio_set_af_mode(GPIOB,  1, 2);
 
-	//gpio_set_af_mode(GPIOA, 2, 7);
-	//gpio_set_af_mode(GPIOA, 3, 7);
 
 	return;
 }
-
-
-#if 0
-typedef struct stm32_pin_info {
-    gpio_dev *gpio_device;      /**< Maple pin's GPIO device */
-    timer_dev *timer_device;    /**< Pin's timer device, if any. */
-    const adc_dev *adc_device;  /**< ADC device, if any. */
-    uint8 gpio_bit;             /**< Pin's GPIO port bit. */
-    uint8 timer_channel;        /**< Timer channel, or 0 if none. */
-    uint8 adc_channel;          /**< Pin ADC channel, or ADCx if none. */
-} stm32_pin_info;
-
-#endif
-
+/* Port, Timer, ADC, PortBit, Timer Channel, ADC Channel */
 extern const stm32_pin_info PIN_MAP[BOARD_NR_GPIO_PINS] = {
     {GPIOA, TIMER5, ADC1,  0, 1,    0}, /* D00/PA0  */
     {GPIOA, TIMER5, ADC1,  1, 2,    1}, /* D01/PA1  */
@@ -131,17 +121,4 @@ extern const uint8 boardUsedPins[BOARD_NR_USED_PINS] __FLASH__ = {
 //    BOARD_LED_PIN, BOARD_BUTTON_PIN,
 };
 
-/*
-static void initSRAMChip(void) {
-    fsmc_nor_psram_reg_map *regs = FSMC_NOR_PSRAM1_BASE;
-
-    fsmc_sram_init_gpios();
-    rcc_clk_enable(RCC_FSMC);
-
-    regs->BCR = (FSMC_BCR_WREN | FSMC_BCR_MWID_16BITS | FSMC_BCR_MTYP_SRAM |
-                 FSMC_BCR_MBKEN);
-    fsmc_nor_psram_set_addset(regs, 0);
-    fsmc_nor_psram_set_datast(regs, 3);
-}
-*/
 #endif

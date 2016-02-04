@@ -83,6 +83,26 @@ void pinMode(uint8 pin, WiringPinMode mode) {
     }
 }
 
+char const* pinName(uint8_t pin)
+{
+  static char name[5];
+  memclr(name, sizeof(name));
+
+  name[0] = 'P';
+  name[1] = (pin >> 4) + 'A';
+
+  uint8_t bit = (pin & 0x0f);
+  if ( bit > 10)
+  {
+    name[2] = '0' + bit/10;
+    name[3] = '0' + bit%10;
+  }else
+  {
+    name[2] = '0' + bit%10;
+  }
+
+  return name;
+}
 
 uint32 digitalRead(uint8 pin) {
     if (pin >= BOARD_NR_GPIO_PINS) {
