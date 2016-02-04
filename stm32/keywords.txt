@@ -1,0 +1,75 @@
+#######################################
+# Syntax Coloring Map For Adafruit Feather WiFi
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+AdafruitSDEP	KEYWORD1
+AdafruitFeather	KEYWORD1
+AdafruitTCP	KEYWORD1
+AdafruitUDP	KEYWORD1
+
+#######################################
+# AdafruitSDEP Methods and Functions (KEYWORD2)
+#######################################
+
+printf	KEYWORD2
+sdep	KEYWORD2
+sdep_n	KEYWORD2
+errno	KEYWORD2
+errstr	KEYWORD2
+
+#######################################
+# AdafruitFeather Methods and Functions (KEYWORD2)
+#######################################
+
+factoryReset	KEYWORD2
+nvmReset	KEYWORD2
+bootloaderVersion	KEYWORD2
+sdkVersion	KEYWORD2
+firmwareVersion	KEYWORD2
+arduinoVersion	KEYWORD2
+
+connect	KEYWORD2
+connected	KEYWORD2
+disconnect	KEYWORD2
+
+saveConnectedProfile	KEYWORD2
+addProfile	KEYWORD2
+removeProfile	KEYWORD2
+checkProfile	KEYWORD2
+clearProfiles	KEYWORD2
+profileSSID	KEYWORD2
+profileEncryptionType	KEYWORD2
+
+macAddress	KEYWORD2
+localIP	KEYWORD2
+subnetMask	KEYWORD2
+gatewayIP	KEYWORD2
+
+SSID	KEYWORD2
+RSSI	KEYWORD2
+encryptionType	KEYWORD2
+BSSID	KEYWORD2
+
+setDisconnectCallback	KEYWORD2
+scanNetworks	KEYWORD2
+hostByName	KEYWORD2
+ping	KEYWORD2
+
+#######################################
+# AdafruitTCP Methods and Functions (KEYWORD2)
+#######################################
+
+usePacketBuffering	KEYWORD2
+connectSSL	KEYWORD2
+stop	KEYWORD2
+setReceivedCallback	KEYWORD2
+setDisconnectCallback	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
