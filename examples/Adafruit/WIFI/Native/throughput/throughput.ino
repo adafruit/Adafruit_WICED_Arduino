@@ -43,13 +43,13 @@ const char * testData[10] =
 
 const uint32_t testStepLen = strlen(testData[0]);
 
-void setup() {
-  //Initialize serial and wait for port to open:
+void setup()
+{
   Serial.begin(115200);
-  while (!Serial) {
-    delay(1); // wait for serial port to connect. Needed for native USB port only
-  }
-  
+
+  // Wait for serial port to connect
+  while (!Serial) delay(1);
+
   // attempt to connect to Wifi network:
   do{
     Serial.print("Attempting to connect to SSID: ");

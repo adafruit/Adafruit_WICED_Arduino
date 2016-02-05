@@ -533,6 +533,16 @@ void AdafruitFeather::disconnect(void)
 
 /******************************************************************************/
 /*!
+    @brief Require TLS verification for server (default is true)
+*/
+/******************************************************************************/
+bool AdafruitFeather::tlsRequireVerification(bool required)
+{
+  return sdep(SDEP_CMD_TLS_REQUIRE_VERIFICATION, 1, &required, NULL, NULL);
+}
+
+/******************************************************************************/
+/*!
     @brief  Set Root CA certificates in PEM format. PEM format is base64 encoded,
             and in form
 

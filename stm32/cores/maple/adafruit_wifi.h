@@ -93,7 +93,7 @@ ASSERT_STATIC( sizeof(wl_ap_info_t) == 52 );
 
 extern "C"
 {
-  void adafruit_wifi_connect_callback(void);
+//  void adafruit_wifi_connect_callback(void);
   void adafruit_wifi_disconnect_callback(void);
 
   void http_rx_callback (uint8_t* data, uint16_t data_length, uint16_t avail);
@@ -203,6 +203,8 @@ public:
   uint32_t   ping(char const* host);
   uint32_t   ping(IPAddress ip);
 
+  // SSL/TLS API
+  bool      tlsRequireVerification(bool required);
   bool      setRootCertificatesPEM(char const* root_certs_pem);
   bool      setRootCertificatesDER(uint8_t const* root_certs_der, uint32_t len);
 
@@ -215,17 +217,6 @@ public:
   err_t httpRequestWithCallback(const char* url, const char* content, uint8_t method);
   err_t httpsRequestWithCallback(const char* url, const char* ca_cert, const char* content, uint8_t method);
   void       addHttpDataReceivedCallBack(ada_http_callback ada_httpCallback = NULL);
-
-//  /* DEBUG Commands */
-//  err_t stackDump();
-//  err_t stackSize();
-//  err_t heapDump();
-//  err_t heapSize();
-//  err_t threadList();
-//
-//  /* SPI Flash Commands */
-//  err_t sflashFormat();
-//  err_t sflashList();
 
   /* MQTT Commands */
   err_t mqttLastWill(bool isOnlineTopic, char* topic, char* value, uint8_t qos, uint8_t retain);
@@ -247,7 +238,19 @@ public:
   /* callback from featherlib */
   friend void http_rx_callback (uint8_t* data, uint16_t data_length, uint16_t avail);
   friend void mqtt_evt_callback(mqtt_evt_opcode_t event, uint16_t len, uint8_t* data);
+
   friend void adafruit_wifi_disconnect_callback(void);
+
+  //  /* DEBUG Commands */
+//  err_t stackDump();
+//  err_t stackSize();
+//  err_t heapDump();
+//  err_t heapSize();
+//  err_t threadList();
+//
+//  /* SPI Flash Commands */
+//  err_t sflashFormat();
+//  err_t sflashList();
 };
 
 extern AdafruitFeather feather;
