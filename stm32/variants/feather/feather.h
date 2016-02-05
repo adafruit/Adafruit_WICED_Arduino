@@ -88,7 +88,7 @@ enum {
 #define BOARD_SPI3_MOSI_PIN     PB5
 
 #define BOARD_NR_GPIO_PINS      40
-#define BOARD_NR_PWM_PINS       9
+#define BOARD_NR_PWM_PINS       13
 #define BOARD_NR_ADC_PINS       11
 #define BOARD_NR_USED_PINS      5
 

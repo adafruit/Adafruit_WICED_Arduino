@@ -73,7 +73,6 @@ static void setupADC() {
 
 
 static void setupTimers() {
-  timer_init_all();
   timer_foreach(timerDefaultConfig);
 }
 

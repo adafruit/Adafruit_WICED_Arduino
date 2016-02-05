@@ -37,6 +37,7 @@
 #ifndef _ADAFRUIT_FEATHERLIB_H_
 #define _ADAFRUIT_FEATHERLIB_H_
 
+#include <stdbool.h>
 #include <stdint.h>
 #include "compiler.h"
 #include "assertion.h"
@@ -106,8 +107,8 @@ typedef struct ATTR_ALIGNED(512)
   char     board_name[12];         // e.g "Feather"
   char     mcu_str[12];            // e.g "ST32F205RGY"
   char     firmware_builddate[12]; // e.g "Dec 07 2015"
-
   uint32_t sdk_version;
+
   uint8_t  reserved[76];
 
   // SDEP Command
@@ -129,7 +130,8 @@ typedef struct ATTR_ALIGNED(512)
 
   // Peripheral API
   uint32_t (*system_millis) (void);
-  uint32_t peripheral_reserved[15];
+  bool     (*sflash_is_available)(void);
+  uint32_t peripheral_reserved[14];
 
   // FILE Interface
   int (*file_write) (int file, char *ptr, int len);
@@ -144,6 +146,15 @@ ASSERT_STATIC( sizeof(adafruit_featherlib_t) == 512 );
 
 #define FEATHERLIB_BASE    ((uint32_t) 0x8010200)
 #define FEATHERLIB         ((adafruit_featherlib_t const*) FEATHERLIB_BASE)
+
+#define FEATHERLIB_API_EXISTS(func)  is_within(FEATHERLIB_BASE, (uint32_t) FEATHERLIB->func, 0x80DFFFF)
+
+static inline bool is_within(uint32_t lower, uint32_t value, uint32_t upper) ATTR_ALWAYS_INLINE ATTR_CONST;
+static inline bool is_within(uint32_t lower, uint32_t value, uint32_t upper)
+{
+  return (lower <= value) && (value <= upper);
+}
+
 
 #define DBG_SERIAL FILENO_UART
 //#define DBG_SERIAL FILENO_UART

@@ -41,84 +41,91 @@
 
 void boardInit(void)
 {
-//  gpio_set_af_mode(GPIOA, 0, 3);
-	//gpio_set_af_mode(GPIOA, 2, 7);
-	//gpio_set_af_mode(GPIOA, 3, 7);
+  gpio_set_af_mode(GPIOA, 0, 2);
+  gpio_set_af_mode(GPIOA, 1, 2);
+	gpio_set_af_mode(GPIOA, 2, 2);
+	gpio_set_af_mode(GPIOA, 3, 2);
+//	gpio_set_af_mode(GPIOA, 6, 2);
+//	gpio_set_af_mode(GPIOA, 7, 2);
+	gpio_set_af_mode(GPIOA, 9 , 2);
+	gpio_set_af_mode(GPIOA, 10, 2);
   gpio_set_af_mode(GPIOA, 15, 1);
 
-	// remap TIMER8 to PC6-9
-//	gpio_set_af_mode(GPIOC, 6, 3);
+  // Leave PB3, PB4, PB5 if sflash is enabled (SPI3 for USB MSC)
+  if ( !FEATHERLIB_API_EXISTS(sflash_is_available) || !FEATHERLIB->sflash_is_available() )
+  {
+    gpio_set_af_mode(GPIOB,  3, 2);
+    gpio_set_af_mode(GPIOB,  4, 2);
+    gpio_set_af_mode(GPIOB,  5, 2);
+  }
+	gpio_set_af_mode(GPIOB,  6, 2);
+	gpio_set_af_mode(GPIOB,  7, 2);
+
 	gpio_set_af_mode(GPIOC, 7, 3);
-//	gpio_set_af_mode(GPIOC, 8, 3);
-//	gpio_set_af_mode(GPIOC, 9, 3);
-
-	// remap TIMER3 to PB4,5,0,1
-//	gpio_set_af_mode(GPIOB,  4, 2);
-//	gpio_set_af_mode(GPIOB,  5, 2);
-//	gpio_set_af_mode(GPIOB,  0, 2);
-//	gpio_set_af_mode(GPIOB,  1, 2);
-
-
-	return;
 }
+
 /* Port, Timer, ADC, PortBit, Timer Channel, ADC Channel */
-extern const stm32_pin_info PIN_MAP[BOARD_NR_GPIO_PINS] = {
-    {GPIOA, TIMER5, ADC1,  0, 1,    0}, /* D00/PA0  */
-    {GPIOA, TIMER5, ADC1,  1, 2,    1}, /* D01/PA1  */
-    {GPIOA, TIMER5, ADC1,  2, 3,    2}, /* D02/PA2  */
-    {GPIOA, TIMER5, ADC1,  3, 4,    3}, /* D03/PA3  */
-    {GPIOA,   NULL, ADC1,  4, 0,    4}, /* D04/PA4  */
-    {GPIOA,   NULL, ADC1,  5, 0,    5}, /* D05/PA5  */
-    {GPIOA,   NULL, ADC1,  6, 1,    6}, /* D06/PA6  */ // ala check TIMER3
-    {GPIOA,   NULL, ADC1,  7, 0,    7}, /* D07/PA7  */
-    {GPIOA,   NULL, NULL,  8, 0, ADCx}, /* D08/PA8  */ // remap out
-    {GPIOA,   NULL, NULL,  9, 0, ADCx}, /* D09/PA9  */ // remap out
-    {GPIOA,   NULL, NULL, 10, 0, ADCx}, /* D10/PA10 */ // remap out
-    {GPIOA,   NULL, NULL, 11, 0, ADCx}, /* D11/PA11 */ // remap out
-    {GPIOA,   NULL, NULL, 12, 0, ADCx}, /* D12/PA12 */
-    {GPIOA,   NULL, NULL, 13, 0, ADCx}, /* D13/PA13 */
-    {GPIOA,   NULL, NULL, 14, 0, ADCx}, /* D14/PA14 */
-    {GPIOA, TIMER2, NULL, 15, 1, ADCx}, /* D15/PA15 */ // remap in
+extern const stm32_pin_info PIN_MAP[BOARD_NR_GPIO_PINS] =
+{
+  /* PA0  */  {GPIOA, TIMER5, ADC1,  0, 1,    0},
+  /* PA1  */  {GPIOA, TIMER5, ADC1,  1, 2,    1},
+  /* PA2  */  {GPIOA, TIMER5, ADC1,  2, 3,    2},
+  /* PA3  */  {GPIOA, TIMER5, ADC1,  3, 4,    3},
+  /* PA4  */  {GPIOA,   NULL, ADC1,  4, 0,    4},
+  /* PA5  */  {GPIOA,   NULL, ADC1,  5, 0,    5},
 
-    {GPIOB, TIMER3, ADC1,  0, 3,    8}, /* D16/PB0  */
-    {GPIOB, TIMER3, ADC1,  1, 4,    9}, /* D17/PB1  */
-    {GPIOB,   NULL, NULL,  2, 0, ADCx}, /* D18/PB2  */
-    {GPIOB, TIMER2, NULL,  3, 2, ADCx}, /* D19/PB3  */ // remap in
-    {GPIOB, TIMER3, NULL,  4, 1, ADCx}, /* D20/PB4  */ // remap in
-    {GPIOB, TIMER3, NULL,  5, 2, ADCx}, /* D21/PB5  */ // remap in
-    {GPIOB,   NULL, NULL,  6, 0, ADCx}, /* D22/PB6  */ // remap out
-    {GPIOB,   NULL, NULL,  7, 0, ADCx}, /* D23/PB7  */ // remap out
-    {GPIOB,   NULL, NULL,  8, 0, ADCx}, /* D24/PB8  */ // remap out
-    {GPIOB,   NULL, NULL,  9, 0, ADCx}, /* D25/PB9  */ // remap out
-    {GPIOB,   NULL, NULL, 10, 0, ADCx}, /* D26/PB10 */
-    {GPIOB,   NULL, NULL, 11, 0, ADCx}, /* D27/PB11 */
-    {GPIOB,   NULL, NULL, 12, 0, ADCx}, /* D28/PB12 */
-    {GPIOB,   NULL, NULL, 13, 0, ADCx}, /* D29/PB13 */
-    {GPIOB,   NULL, NULL, 14, 0, ADCx}, /* D30/PB14 */
-    {GPIOB,   NULL, NULL, 15, 0, ADCx}, /* D31/PB15 */
+  /* PA6  */  {GPIOA,   NULL, ADC1,  6, 1,    6},  // ala check TIMER3
+  /* PA7  */  {GPIOA,   NULL, ADC1,  7, 0,    7},
+                                                    {GPIOA,   NULL, NULL,  8, 0, ADCx}, /* PA8 (n/a) */
+  /* PA9  */  {GPIOA, TIMER1, NULL,  9, 2, ADCx},  // UART1_TXD
+  /* PA10 */  {GPIOA, TIMER1, NULL, 10, 3, ADCx},  // UART1_RXD
+                                                    {GPIOA,   NULL, NULL, 11, 0, ADCx}, /* PA11 (n/a) */ // remap out
+                                                    {GPIOA,   NULL, NULL, 12, 0, ADCx}, /* PA12 (n/a) */
+  /* PA13 */  {GPIOA,   NULL, NULL, 13, 0, ADCx}, // SWDIO
+  /* PA14 */  {GPIOA,   NULL, NULL, 14, 0, ADCx}, // SWCLK
+  /* PA15 */  {GPIOA, TIMER2, NULL, 15, 1, ADCx}, // LED
 
-    {GPIOC,   NULL, ADC1,  0, 0,   10}, /* D32/PC0  */
-    {GPIOC,   NULL, ADC1,  1, 0,   11}, /* D33/PC1  */
-    {GPIOC,   NULL, ADC1,  2, 0,   12}, /* D34/PC2  */
-    {GPIOC,   NULL, ADC1,  3, 0,   13}, /* D35/PC3  */
-    {GPIOC,   NULL, ADC1,  4, 0,   14}, /* D36/PC4  */
-    {GPIOC,   NULL, ADC1,  5, 0,   15}, /* D37/PC5  */
-    {GPIOC, TIMER8, NULL,  6, 1, ADCx}, /* D38/PC6  */
-    {GPIOC, TIMER8, NULL,  7, 2, ADCx}, /* D39/PC7  */
+                                                    {GPIOB, TIMER3, ADC1,  0, 3,    8}, /* PB0 (n/a) */
+                                                    {GPIOB, TIMER3, ADC1,  1, 4,    9}, /* PB1 (n/a) */
+                                                    {GPIOB,   NULL, NULL,  2, 0, ADCx}, /* PB2 (n/a) */
+  /* PB3  */  {GPIOB, TIMER2, NULL,  3, 2, ADCx}, // SPI3_SCK
+  /* PB4  */  {GPIOB, TIMER3, NULL,  4, 1, ADCx}, // SPI3_MISO
+  /* PB5  */  {GPIOB, TIMER3, NULL,  5, 2, ADCx}, // SPI3_MOSI
+  /* PB6  */  {GPIOB, TIMER4, NULL,  6, 1, ADCx}, // I2C1_SCL
+  /* PB7  */  {GPIOB, TIMER4, NULL,  7, 2, ADCx}, // I2C1_SDA
+                                                    {GPIOB,   NULL, NULL,  8, 0, ADCx}, /* PB8  (n/a) */ // remap out
+                                                    {GPIOB,   NULL, NULL,  9, 0, ADCx}, /* PB9  (n/a) */ // remap out
+                                                    {GPIOB,   NULL, NULL, 10, 0, ADCx}, /* PB10 (n/a) */
+                                                    {GPIOB,   NULL, NULL, 11, 0, ADCx}, /* PB11 (n/a) */
+                                                    {GPIOB,   NULL, NULL, 12, 0, ADCx}, /* PB12 (n/a) */
+                                                    {GPIOB,   NULL, NULL, 13, 0, ADCx}, /* PB13 (n/a) */
+  /* PB14 */  {GPIOB,   NULL, NULL, 14, 0, ADCx}, // USB
+  /* PB15 */  {GPIOB,   NULL, NULL, 15, 0, ADCx}, // USB
+
+                                                    {GPIOC,   NULL, ADC1,  0, 0,   10}, /* PC0 (n/a) */
+                                                    {GPIOC,   NULL, ADC1,  1, 0,   11}, /* PC1 (n/a) */
+  /* PC2  */  {GPIOC,   NULL, ADC1,  2, 0,   12},
+  /* PC3  */  {GPIOC,   NULL, ADC1,  3, 0,   13},
+                                                    {GPIOC,   NULL, ADC1,  4, 0,   14}, /* PC4 (n/a)  */
+  /* PC5  */  {GPIOC,   NULL, ADC1,  5, 0,   15},
+                                                    {GPIOC, TIMER8, NULL,  6, 1, ADCx}, /* PC6 (n/a) */
+  /* PC7  */  {GPIOC, TIMER8, NULL,  7, 2, ADCx},
 };
 
 extern const uint8 boardPWMPins[BOARD_NR_PWM_PINS] __FLASH__ = {
-    PA0, PA1, PA2, PA3, PA15, PB3, PB4, PB5, PC7
+    PA0, PA1, PA2, PA3, PA9, PA10, PA15, PB3, PB4, PB5, PB6, PB7, PC7
 };
+
+ASSERT_STATIC( sizeof(boardPWMPins) == BOARD_NR_PWM_PINS );
 
 extern const uint8 boardADCPins[BOARD_NR_ADC_PINS] __FLASH__ = {
     PA0, PA1, PA2, PA3, PA4, PA5, PA6, PA7, PC2, PC3, PC5
 };
 
+ASSERT_STATIC( sizeof(boardADCPins) == BOARD_NR_ADC_PINS );
+
 extern const uint8 boardUsedPins[BOARD_NR_USED_PINS] __FLASH__ = {
     PB14, PB15, // USB
-    PA9, PA10,  // UART
-//    BOARD_LED_PIN, BOARD_BUTTON_PIN,
 };
 
 #endif

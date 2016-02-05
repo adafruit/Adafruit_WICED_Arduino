@@ -82,6 +82,13 @@ void HardwareSerial::begin(uint32 baud) {
     gpio_set_af_mode(txi->gpio_device, txi->gpio_bit, afnum);
     gpio_set_af_mode(rxi->gpio_device, rxi->gpio_bit, afnum);
 
+#if 0
+    if (txi->timer_device != NULL) {
+        /* Turn off any PWM if there's a conflict on this GPIO bit. */
+        timer_set_mode(txi->timer_device, txi->timer_channel, TIMER_DISABLED);
+    }
+#endif
+
     usart_init(usart_device);
     usart_set_baud_rate(usart_device, baud);
     usart_enable(usart_device);
