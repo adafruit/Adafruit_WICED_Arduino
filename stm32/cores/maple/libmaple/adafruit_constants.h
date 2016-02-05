@@ -233,6 +233,12 @@ typedef enum
 
 } mqtt_evt_opcode_t;
 
+enum
+{
+    TLS_NO_VERIFICATION       = 0,
+    TLS_VERIFICATION_OPTIONAL = 1,
+    TLS_VERIFICATION_REQUIRED = 2,
+};
 
 #ifdef __cplusplus
  }

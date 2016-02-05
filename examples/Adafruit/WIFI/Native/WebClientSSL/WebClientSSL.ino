@@ -27,36 +27,55 @@
 #include <AdafruitNet.h>
 #include "certificates.h"
 
-char ssid[] = "yourSSID";     //  your network SSID (name)
-char pass[] = "yourPass";  // your network password (use for WPA, or use as key for WEP)
+#define WLAN_SSID            "thach"
+#define WLAN_PASS            "thach367"
 
 char uri[]    = "/";
 
 // Change the SERVER_ID to match the generated certificates.h
-#define SERVER_ID    1
+#define SERVER_ID    2
 
-#if SERVER_ID == 1
-  char server[] = "www.adafruit.com";
-#elif SERVER_ID == 2
-  char server[] = "www.facebook.com";
-#elif SERVER_ID == 3
-  char server[] = "github.com";
-#elif SERVER_ID == 4
-  // hanged when print binary data
-  char server[] = "twitter.com";
-#elif SERVER_ID == 5
-  // cannot connect
-  char server[] = "www.google.com";
-#elif SERVER_ID == 6
-  char server[] = "www.yahoo.com";
-#else
-  #error Server is not defined
-#endif
+const char * server_arr[] =
+{
+    [0] = "www.adafruit.com"  ,
+    [1] = "www.google.com"    ,
+    [2] = "www.arduino.cc"    ,
+    [3] = "www.yahoo.com"     ,
+    [4] = "www.microsoft.com" ,
+    [5] = "www.reddit.com"    ,
+    [6] = "www.facebook.com"  ,
+    [7] = "www.geotrust.com"  ,
+    [8] = "www.eff.org"       ,
+    [9] = "www.twitter.com"   ,
+    [10] = "www.flickr.com"   ,
+};
+
+const char * server = server_arr[SERVER_ID];
 
 // Initialize the Ethernet client library
 // with the IP address and port of the server
 // that you want to connect to (port 80 is default for HTTP):
 HTTPClient client;
+
+bool connectAP(void)
+{
+  // Attempt to connect to an AP
+  Serial.print("Attempting to connect to: ");
+  Serial.println(WLAN_SSID);
+
+  if ( feather.connect(WLAN_SSID, WLAN_PASS) )
+  {
+    Serial.println("Connected!");
+  }
+  else
+  {
+    Serial.printf("Failed! %s (%d)", feather.errstr(), feather.errno());
+    Serial.println();
+  }
+  Serial.println();
+
+  return feather.connected();
+}
 
 void setup()
 {
@@ -65,26 +84,17 @@ void setup()
   // wait for Serial port to connect. Needed for native USB port only
   while (!Serial) delay(1);
   
-  do {
-    Serial.print("Attempting to connect: ");
-    Serial.println(ssid);
-    // Connect using saved profile if possible since it re-connect much quicker
-    if ( feather.checkProfile(ssid) )
-    {
-      feather.connect();
-    }else
-    {
-      feather.clearProfiles();
-      if ( feather.connect(ssid, pass) )
-      {
-        feather.saveConnectedProfile();
-      }
-    }
-  } while( !feather.connected() );
+  Serial.println("WebClientSSL Example");
+
+  while( !connectAP() )
+  {
+    delay(100);
+  }
 
   Serial.println("Connected to wifi");
   printWifiStatus();
 
+#if 0
   // Setting Certificates chain of the server
   Serial.print("Setting Root CA chain ... ");
   if ( feather.setRootCertificatesDER(root_certs, sizeof(root_certs)) )
@@ -94,6 +104,9 @@ void setup()
   {
     Serial.println("failed");
   }
+#else
+  feather.tlsRequireVerification(false);
+#endif  
 
   Serial.print("\nStarting connection to server...");
   Serial.println(server);
@@ -108,7 +121,7 @@ void setup()
     client.get(server, uri);
   }else
   {
-    Serial.println("Failed: %s (%d)", client.errstr(), client.errno());
+    Serial.printf("Failed: %s (%d)", client.errstr(), client.errno());
     Serial.println();
   }
 }
@@ -116,21 +129,13 @@ void setup()
 void loop() {
   // if there are incoming bytes available
   // from the server, read them and print them:
-  while ( client.available() )
+  if ( client.available() )
   {
     char c = client.read();
-    Serial.write(c);
-  }
-
-  // if the server's disconnected, stop the client:
-  if ( !client.connected() )
+    Serial.write( isprint(c) ? c : '.');
+  }else
   {
-    Serial.println();
-    Serial.println("disconnecting from server.");
-    client.stop();
-
-    // do nothing forevermore:
-    while (true) delay(1);
+    delay(1);
   }
 }
 
@@ -151,8 +156,4 @@ void printWifiStatus() {
   Serial.print(rssi);
   Serial.println(" dBm");
 }
-
-
-
-
 
