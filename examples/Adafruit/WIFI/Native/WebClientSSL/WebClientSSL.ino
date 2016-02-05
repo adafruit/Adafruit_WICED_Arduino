@@ -27,29 +27,33 @@
 #include <AdafruitNet.h>
 #include "certificates.h"
 
-#define WLAN_SSID            "thach"
-#define WLAN_PASS            "thach367"
+#define WLAN_SSID            "yourSSID"
+#define WLAN_PASS            "yourPass"
 
 char uri[]    = "/";
 
+int ledPin = PA15;
+
 // Change the SERVER_ID to match the generated certificates.h
-#define SERVER_ID    2
+#define SERVER_ID    0
 
 const char * server_arr[] =
 {
-    [0] = "www.adafruit.com"  ,
-    [1] = "www.google.com"    ,
-    [2] = "www.arduino.cc"    ,
-    [3] = "www.yahoo.com"     ,
-    [4] = "www.microsoft.com" ,
-    [5] = "www.reddit.com"    ,
-    [6] = "www.facebook.com"  ,
-    [7] = "www.geotrust.com"  ,
-    [8] = "www.eff.org"       ,
-    [9] = "www.twitter.com"   ,
-    [10] = "www.flickr.com"   ,
+    [0 ] = "www.adafruit.com"  ,
+    [1 ] = "www.google.com"    ,
+    [2 ] = "www.arduino.cc"    ,
+    [3 ] = "www.yahoo.com"     ,
+    [4 ] = "www.microsoft.com" ,
+    [5 ] = "www.reddit.com"    ,
+    [6 ] = "news.ycombinator.com",
+    [7 ] = "www.facebook.com"  ,
+    [8 ] = "www.geotrust.com"  ,
+    [9 ] = "www.eff.org"       ,
+    [10] = "www.twitter.com"   ,
+    [11] = "www.flickr.com"   ,
 };
 
+// You can set your own server here
 const char * server = server_arr[SERVER_ID];
 
 // Initialize the Ethernet client library
@@ -63,17 +67,28 @@ bool connectAP(void)
   Serial.print("Attempting to connect to: ");
   Serial.println(WLAN_SSID);
 
-  if ( feather.connect(WLAN_SSID, WLAN_PASS) )
+  // Connect using saved profile if possible since it re-connect much quicker
+  if ( feather.checkProfile(WLAN_SSID) )
+  {
+    feather.connect();
+  }else
+  {
+    feather.clearProfiles();
+    if ( feather.connect(WLAN_SSID, WLAN_PASS) )
+    {
+      feather.saveConnectedProfile();
+    }
+  }
+
+  if ( feather.connected() )
   {
     Serial.println("Connected!");
-  }
-  else
+  } else
   {
     Serial.printf("Failed! %s (%d)", feather.errstr(), feather.errno());
-    Serial.println();
   }
+  
   Serial.println();
-
   return feather.connected();
 }
 
@@ -91,7 +106,6 @@ void setup()
     delay(100);
   }
 
-  Serial.println("Connected to wifi");
   printWifiStatus();
 
 #if 0
@@ -132,9 +146,11 @@ void loop() {
   if ( client.available() )
   {
     char c = client.read();
-    Serial.write( isprint(c) ? c : '.');
+    Serial.write( (isprint(c) || iscntrl(c)) ? c : '.');
   }else
   {
+    //togglePin(ledPin);
+    //delay(250);
     delay(1);
   }
 }

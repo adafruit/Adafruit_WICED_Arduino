@@ -155,6 +155,7 @@ int AdafruitTCP::connectSSL(const char* host, uint16_t port)
 uint8_t AdafruitTCP::connected()
 {
   // Handle not zero --> still connected
+  // TODO handle disconnection
   return ( _tcp_handle != 0 ) ? 1 : 0;
 }
 
