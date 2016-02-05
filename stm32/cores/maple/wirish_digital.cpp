@@ -72,15 +72,21 @@ void pinMode(uint8 pin, WiringPinMode mode) {
         return;
     }
 
-    gpio_set_mode(PIN_MAP[pin].gpio_device, PIN_MAP[pin].gpio_bit, outputMode);
+    const stm32_pin_info *info = &PIN_MAP[pin];
 
-    if (PIN_MAP[pin].timer_device != NULL) {
-        /* Enable/disable timer channels if we're switching into or
-         * out of PWM. */
-        timer_set_mode(PIN_MAP[pin].timer_device,
-                       PIN_MAP[pin].timer_channel,
-                       pwm ? TIMER_PWM : TIMER_DISABLED);
+    if (pwm)
+    {
+      if (info->timer_device != NULL) {
+        int afnum = timer_get_af(info->timer_device);
+        timer_set_mode(info->timer_device, info->timer_channel, TIMER_PWM);
+        gpio_set_af_mode(info->gpio_device, info->gpio_bit, afnum);
+
+        /* Enable/disable timer channels if we're switching into or * out of PWM. */
+//        timer_set_mode(info->timer_device, info->timer_channel, pwm ? TIMER_PWM : TIMER_DISABLED);
+      }
     }
+
+    gpio_set_mode(info->gpio_device, info->gpio_bit, outputMode);
 }
 
 char const* pinName(uint8_t pin)

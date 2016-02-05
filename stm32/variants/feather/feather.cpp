@@ -41,27 +41,6 @@
 
 void boardInit(void)
 {
-  gpio_set_af_mode(GPIOA, 0, 2);
-  gpio_set_af_mode(GPIOA, 1, 2);
-	gpio_set_af_mode(GPIOA, 2, 2);
-	gpio_set_af_mode(GPIOA, 3, 2);
-//	gpio_set_af_mode(GPIOA, 6, 2);
-//	gpio_set_af_mode(GPIOA, 7, 2);
-	gpio_set_af_mode(GPIOA, 9 , 2);
-	gpio_set_af_mode(GPIOA, 10, 2);
-  gpio_set_af_mode(GPIOA, 15, 1);
-
-  // Leave PB3, PB4, PB5 if sflash is enabled (SPI3 for USB MSC)
-  if ( !FEATHERLIB_API_EXISTS(sflash_is_available) || !FEATHERLIB->sflash_is_available() )
-  {
-    gpio_set_af_mode(GPIOB,  3, 2);
-    gpio_set_af_mode(GPIOB,  4, 2);
-    gpio_set_af_mode(GPIOB,  5, 2);
-  }
-	gpio_set_af_mode(GPIOB,  6, 2);
-	gpio_set_af_mode(GPIOB,  7, 2);
-
-	gpio_set_af_mode(GPIOC, 7, 3);
 }
 
 /* Port, Timer, ADC, PortBit, Timer Channel, ADC Channel */

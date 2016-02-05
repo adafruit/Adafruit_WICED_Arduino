@@ -595,6 +595,34 @@ void timer_attach_interrupt(timer_dev *dev,
                             voidFuncPtr handler);
 void timer_detach_interrupt(timer_dev *dev, uint8 interrupt);
 
+static inline int timer_get_af(timer_dev *dev) {
+    rcc_clk_id clk_id = dev->clk_id;
+    /* Timers 6 and 7 don't have any capture/compare, so they can't do
+     * PWM (and in fact have no AF values). */
+    ASSERT(clk_id != RCC_TIMER6 && clk_id != RCC_TIMER7);
+    switch(dev->clk_id) {
+      case RCC_TIMER1:        // fall-through
+      case RCC_TIMER2:
+          return 1;
+      case RCC_TIMER3:        // fall-through
+      case RCC_TIMER4:        // ...
+      case RCC_TIMER5:
+          return 2;
+      case RCC_TIMER8:        // fall-through
+      case RCC_TIMER9:        // ...
+      case RCC_TIMER10:       // ...
+      case RCC_TIMER11:
+          return 3;
+      case RCC_TIMER12:       // fall-through
+      case RCC_TIMER13:       // ...
+      case RCC_TIMER14:
+          return 9;
+      default:
+          ASSERT(0);          // Can't happen
+          return 0;
+    }
+}
+
 /**
  * Initialize all timer devices on the chip.
  */
