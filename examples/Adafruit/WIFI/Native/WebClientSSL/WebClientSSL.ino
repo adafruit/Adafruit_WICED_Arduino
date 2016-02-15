@@ -29,32 +29,39 @@
 
 #define WLAN_SSID            "yourSSID"
 #define WLAN_PASS            "yourPass"
-
-char uri[]    = "/";
+#define LOCAL_SERVER         "192.168.0.20"
 
 int ledPin = PA15;
 
 // Change the SERVER_ID to match the generated certificates.h
-#define SERVER_ID    0
+#define SERVER_ID    12
 
-const char * server_arr[] =
+const char * server_arr[][2] =
 {
-    [0 ] = "www.adafruit.com"  ,
-    [1 ] = "www.google.com"    ,
-    [2 ] = "www.arduino.cc"    ,
-    [3 ] = "www.yahoo.com"     ,
-    [4 ] = "www.microsoft.com" ,
-    [5 ] = "www.reddit.com"    ,
-    [6 ] = "news.ycombinator.com",
-    [7 ] = "www.facebook.com"  ,
-    [8 ] = "www.geotrust.com"  ,
-    [9 ] = "www.eff.org"       ,
-    [10] = "www.twitter.com"   ,
-    [11] = "www.flickr.com"   ,
+    [0 ] = { "www.adafruit.com"     , "/" },
+    [1 ] = { "www.google.com"       , "/" },
+    [2 ] = { "www.arduino.cc"       , "/" },
+    [3 ] = { "www.yahoo.com"        , "/" },
+    [4 ] = { "www.microsoft.com"    , "/" },
+    [5 ] = { "www.reddit.com"       , "/" },
+    [6 ] = { "news.ycombinator.com" , "/" },
+    [7 ] = { "www.facebook.com"     , "/" },
+    [8 ] = { "www.geotrust.com"     , "/" },
+    [9 ] = { "www.eff.org"          , "/" },
+    [10] = { "www.twitter.com"      , "/" },
+    [11] = { "www.flickr.com"       , "/" },
+
+    // Local server, 
+    [12] = { LOCAL_SERVER, "text_1KB.txt"  },
+    [13] = { LOCAL_SERVER, "text_10KB.txt" },
+    [14] = { LOCAL_SERVER, "text_100KB.txt"},
+    [15] = { LOCAL_SERVER, "text_1MB.txt"  },
+    
 };
 
-// You can set your own server here
-const char * server = server_arr[SERVER_ID];
+// You can set your own server & uri here
+const char * server = server_arr[SERVER_ID][0];
+const char * uri    = server_arr[SERVER_ID][1];
 
 // Initialize the Ethernet client library
 // with the IP address and port of the server
@@ -92,6 +99,22 @@ bool connectAP(void)
   return feather.connected();
 }
 
+int receive_callback(void* arg1, void* arg2)
+{
+  (void) arg1; // reserved for future use
+  (void) arg2; // reserved for future use
+  
+  // if there are incoming bytes available
+  // from the server, read then print them:
+  while (client.available())
+  {
+    char c = client.read();
+    Serial.write( (isprint(c) || iscntrl(c)) ? c : '.');
+  }
+
+  return 0;
+}
+
 void setup()
 {
   Serial.begin(115200);
@@ -126,6 +149,7 @@ void setup()
   Serial.println(server);
 
   client.setTimeout(10000);
+  client.setReceivedCallback(receive_callback);
 
   if ( client.connectSSL(server, 443) )
   {
@@ -141,18 +165,8 @@ void setup()
 }
 
 void loop() {
-  // if there are incoming bytes available
-  // from the server, read them and print them:
-  if ( client.available() )
-  {
-    char c = client.read();
-    Serial.write( (isprint(c) || iscntrl(c)) ? c : '.');
-  }else
-  {
-    //togglePin(ledPin);
-    //delay(250);
-    delay(1);
-  }
+  togglePin(ledPin);
+  delay(250);
 }
 
 
