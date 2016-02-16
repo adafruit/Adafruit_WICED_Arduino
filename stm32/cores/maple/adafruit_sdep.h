@@ -48,11 +48,11 @@ protected:
 public:
   AdafruitSDEP() { _errno = ERROR_NONE; }
 
-  bool sdep(uint16_t cmd_id      ,
-            uint16_t  paylen     , void const* parameter,
-            uint16_t* result_len , void* result_buffer)
+  bool sdep(uint16_t  cmd_id       ,
+            uint16_t  param_len    , void const* p_param,
+            uint16_t* p_result_len , void* p_result)
   {
-    _errno = FEATHERLIB->sdep_execute(cmd_id, paylen, parameter, result_len, result_buffer);
+    _errno = FEATHERLIB->sdep_execute(cmd_id, param_len, p_param, p_result_len, p_result);
     return (ERROR_NONE == _errno);
   }
 
