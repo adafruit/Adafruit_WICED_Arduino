@@ -373,16 +373,28 @@ void AdafruitTCP::stop()
     @brief This callback is invoked when there is data received
 */
 /******************************************************************************/
-err_t adafruit_tcp_receive_callback(void* arg, void* p_tcp)
+err_t adafruit_tcp_receive_callback(void* socket, void* p_tcp)
 {
   AdafruitTCP* pTCP = (AdafruitTCP*) p_tcp;
-  if (pTCP->rx_callback) pTCP->rx_callback(pTCP);
+
+  // Integrity check
+  if ( *((uint32_t*) pTCP->_tcp_handle) == ((uint32_t) socket) )
+  {
+    if (pTCP->rx_callback) pTCP->rx_callback(pTCP);
+  }
+
   return ERROR_NONE;
 }
 
-err_t adafruit_tcp_disconnect_callback(void* arg, void* p_tcp)
+err_t adafruit_tcp_disconnect_callback(void* socket, void* p_tcp)
 {
   AdafruitTCP* pTCP = (AdafruitTCP*) p_tcp;
-  if (pTCP->disconnect_callback) pTCP->disconnect_callback(pTCP);
+
+  // Integrity check
+  if ( *((uint32_t*) pTCP->_tcp_handle) == ((uint32_t) socket) )
+  {
+    if (pTCP->disconnect_callback) pTCP->disconnect_callback(pTCP);
+  }
+
   return ERROR_NONE;
 }

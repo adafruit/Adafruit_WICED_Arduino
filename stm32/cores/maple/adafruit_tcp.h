@@ -101,8 +101,8 @@ public:
   void setReceivedCallback   ( void (*fp) (AdafruitTCP* pTCP));
   void setDisconnectCallback ( void (*fp) (AdafruitTCP* pTCP));
 
-  friend err_t adafruit_tcp_receive_callback(void* arg, void* p_tcp);
-  friend err_t adafruit_tcp_disconnect_callback(void* arg, void* p_tcp);
+  friend err_t adafruit_tcp_receive_callback(void* socket, void* p_tcp);
+  friend err_t adafruit_tcp_disconnect_callback(void* socket, void* p_tcp);
 };
 
 #endif

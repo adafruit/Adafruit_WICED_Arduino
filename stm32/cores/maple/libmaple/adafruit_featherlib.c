@@ -51,8 +51,8 @@ extern void mqtt_evt_callback(mqtt_evt_opcode_t event, uint16_t len, uint8_t* da
 //extern void adafruit_wifi_connect_callback(void);
 extern void adafruit_wifi_disconnect_callback(void);
 
-extern err_t adafruit_tcp_receive_callback(void* arg, void* p_tcp);
-extern err_t adafruit_tcp_disconnect_callback(void* arg, void* p_tcp);
+extern err_t adafruit_tcp_receive_callback(void* socket, void* p_tcp);
+extern err_t adafruit_tcp_disconnect_callback(void* socket, void* p_tcp);
 
 //--------------------------------------------------------------------+
 // IMPLEMENTATION
