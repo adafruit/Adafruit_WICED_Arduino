@@ -274,7 +274,7 @@ int AdafruitTCP::available()
 {
   if ( _tcp_handle == 0 ) return 0;
 
-  uint8_t result = 0;
+  int32_t result = 0;
   sdep(SDEP_CMD_TCP_AVAILABLE, 4, &_tcp_handle, NULL, &result);
 
   return result;

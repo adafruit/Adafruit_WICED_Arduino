@@ -220,7 +220,7 @@ int AdafruitUDP::available()
 {
   if ( _udp_handle == 0 ) return 0;
 
-  uint8_t result;
+  int32_t result = 0;
   VERIFY(sdep(SDEP_CMD_UDP_AVAILABLE, 4, &_udp_handle, NULL, &result), 0);
 
   return result;
