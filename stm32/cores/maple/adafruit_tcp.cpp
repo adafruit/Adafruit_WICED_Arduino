@@ -202,13 +202,12 @@ int AdafruitTCP::read(uint8_t* buf, size_t size)
   {
       { .len = 4, .p_value = &_tcp_handle },
       { .len = 2, .p_value = &size16      },
-      { .len = 4, .p_value = &_timeout     },
+      { .len = 4, .p_value = &_timeout    },
   };
+  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
   // TODO check case when read bytes < size
-  VERIFY( sdep_n(SDEP_CMD_TCP_READ,
-                 sizeof(para_arr)/sizeof(sdep_cmd_para_t),
-                 para_arr, &size16, buf), 0);
+  VERIFY( sdep_n(SDEP_CMD_TCP_READ, para_count, para_arr, &size16, buf), 0);
 
   _bytesRead += size;
   return size;
@@ -238,10 +237,9 @@ size_t AdafruitTCP::write(const uint8_t* content, size_t len)
       { .len = 4  , .p_value = &_tcp_handle},
       { .len = len, .p_value = content    }
   };
-
-  VERIFY( sdep_n(SDEP_CMD_TCP_WRITE,
-                 sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
-                 NULL, NULL), 0);
+  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
+  
+  VERIFY( sdep_n(SDEP_CMD_TCP_WRITE, para_count, para_arr, NULL, NULL), 0);
 
   // if packet is not buffered --> send out immediately
   if (!_packet_buffering) this->flush();

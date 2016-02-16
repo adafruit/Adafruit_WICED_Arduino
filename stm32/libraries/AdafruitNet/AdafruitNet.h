@@ -43,13 +43,18 @@
 #include <adafruit_wifi.h>
 #include <adafruit_tcp.h>
 
+#define HTTPCLIENT_MAX_HEADER  10
 
 class HTTPClient : public AdafruitTCP
 {
+protected:
+  const char* _headers[HTTPCLIENT_MAX_HEADER];
+  uint8_t _header_count;
 
 public:
 	HTTPClient();
 
+	bool addHeader(const char* header);
 	int get(char const * hostname, char const *uri);
 };
 

@@ -38,9 +38,21 @@
 
 #define HTTP_GET      "GET"
 #define HTTP_VERSION  "HTTP/1.1"
+
 HTTPClient::HTTPClient()
 {
   _packet_buffering = true;
+  _header_count = 0;
+
+  for(uint8_t i=0; i<HTTPCLIENT_MAX_HEADER; i++) _headers[i] = NULL;
+}
+
+bool HTTPClient::addHeader(const char* header)
+{
+  if (_header_count >= HTTPCLIENT_MAX_HEADER) return false;
+
+  _headers[_header_count++] = header;
+  return true;
 }
 
 int HTTPClient::get(char const * hostname, char const *uri)
@@ -51,8 +63,13 @@ int HTTPClient::get(char const * hostname, char const *uri)
   printf("Host: %s", hostname);
   println();
 
-  println("Connection: close");
+  for(uint8_t i=0; i<_header_count; i++)
+  {
+    println(_headers[i]);
+  }
+  
+  // End of header
   println();
-
+  
   flush();
 }
