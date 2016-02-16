@@ -57,7 +57,7 @@ public:
     void end(void) {}          // do nothing
 
     /* I/O */
-    operator bool() { return this->isConnected; }
+    operator bool();
 
     virtual int available(void);
     virtual int peek(void);

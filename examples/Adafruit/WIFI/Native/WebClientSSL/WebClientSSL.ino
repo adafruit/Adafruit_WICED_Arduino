@@ -39,7 +39,7 @@
 int ledPin = PA15;
 
 // Change the SERVER_ID to match the generated certificates.h
-#define SERVER_ID    13
+#define SERVER_ID    0
 
 const char * server_arr[][2] =
 {
@@ -106,11 +106,11 @@ void receive_callback(AdafruitTCP* pTCP)
 { 
   // if there are incoming bytes available
   // from the server, read then print them:
-#if 0  
-  while (pTCP->available())
+#if 1
+  while (pTCP->available() > 0 )
   {
     char c = pTCP->read();
-    Serial.write( (isprint(c) || iscntrl(c))te ? c : '.');
+    Serial.write( (isprint(c) || iscntrl(c)) ? c : '.');
   }
 #else
   int c;

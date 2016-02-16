@@ -58,6 +58,12 @@ int USBSerial::read(void)
   return (int) ch;
 }
 
+#if 1
+USBSerial::operator bool()
+{
+  return this->isConnected;
+}
+
 size_t USBSerial::write(unsigned char ch)
 {
   FEATHERLIB->file_write(FILENO_USB_SERIAL, (char*)&ch, 1);
@@ -67,6 +73,25 @@ size_t USBSerial::write(const uint8_t *buffer, size_t size)
 {
   FEATHERLIB->file_write(FILENO_USB_SERIAL, (char*)buffer, size);
 }
+
+#else
+// DEBUGGING with SWO
+USBSerial::operator bool()
+{
+  return true;
+}
+
+size_t USBSerial::write(unsigned char ch)
+{
+  FEATHERLIB->file_write(STDOUT_FILENO, (char*)&ch, 1);
+}
+
+size_t USBSerial::write(const uint8_t *buffer, size_t size)
+{
+  FEATHERLIB->file_write(STDOUT_FILENO, (char*)buffer, size);
+}
+#endif
+
 
 // Callback from featherlib when there is status change
 void USBSerial_callback(uint32_t eid, void* p_data)
