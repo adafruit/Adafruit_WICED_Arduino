@@ -42,7 +42,7 @@
 
 #define ADAFRUIT_UDP_TIMEOUT  1000
 
-class AdafruitUDP : public UDP
+class AdafruitUDP : public UDP, public AdafruitSDEP
 {
 protected:
   uint32_t  _udp_handle;
@@ -53,7 +53,6 @@ protected:
 	uint16_t  _sndPort;
 	uint32_t  _sndIP;
 
-  err_t     _errno;
   uint32_t  _bytesRead;
 
   int (*rx_callback) (void *, void*);
@@ -61,8 +60,6 @@ protected:
 
 public:
   AdafruitUDP();
-
-  err_t errno(void)  { return _errno; }
 
   // UDP API
   virtual uint8_t begin(uint16_t port);

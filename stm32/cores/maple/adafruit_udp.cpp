@@ -63,8 +63,6 @@ void AdafruitUDP::reset(void)
 
   _sndIP      = 0;
   _sndPort    = 0;
-
-  _errno      = ERROR_NONE;
 }
 
 /******************************************************************************/
@@ -82,11 +80,9 @@ uint8_t AdafruitUDP::begin(uint16_t port)
       { .len = 1, .p_value = &interface },
       { .len = 2, .p_value = &port      },
   };
+  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
-  _errno = FEATHERLIB->sdep_execute_n(SDEP_CMD_UDP_CREATE,
-                                      sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
-                                      NULL, &_udp_handle);
-  return ERROR_NONE == _errno;
+  return sdep_n(SDEP_CMD_UDP_CREATE, para_count, para_arr, NULL, &_udp_handle);
 }
 
 /******************************************************************************/
@@ -98,7 +94,7 @@ void AdafruitUDP::stop()
 {
   if (_udp_handle == 0) return;
 
-  _errno = FEATHERLIB->sdep_execute(SDEP_CMD_UDP_CLOSE, 4, &_udp_handle, NULL, NULL);
+  sdep(SDEP_CMD_UDP_CLOSE, 4, &_udp_handle, NULL, NULL);
   this->reset();
 }
 
@@ -124,11 +120,9 @@ int AdafruitUDP::parsePacket()
       { .len = 4   , .p_value = &_udp_handle },
       { .len = 4   , .p_value = &_timeout    },
   };
+  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
-  _errno = FEATHERLIB->sdep_execute_n(SDEP_CMD_UDP_PACKET_INFO,
-                                      sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
-                                      NULL, &response);
-  VERIFY(ERROR_NONE == _errno, 0);
+  VERIFY(sdep_n(SDEP_CMD_UDP_PACKET_INFO, para_count, para_arr, NULL, &response), 0);
 
   _rcvIP   = response.remote_ip;
   _rcvPort = response.remote_port;
@@ -187,12 +181,10 @@ int AdafruitUDP::read(unsigned char* buf, size_t size)
       { .len = 2, .p_value = &size16      },
       { .len = 4, .p_value = &_timeout     },
   };
+  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
   // TODO check case when read bytes < size
-  _errno = FEATHERLIB->sdep_execute_n(SDEP_CMD_UDP_READ,
-                                      sizeof(para_arr)/sizeof(sdep_cmd_para_t),
-                                      para_arr, &size16, buf);
-  VERIFY(ERROR_NONE == _errno, -1);
+  VERIFY(sdep_n(SDEP_CMD_UDP_READ, para_count, para_arr, &size16, buf), -1);
 
   _bytesRead += size;
   return size;
@@ -213,11 +205,9 @@ int AdafruitUDP::peek()
       { .len = 4, .p_value = &_udp_handle },
       { .len = 4, .p_value = &_timeout    },
   };
+  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
-  _errno = FEATHERLIB->sdep_execute_n(SDEP_CMD_UDP_PEEK,
-                                      sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
-                                      NULL, &data);
-  VERIFY(ERROR_NONE == _errno, -1);
+  VERIFY(sdep_n(SDEP_CMD_UDP_PEEK, para_count, para_arr, NULL, &data), -1);
   return (int) data;
 }
 
@@ -231,8 +221,7 @@ int AdafruitUDP::available()
   if ( _udp_handle == 0 ) return 0;
 
   uint8_t result;
-  _errno = FEATHERLIB->sdep_execute(SDEP_CMD_UDP_AVAILABLE, 4, &_udp_handle, NULL, &result);
-  VERIFY(ERROR_NONE == _errno, 0);
+  VERIFY(sdep(SDEP_CMD_UDP_AVAILABLE, 4, &_udp_handle, NULL, &result), 0);
 
   return result;
 }
@@ -303,12 +292,9 @@ size_t AdafruitUDP::write(const uint8_t* buffer, size_t size)
       { .len = 2   , .p_value = &_sndPort    },
       { .len = size, .p_value = buffer       }
   };
+  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
-  _errno = FEATHERLIB->sdep_execute_n(SDEP_CMD_UDP_WRITE,
-                                      sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
-                                      NULL, NULL);
-  VERIFY(ERROR_NONE == _errno, 0);
-
+  VERIFY(sdep_n(SDEP_CMD_UDP_WRITE, para_count, para_arr, NULL, NULL), 0);
   return size;
 }
 
@@ -320,8 +306,7 @@ size_t AdafruitUDP::write(const uint8_t* buffer, size_t size)
 void AdafruitUDP::flush()
 {
   if (_udp_handle == 0) return;
-
-  _errno = FEATHERLIB->sdep_execute(SDEP_CMD_UDP_FLUSH, 4, &_udp_handle, NULL, NULL);
+  sdep(SDEP_CMD_UDP_FLUSH, 4, &_udp_handle, NULL, NULL);
 }
 
 /******************************************************************************/
