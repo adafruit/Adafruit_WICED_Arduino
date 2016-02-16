@@ -50,6 +50,17 @@ AdafruitTCP::AdafruitTCP(void)
 
 /******************************************************************************/
 /*!
+    @brief Destructor
+*/
+/******************************************************************************/
+AdafruitTCP::~AdafruitTCP()
+{
+  // TODO close and free all resource
+}
+
+
+/******************************************************************************/
+/*!
     @brief
 */
 /******************************************************************************/
@@ -126,10 +137,9 @@ int AdafruitTCP::connectSSL(IPAddress ip, uint16_t port)
       { .len = 4 , .p_value = &_timeout   },
       //{ .len = namelen , .p_value = common_name },
   };
+  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t) /*- (common_name ? 0 : 1)*/;
 
-  VERIFY( sdep_n(SDEP_CMD_TCP_CONNECT,
-                 sizeof(para_arr)/sizeof(sdep_cmd_para_t) /*- (common_name ? 0 : 1)*/, para_arr,
-                 NULL, &_tcp_handle), false);
+  VERIFY(sdep_n(SDEP_CMD_TCP_CONNECT, para_count , para_arr, NULL, &_tcp_handle), false);
 
   this->install_callback();
   return true;
@@ -298,19 +308,25 @@ int AdafruitTCP::peek()
 /******************************************************************************/
 void AdafruitTCP::install_callback(void)
 {
-  if (disconnect_callback == NULL && rx_callback == NULL) return;
+  // connect callback is not supported yet
+  bool connect_enabled   = false;
+  bool rx_enabled        = (rx_callback != NULL);
+  bool disconect_enabled = (disconnect_callback != NULL);
+
+  uint32_t this_value = (uint32_t) this;
 
   sdep_cmd_para_t para_arr[] =
   {
-      { .len = 4, .p_value = &_tcp_handle         },
-      { .len = 4, .p_value = &disconnect_callback },
-      { .len = 4, .p_value = &rx_callback         },
+      { .len = 4, .p_value = &_tcp_handle       },
+      { .len = 4, .p_value = &this_value        },
+      { .len = 1, .p_value = &connect_enabled   },
+      { .len = 1, .p_value = &rx_enabled        },
+      { .len = 1, .p_value = &disconect_enabled },
   };
+  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
   // TODO check case when read bytes < size
-  sdep_n(SDEP_CMD_TCP_SET_CALLBACK,
-         sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
-         NULL, NULL);
+  sdep_n(SDEP_CMD_TCP_SET_CALLBACK, para_count, para_arr, NULL, NULL);
 }
 
 /******************************************************************************/
@@ -318,7 +334,7 @@ void AdafruitTCP::install_callback(void)
     @brief  Sets the data received callback for the user code
 */
 /******************************************************************************/
-void AdafruitTCP::setReceivedCallback( int (*fp) (void*, void*) )
+void AdafruitTCP::setReceivedCallback( void (*fp) (AdafruitTCP* pTCP) )
 {
   rx_callback = fp;
 }
@@ -328,7 +344,7 @@ void AdafruitTCP::setReceivedCallback( int (*fp) (void*, void*) )
     @brief  Sets the disconnect callback for the user code
 */
 /******************************************************************************/
-void AdafruitTCP::setDisconnectCallback( int (*fp) (void*, void*))
+void AdafruitTCP::setDisconnectCallback( void (*fp) (AdafruitTCP* pTCP))
 {
   disconnect_callback = fp;
 }
@@ -345,3 +361,23 @@ void AdafruitTCP::stop()
   sdep(SDEP_CMD_TCP_CLOSE, 4, &_tcp_handle, NULL, NULL);
   this->reset();
 }
+
+
+//--------------------------------------------------------------------+
+// Callbacks
+//--------------------------------------------------------------------+
+/******************************************************************************/
+/*!
+    @brief This callback is invoked when there is data received
+*/
+/******************************************************************************/
+void adafruit_tcp_receive_callback(void* arg, void* p_tcp)
+{
+  AdafruitTCP* pTCP = (AdafruitTCP*) p_tcp;
+
+  if (pTCP->rx_callback)
+  {
+    pTCP->rx_callback(pTCP);
+  }
+}
+

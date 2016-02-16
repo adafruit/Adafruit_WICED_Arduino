@@ -46,20 +46,8 @@
 #include "adafruit_constants.h"
 #include "adafruit_featherlib.h"
 #include "adafruit_sdep.h"
-
-/**
- * Maximum packet size for one access point (52 bytes)
- *     1  byte        : length of SSID
- *     32 bytes (max) : SSID
- *     6  bytes       : MAC address
- *     2  bytes       : Receive Signal Strength in dBm
- *     4  bytes       : Maximum data rate in kilobits/s
- *     1  byte        : Network type
- *     4  bytes       : Security type
- *     1  byte        : Radio channel
- *     1  byte        : Radio band
- */
-#define AP_INFO_PACKET_SIZE      52
+#include "adafruit_tcp.h"
+#include "adafruit_udp.h"
 
 #define WIFI_MAX_SSID_LEN         32
 #define WIFI_MAX_PASSPHRASE_LEN   64
@@ -206,7 +194,7 @@ public:
   // SSL/TLS API
   bool      tlsRequireVerification(bool required);
   bool      setRootCertificatesPEM(char const* root_certs_pem);
-  bool      setRootCertificatesDER(uint8_t const* root_certs_der, uint32_t len);
+  bool      setRootCertificatesDER(uint8_t const* root_certs_der, uint16_t len);
 
   err_t getTime(char* iso8601_time);
   err_t httpGetUri(char* uri, uint16_t* length, uint8_t* response);

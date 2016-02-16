@@ -34,7 +34,7 @@
 int ledPin = PA15;
 
 // Change the SERVER_ID to match the generated certificates.h
-#define SERVER_ID    12
+#define SERVER_ID    0
 
 const char * server_arr[][2] =
 {
@@ -52,10 +52,10 @@ const char * server_arr[][2] =
     [11] = { "www.flickr.com"       , "/" },
 
     // Local server, 
-    [12] = { LOCAL_SERVER, "text_1KB.txt"  },
-    [13] = { LOCAL_SERVER, "text_10KB.txt" },
-    [14] = { LOCAL_SERVER, "text_100KB.txt"},
-    [15] = { LOCAL_SERVER, "text_1MB.txt"  },
+    [12] = { LOCAL_SERVER, "/text_1KB.txt"  },
+    [13] = { LOCAL_SERVER, "/text_10KB.txt" },
+    [14] = { LOCAL_SERVER, "/text_100KB.txt"},
+    [15] = { LOCAL_SERVER, "/text_1MB.txt"  },
     
 };
 
@@ -99,20 +99,15 @@ bool connectAP(void)
   return feather.connected();
 }
 
-int receive_callback(void* arg1, void* arg2)
-{
-  (void) arg1; // reserved for future use
-  (void) arg2; // reserved for future use
-  
+void receive_callback(AdafruitTCP* pTCP)
+{ 
   // if there are incoming bytes available
   // from the server, read then print them:
-  while (client.available())
+  while (pTCP->available())
   {
-    char c = client.read();
+    char c = pTCP->read();
     Serial.write( (isprint(c) || iscntrl(c)) ? c : '.');
   }
-
-  return 0;
 }
 
 void setup()
@@ -142,6 +137,10 @@ void setup()
     Serial.println("failed");
   }
 #else
+  // disable Root CA chain by setting it to NULL
+  feather.setRootCertificatesPEM(NULL);
+  
+  // Disable certificate verification (accept any server)
   feather.tlsRequireVerification(false);
 #endif  
 

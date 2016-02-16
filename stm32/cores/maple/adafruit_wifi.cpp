@@ -538,7 +538,7 @@ void AdafruitFeather::disconnect(void)
 /******************************************************************************/
 bool AdafruitFeather::tlsRequireVerification(bool required)
 {
-  uint8_t tls_option = required ? TLS_NO_VERIFICATION : TLS_VERIFICATION_REQUIRED;
+  uint8_t tls_option = required ? TLS_VERIFICATION_REQUIRED : TLS_VERIFICATION_OPTIONAL; //TLS_NO_VERIFICATION;
   return sdep(SDEP_CMD_TLS_REQUIRE_VERIFICATION, 1, &tls_option, NULL, NULL);
 }
 
@@ -559,7 +559,16 @@ bool AdafruitFeather::tlsRequireVerification(bool required)
 bool AdafruitFeather::setRootCertificatesPEM(char const* root_certs_pem)
 {
   uint16_t len = (root_certs_pem ? strlen(root_certs_pem) : 0 );
-  return sdep(SDEP_CMD_TLS_SET_ROOT_CERTS, len, root_certs_pem, NULL, NULL);
+//  return sdep(SDEP_CMD_TLS_SET_ROOT_CERTS, len, root_certs_pem, NULL, NULL);
+  // TODO use sdep instead of sdep_n
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = len  , .p_value = root_certs_pem },
+  };
+  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
+
+  return sdep_n(SDEP_CMD_TLS_SET_ROOT_CERTS, para_count, para_arr, NULL, NULL);
+
 }
 
 /******************************************************************************/
@@ -572,9 +581,17 @@ bool AdafruitFeather::setRootCertificatesPEM(char const* root_certs_pem)
     PEM counterpart.
 */
 /******************************************************************************/
-bool AdafruitFeather::setRootCertificatesDER(uint8_t const* root_certs_der, uint32_t len)
+bool AdafruitFeather::setRootCertificatesDER(uint8_t const* root_certs_der, uint16_t len)
 {
-  return sdep(SDEP_CMD_TLS_SET_ROOT_CERTS, len, root_certs_der, NULL, NULL);
+//  return sdep(SDEP_CMD_TLS_SET_ROOT_CERTS, len, root_certs_der, NULL, NULL);
+  // TODO use sdep instead of sdep_n
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = len  , .p_value = root_certs_der },
+  };
+  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
+
+  return sdep_n(SDEP_CMD_TLS_SET_ROOT_CERTS, para_count, para_arr, NULL, NULL);
 }
 
 /******************************************************************************/

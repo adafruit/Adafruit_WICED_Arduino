@@ -42,6 +42,11 @@
 #include <IPAddress.h>
 #include "adafruit_wifi.h"
 
+extern "C"
+{
+  void adafruit_tcp_receive_callback(void* arg, void* p_tcp);
+}
+
 class AdafruitTCP : public Client, public AdafruitSDEP
 {
 protected:
@@ -53,14 +58,15 @@ protected:
 	bool     _packet_buffering;
 
   // Callback signatures
-  int (*rx_callback)         ( void *, void * );
-  int (*disconnect_callback) ( void *, void * );
+  void (*rx_callback)         (AdafruitTCP* pTCP);
+  void (*disconnect_callback) (AdafruitTCP* pTCP);
 
   void install_callback ( void );
   void reset ( void );
 
 public:
   AdafruitTCP ( void );
+  virtual ~AdafruitTCP();
 
   void usePacketBuffering(bool enable);
 
@@ -91,8 +97,10 @@ public:
   using Print::write;
 
   // Set callback handlers
-  void setReceivedCallback   ( int (*fp) (void*, void*) );
-  void setDisconnectCallback ( int (*fp) (void*, void*) );
+  void setReceivedCallback   ( void (*fp) (AdafruitTCP* pTCP));
+  void setDisconnectCallback ( void (*fp) (AdafruitTCP* pTCP));
+
+  friend void adafruit_tcp_receive_callback(void* arg, void* p_tcp);
 };
 
 #endif

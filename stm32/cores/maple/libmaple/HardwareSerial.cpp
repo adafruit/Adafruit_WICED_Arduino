@@ -125,7 +125,6 @@ uint32 HardwareSerial::pending(void) {
 
 size_t HardwareSerial::write(uint8_t ch) {
   usart_putc(usart_device, ch);
-  //FEATHERLIB->file_write(STDOUT_FILENO, (char*)&ch, 1);
   return 1;
 }
 

@@ -78,13 +78,20 @@ typedef struct ATTR_ALIGNED(512)
 
   uint32_t reserved4[12];
 
-  // 192 - 255
+  // 192 - 255 (16 functions)
   void (*wifi_connect_callback)(void); // not used for now
   void (*wifi_disconnect_callback)(void);
-  uint32_t reserved5[14];
+  uint32_t reserved5[2];
+
+  void (*tcp_connect_callback)(void* arg, void* p_tcp); // not used for now
+  void (*tcp_receive_callback)(void* arg, void* p_tcp);
+  void (*tcp_disconnect_callback)(void* arg, void* p_tcp);
+  uint32_t reserved6;
+
+  uint32_t reserved7[8];
 
   // 256 - 512
-  uint32_t reserved6[64];
+  uint32_t reserved100[64];
 
 }adafruit_arduino_t;
 
