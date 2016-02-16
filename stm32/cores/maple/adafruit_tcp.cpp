@@ -44,7 +44,9 @@
 /******************************************************************************/
 AdafruitTCP::AdafruitTCP(void)
 {
-  rx_callback   = NULL;
+  rx_callback         = NULL;
+  disconnect_callback = NULL;
+
   this->reset();
 }
 
@@ -309,19 +311,19 @@ int AdafruitTCP::peek()
 void AdafruitTCP::install_callback(void)
 {
   // connect callback is not supported yet
-  bool connect_enabled   = false;
-  bool rx_enabled        = (rx_callback != NULL);
-  bool disconect_enabled = (disconnect_callback != NULL);
+  bool connect_enabled    = false;
+  bool rx_enabled         = (rx_callback != NULL);
+  bool disconnect_enabled = (disconnect_callback != NULL);
 
   uint32_t this_value = (uint32_t) this;
 
   sdep_cmd_para_t para_arr[] =
   {
-      { .len = 4, .p_value = &_tcp_handle       },
-      { .len = 4, .p_value = &this_value        },
-      { .len = 1, .p_value = &connect_enabled   },
-      { .len = 1, .p_value = &rx_enabled        },
-      { .len = 1, .p_value = &disconect_enabled },
+      { .len = 4, .p_value = &_tcp_handle        },
+      { .len = 4, .p_value = &this_value         },
+      { .len = 1, .p_value = &connect_enabled    },
+      { .len = 1, .p_value = &rx_enabled         },
+      { .len = 1, .p_value = &disconnect_enabled },
   };
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
@@ -371,13 +373,16 @@ void AdafruitTCP::stop()
     @brief This callback is invoked when there is data received
 */
 /******************************************************************************/
-void adafruit_tcp_receive_callback(void* arg, void* p_tcp)
+err_t adafruit_tcp_receive_callback(void* arg, void* p_tcp)
 {
   AdafruitTCP* pTCP = (AdafruitTCP*) p_tcp;
-
-  if (pTCP->rx_callback)
-  {
-    pTCP->rx_callback(pTCP);
-  }
+  if (pTCP->rx_callback) pTCP->rx_callback(pTCP);
+  return ERROR_NONE;
 }
 
+err_t adafruit_tcp_disconnect_callback(void* arg, void* p_tcp)
+{
+  AdafruitTCP* pTCP = (AdafruitTCP*) p_tcp;
+  if (pTCP->disconnect_callback) pTCP->disconnect_callback(pTCP);
+  return ERROR_NONE;
+}
