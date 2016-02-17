@@ -221,9 +221,6 @@ public:
   bool     getISO8601Time(iso8601_time_t* iso8601_time);
   uint32_t getUtcTime(void);
 
-  err_t httpGetUri(char* uri, uint16_t* length, uint8_t* response);
-  err_t httpPost(char* uri, uint16_t* length, uint8_t* response);
-
   err_t httpRequest(const char* url, const char* content, uint8_t method, uint32_t buffer_length, uint8_t* buffer);
   err_t httpsRequest(const char* url, const char* ca_cert, const char* content, uint8_t method, uint32_t buffer_length, uint8_t* buffer);
   err_t httpRequestWithCallback(const char* url, const char* content, uint8_t method);

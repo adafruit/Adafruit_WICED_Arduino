@@ -680,49 +680,6 @@ uint32_t AdafruitFeather::getUtcTime(void)
 
 /******************************************************************************/
 /*!
-    @brief  Retrieve the results of a specified URI
-
-    @param[in]      uri       The URI
-
-    @param[out]     length    Length of response buffer
-
-    @param[out]     response  The full response based on the specified URI
-
-    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
-            a specific error if something went wrong.
-*/
-/******************************************************************************/
-err_t AdafruitFeather::httpGetUri(char* uri, uint16_t* length, uint8_t* response)
-{
-  return FEATHERLIB->sdep_execute(SDEP_CMD_HTTPGETURI, strlen(uri),
-                                  (uint8_t*)uri, length, response);
-}
-
-/******************************************************************************/
-/*!
-    @brief  Send the 'x-www-form-urlencoded' URL as a HTTP POST operation
-
-    @param[in]      uri       The URI (must contain parameters for the post
-                                       after a '?' character in the URI)
-
-    @param[out]     length    Length of response buffer
-
-    @param[out]     response  The full response based on the specified URI
-
-    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
-            a specific error if something went wrong.
-*/
-/******************************************************************************/
-err_t AdafruitFeather::httpPost(char* uri, uint16_t* length, uint8_t* response)
-{
-  if (uri == NULL) return ERROR_SDEP_INVALIDPARAMETER;
-
-  return FEATHERLIB->sdep_execute(SDEP_CMD_HTTPPOST, strlen(uri),
-                                  (uint8_t*)uri, length, response);
-}
-
-/******************************************************************************/
-/*!
     @brief  Specify the LastWill message used in case of ungraceful disconnection
 
     @param[in]    topic    Topic
