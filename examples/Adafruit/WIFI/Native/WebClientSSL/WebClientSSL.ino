@@ -20,6 +20,9 @@
 * 4. The script will genearate certificates.h contains certificate chain
 * of the server. You may need to close and re-open this sketch to reload
 * 5. Compile and run this sketch
+* 
+* NOTE: to create self-signed certificate for localhost
+* https://gist.github.com/sl4m/5091803
 */
 
 #include <adafruit_wifi.h>
@@ -29,7 +32,11 @@
 
 #define WLAN_SSID            "yourSSID"
 #define WLAN_PASS            "yourPass"
-#define LOCAL_SERVER         "192.168.0.20"
+
+#define HTTPS_PORT            443
+
+#define LOCAL_SERVER         "192.168.0.21"
+
 
 // Some server such as facebook check the user_agent header to
 // return data accordingly. Setting curl to mimics command line browser !!
@@ -39,7 +46,7 @@
 int ledPin = PA15;
 
 // Change the SERVER_ID to match the generated certificates.h
-#define SERVER_ID    0
+#define SERVER_ID    2
 
 const char * server_arr[][2] =
 {
@@ -57,10 +64,9 @@ const char * server_arr[][2] =
     [11] = { "www.flickr.com"       , "/" },
 
     // Local server, 
-    [12] = { LOCAL_SERVER, "/text_1KB.txt"  },
-    [13] = { LOCAL_SERVER, "/text_10KB.txt" },
-    [14] = { LOCAL_SERVER, "/text_100KB.txt"},
-    [15] = { LOCAL_SERVER, "/text_1MB.txt"  },
+    [12] = { LOCAL_SERVER, "/text_10KB.txt" },
+    [13] = { LOCAL_SERVER, "/text_100KB.txt"},
+    [14] = { LOCAL_SERVER, "/text_1MB.txt"  },
     
 };
 
@@ -123,9 +129,11 @@ void receive_callback(AdafruitTCP* pTCP)
 
 void disconnect_callback(AdafruitTCP* pTCP)
 { 
+  Serial.println();
   Serial.println("---------------------");
   Serial.println("DISCONNECTED CALLBACK");
   Serial.println("---------------------");
+  Serial.println();
 }
 
 void setup()
@@ -155,21 +163,18 @@ void setup()
   {
     Serial.println("failed");
   }
-#else
-  // disable Root CA chain by setting it to NULL
-  feather.setRootCertificatesPEM(NULL);
+#endif
   
   // Disable certificate verification (accept any server)
   feather.tlsRequireVerification(false);
-#endif
 
-  Serial.printf("\r\nStarting connection to %s ...\r\n", server);
+  Serial.printf("\r\nStarting connection to %s port %d...\r\n", server,HTTPS_PORT );
   
   http.setTimeout(10000);
   http.setReceivedCallback(receive_callback);
   http.setDisconnectCallback(disconnect_callback);
 
-  if ( http.connectSSL(server, 443) )
+  if ( http.connectSSL(server, HTTPS_PORT) )
   {
     Serial.println("connected to server");
     
