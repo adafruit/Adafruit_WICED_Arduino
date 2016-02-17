@@ -36,7 +36,7 @@ bool connectAP(void)
   
   if ( feather.connect(WLAN_SSID, WLAN_PASS) )
   {
-    Serial.println(F("Connected!"));
+    Serial.println("Connected!");
   }
   else
   {

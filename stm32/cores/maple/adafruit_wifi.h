@@ -79,6 +79,28 @@ typedef struct ATTR_PACKED
 
 ASSERT_STATIC( sizeof(wl_ap_info_t) == 52 );
 
+typedef struct ATTR_PACKED
+{
+    char year[4];        /**< Year         */
+    char dash1;          /**< Dash1        */
+    char month[2];       /**< Month        */
+    char dash2;          /**< Dash2        */
+    char day[2];         /**< Day          */
+    char T;              /**< T            */
+    char hour[2];        /**< Hour         */
+    char colon1;         /**< Colon1       */
+    char minute[2];      /**< Minute       */
+    char colon2;         /**< Colon2       */
+    char second[2];      /**< Second       */
+    char decimal;        /**< Decimal      */
+    char sub_second[6];  /**< Sub-second   */
+    char Z;              /**< UTC timezone */
+
+    char nullterm;       // not part of the format, make printf easier
+} iso8601_time_t;
+
+ASSERT_STATIC( sizeof(iso8601_time_t) == 28 );
+
 extern "C"
 {
 //  void adafruit_wifi_connect_callback(void);
@@ -193,10 +215,12 @@ public:
 
   // SSL/TLS API
   bool      tlsRequireVerification(bool required);
-  bool      setRootCertificatesPEM(char const* root_certs_pem);
-  bool      setRootCertificatesDER(uint8_t const* root_certs_der, uint16_t len);
+  bool      setRootCertificates(uint8_t const* root_certs_der, uint16_t len);
+//  bool      setRootCertificatesPEM(char const* root_certs_pem);
 
-  err_t getTime(char* iso8601_time);
+  bool     getISO8601Time(iso8601_time_t* iso8601_time);
+  uint32_t getUtcTime(void);
+
   err_t httpGetUri(char* uri, uint16_t* length, uint8_t* response);
   err_t httpPost(char* uri, uint16_t* length, uint8_t* response);
 

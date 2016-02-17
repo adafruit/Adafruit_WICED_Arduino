@@ -538,10 +538,11 @@ void AdafruitFeather::disconnect(void)
 /******************************************************************************/
 bool AdafruitFeather::tlsRequireVerification(bool required)
 {
-  uint8_t tls_option = required ? TLS_VERIFICATION_REQUIRED : TLS_NO_VERIFICATION; //TLS_VERIFICATION_OPTIONAL
+  uint8_t tls_option = required ? TLS_VERIFICATION_REQUIRED : TLS_NO_VERIFICATION;
   return sdep(SDEP_CMD_TLS_REQUIRE_VERIFICATION, 1, &tls_option, NULL, NULL);
 }
 
+#if 0
 /******************************************************************************/
 /*!
     @brief  Set Root CA certificates in PEM format. PEM format is base64 encoded,
@@ -570,6 +571,7 @@ bool AdafruitFeather::setRootCertificatesPEM(char const* root_certs_pem)
   return sdep_n(SDEP_CMD_TLS_SET_ROOT_CERTS, para_count, para_arr, NULL, NULL);
 
 }
+#endif
 
 /******************************************************************************/
 /*!
@@ -581,7 +583,7 @@ bool AdafruitFeather::setRootCertificatesPEM(char const* root_certs_pem)
     PEM counterpart.
 */
 /******************************************************************************/
-bool AdafruitFeather::setRootCertificatesDER(uint8_t const* root_certs_der, uint16_t len)
+bool AdafruitFeather::setRootCertificates(uint8_t const* root_certs_der, uint16_t len)
 {
 //  return sdep(SDEP_CMD_TLS_SET_ROOT_CERTS, len, root_certs_der, NULL, NULL);
   // TODO use sdep instead of sdep_n
@@ -660,14 +662,27 @@ err_t AdafruitFeather::stopAP(void)
             e.g. "2012-07-02T17:12:34.567890Z" (string length = 27 bytes)
 
     @param[out]     iso8601_time    String of current UTC date and time
-
-    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
-            a specific error if something went wrong.
 */
 /******************************************************************************/
-err_t AdafruitFeather::getTime(char* iso8601_time)
+bool AdafruitFeather::getISO8601Time(iso8601_time_t* iso8601_time)
 {
-  return FEATHERLIB->sdep_execute(SDEP_CMD_GETTIME, 0, NULL, NULL, (uint8_t*)iso8601_time);
+  iso8601_time->nullterm = 0;
+  return sdep(SDEP_CMD_GET_ISO8601_TIME, 0, NULL, NULL, iso8601_time);
+}
+
+/******************************************************************************/
+/*!
+    @brief  Get the current UTC in seconds
+
+    @return UTC time if success, 0 otherwise
+*/
+/******************************************************************************/
+uint32_t AdafruitFeather::getUtcTime(void)
+{
+  uint32_t utc_time;
+  VERIFY ( sdep(SDEP_CMD_GET_UTC_TIME, 0, NULL, NULL, &utc_time), 0);
+
+  return utc_time;
 }
 
 /******************************************************************************/
