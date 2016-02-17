@@ -190,10 +190,11 @@ bool AdafruitFeather::connect(const char *ssid, const char *key, int enc_type)
       { .len = strlen(key) , .p_value = key       },
       { .len = 4           , .p_value = &enc_type },
   };
+  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
   uint16_t resp_len = sizeof(wl_ap_info_t);
-  _connected = sdep_n(SDEP_CMD_CONNECT, sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
-                                        &resp_len, &_ap_info);
+  _connected = sdep_n(SDEP_CMD_CONNECT, para_count, para_arr, &resp_len, &_ap_info);
+
 	return _connected;
 }
 
@@ -313,10 +314,9 @@ bool AdafruitFeather::addProfile(char* ssid)
   {
       { .len = strlen(ssid), .p_value = ssid      },
   };
+  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
-  return sdep_n(SDEP_CMD_WIFI_PROFILE_ADD,
-                sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
-                NULL, NULL);
+  return sdep_n(SDEP_CMD_WIFI_PROFILE_ADD, para_count, para_arr, NULL, NULL);
 }
 
 bool AdafruitFeather::addProfile(char* ssid, char* key, int enc_type)
@@ -333,17 +333,14 @@ bool AdafruitFeather::addProfile(char* ssid, char* key, int enc_type)
       { .len = strlen(key) , .p_value = key       },
       { .len = 4           , .p_value = &enc_type },
   };
+  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
-  return sdep_n(SDEP_CMD_WIFI_PROFILE_ADD,
-                sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
-                NULL, NULL);
+  return sdep_n(SDEP_CMD_WIFI_PROFILE_ADD, para_count, para_arr, NULL, NULL);
 }
 
 bool AdafruitFeather::removeProfile(char* ssid)
 {
-  return sdep(SDEP_CMD_WIFI_PROFILE_DEL,
-              strlen(ssid), ssid,
-              NULL, NULL);
+  return sdep(SDEP_CMD_WIFI_PROFILE_DEL, strlen(ssid), ssid, NULL, NULL);
 }
 
 void AdafruitFeather::clearProfiles(void)
@@ -369,12 +366,11 @@ char* AdafruitFeather::profileSSID (uint8_t pos)
       { .len = 1, .p_value = &pos    },
       { .len = 1, .p_value = &option },
   };
+  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
   uint16_t len = 0;
 
-  sdep_n(SDEP_CMD_WIFI_PROFILE_GET,
-         sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
-         &len, profile_ssid);
+  sdep_n(SDEP_CMD_WIFI_PROFILE_GET, para_count, para_arr, &len, profile_ssid);
 
   return (len > 0) ? profile_ssid : NULL;
 }
@@ -388,12 +384,11 @@ int32_t AdafruitFeather::profileEncryptionType(uint8_t pos)
       { .len = 1, .p_value = &pos    },
       { .len = 1, .p_value = &option },
   };
+  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
   int32_t sec_type;
 
-  return sdep_n(SDEP_CMD_WIFI_PROFILE_GET,
-                sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
-                NULL, &sec_type) ? sec_type : -1;
+  return sdep_n(SDEP_CMD_WIFI_PROFILE_GET, para_count, para_arr, NULL, &sec_type) ? sec_type : -1;
 }
 
 /******************************************************************************/
@@ -510,10 +505,9 @@ err_t AdafruitFeather::connectAP(char const* ssid, char const* passwd)
       { .len = strlen(ssid)  , .p_value = ssid   },
       { .len = strlen(passwd), .p_value = passwd },
   };
+  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
-  err_t error = FEATHERLIB->sdep_execute_n(SDEP_CMD_CONNECT,
-                                              sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
-                                              NULL, NULL);
+  err_t error = FEATHERLIB->sdep_execute_n(SDEP_CMD_CONNECT, para_count, para_arr, NULL, NULL);
 
   return error;
 }
@@ -623,10 +617,9 @@ err_t AdafruitFeather::startAP(char* ssid, char* passwd)
       { .len = strlen(ssid)  , .p_value = ssid   },
       { .len = strlen(passwd), .p_value = passwd },
   };
+  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
-  err_t err = FEATHERLIB->sdep_execute_n(SDEP_CMD_APSTART,
-                                         sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
-                                         NULL, NULL);
+  err_t err = FEATHERLIB->sdep_execute_n(SDEP_CMD_APSTART, para_count, para_arr, NULL, NULL);
   return err;
 }
 
