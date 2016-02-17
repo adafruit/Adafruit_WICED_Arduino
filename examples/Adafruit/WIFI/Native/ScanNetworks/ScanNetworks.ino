@@ -12,7 +12,7 @@
  any redistribution
 *********************************************************************/
 
-#include <adafruit_wifi.h>
+#include <adafruit_feather.h>
 
 #define MAX_SCAN_NUM   20
 wl_ap_info_t scan_result[MAX_SCAN_NUM];

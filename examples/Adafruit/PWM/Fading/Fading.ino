@@ -16,7 +16,7 @@
   http://leaflabs.com/docs/lang/api/analogwrite.html#arduino-compatibility
 */
 
-#include <adafruit_wifi.h>
+#include <adafruit_feather.h>
 
 void setup() {
   for(int i=0; i<BOARD_NR_PWM_PINS; i++)

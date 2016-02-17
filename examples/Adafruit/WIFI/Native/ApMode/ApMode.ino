@@ -5,7 +5,7 @@
   author: huynguyen 
  */
 
-#include "adafruit_wifi.h"
+#include "adafruit_feather.h"
 
 static bool defaultMode = 0;
 /**************************************************************************/

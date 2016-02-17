@@ -11,7 +11,7 @@
  All text above, and the splash screen below must be included in
  any redistribution
 *********************************************************************/
-#include <adafruit_wifi.h>
+#include <adafruit_feather.h>
 
 // the setup function runs once when you press reset or power the board
 void setup() 

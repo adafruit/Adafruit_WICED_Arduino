@@ -17,7 +17,7 @@
   author: huynguyen
  */
 
-#include "adafruit_wifi.h"
+#include "adafruit_feather.h"
 #include "certificate.h"
 
 #define WLAN_SSID            "YOURSSID"

@@ -12,7 +12,7 @@
  any redistribution
 *********************************************************************/
 
-#include <adafruit_wifi.h>
+#include <adafruit_feather.h>
 
 int pinout = PA15;
 int pinin  = PC5;

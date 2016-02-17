@@ -4,7 +4,7 @@
 #include <Adafruit_FeatherOLED.h>
 #include <Adafruit_FeatherOLED_WiFi.h>
 #include <Adafruit_Sensor.h>
-#include <adafruit_wifi.h>
+#include <adafruit_feather.h>
 #include <itoa.h>
 
 #define WLAN_SSID                 "SSID"

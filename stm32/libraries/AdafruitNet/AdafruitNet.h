@@ -40,7 +40,7 @@
 #include <Arduino.h>
 #include <Client.h>
 #include <IPAddress.h>
-#include <adafruit_wifi.h>
+#include <adafruit_feather.h>
 #include <adafruit_tcp.h>
 
 #define HTTPCLIENT_MAX_HEADER  10

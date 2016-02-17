@@ -9,7 +9,7 @@
   author: huynguyen
  */
 
-#include "adafruit_wifi.h"
+#include "adafruit_feather.h"
 #include "itoa.h"
 
 #define WLAN_SSID            "SSID of AP"
@@ -48,23 +48,21 @@ int temp;
 int connectAP()
 {
   // Attempt to connect to an AP
-  Serial.print(F("Attempting to connect to: "));
+  Serial.print("Attempting to connect to: ");
   Serial.println(WLAN_SSID);
 
-  int error = feather.connectAP(WLAN_SSID, WLAN_PASS);
-
-  if (error == 0)
+  if ( feather.connect(WLAN_SSID, WLAN_PASS) )
   {
-    Serial.println(F("Connected!"));
+    Serial.println("Connected!");
   }
   else
   {
-    Serial.print(F("Failed! Error: "));
-    Serial.println(error, HEX);
+    Serial.printf("Failed! %s (%d)", feather.errstr(), feather.errno());
+    Serial.println();
   }
   Serial.println("");
 
-  return error;
+  return feather.errno();
 }
 
 /**************************************************************************/

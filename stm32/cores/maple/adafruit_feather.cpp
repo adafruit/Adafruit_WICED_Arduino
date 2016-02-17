@@ -1,7 +1,7 @@
 /**************************************************************************/
 /*!
-    @file     adafruit_wifi.cpp
-    @author   huynguyen
+    @file     adafruit_feather.cpp
+    @author   huynguyen, hathach, ktown
 
     @section LICENSE
 
@@ -35,7 +35,7 @@
 /**************************************************************************/
 
 #include "adafruit_featherlib.h"
-#include "adafruit_wifi.h"
+#include "adafruit_feather.h"
 #include "itoa.h"
 #include <string.h>
 #include <stdlib.h>

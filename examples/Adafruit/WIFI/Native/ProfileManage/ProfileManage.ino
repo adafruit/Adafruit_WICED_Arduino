@@ -12,7 +12,7 @@
  any redistribution
 *********************************************************************/
 
-#include <adafruit_wifi.h>
+#include <adafruit_feather.h>
 
 char ssid[]   = "yourSSID";     //  your network SSID (name)
 char pass[]   = "yourPassword";  // your network password

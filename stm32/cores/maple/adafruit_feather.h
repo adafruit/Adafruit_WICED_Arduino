@@ -1,7 +1,7 @@
 /**************************************************************************/
 /*!
-    @file     adafruit_wifi.h
-    @author   huynguyen
+    @file     adafruit_feather.h
+    @author   huynguyen, hathach, ktown
 
     @section LICENSE
 
@@ -34,8 +34,8 @@
 */
 /**************************************************************************/
 
-#ifndef _ADAFRUIT_WIFI_H_
-#define _ADAFRUIT_WIFI_H_
+#ifndef _ADAFRUIT_FEATHER_H_
+#define _ADAFRUIT_FEATHER_H_
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -252,17 +252,6 @@ public:
   friend void mqtt_evt_callback(mqtt_evt_opcode_t event, uint16_t len, uint8_t* data);
 
   friend void adafruit_wifi_disconnect_callback(void);
-
-  //  /* DEBUG Commands */
-//  err_t stackDump();
-//  err_t stackSize();
-//  err_t heapDump();
-//  err_t heapSize();
-//  err_t threadList();
-//
-//  /* SPI Flash Commands */
-//  err_t sflashFormat();
-//  err_t sflashList();
 };
 
 extern AdafruitFeather feather;

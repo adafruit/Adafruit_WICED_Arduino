@@ -15,7 +15,7 @@
   Modified by Roger Clark. www.rogerclark.net for Maple mini 25th April 2015 , where the LED is on PB1
   
  */
-#include <adafruit_wifi.h>
+#include <adafruit_feather.h>
 
 int ledPin = PA15;
 

@@ -12,7 +12,7 @@
  any redistribution
 *********************************************************************/
 
-#include "adafruit_wifi.h"
+#include "adafruit_feather.h"
 
 #define WLAN_SSID            "yourSSID"
 #define WLAN_PASS            "yourPassword"

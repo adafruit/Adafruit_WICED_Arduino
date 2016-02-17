@@ -16,7 +16,7 @@
 
  */
 
-#include "adafruit_wifi.h"
+#include "adafruit_feather.h"
 #include "adafruit_udp.h"
 
 char ssid[] = "yourSSID";  //  your network SSID (name)

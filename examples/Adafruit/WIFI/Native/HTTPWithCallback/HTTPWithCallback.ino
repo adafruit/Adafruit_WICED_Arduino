@@ -24,7 +24,7 @@
   CRC code by James Bowman: http://excamera.com/sphinx/article-crc.html
  */
 
-#include "adafruit_wifi.h"
+#include "adafruit_feather.h"
 
 #define WLAN_SSID            "SSID"
 #define WLAN_PASS            "PASSWORD"

@@ -25,7 +25,7 @@
 * https://gist.github.com/sl4m/5091803
 */
 
-#include <adafruit_wifi.h>
+#include <adafruit_feather.h>
 #include <adafruit_tcp.h>
 #include <AdafruitNet.h>
 #include "certificates.h"
@@ -153,7 +153,7 @@ void setup()
 
   printWifiStatus();
 
-#if 0
+#if 0 // currently disabl Certificate verification
   // Setting Certificates chain of the server
   Serial.print("Setting Root CA chain ... ");
   if ( feather.setRootCertificatesDER(root_certs, sizeof(root_certs)) )
