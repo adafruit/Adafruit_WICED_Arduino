@@ -26,7 +26,6 @@
 */
 
 #include <adafruit_feather.h>
-#include <adafruit_tcp.h>
 #include <AdafruitNet.h>
 #include "certificates.h"
 
@@ -46,7 +45,7 @@
 int ledPin = PA15;
 
 // Change the SERVER_ID to match the generated certificates.h
-#define SERVER_ID    2
+#define SERVER_ID    13
 
 const char * server_arr[][2] =
 {
@@ -112,7 +111,7 @@ void receive_callback(AdafruitTCP* pTCP)
 { 
   // if there are incoming bytes available
   // from the server, read then print them:
-#if 1
+#if 0
   while (pTCP->available() > 0 )
   {
     char c = pTCP->read();
@@ -197,14 +196,12 @@ void loop() {
 
 
 void printWifiStatus() {
-  // print the SSID of the network you're attached to:
-  Serial.print("SSID: ");
-  Serial.println(feather.SSID());
-
   // print your WiFi shield's IP address:
-  IPAddress ip = feather.localIP();
   Serial.print("IP Address: ");
-  Serial.println(ip);
+  Serial.println( IPAddress(feather.localIP()) );
+
+  Serial.print("Gateway : ");
+  Serial.println( IPAddress(feather.gatewayIP()) );
 
   // print the received signal strength:
   long rssi = feather.RSSI();
