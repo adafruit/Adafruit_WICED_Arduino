@@ -54,52 +54,48 @@ protected:
   uint32_t  _tcp_handle;
   uint32_t  _bytesRead;
 
-  // buffer written until network packet is full ~1500 or flush() is called
-  // default is false
+  // If enabled, data is written to a buffer until the network packet is full
+  // (~1500 bytes) or until .flush() is called
+  // Default = false (buffering disabled)
 	bool     _packet_buffering;
 
-  // Callback signatures
+  // Callback prototypes
   void (*rx_callback)         (AdafruitTCP* pTCP);
   void (*disconnect_callback) (AdafruitTCP* pTCP);
 
   void install_callback ( void );
-  void reset ( void );
+  void reset            ( void );
 
 public:
   AdafruitTCP ( void );
   virtual ~AdafruitTCP();
 
-  void usePacketBuffering(bool enable);
+  void usePacketBuffering     ( bool enable );
 
   // Client API
-  virtual int     connect ( IPAddress ip, uint16_t port );
-  virtual int     connect ( const char * host, uint16_t port );
-
-  virtual int connectSSL(IPAddress ip, uint16_t port);
-	virtual int connectSSL(const char* host, uint16_t port);
-
-// virtual int connectSSL(IPAddress ip, uint16_t port, char const* common_name = NULL);
-// virtual int connectSSL(const char* host, uint16_t port, char const* common_name = NULL);
-
-  virtual uint8_t connected( void );
-  virtual void    stop    ( void );
+  virtual int      connect    ( IPAddress ip, uint16_t port );
+  virtual int      connect    ( const char * host, uint16_t port );
+  virtual int      connectSSL ( IPAddress ip, uint16_t port );
+	virtual int      connectSSL ( const char* host, uint16_t port );
+  virtual uint8_t  connected  ( void );
+  virtual void     stop       ( void );
 
   virtual operator bool() { return _tcp_handle != 0; }
 
   // Stream API
-  virtual int    read       ( void );
-  virtual int    read       ( uint8_t * buf, size_t size );
-  virtual size_t write      ( uint8_t );
-  virtual size_t write      ( const uint8_t *content, size_t len );
-  virtual int    available  ( void );
-  virtual int    peek       ( void );
-  virtual void   flush      ( void );
+  virtual int      read       ( void );
+  virtual int      read       ( uint8_t * buf, size_t size );
+  virtual size_t   write      ( uint8_t );
+  virtual size_t   write      ( const uint8_t *content, size_t len );
+  virtual int      available  ( void );
+  virtual int      peek       ( void );
+  virtual void     flush      ( void );
 
   using Print::write;
 
   // Set callback handlers
-  void setReceivedCallback   ( void (*fp) (AdafruitTCP* pTCP));
-  void setDisconnectCallback ( void (*fp) (AdafruitTCP* pTCP));
+  void setReceivedCallback    ( void (*fp) (AdafruitTCP* pTCP) );
+  void setDisconnectCallback  ( void (*fp) (AdafruitTCP* pTCP) );
 
   friend err_t adafruit_tcp_receive_callback(void* socket, void* p_tcp);
   friend err_t adafruit_tcp_disconnect_callback(void* socket, void* p_tcp);

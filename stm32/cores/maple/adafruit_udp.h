@@ -46,13 +46,10 @@ class AdafruitUDP : public UDP, public AdafruitSDEP
 {
 protected:
   uint32_t  _udp_handle;
-
 	uint16_t  _rcvPort;
 	uint32_t  _rcvIP;
-
 	uint16_t  _sndPort;
 	uint32_t  _sndIP;
-
   uint32_t  _bytesRead;
 
   int (*rx_callback) (void *, void*);
@@ -62,36 +59,32 @@ public:
   AdafruitUDP();
 
   // UDP API
-  virtual uint8_t begin(uint16_t port);
-  virtual void stop();
-
-  virtual int beginPacket(IPAddress ip, uint16_t port);
-  virtual int beginPacket(const char *host, uint16_t port);
-  virtual int endPacket();
-  virtual int parsePacket();
-
-  virtual IPAddress remoteIP();
-  virtual uint16_t remotePort();
+  virtual uint8_t   begin       ( uint16_t port );
+  virtual void      stop        ( void );
+  virtual int       beginPacket ( IPAddress ip, uint16_t port );
+  virtual int       beginPacket ( const char *host, uint16_t port );
+  virtual int       endPacket   ( void );
+  virtual int       parsePacket ( void );
+  virtual IPAddress remoteIP    ( void );
+  virtual uint16_t  remotePort  ( void );
 
   // Stream API
-  virtual int read();
-  virtual int read(unsigned char* buffer, size_t len);
-  virtual int read(char* buffer, size_t len)
+  virtual int       read        ( void );
+  virtual int       read        ( unsigned char* buffer, size_t len );
+  virtual int       read        (char* buffer, size_t len )
   {
     return this->read( (unsigned char*) buffer, len );
   }
-
-  virtual int peek();
-  virtual int available();
-
-  virtual void flush();
-  virtual size_t write(uint8_t byte);
-  virtual size_t write(const uint8_t *buffer, size_t size);
+  virtual int       peek        ( void );
+  virtual int       available   ( void );
+  virtual void      flush       ( void );
+  virtual size_t    write       ( uint8_t byte );
+  virtual size_t    write       ( const uint8_t *buffer, size_t size );
 
   using Print::write;
 
   // callback
-  void setReceivedCallback( int (*fp) (void*, void*) );
+  void  setReceivedCallback ( int (*fp) (void*, void*) );
 };
 
 #endif
