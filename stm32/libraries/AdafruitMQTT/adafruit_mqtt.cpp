@@ -36,19 +36,55 @@
 
 #include "adafruit_mqtt.h"
 
-int AdafruitMQTT::connect ( IPAddress ip, uint16_t port )
+bool AdafruitMQTT::connectBroker(void)
 {
-  // Call AdafruitTCP connect
-  ((AdafruitTCP*) this)->connect(ip, port);
+  uint32_t tcp_handle = tcp.getHandle();
 
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = 4                 , .p_value = &tcp_handle       },
+      { .len = 2                 , .p_value = &_keepalive        },
+      { .len = 1                 , .p_value = &_cleansession     },
+      // ID, user, pass
+      { .len = strlen(_clientID) , .p_value = _clientID          },
+      { .len = strlen(_username) , .p_value = _username          },
+      { .len = strlen(_password) , .p_value = _password          },
+      // will para
+      { .len = _will_topic.len   , .p_value = _will_topic.data   },
+      { .len = _will_message.len , .p_value = _will_message.data },
+      { .len = 1                 , .p_value = &_will_qos         },
+      { .len = 1                 , .p_value = &_will_retained    },
+  };
+  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
+  return sdep_n(SDEP_CMD_MQTTCONNECT, para_count, para_arr, NULL, &_mqtt_handle);
 }
 
-int AdafruitMQTT::connectSSL(IPAddress ip, uint16_t port)
+bool AdafruitMQTT::connect ( IPAddress ip, uint16_t port )
+{
+  VERIFY ( tcp.connect(ip, port), false);
+  return connectBroker();
+}
+
+bool AdafruitMQTT::connect ( const char * host, uint16_t port )
+{
+  IPAddress ip;
+  VERIFY( Feather.hostByName(host, ip), false );
+  return this->connect(ip, port);
+}
+
+
+bool AdafruitMQTT::connectSSL(IPAddress ip, uint16_t port)
 {
   // Call AdafruitTCP connect
-  ((AdafruitTCP*) this)->connectSSL(ip, port);
+  VERIFY( tcp.connectSSL(ip, port), false);
+  return connectBroker();
+}
 
-
+bool AdafruitMQTT::connectSSL ( const char* host, uint16_t port )
+{
+  IPAddress ip;
+  VERIFY( Feather.hostByName(host, ip), false );
+  return this->connectSSL(ip, port);
 }
 

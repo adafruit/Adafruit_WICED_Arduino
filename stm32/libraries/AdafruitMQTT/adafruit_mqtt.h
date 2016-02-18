@@ -48,6 +48,8 @@ public:
   int len;
   const char* data;
 
+  MQTTString(void) { len = 0; data = NULL; }
+
   MQTTString(const char* cstring            ) { len = strlen(cstring); data = cstring;  }
   MQTTString(const char* bytes, int size    ) { len = size; data = bytes;               }
   MQTTString(const uint8_t* bytes, int size ) { len = size; data = (const char*) bytes; }
@@ -63,46 +65,62 @@ public:
   }
 };
 
-class AdafruitMQTT : public AdafruitTCP
+class AdafruitMQTT : public AdafruitSDEP
 {
 protected:
+  AdafruitTCP tcp;
+
   const char * _clientID;
   const char * _username;
   const char * _password;
 
+  uint16_t    _keepalive_sec; // in seconds
+  uint8_t     _cleansession;
+
   MQTTString _will_topic;
   MQTTString _will_message;
-  uint8_t    _will_retained;
   uint8_t    _will_qos;
+  uint8_t    _will_retained;
+
+  uint32_t  _mqtt_handle;
+
+  bool connectBroker(void);
+  bool init(void)
+  {
+    _keepalive_sec = 60;
+    _cleansession  = 1;
+    _mqtt_handle   = 0;
+
+    tcp.usePacketBuffering(true);
+
+    _clientID = _username = _password = NULL;
+  }
 
 public:
   AdafruitMQTT(const char * clientID, const char* username, const char* password)
   {
-      _packet_buffering = true;
-      _clientID = clientID;
-      _username = username;
-      _password = password;
+    init();
+    _clientID = clientID;
+    _username = username;
+    _password = password;
   }
 
   AdafruitMQTT(const char* username, const char* password)
   {
-    _packet_buffering = true;
+    init();
     _username = username;
     _password = password;
-    _clientID = NULL;
   }
 
   AdafruitMQTT(const char * clientID)
   {
-    _packet_buffering = true;
+    init();
     _clientID = clientID;
-    _username = _password = NULL;
   }
 
   AdafruitMQTT()
   {
-    _packet_buffering = true;
-    _clientID = _username = _password = NULL;
+    init();
   }
 
   // Set MQTT last will topic, payload, QOS, and retain. This needs
@@ -116,9 +134,11 @@ public:
     _will_retained = retained;
   }
 
-  // Overwrite AdafruitTCP connect()
-  virtual int connect   (IPAddress ip, uint16_t port);
-  virtual int connectSSL(IPAddress ip, uint16_t port);
+  // API
+  bool connect    ( IPAddress ip, uint16_t port = 1883 );
+  bool connect    ( const char * host, uint16_t port = 1883 );
+  bool connectSSL ( IPAddress ip, uint16_t port = 8883 );
+	bool connectSSL ( const char* host, uint16_t port = 8883 );
 
 };
 

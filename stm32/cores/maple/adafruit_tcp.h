@@ -71,6 +71,7 @@ public:
   virtual ~AdafruitTCP();
 
   void usePacketBuffering     ( bool enable );
+  uint32_t getHandle          ( void ) { return _tcp_handle; }
 
   // Client API
   virtual int      connect    ( IPAddress ip, uint16_t port );

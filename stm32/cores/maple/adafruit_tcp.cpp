@@ -97,11 +97,9 @@ int AdafruitTCP::connect(IPAddress ip, uint16_t port)
       { .len = 1, .p_value = &is_tls   },
       { .len = 4, .p_value = &_timeout },
   };
+  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
-  VERIFY( sdep_n(SDEP_CMD_TCP_CONNECT,
-                 sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
-                 NULL, &_tcp_handle), false);
-
+  VERIFY(sdep_n(SDEP_CMD_TCP_CONNECT, para_count, para_arr, NULL, &_tcp_handle), false);
   this->install_callback();
 
   return true;
