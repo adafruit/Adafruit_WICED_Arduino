@@ -51,18 +51,18 @@ int connectAP()
   Serial.print("Attempting to connect to: ");
   Serial.println(WLAN_SSID);
 
-  if ( feather.connect(WLAN_SSID, WLAN_PASS) )
+  if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
   {
     Serial.println("Connected!");
   }
   else
   {
-    Serial.printf("Failed! %s (%d)", feather.errstr(), feather.errno());
+    Serial.printf("Failed! %s (%d)", Feather.errstr(), Feather.errno());
     Serial.println();
   }
   Serial.println("");
 
-  return feather.errno();
+  return Feather.errno();
 }
 
 /**************************************************************************/
@@ -78,7 +78,7 @@ int connectBroker()
   Serial.print(F("Attempting to connect to broker: "));
   Serial.print(MQTT_HOST); Serial.print(":"); Serial.println(MQTT_PORT);
 
-  int error = feather.mqttConnect(MQTT_HOST, MQTT_PORT, CLIENT_ID, ADAFRUIT_USERNAME, AIO_KEY);
+  int error = Feather.mqttConnect(MQTT_HOST, MQTT_PORT, CLIENT_ID, ADAFRUIT_USERNAME, AIO_KEY);
   if (error == 0)
   {
     Serial.println(F("Connected!"));
@@ -106,7 +106,7 @@ int subscribeTopic()
   Serial.print(F("Attempting to subscribe to the topic = <"));
   Serial.print(SUBSCRIBE_TOPIC); Serial.println(">");
 
-  int error = feather.mqttSubscribe(SUBSCRIBE_TOPIC, QOS);
+  int error = Feather.mqttSubscribe(SUBSCRIBE_TOPIC, QOS);
 
   if (error == 0)
   {
@@ -137,7 +137,7 @@ void readArrivedMessage()
     
     // Specify the current number of items in the ASYNC FIFO
     uint16_t n_item;
-    irq_error = feather.irqCount(&n_item);
+    irq_error = Feather.irqCount(&n_item);
     if (irq_error == 0)
     {
       if (n_item > 0)
@@ -149,7 +149,7 @@ void readArrivedMessage()
         for (int n = 0; n < n_item; n++)
         {
           // Read message from subscribed topic
-          irq_error = feather.irqRead(&response_len, response);
+          irq_error = Feather.irqRead(&response_len, response);
           if (irq_error == 0)
           {
             if (response_len > 0)
@@ -205,7 +205,7 @@ void setup()
   wifi_error = connectAP();
 
   // Set LastWill message
-  if (feather.mqttLastWill(0, LASTWILL_TOPIC, LASTWILL_MESSAGE, QOS, RETAIN) == 0)
+  if (Feather.mqttLastWill(0, LASTWILL_TOPIC, LASTWILL_MESSAGE, QOS, RETAIN) == 0)
   {
     Serial.println(F("LastWill message has been set!\r\n"));
   }
@@ -215,7 +215,7 @@ void setup()
   }
 
   // Set LastWill Connected topic + message
-  if (feather.mqttLastWill(1, CONNECTED_TOPIC, CONNECTED_MESSAGE, QOS, RETAIN) == 0)
+  if (Feather.mqttLastWill(1, CONNECTED_TOPIC, CONNECTED_MESSAGE, QOS, RETAIN) == 0)
   {
     Serial.println(F("Connected topic & message have been set!\r\n"));
   }
@@ -230,7 +230,7 @@ void setup()
     subs_error = subscribeTopic();
 
     // Optional: connectBroker() includes this already
-    if (feather.mqttPublish(CONNECTED_TOPIC, CONNECTED_MESSAGE, QOS, RETAIN) == ERROR_NONE)
+    if (Feather.mqttPublish(CONNECTED_TOPIC, CONNECTED_MESSAGE, QOS, RETAIN) == ERROR_NONE)
     {
       Serial.print(F("Published Message to ")); Serial.println(CONNECTED_TOPIC);
       Serial.print(F("Value = ")); Serial.println(CONNECTED_MESSAGE);
@@ -261,7 +261,7 @@ void loop() {
       itoa(temp, str, 10);
 
       // qos = 1, retain = 0
-      if (feather.mqttPublish(PUBLISH_TOPIC, str, QOS, RETAIN) == 0)
+      if (Feather.mqttPublish(PUBLISH_TOPIC, str, QOS, RETAIN) == 0)
       {
         Serial.print(F("Published Message to ")); Serial.println(PUBLISH_TOPIC);
         Serial.print(F("Value = ")); Serial.println(temp);

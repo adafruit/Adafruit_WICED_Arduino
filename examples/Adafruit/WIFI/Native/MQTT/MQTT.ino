@@ -59,7 +59,7 @@ int connectAP()
   Serial.print(F("Attempting to connect to: "));
   Serial.println(WLAN_SSID);
 
-  int error = feather.connectAP(WLAN_SSID, WLAN_PASS);
+  int error = Feather.connectAP(WLAN_SSID, WLAN_PASS);
 
   if (error == 0)
   {
@@ -87,7 +87,7 @@ int connectBroker()
   // Generate a 23-character random clientID
   char* clientID = NULL;
   char id[24];
-  if (feather.mqttGenerateRandomID(id, 23) == 0)
+  if (Feather.mqttGenerateRandomID(id, 23) == 0)
   {
     clientID = id;
   }
@@ -100,7 +100,7 @@ int connectBroker()
   Serial.print(F("Attempting to connect to broker: "));
   Serial.print(MQTT_HOST); Serial.print(":"); Serial.println(MQTT_PORT);
 
-  int error = feather.mqttConnect(MQTT_HOST, MQTT_PORT, clientID, ADAFRUIT_USERNAME, AIO_KEY); 
+  int error = Feather.mqttConnect(MQTT_HOST, MQTT_PORT, clientID, ADAFRUIT_USERNAME, AIO_KEY); 
   if (error == 0)
   {
     Serial.println(F("Connected!"));
@@ -128,7 +128,7 @@ int subscribeTopic()
   Serial.print(F("Attempting to subscribe to the topic = <"));
   Serial.print(SUBSCRIBE_TOPIC); Serial.println(">");
 
-  int error = feather.mqttSubscribe(SUBSCRIBE_TOPIC, QOS);
+  int error = Feather.mqttSubscribe(SUBSCRIBE_TOPIC, QOS);
 
   if (error == 0)
   {
@@ -193,7 +193,7 @@ void setup()
   if (LASTWILL_ENABLED == 1)
   {
     // Set LastWill topic + message
-    if (feather.mqttLastWill(false, LASTWILL_TOPIC, LASTWILL_MESSAGE, QOS, RETAIN) == 0)
+    if (Feather.mqttLastWill(false, LASTWILL_TOPIC, LASTWILL_MESSAGE, QOS, RETAIN) == 0)
     {
       Serial.println(F("LastWill message has been set!\r\n"));
     }
@@ -203,7 +203,7 @@ void setup()
     }
   
     // Set LastWill Connected topic + message
-    if (feather.mqttLastWill(true, CONNECTED_TOPIC, CONNECTED_MESSAGE, QOS, RETAIN) == 0)
+    if (Feather.mqttLastWill(true, CONNECTED_TOPIC, CONNECTED_MESSAGE, QOS, RETAIN) == 0)
     {
       Serial.println(F("Connected topic & message have been set!\r\n"));
     }
@@ -214,7 +214,7 @@ void setup()
   }
 
   // Register the mqtt callback handler
-  feather.addMqttCallBack(mqttCallback);
+  Feather.addMqttCallBack(mqttCallback);
 
   // Connect to broker
   mqtt_error = connectBroker();
@@ -238,14 +238,14 @@ void loop() {
       // Buffer for temperature
       char str[3] = "0";
       uint32_t randomNum = 0;
-      if (feather.randomNumber(&randomNum) == 0)
+      if (Feather.randomNumber(&randomNum) == 0)
       {
         randomNum = randomNum % 50;
         utoa( randomNum, str, 10);
       }
 
       // qos = 1, retain = 0
-      if (feather.mqttPublish(PUBLISH_TOPIC, str, QOS, RETAIN) == 0)
+      if (Feather.mqttPublish(PUBLISH_TOPIC, str, QOS, RETAIN) == 0)
       {
         Serial.print(F("Published Message to ")); Serial.println(PUBLISH_TOPIC);
         Serial.print(F("Value = ")); Serial.println(randomNum);

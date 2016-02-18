@@ -26,7 +26,7 @@ void setup()
   {
     Serial.print("Attempting to connect to: ");
     Serial.println(ssid);
-  } while( !feather.connect(ssid, pass) ) ;
+  } while( !Feather.connect(ssid, pass) ) ;
 
   Serial.println("Connected!");
   Serial.println("\nStarting connection to server...");

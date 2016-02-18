@@ -139,15 +139,15 @@ void connectToAP()
   {
     Serial.print("Attempting to connect to: ");
     Serial.println(ssid);
-  } while( !feather.connect(ssid, pass) ) ;
+  } while( !Feather.connect(ssid, pass) ) ;
 
   Serial.println("Connected!");
 
   // print IP address
   Serial.print("IP Address: ");
-  Serial.println( feather.localIP() );
+  Serial.println( Feather.localIP() );
 
   // print the received signal strength:
-  Serial.printf("signal strength (RSSI): %d dBm", feather.RSSI());
+  Serial.printf("signal strength (RSSI): %d dBm", Feather.RSSI());
 }
 

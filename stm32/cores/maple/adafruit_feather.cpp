@@ -45,7 +45,7 @@ extern "C"
   extern adafruit_arduino_t const adafruit_arduino;
 }
 
-AdafruitFeather feather;
+AdafruitFeather Feather;
 
 /******************************************************************************/
 /*!
@@ -1386,10 +1386,10 @@ void AdafruitFeather::addMqttCallBack(ada_mqtt_callback ada_mqttCallback)
 /******************************************************************************/
 void adafruit_wifi_disconnect_callback(void)
 {
-  feather._connected = false;
-  if ( feather.wlan_disconnect_callback )
+  Feather._connected = false;
+  if ( Feather.wlan_disconnect_callback )
   {
-    feather.wlan_disconnect_callback();
+    Feather.wlan_disconnect_callback();
   }
 }
 
@@ -1400,9 +1400,9 @@ void adafruit_wifi_disconnect_callback(void)
 /******************************************************************************/
 void http_rx_callback(uint8_t* data, uint16_t data_length, uint16_t avail)
 {
-  if (feather.ada_http_rx_callback != NULL)
+  if (Feather.ada_http_rx_callback != NULL)
   {
-    feather.ada_http_rx_callback(data, data_length, avail);
+    Feather.ada_http_rx_callback(data, data_length, avail);
   }
 }
 
@@ -1413,8 +1413,8 @@ void http_rx_callback(uint8_t* data, uint16_t data_length, uint16_t avail)
 /******************************************************************************/
 void mqtt_evt_callback(mqtt_evt_opcode_t event, uint16_t len, uint8_t* data)
 {
-  if (feather.ada_mqtt_evt_callback != NULL)
+  if (Feather.ada_mqtt_evt_callback != NULL)
   {
-    feather.ada_mqtt_evt_callback(event, len, data);
+    Feather.ada_mqtt_evt_callback(event, len, data);
   }
 }

@@ -43,7 +43,7 @@ void printMacAddress() {
   byte mac[6];
 
   // print your MAC address:
-  feather.macAddress(mac);
+  Feather.macAddress(mac);
   Serial.print("MAC: ");
   Serial.print(mac[5], HEX);  Serial.print(":");
   Serial.print(mac[4], HEX);  Serial.print(":");
@@ -56,7 +56,7 @@ void printMacAddress() {
 void listNetworks() {
   // scan for nearby networks:
   Serial.println("** Scanned Networks **");
-  int numSsid = feather.scanNetworks(scan_result, MAX_SCAN_NUM);
+  int numSsid = Feather.scanNetworks(scan_result, MAX_SCAN_NUM);
   if (numSsid < 0)
   {
     Serial.println("Couldn't get a wifi connection");

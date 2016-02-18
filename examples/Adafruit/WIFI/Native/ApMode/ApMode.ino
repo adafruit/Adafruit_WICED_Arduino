@@ -35,7 +35,7 @@ void loop()
     defaultMode = 0;
     
     // Start AP mode with default SSID and PASSWORD
-    if (feather.startAP() == ERROR_NONE)
+    if (Feather.startAP() == ERROR_NONE)
     {
       Serial.println("AP mode started with default SSID and PASSWORD");
     }
@@ -49,7 +49,7 @@ void loop()
     // Start AP mode with default SSID and PASSWORD
     char* ssid = "ADAFRUIT";
     char* pass = "12345678";
-    if (feather.startAP(ssid, pass) == ERROR_NONE)
+    if (Feather.startAP(ssid, pass) == ERROR_NONE)
     {
       Serial.print("AP mode started with SSID = "); Serial.print(ssid);
       Serial.print(" and PASSWORD = "); Serial.println(pass);
@@ -62,7 +62,7 @@ void loop()
   delay(30000);
   
   // Stop AP mode
-  if (feather.stopAP() == ERROR_NONE)
+  if (Feather.stopAP() == ERROR_NONE)
   {
     Serial.println("AP mode stopped");
   }

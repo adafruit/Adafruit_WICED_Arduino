@@ -72,7 +72,7 @@ void AdafruitUDP::reset(void)
 /******************************************************************************/
 uint8_t AdafruitUDP::begin(uint16_t port)
 {
-  if ( !feather.connected() ) return 0;
+  if ( !Feather.connected() ) return 0;
 
   uint8_t interface = WIFI_INTERFACE_STATION;
   sdep_cmd_para_t para_arr[] =
@@ -234,7 +234,7 @@ int AdafruitUDP::available()
 int AdafruitUDP::beginPacket(const char *host, uint16_t port)
 {
 	IPAddress ip;
-	if ( !feather.hostByName(host, ip) ) return 0;
+	if ( !Feather.hostByName(host, ip) ) return 0;
 
 	return this->beginPacket(ip, port);
 }

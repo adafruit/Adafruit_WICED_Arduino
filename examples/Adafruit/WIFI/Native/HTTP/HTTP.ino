@@ -48,14 +48,14 @@ void setup()
   Serial.print("Attempting to connect to: ");
   Serial.println(WLAN_SSID);
 
-  if ( feather.connect(WLAN_SSID, WLAN_PASS) )
+  if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
   {
     Serial.println(F("Connected!"));
   }
   else
   {
     Serial.print(F("Failed! Error: "));
-    Serial.println(feather.errno(), HEX);
+    Serial.println(Feather.errno(), HEX);
   }
   Serial.println("");
 }
@@ -69,10 +69,10 @@ void loop()
 {
   togglePin(BOARD_LED_PIN);
   
-  if ( feather.connected() )
+  if ( Feather.connected() )
   {
     int http_error = -1;
-    if ( (http_error = feather.httpRequest(URL, CONTENT, METHOD, BUFFER_LENGTH, result_buf) ) == 0)
+    if ( (http_error = Feather.httpRequest(URL, CONTENT, METHOD, BUFFER_LENGTH, result_buf) ) == 0)
     {
       Serial.println(F("Download Completed!\r\n"));
       Serial.println((char*)result_buf);

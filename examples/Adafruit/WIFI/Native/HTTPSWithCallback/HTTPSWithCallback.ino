@@ -128,7 +128,7 @@ int connectAP()
   Serial.print(F("Attempting to connect to: "));
   Serial.println(WLAN_SSID);
 
-  int error = feather.connectAP(WLAN_SSID, WLAN_PASS);
+  int error = Feather.connectAP(WLAN_SSID, WLAN_PASS);
 
   if (error == 0)
   {
@@ -175,7 +175,7 @@ void setup()
   Serial.println(F("HTTPS With Callback Example\r\n"));
 
   // Register the callback handler
-  feather.addHttpDataReceivedCallBack(rxCallback);
+  Feather.addHttpDataReceivedCallBack(rxCallback);
 
   // Try to connect to the access point
   wifi_error = connectAP();
@@ -196,7 +196,7 @@ void loop()
   {
     int https_error = -1;
     // Start the HTTPS request (this function will block until EOF or ERROR)
-    if ( (https_error = feather.httpsRequestWithCallback(URL, ca_cert, CONTENT, METHOD) ) != 0)
+    if ( (https_error = Feather.httpsRequestWithCallback(URL, ca_cert, CONTENT, METHOD) ) != 0)
     {
       Serial.print(F("Error: "));
       Serial.println(https_error, HEX);

@@ -27,16 +27,16 @@ void setup()
 void loop() 
 {
   Serial.print("Bootloader version      : ");
-  Serial.println(feather.bootloaderVersion());
+  Serial.println(Feather.bootloaderVersion());
 
   Serial.print("SDK version             : ");
-  Serial.println(feather.sdkVersion());
+  Serial.println(Feather.sdkVersion());
   
   Serial.print("Firmware version        : ");
-  Serial.println(feather.firmwareVersion());
+  Serial.println(Feather.firmwareVersion());
 
   Serial.print("Arduino library version : ");
-  Serial.println(feather.arduinoVersion());
+  Serial.println(Feather.arduinoVersion());
   
   Serial.println();
   Serial.println("Print again in 10 seconds");

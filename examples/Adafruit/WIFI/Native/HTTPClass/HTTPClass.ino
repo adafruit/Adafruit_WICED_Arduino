@@ -78,7 +78,7 @@ int connectAP()
   Serial.print(F("Attempting to connect to: "));
   Serial.println(WLAN_SSID);
 
-  int error = feather.connectAP(WLAN_SSID, WLAN_PASS);
+  int error = Feather.connectAP(WLAN_SSID, WLAN_PASS);
 
   if (error == 0)
   {

@@ -50,10 +50,10 @@ bool connectAP()
   oled.display();
 
   // Attempt to connect to the AP
-  if ( feather.connect(WLAN_SSID, WLAN_PASS, WLAN_SECURITY ) )
+  if ( Feather.connect(WLAN_SSID, WLAN_PASS, WLAN_SECURITY ) )
   {
-    int8_t rssi = feather.RSSI();
-    uint32_t ipAddress = feather.localIP();
+    int8_t rssi = Feather.RSSI();
+    uint32_t ipAddress = Feather.localIP();
     oled.setConnected(true);
     oled.setRSSI(rssi);
     oled.setIPAddress(ipAddress);
@@ -63,7 +63,7 @@ bool connectAP()
   else
   {
     // Display the error message
-    err_t err = feather.errno();
+    err_t err = Feather.errno();
     oled.setConnected(false);
     oled.refreshIcons();
     oled.clearMsgArea();
@@ -81,9 +81,9 @@ bool connectAP()
       default:
         // The most likely cause of errors at this point is that
         // you are just out of the device/AP operating range
-        oled.print(feather.errno());
+        oled.print(Feather.errno());
         oled.print(":");
-        oled.println(feather.errstr());
+        oled.println(Feather.errstr());
         oled.refreshIcons(); // Refresh icons in case the text ran over
         break;
     }    
@@ -108,14 +108,14 @@ int connectBroker()
   // Generate a random 23-character client ID
   char _clientID[24];
   memset(_clientID, 0, 24);
-  feather.mqttGenerateRandomID(_clientID, 23);
+  Feather.mqttGenerateRandomID(_clientID, 23);
 
   // Attempt to connect to a Broker
   oled.clearMsgArea();
   oled.println(MQTT_HOST);
   oled.display();
 
-  int error = feather.mqttConnect(MQTT_HOST, MQTT_PORT, (char *)_clientID, MQTT_AIOUSERNAME, MQTT_AIOKEY);
+  int error = Feather.mqttConnect(MQTT_HOST, MQTT_PORT, (char *)_clientID, MQTT_AIOUSERNAME, MQTT_AIOKEY);
   if (error == 0)
   {
     oled.println("Connected!");
@@ -195,7 +195,7 @@ void updateVbat()
   {
     char buffer[7];
     itoa((int)vbatFloat, buffer, 10);
-    feather.mqttPublish(MQTT_TOPIC_VBAT, buffer, MQTT_QOS, MQTT_RETAIN);
+    Feather.mqttPublish(MQTT_TOPIC_VBAT, buffer, MQTT_QOS, MQTT_RETAIN);
   }
   #endif
 }
@@ -239,7 +239,7 @@ void setup()
 
   #if MQTT_ENABLED
   // Register the mqtt callback handler
-  feather.addMqttCallBack(mqttCallback);
+  Feather.addMqttCallBack(mqttCallback);
 
   // Connect to broker
   int mqtt_error = connectBroker();
@@ -273,10 +273,10 @@ void loop()
   updateVbat();
   #endif
   
-  if ( feather.connected() )
+  if ( Feather.connected() )
   {
     // Update the RSSI value
-    int8_t rssi = feather.RSSI();
+    int8_t rssi = Feather.RSSI();
     oled.setRSSI(rssi);
 
     // Get a light sample and publish to MQTT if available
@@ -295,7 +295,7 @@ void loop()
             {
               char buffer[7];
               itoa(event.light, buffer, 10);
-              if (feather.mqttPublish(MQTT_TOPIC_TSL2561_LUX, buffer, MQTT_QOS, MQTT_RETAIN) == 0)
+              if (Feather.mqttPublish(MQTT_TOPIC_TSL2561_LUX, buffer, MQTT_QOS, MQTT_RETAIN) == 0)
               {
                 oled.clearMsgArea();
                 oled.print("Lux -> MQTT: ");

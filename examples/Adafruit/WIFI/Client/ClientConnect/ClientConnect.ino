@@ -18,7 +18,7 @@ void setup()
   Serial.print("Attempting to connect to: ");
   Serial.println(WLAN_SSID);
   
-  if ( feather.connect(WLAN_SSID, WLAN_PASS) )
+  if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
   {
     Serial.println("connecting...");
   

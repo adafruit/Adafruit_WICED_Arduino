@@ -198,12 +198,6 @@ public:
   /* WiFi Commands */
   int scanNetworks(wl_ap_info_t ap_list[], uint8_t max_ap);
 
-  err_t connectAP(char const* ssid, char const* passwd);
-
-  err_t startAP(char* ssid, char* passwd);
-  err_t startAP(void);
-  err_t stopAP(void);
-
   /* Network Commands */
   IPAddress  hostByName( const char* hostname);
   bool       hostByName( const char* hostname, IPAddress& result );
@@ -220,6 +214,14 @@ public:
 
   bool     getISO8601Time(iso8601_time_t* iso8601_time);
   uint32_t getUtcTime(void);
+
+  //------------- API below this are subjected to be refactor -------------//
+
+  err_t connectAP(char const* ssid, char const* passwd);
+
+  err_t startAP(char* ssid, char* passwd);
+  err_t startAP(void);
+  err_t stopAP(void);
 
   err_t httpRequest(const char* url, const char* content, uint8_t method, uint32_t buffer_length, uint8_t* buffer);
   err_t httpsRequest(const char* url, const char* ca_cert, const char* content, uint8_t method, uint32_t buffer_length, uint8_t* buffer);
@@ -251,6 +253,6 @@ public:
   friend void adafruit_wifi_disconnect_callback(void);
 };
 
-extern AdafruitFeather feather;
+extern AdafruitFeather Feather;
 
 #endif

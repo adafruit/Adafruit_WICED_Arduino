@@ -29,12 +29,12 @@ void setup() {
   Serial.println("ID Sec  SSID");
   for(uint8_t i=0; i<WIFI_MAX_PROFILE; i++)
   {
-    char * profile_ssid = feather.profileSSID(i);
+    char * profile_ssid = Feather.profileSSID(i);
     
     Serial.printf("%02d ", i);
     if ( profile_ssid != NULL )
     {
-      printEncryptionType( feather.profileEncryptionType(i) );
+      printEncryptionType( Feather.profileEncryptionType(i) );
       Serial.print(" ");
       Serial.println(profile_ssid);
     }else
@@ -43,7 +43,7 @@ void setup() {
     }
   }
 
-  if ( feather.checkProfile(ssid) )
+  if ( Feather.checkProfile(ssid) )
   {
     Serial.print(ssid);
     Serial.println(" is already in profile list");
@@ -54,13 +54,13 @@ void setup() {
     Serial.print(ssid);
     Serial.println(" to profile list");
     
-    feather.addProfile(ssid, pass, enc_type);
+    Feather.addProfile(ssid, pass, enc_type);
   }
   
   // attempt to connect to Wifi network:
   do {
     Serial.println("Attempting to connect with saved profile");
-  } while( !feather.connect() );
+  } while( !Feather.connect() );
   
   // you're connected now, so print out the data:
   Serial.print("You're connected to the network");
@@ -76,12 +76,12 @@ void loop() {
 
 void printWifiData() {
   // print your WiFi shield's IP address:
-  IPAddress ip = feather.localIP();
+  IPAddress ip = Feather.localIP();
   Serial.print("IP Address: ");
   Serial.println(ip);
   // print your MAC address:
   byte mac[6];
-  feather.macAddress(mac);
+  Feather.macAddress(mac);
   Serial.print("MAC address: ");
   Serial.print(mac[5], HEX);
   Serial.print(":");
@@ -96,12 +96,12 @@ void printWifiData() {
   Serial.println(mac[0], HEX);
 
   // print your subnet mask:
-  IPAddress subnet = feather.subnetMask();
+  IPAddress subnet = Feather.subnetMask();
   Serial.print("NetMask: ");
   Serial.println(subnet);
 
   // print your gateway address:
-  IPAddress gateway = feather.gatewayIP();
+  IPAddress gateway = Feather.gatewayIP();
   Serial.print("Gateway: ");
   Serial.println(gateway);
 }
@@ -109,11 +109,11 @@ void printWifiData() {
 void printCurrentNet() {
   // print the SSID of the network you're attached to:
   Serial.print("SSID: ");
-  Serial.println(feather.SSID());
+  Serial.println(Feather.SSID());
 
   // print the MAC address of the router you're attached to:
   byte bssid[6];
-  feather.BSSID(bssid);
+  Feather.BSSID(bssid);
   Serial.print("BSSID: ");
   Serial.print(bssid[5], HEX);
   Serial.print(":");
@@ -128,13 +128,13 @@ void printCurrentNet() {
   Serial.println(bssid[0], HEX);
 
   // print the received signal strength:
-  long rssi = feather.RSSI();
+  long rssi = Feather.RSSI();
   Serial.print("signal strength (RSSI):");
   Serial.println(rssi);
 
   // print the encryption type:
   Serial.print("Encryption Type: ");
-  printEncryptionType( feather.encryptionType() );
+  printEncryptionType( Feather.encryptionType() );
   Serial.println();
 }
 

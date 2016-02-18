@@ -34,7 +34,7 @@ void loop() {
   togglePin(BOARD_LED_PIN);
 
   uint32_t random32bit;
-  if (feather.randomNumber(&random32bit) == 0)
+  if (Feather.randomNumber(&random32bit) == 0)
   {
     Serial.print(F("Generated a random number: "));
     Serial.println(random32bit, DEC);
@@ -45,7 +45,7 @@ void loop() {
   }
 
   char clientID[24];
-  if (feather.mqttGenerateRandomID(clientID, 23) == 0)
+  if (Feather.mqttGenerateRandomID(clientID, 23) == 0)
   {
     Serial.print(F("Generated a 23-character ID: "));
     Serial.println(clientID);

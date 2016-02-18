@@ -83,28 +83,28 @@ bool connectAP(void)
   Serial.println(WLAN_SSID);
 
   // Connect using saved profile if possible since it re-connect much quicker
-  if ( feather.checkProfile(WLAN_SSID) )
+  if ( Feather.checkProfile(WLAN_SSID) )
   {
-    feather.connect();
+    Feather.connect();
   }else
   {
-    feather.clearProfiles();
-    if ( feather.connect(WLAN_SSID, WLAN_PASS) )
+    Feather.clearProfiles();
+    if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
     {
-      feather.saveConnectedProfile();
+      Feather.saveConnectedProfile();
     }
   }
 
-  if ( feather.connected() )
+  if ( Feather.connected() )
   {
     Serial.println("Connected!");
   } else
   {
-    Serial.printf("Failed! %s (%d)", feather.errstr(), feather.errno());
+    Serial.printf("Failed! %s (%d)", Feather.errstr(), Feather.errno());
   }
   
   Serial.println();
-  return feather.connected();
+  return Feather.connected();
 }
 
 void receive_callback(AdafruitTCP* pTCP)
@@ -155,7 +155,7 @@ void setup()
 #if 0 // currently disabl Certificate verification
   // Setting Certificates chain of the server
   Serial.print("Setting Root CA chain ... ");
-  if ( feather.setRootCertificatesDER(root_certs, sizeof(root_certs)) )
+  if ( Feather.setRootCertificatesDER(root_certs, sizeof(root_certs)) )
   {
     Serial.println("done");
   }else
@@ -165,7 +165,7 @@ void setup()
 #endif
   
   // Disable certificate verification (accept any server)
-  feather.tlsRequireVerification(false);
+  Feather.tlsRequireVerification(false);
 
   Serial.printf("\r\nStarting connection to %s port %d...\r\n", server,HTTPS_PORT );
   
@@ -198,13 +198,13 @@ void loop() {
 void printWifiStatus() {
   // print your WiFi shield's IP address:
   Serial.print("IP Address: ");
-  Serial.println( IPAddress(feather.localIP()) );
+  Serial.println( IPAddress(Feather.localIP()) );
 
   Serial.print("Gateway : ");
-  Serial.println( IPAddress(feather.gatewayIP()) );
+  Serial.println( IPAddress(Feather.gatewayIP()) );
 
   // print the received signal strength:
-  long rssi = feather.RSSI();
+  long rssi = Feather.RSSI();
   Serial.print("signal strength (RSSI):");
   Serial.print(rssi);
   Serial.println(" dBm");

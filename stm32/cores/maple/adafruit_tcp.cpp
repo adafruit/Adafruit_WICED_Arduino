@@ -85,7 +85,7 @@ void AdafruitTCP::usePacketBuffering(bool enable)
 /******************************************************************************/
 int AdafruitTCP::connect(IPAddress ip, uint16_t port)
 {
-  if ( !feather.connected() ) return 0;
+  if ( !Feather.connected() ) return 0;
 
   uint32_t ipv4 = (uint32_t) ip;
   uint8_t is_tls = 0;
@@ -115,7 +115,7 @@ int AdafruitTCP::connect(IPAddress ip, uint16_t port)
 int AdafruitTCP::connect(const char* host, uint16_t port)
 {
   IPAddress ip;
-  VERIFY( feather.hostByName(host, ip), false );
+  VERIFY( Feather.hostByName(host, ip), false );
   return this->connect(ip, port);
 }
 
@@ -155,7 +155,7 @@ int AdafruitTCP::connectSSL(IPAddress ip, uint16_t port)
 int AdafruitTCP::connectSSL(const char* host, uint16_t port)
 {
   IPAddress ip;
-  VERIFY( feather.hostByName(host, ip), false );
+  VERIFY( Feather.hostByName(host, ip), false );
   return this->connectSSL(ip, port);
 }
 

@@ -54,7 +54,7 @@ void setup()
   do{
     Serial.print("Attempting to connect to SSID: ");
     Serial.println(ssid);
-  }while( !feather.connect(ssid, pass) );
+  }while( !Feather.connect(ssid, pass) );
 
   Serial.println("Connected to WiFi");
   printWifiStatus();
@@ -118,15 +118,15 @@ void loop()
 void printWifiStatus() {
   // print the SSID of the network you're attached to:
   Serial.print("SSID: ");
-  Serial.println(feather.SSID());
+  Serial.println(Feather.SSID());
 
   // print your WiFi shield's IP address:
-  IPAddress ip = feather.localIP();
+  IPAddress ip = Feather.localIP();
   Serial.print("IP Address: ");
   Serial.println(ip);
 
   // print the received signal strength:
-  long rssi = feather.RSSI();
+  long rssi = Feather.RSSI();
   Serial.print("signal strength (RSSI):");
   Serial.print(rssi);
   Serial.println(" dBm");

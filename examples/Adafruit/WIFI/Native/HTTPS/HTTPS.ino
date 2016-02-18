@@ -52,7 +52,7 @@ int connectAP()
   Serial.print(F("Attempting to connect to: "));
   Serial.println(WLAN_SSID);
 
-  int error = feather.connectAP(WLAN_SSID, WLAN_PASS);
+  int error = Feather.connectAP(WLAN_SSID, WLAN_PASS);
 
   if (error == 0)
   {
@@ -99,7 +99,7 @@ void loop() {
   if (wifi_error == 0)
   {
     int https_error = -1;
-    if ( (https_error = feather.httpsRequest(URL, root_ca_cert, CONTENT, METHOD, BUFFER_LENGTH, result_buf) ) == 0)
+    if ( (https_error = Feather.httpsRequest(URL, root_ca_cert, CONTENT, METHOD, BUFFER_LENGTH, result_buf) ) == 0)
     {
       Serial.println(F("Download Completed!\r\n"));
       Serial.println((char*)result_buf);

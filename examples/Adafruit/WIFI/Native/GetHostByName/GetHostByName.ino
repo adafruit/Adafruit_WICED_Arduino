@@ -34,13 +34,13 @@ bool connectAP(void)
   Serial.print("Attempting to connect to: ");
   Serial.println(WLAN_SSID);
   
-  if ( feather.connect(WLAN_SSID, WLAN_PASS) )
+  if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
   {
     Serial.println("Connected!");
   }
   else
   {
-    Serial.printf("Failed! %s (%d)", feather.errstr(), feather.errno());
+    Serial.printf("Failed! %s (%d)", Feather.errstr(), Feather.errno());
     Serial.println();
   }
   Serial.println("");
@@ -61,7 +61,7 @@ void setup()
   Serial.println("GetHostByName Example\r\n");
 
   // Set disconnection callback
-  feather.setDisconnectCallback(disconnect_callback);
+  Feather.setDisconnectCallback(disconnect_callback);
 
   connectAP();
 }
@@ -73,17 +73,17 @@ void setup()
 /**************************************************************************/
 void loop()
 { 
-  if ( feather.connected() )
+  if ( Feather.connected() )
   {
     // Resolve and ping hostname
     IPAddress ipaddr;
    
-    ipaddr = feather.hostByName(target_hostname);
+    ipaddr = Feather.hostByName(target_hostname);
     Serial.print(target_hostname);
     Serial.print(": ");
     Serial.println(ipaddr);
     
-    ipaddr = feather.hostByName(target_ip_str);
+    ipaddr = Feather.hostByName(target_ip_str);
     Serial.print(target_ip_str);
     Serial.print(": ");
     Serial.println(ipaddr);
