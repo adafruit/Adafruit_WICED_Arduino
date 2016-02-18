@@ -34,8 +34,7 @@
 
 #define HTTPS_PORT            443
 
-#define LOCAL_SERVER         "192.168.0.21"
-
+#define S3_SERVER             "adafruit-download.s3.amazonaws.com"
 
 // Some server such as facebook check the user_agent header to
 // return data accordingly. Setting curl to mimics command line browser !!
@@ -45,7 +44,7 @@
 int ledPin = PA15;
 
 // Change the SERVER_ID to match the generated certificates.h
-#define SERVER_ID    13
+#define SERVER_ID    14
 
 const char * server_arr[][2] =
 {
@@ -62,10 +61,10 @@ const char * server_arr[][2] =
     [10] = { "twitter.com"          , "/" },
     [11] = { "www.flickr.com"       , "/" },
 
-    // Local server, 
-    [12] = { LOCAL_SERVER, "/text_10KB.txt" },
-    [13] = { LOCAL_SERVER, "/text_100KB.txt"},
-    [14] = { LOCAL_SERVER, "/text_1MB.txt"  },
+    // S3 server to test large files, 
+    [12] = { S3_SERVER, "/text_10KB.txt" },
+    [13] = { S3_SERVER, "/text_100KB.txt"},
+    [14] = { S3_SERVER, "/text_1MB.txt"  },
     
 };
 
