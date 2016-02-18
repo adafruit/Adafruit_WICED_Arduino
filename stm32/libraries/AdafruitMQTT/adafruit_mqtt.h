@@ -46,11 +46,11 @@ class MQTTString
 {
 public:
   int len;
-	const char* data;
+  const char* data;
 
-	MQTTString(const char* cstring            ) { len = strlen(cstring); data = cstring;  }
-	MQTTString(const char* bytes, int size    ) { len = size; data = bytes;               }
-	MQTTString(const uint8_t* bytes, int size ) { len = size; data = (const char*) bytes; }
+  MQTTString(const char* cstring            ) { len = strlen(cstring); data = cstring;  }
+  MQTTString(const char* bytes, int size    ) { len = size; data = bytes;               }
+  MQTTString(const uint8_t* bytes, int size ) { len = size; data = (const char*) bytes; }
 
   MQTTString& operator = (const MQTTString& rhs)
   {
@@ -76,52 +76,50 @@ protected:
   uint8_t    _will_qos;
 
 public:
-	AdafruitMQTT(const char * clientID, const char* username, const char* password)
-	{
-	  _packet_buffering = true;
-	  _clientID = clientID;
-	  _username = username;
-	  _password = password;
-	}
+  AdafruitMQTT(const char * clientID, const char* username, const char* password)
+  {
+      _packet_buffering = true;
+      _clientID = clientID;
+      _username = username;
+      _password = password;
+  }
 
-	AdafruitMQTT(const char* username, const char* password)
-	{
-	  _packet_buffering = true;
-	  _username = username;
-	  _password = password;
-	  _clientID = NULL;
-	}
+  AdafruitMQTT(const char* username, const char* password)
+  {
+    _packet_buffering = true;
+    _username = username;
+    _password = password;
+    _clientID = NULL;
+  }
 
-	AdafruitMQTT(const char * clientID)
-	{
-	  _packet_buffering = true;
-	  _clientID = clientID;
-	  _username = _password = NULL;
-	}
+  AdafruitMQTT(const char * clientID)
+  {
+    _packet_buffering = true;
+    _clientID = clientID;
+    _username = _password = NULL;
+  }
 
-	AdafruitMQTT()
-	{
-	  _packet_buffering = true;
-	  _clientID = _username = _password = NULL;
-	}
+  AdafruitMQTT()
+  {
+    _packet_buffering = true;
+    _clientID = _username = _password = NULL;
+  }
 
   // Set MQTT last will topic, payload, QOS, and retain. This needs
   // to be called before connect() because it is sent as part of the
   // connect control packet.
-	void will(MQTTString topic, MQTTString message, uint8_t qos =0, uint8_t retained =0)
-	{
-	  _will_topic    = topic;
-	  _will_message  = message;
-	  _will_qos      = qos;
-	  _will_retained = retained;
-	}
+  void will(MQTTString topic, MQTTString message, uint8_t qos =0, uint8_t retained =0)
+  {
+    _will_topic    = topic;
+    _will_message  = message;
+    _will_qos      = qos;
+    _will_retained = retained;
+  }
 
-	// Overwrite AdafruitTCP connect()
+  // Overwrite AdafruitTCP connect()
   virtual int connect   (IPAddress ip, uint16_t port);
   virtual int connectSSL(IPAddress ip, uint16_t port);
 
 };
-
-
 
 #endif /* _ADAFRUIT_MQTT_H__ */
