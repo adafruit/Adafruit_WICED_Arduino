@@ -75,11 +75,11 @@ public:
   virtual int     connect ( IPAddress ip, uint16_t port );
   virtual int     connect ( const char * host, uint16_t port );
 
-  int connectSSL(IPAddress ip, uint16_t port);
-	int connectSSL(const char* host, uint16_t port);
+  virtual int connectSSL(IPAddress ip, uint16_t port);
+	virtual int connectSSL(const char* host, uint16_t port);
 
-//  int connectSSL(IPAddress ip, uint16_t port, char const* common_name = NULL);
-//	int connectSSL(const char* host, uint16_t port, char const* common_name = NULL);
+// virtual int connectSSL(IPAddress ip, uint16_t port, char const* common_name = NULL);
+// virtual int connectSSL(const char* host, uint16_t port, char const* common_name = NULL);
 
   virtual uint8_t connected( void );
   virtual void    stop    ( void );

@@ -313,6 +313,9 @@ void AdafruitTCP::install_callback(void)
   bool rx_enabled         = (rx_callback != NULL);
   bool disconnect_enabled = (disconnect_callback != NULL);
 
+  // no callbacks are enabled
+  if ( !(connect_enabled || rx_enabled || disconnect_enabled) ) return;
+
   uint32_t this_value = (uint32_t) this;
 
   sdep_cmd_para_t para_arr[] =

@@ -1,13 +1,13 @@
 /**************************************************************************/
 /*!
-    @file     AdafruitNet.h
+    @file     adafruit_mqtt.cpp
     @author   hathach
 
     @section LICENSE
 
     Software License Agreement (BSD License)
 
-    Copyright (c) 2015, Adafruit Industries (adafruit.com)
+    Copyright (c) 2016, Adafruit Industries (adafruit.com)
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -34,28 +34,21 @@
 */
 /**************************************************************************/
 
-#ifndef _ADAFRUITNET_H_
-#define _ADAFRUITNET_H_
+#include "adafruit_mqtt.h"
 
-#include <Arduino.h>
-#include <Client.h>
-#include <IPAddress.h>
-#include <adafruit_feather.h>
-
-#define HTTPCLIENT_MAX_HEADER  10
-
-class HTTPClient : public AdafruitTCP
+int AdafruitMQTT::connect ( IPAddress ip, uint16_t port )
 {
-protected:
-  const char* _headers[HTTPCLIENT_MAX_HEADER];
-  uint8_t _header_count;
-
-public:
-	HTTPClient();
-
-	bool addHeader(const char* header);
-	int get(char const * hostname, char const *uri);
-};
+  // Call AdafruitTCP connect
+  ((AdafruitTCP*) this)->connect(ip, port);
 
 
-#endif /* _ADAFRUITNET_H_ */
+}
+
+int AdafruitMQTT::connectSSL(IPAddress ip, uint16_t port)
+{
+  // Call AdafruitTCP connect
+  ((AdafruitTCP*) this)->connectSSL(ip, port);
+
+
+}
+
