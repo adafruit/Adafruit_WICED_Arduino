@@ -44,22 +44,32 @@ class AdafruitSDEP
 {
 protected:
   err_t _errno;
-  bool  _err_verbose;
+  bool  _err_print;
+  bool  _err_halt;
+
+  void  handle_error(void)
+  {
+    if (_err_print && (ERROR_NONE != _errno))
+    {
+      Serial.printf("\r\nSDEP Error: %s (%d)\r\n", errstr(), errno());
+    }
+
+    if ( _err_halt && (ERROR_NONE != _errno) )
+    {
+      Serial.println("\r\n--- HALTED ---\r\n");
+      while(1) delay(1);
+    }
+  }
 
 public:
-  AdafruitSDEP() { _errno = ERROR_NONE; _err_verbose = false; }
+  AdafruitSDEP() { _errno = ERROR_NONE; _err_print = _err_halt = false; }
 
   bool sdep(uint16_t  cmd_id       ,
             uint16_t  param_len    , void const* p_param,
             uint16_t* p_result_len , void* p_result)
   {
     _errno = FEATHERLIB->sdep_execute(cmd_id, param_len, p_param, p_result_len, p_result);
-
-    if (_err_verbose && (ERROR_NONE != _errno))
-    {
-      Serial.printf("\r\nSDEP Error: %s (%d)\r\n", errstr(), errno());
-    }
-
+    handle_error();
     return (ERROR_NONE == _errno);
   }
 
@@ -68,16 +78,10 @@ public:
               uint16_t* p_result_len , void* p_result)
   {
     _errno = FEATHERLIB->sdep_execute_n(cmd_id, para_count, para_arr, p_result_len, p_result);
-
-    if (_err_verbose && (ERROR_NONE != _errno))
-    {
-      Serial.printf("\r\nSDEP Error: %s (%d)\r\n", errstr(), errno());
-    }
-
+    handle_error();
     return (ERROR_NONE == _errno);
   }
 
-  void        errverbose (bool enabled ) { _err_verbose = enabled; }
   err_t       errno      (void         ) { return _errno; }
   char const* errstr     (void         )
   {
@@ -86,6 +90,8 @@ public:
 
     return p_str ? p_str : "Unknown Error";
   }
+  void        erractions (bool print, bool halt) { _err_print = print; _err_halt = halt; }
+
 };
 
 // TODO move to appropriate place

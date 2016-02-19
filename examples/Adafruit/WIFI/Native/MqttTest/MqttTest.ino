@@ -79,34 +79,23 @@ void setup()
     delay(500); // delay between each attempt
   }
   
-  // Configrue MQTT to auto print out error
-  mqtt.errverbose(true);
+  // MQTT to auto print out error code & halted
+  mqtt.erractions(true, true);
 
   // Will must be set before connect, since it is part of connect data
   mqtt.will(TOPIC, WILL_MESSAGE, MQTT_QOS_AT_LEAST_ONCE);
 
   Serial.printf("Connecting to " BROKER_HOST " port %d ... ", BROKER_PORT);
-  if ( !mqtt.connect(BROKER_HOST, BROKER_PORT) )
-  {
-    while(1) delay(1);
-  }
+  mqtt.connect(BROKER_HOST, BROKER_PORT); 
   Serial.println("OK");
 
   Serial.print("Publishing to " TOPIC " ... ");
-  if ( !mqtt.publish(TOPIC, PUBLISH_MESSAGE) )
-  {
-    while(1) delay(1);
-  }
+  mqtt.publish(TOPIC, PUBLISH_MESSAGE); // halted if failed
   Serial.println("OK");
 
-  
   Serial.print("Suscribing to " SUBSCRIBED_TOPIC " ... ");
-  if ( !mqtt.subscribe(SUBSCRIBED_TOPIC, MQTT_QOS_AT_MOST_ONCE, subscribed_callback) )
-  {
-    while(1) delay(1);
-  }
+  mqtt.subscribe(SUBSCRIBED_TOPIC, MQTT_QOS_AT_MOST_ONCE, subscribed_callback); // halted if failed
   Serial.println("OK");
-
 
   // To test Will message, pull out power and wait for Keep Alive interval to pass 
   // (default is 60 seconds)
