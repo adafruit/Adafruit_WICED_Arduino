@@ -57,7 +57,7 @@ public:
 
     if (_err_verbose && (ERROR_NONE != _errno))
     {
-      Serial.printf("\r\nFailed! %s (%d)\r\n", errstr(), errno());
+      Serial.printf("\r\nSDEP Error: %s (%d)\r\n", errstr(), errno());
     }
 
     return (ERROR_NONE == _errno);
