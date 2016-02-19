@@ -28,6 +28,11 @@ void disconnect_callback(void)
   Serial.println("disconnect_callback(): Disconnected");
 }
 
+/**************************************************************************/
+/*!
+    @brief  Connect to defined Access Point
+*/
+/**************************************************************************/
 bool connectAP(void)
 {
   // Attempt to connect to an AP

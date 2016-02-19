@@ -65,6 +65,9 @@ bool AdafruitMQTT::connect ( IPAddress ip, uint16_t port )
   VERIFY ( tcp.connect(ip, port) );
   _connected = connectBroker();
 
+  // close TCP if failed to connect
+  if (!_connected) tcp.stop();
+
   return _connected;
 }
 
@@ -81,6 +84,9 @@ bool AdafruitMQTT::connectSSL(IPAddress ip, uint16_t port)
   // Call AdafruitTCP connect
   VERIFY( tcp.connectSSL(ip, port) );
   _connected = connectBroker();
+
+  // close TCP if failed to connect
+  if (!_connected) tcp.stop();
 
   return _connected;
 }
@@ -99,6 +105,7 @@ bool AdafruitMQTT::disconnect ( void )
 
   // Send Disconnect Packet to Broker
   VERIFY( sdep(SDEP_CMD_MQTTDISCONNECT, 4, &_mqtt_handle, NULL, NULL) );
+  _mqtt_handle = 0;
 
   // Disconnect TCP
   tcp.stop();

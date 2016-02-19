@@ -15,18 +15,22 @@
 #include <adafruit_feather.h>
 #include <adafruit_mqtt.h>
 
-#define WLAN_SSID      "thach"
-#define WLAN_PASS      "thach367"
+#define WLAN_SSID       "thach"
+#define WLAN_PASS       "thach367"
 
 // Public Broker description http://test.mosquitto.org/
 // 1883 : MQTT, unencrypted
 // 8883 : MQTT, encrypted
-#define BROKER_HOST    "test.mosquitto.org"
-#define BROKER_PORT    1883
+#define BROKER_HOST     "test.mosquitto.org"
+#define BROKER_PORT     1883
 
-#define CLIENTID       "Adafruit Feather"
-#define WILL_TOPIC     "adafruit/feather/will"
-#define WILL_MESSAGE   "Good Bye!!"
+#define CLIENTID        "Adafruit Feather"
+#define TOPIC           "adafruit/feather"
+
+#define WILL_MESSAGE    "Good Bye!!"
+#define PUBLISH_MESSAGE "Hello from Adafruit WICED Feather"
+
+
 
 // Public user/pass are not required
 AdafruitMQTT mqtt(CLIENTID);
@@ -75,14 +79,22 @@ void setup()
   }
 
   Serial.printf("Connecting to " BROKER_HOST " port %d ... ", BROKER_PORT);
-
   if ( !mqtt.connect(BROKER_HOST, BROKER_PORT) )
   {
-    Serial.printf("Failed! %s (%d)", Feather.errstr(), Feather.errno());
+    Serial.printf("Failed! %s (%d)", mqtt.errstr(), mqtt.errno());
     while(1) delay(1);
   }
-
   Serial.println("OK");
+
+  Serial.print("Publishing to " TOPIC " ... ");
+  if ( !mqtt.publish(TOPIC, PUBLISH_MESSAGE) )
+  {
+    Serial.printf("Failed! %s (%d)", mqtt.errstr(), mqtt.errno());
+    while(1) delay(1);
+  }
+  Serial.println("OK");
+
+  mqtt.disconnect();
 }
 
 /**************************************************************************/
