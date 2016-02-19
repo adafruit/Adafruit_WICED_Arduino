@@ -255,4 +255,12 @@ public:
 
 extern AdafruitFeather Feather;
 
+//--------------------------------------------------------------------+
+// DEBUG HELPER
+//--------------------------------------------------------------------+
+#define DBG_LOCATION()  Serial.printf("%s: %d: \r\n", __PRETTY_FUNCTION__, __LINE__)
+#define DBG_INT(x)      Serial.printf(#x " = %ld\r\n", (uint32_t) (x) )
+#define DBG_HEX(x)      Serial.printf(#x " = %08lx\r\n", (uint32_t) (x) )
+#define DBG_STR(x)      Serial.printf(#x " = %s\r\n", (char*)(x) )
+
 #endif

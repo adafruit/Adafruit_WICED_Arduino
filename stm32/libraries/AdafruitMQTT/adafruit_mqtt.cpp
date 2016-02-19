@@ -144,5 +144,5 @@ bool AdafruitMQTT::subscribe( const char* topicFilter, uint8_t qos, messageHandl
   };
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
-  return sdep_n(SDEP_CMD_MQTTPUBLISH, para_count, para_arr, NULL, NULL);
+  return sdep_n(SDEP_CMD_MQTTSUBSCRIBE, para_count, para_arr, NULL, NULL);
 }

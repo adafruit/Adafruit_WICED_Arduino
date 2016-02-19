@@ -15,20 +15,22 @@
 #include <adafruit_feather.h>
 #include <adafruit_mqtt.h>
 
-#define WLAN_SSID       "thach"
-#define WLAN_PASS       "thach367"
+#define WLAN_SSID       "yourSSID"
+#define WLAN_PASS       "yourPASS"
 
 // Public Broker description http://test.mosquitto.org/
 // 1883 : MQTT, unencrypted
 // 8883 : MQTT, encrypted
-#define BROKER_HOST     "test.mosquitto.org"
-#define BROKER_PORT     1883
+#define BROKER_HOST       "test.mosquitto.org"
+#define BROKER_PORT       1883
 
-#define CLIENTID        "Adafruit Feather"
-#define TOPIC           "adafruit/feather"
+#define CLIENTID          "Adafruit Feather"
 
-#define WILL_MESSAGE    "Good Bye!!"
-#define PUBLISH_MESSAGE "Hello from Adafruit WICED Feather"
+#define TOPIC             "adafruit/feather"
+#define SUBSCRIBED_TOPIC  "adafruit/*"
+
+#define WILL_MESSAGE      "Good Bye!!"
+#define PUBLISH_MESSAGE   "Hello from Adafruit WICED Feather"
 
 
 // Public user/pass are not required
@@ -76,6 +78,9 @@ void setup()
   {
     delay(500); // delay between each attempt
   }
+  
+  // Configrue MQTT to auto print out error
+  mqtt.errverbose(true);
 
   // Will must be set before connect, since it is part of connect data
   mqtt.will(TOPIC, WILL_MESSAGE, MQTT_QOS_AT_LEAST_ONCE);
@@ -83,7 +88,6 @@ void setup()
   Serial.printf("Connecting to " BROKER_HOST " port %d ... ", BROKER_PORT);
   if ( !mqtt.connect(BROKER_HOST, BROKER_PORT) )
   {
-    Serial.printf("Failed! %s (%d)", mqtt.errstr(), mqtt.errno());
     while(1) delay(1);
   }
   Serial.println("OK");
@@ -91,16 +95,38 @@ void setup()
   Serial.print("Publishing to " TOPIC " ... ");
   if ( !mqtt.publish(TOPIC, PUBLISH_MESSAGE) )
   {
-    Serial.printf("Failed! %s (%d)", mqtt.errstr(), mqtt.errno());
     while(1) delay(1);
   }
   Serial.println("OK");
 
+  
+  Serial.print("Suscribing to " SUBSCRIBED_TOPIC " ... ");
+  if ( !mqtt.subscribe(SUBSCRIBED_TOPIC, MQTT_QOS_AT_MOST_ONCE, subscribed_callback) )
+  {
+    while(1) delay(1);
+  }
+  Serial.println("OK");
+
+
   // To test Will message, pull out power and wait for Keep Alive interval to pass 
   // (default is 60 seconds)
 
-  Serial.print("Disconnect from Broker");
-  mqtt.disconnect();
+  //Serial.print("Disconnect from Broker");
+  //mqtt.disconnect();
+}
+
+/**************************************************************************/
+/*!
+    @brief  Subscribed callback
+    @note message is array of bytes, not null-terminated C string, don't 
+    try to use Serial.print(), use Serial.write() instead
+*/
+/**************************************************************************/
+void subscribed_callback(char* topic, uint8_t* message, size_t len)
+{
+  Serial.printf("[Subscribed] %s : ");
+  Serial.write(message, len);
+  Serial.println();
 }
 
 /**************************************************************************/

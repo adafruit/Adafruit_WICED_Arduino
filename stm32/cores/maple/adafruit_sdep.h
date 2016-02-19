@@ -44,15 +44,22 @@ class AdafruitSDEP
 {
 protected:
   err_t _errno;
+  bool  _err_verbose;
 
 public:
-  AdafruitSDEP() { _errno = ERROR_NONE; }
+  AdafruitSDEP() { _errno = ERROR_NONE; _err_verbose = false; }
 
   bool sdep(uint16_t  cmd_id       ,
             uint16_t  param_len    , void const* p_param,
             uint16_t* p_result_len , void* p_result)
   {
     _errno = FEATHERLIB->sdep_execute(cmd_id, param_len, p_param, p_result_len, p_result);
+
+    if (_err_verbose && (ERROR_NONE != _errno))
+    {
+      Serial.printf("\r\nFailed! %s (%d)\r\n", errstr(), errno());
+    }
+
     return (ERROR_NONE == _errno);
   }
 
@@ -61,11 +68,18 @@ public:
               uint16_t* p_result_len , void* p_result)
   {
     _errno = FEATHERLIB->sdep_execute_n(cmd_id, para_count, para_arr, p_result_len, p_result);
+
+    if (_err_verbose && (ERROR_NONE != _errno))
+    {
+      Serial.printf("\r\nSDEP Error: %s (%d)\r\n", errstr(), errno());
+    }
+
     return (ERROR_NONE == _errno);
   }
 
-  err_t       errno (void)  { return _errno; }
-  char const* errstr(void)
+  void        errverbose (bool enabled ) { _err_verbose = enabled; }
+  err_t       errno      (void         ) { return _errno; }
+  char const* errstr     (void         )
   {
     char const* p_str = NULL;
     FEATHERLIB->sdep_execute(SDEP_CMD_ERROR_STRING, sizeof(err_t), &_errno, NULL, &p_str);

@@ -165,9 +165,9 @@ static inline bool is_within(uint32_t lower, uint32_t value, uint32_t upper)
   return (lower <= value) && (value <= upper);
 }
 
+#if 0
 
-#define DBG_SERIAL FILENO_UART
-//#define DBG_SERIAL FILENO_UART
+#define DBG_SERIAL STDOUT_FILENO
 
 #define DBG_LOCATION()       do {\
     FEATHERLIB->file_write(DBG_SERIAL, (char*) __PRETTY_FUNCTION__, strlen(__PRETTY_FUNCTION__));\
@@ -183,6 +183,7 @@ static inline bool is_within(uint32_t lower, uint32_t value, uint32_t upper)
     FEATHERLIB->file_write(DBG_SERIAL, ch, 1);\
     FEATHERLIB->file_write(DBG_SERIAL, "\r\n", 2);\
   } while(0)
+#endif
 
 #ifdef __cplusplus
  }

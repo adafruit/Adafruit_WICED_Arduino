@@ -194,20 +194,6 @@ extern "C"
                   error,\
                   "expected " BIN8_PRINTF_PATTERN ", actual " BIN8_PRINTF_PATTERN, BIN8_PRINTF_CONVERT(exp), BIN8_PRINTF_CONVERT(act) )
 
-//--------------------------------------------------------------------+
-// DEBUG HELPER
-//--------------------------------------------------------------------+
-
-#define DBG_LOCATION()        fprintf(stderr, "%s: %d: \r\n", __func__, __LINE__)
-#define PRINT_INT(x)          fprintf(stderr, #x " = %ld\r\n", (uint32_t) (x) )
-#define PRINT_HEX(x)          fprintf(stderr, #x " = %08lx\r\n", (uint32_t) (x) )
-#define PRINT_BUFFER(buf, n) \
-  do {\
-    uint8_t* p8 = (uint8_t*) (buf);\
-    fprintf(stderr, #buf ": ");\
-    for(uint32_t i=0; i<(n); i++) fprintf(stderr, "%02x ", p8[i]);\
-    fprintf(stderr, "\r\n");\
-  }while(0)
 
 #ifdef __cplusplus
 }
