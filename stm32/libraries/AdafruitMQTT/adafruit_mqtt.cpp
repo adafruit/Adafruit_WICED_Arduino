@@ -36,15 +36,15 @@
 
 #include "adafruit_mqtt.h"
 
-bool AdafruitMQTT::connectBroker(void)
+bool AdafruitMQTT::connectBroker(bool cleanSession, uint16_t keepalive_sec)
 {
   uint32_t tcp_handle = tcp.getHandle();
 
   sdep_cmd_para_t para_arr[] =
   {
       { .len = 4                   , .p_value = &tcp_handle        },
-      { .len = 2                   , .p_value = &_keepalive_sec    },
-      { .len = 1                   , .p_value = &_cleansession     },
+      { .len = 2                   , .p_value = &keepalive_sec     },
+      { .len = 1                   , .p_value = &cleanSession      },
       // ID                        , user, pass
       { .len = strlen(_clientID)   , .p_value = _clientID          },
       { .len = strlen(_username)   , .p_value = _username          },
@@ -60,10 +60,10 @@ bool AdafruitMQTT::connectBroker(void)
   return sdep_n(SDEP_CMD_MQTTCONNECT, para_count, para_arr, NULL, &_mqtt_handle);
 }
 
-bool AdafruitMQTT::connect ( IPAddress ip, uint16_t port )
+bool AdafruitMQTT::connect ( IPAddress ip, uint16_t port, bool cleanSession, uint16_t keepalive_sec)
 {
   VERIFY ( tcp.connect(ip, port) );
-  _connected = connectBroker();
+  _connected = connectBroker(cleanSession, keepalive_sec);
 
   // close TCP if failed to connect
   if (!_connected) tcp.stop();
@@ -71,19 +71,19 @@ bool AdafruitMQTT::connect ( IPAddress ip, uint16_t port )
   return _connected;
 }
 
-bool AdafruitMQTT::connect ( const char * host, uint16_t port )
+bool AdafruitMQTT::connect ( const char * host, uint16_t port, bool cleanSession, uint16_t keepalive_sec)
 {
   IPAddress ip;
   VERIFY( Feather.hostByName(host, ip) );
-  return this->connect(ip, port);
+  return this->connect(ip, port, cleanSession, keepalive_sec);
 }
 
 
-bool AdafruitMQTT::connectSSL(IPAddress ip, uint16_t port)
+bool AdafruitMQTT::connectSSL(IPAddress ip, uint16_t port, bool cleanSession, uint16_t keepalive_sec)
 {
   // Call AdafruitTCP connect
   VERIFY( tcp.connectSSL(ip, port) );
-  _connected = connectBroker();
+  _connected = connectBroker(cleanSession, keepalive_sec);
 
   // close TCP if failed to connect
   if (!_connected) tcp.stop();
@@ -91,11 +91,11 @@ bool AdafruitMQTT::connectSSL(IPAddress ip, uint16_t port)
   return _connected;
 }
 
-bool AdafruitMQTT::connectSSL ( const char* host, uint16_t port )
+bool AdafruitMQTT::connectSSL ( const char* host, uint16_t port, bool cleanSession, uint16_t keepalive_sec )
 {
   IPAddress ip;
   VERIFY( Feather.hostByName(host, ip) );
-  return this->connectSSL(ip, port);
+  return this->connectSSL(ip, port, cleanSession, keepalive_sec);
 }
 
 bool AdafruitMQTT::disconnect ( void )
@@ -121,13 +121,28 @@ bool AdafruitMQTT::publish( const char* topic, MQTTString message, uint8_t qos, 
   sdep_cmd_para_t para_arr[] =
   {
       { .len = 4             , .p_value = &_mqtt_handle },
-      { .len = 1             , .p_value = &qos          },
-      { .len = 1             , .p_value = &retained     },
       { .len = strlen(topic) , .p_value = topic         },
       { .len = message.len   , .p_value = message.data  },
+      { .len = 1             , .p_value = &qos          },
+      { .len = 1             , .p_value = &retained     },
   };
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
   return sdep_n(SDEP_CMD_MQTTPUBLISH, para_count, para_arr, NULL, NULL);
 }
 
+bool AdafruitMQTT::subscribe( const char* topicFilter, uint8_t qos, messageHandler mh)
+{
+  VERIFY( _connected && topicFilter != NULL && mh != NULL );
+
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = 4                   , .p_value = &_mqtt_handle },
+      { .len = strlen(topicFilter) , .p_value = topicFilter   },
+      { .len = 1                   , .p_value = &qos          },
+      { .len = 4                   , .p_value = &mh            },
+  };
+  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
+
+  return sdep_n(SDEP_CMD_MQTTPUBLISH, para_count, para_arr, NULL, NULL);
+}

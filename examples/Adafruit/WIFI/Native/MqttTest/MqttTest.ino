@@ -31,7 +31,6 @@
 #define PUBLISH_MESSAGE "Hello from Adafruit WICED Feather"
 
 
-
 // Public user/pass are not required
 AdafruitMQTT mqtt(CLIENTID);
 
@@ -78,6 +77,9 @@ void setup()
     delay(500); // delay between each attempt
   }
 
+  // Will must be set before connect, since it is part of connect data
+  mqtt.will(TOPIC, WILL_MESSAGE, MQTT_QOS_AT_LEAST_ONCE);
+
   Serial.printf("Connecting to " BROKER_HOST " port %d ... ", BROKER_PORT);
   if ( !mqtt.connect(BROKER_HOST, BROKER_PORT) )
   {
@@ -94,6 +96,10 @@ void setup()
   }
   Serial.println("OK");
 
+  // To test Will message, pull out power and wait for Keep Alive interval to pass 
+  // (default is 60 seconds)
+
+  Serial.print("Disconnect from Broker");
   mqtt.disconnect();
 }
 

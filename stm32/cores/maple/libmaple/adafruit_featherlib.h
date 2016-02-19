@@ -88,7 +88,10 @@ typedef struct ATTR_ALIGNED(512)
   err_t (*tcp_disconnect_callback)(void* socket, void* p_tcp);
   uint32_t reserved6;
 
-  uint32_t reserved7[8];
+//  void (*mqtt_message_callback)(void* p_mqtt, const char* topic, void* message, size_t messlen);
+  uint32_t reserved7[4];
+
+  uint32_t reserved8[4];
 
   // 256 - 512
   uint32_t reserved100[64];

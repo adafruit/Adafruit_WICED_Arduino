@@ -49,6 +49,8 @@ enum
   MQTT_QOS_EXACTLY_ONCE,
 };
 
+#define MQTT_KEEPALIVE_DEFAULT    60 // in seconds
+
 class MQTTString
 {
 public:
@@ -85,30 +87,28 @@ protected:
   const char * _username;
   const char * _password;
 
-  uint16_t    _keepalive_sec; // in seconds
-  uint8_t     _cleansession;
-
   const char* _will_topic;
   MQTTString  _will_message;
   uint8_t     _will_qos;
   uint8_t     _will_retained;
 
 
-  bool connectBroker(void);
+  bool connectBroker(bool cleanSession, uint16_t keepalive_sec);
   bool init(void)
   {
     _mqtt_handle   = 0;
     _connected     = 0;
     tcp.usePacketBuffering(true);
 
-    _keepalive_sec = 60;
-    _cleansession  = 1;
     _clientID = _username = _password = NULL;
 
     _will_qos = _will_retained = 0;
   }
 
 public:
+  // messageHandler must not be changed since featherlib uses the same signature
+  typedef void (*messageHandler)(char* topic, uint8_t* message, size_t len);
+
   AdafruitMQTT(const char * clientID, const char* username, const char* password)
   {
     init();
@@ -149,15 +149,15 @@ public:
   // API
   bool connected  ( void ) { return _connected; }
 
-  bool connect    ( IPAddress ip, uint16_t port = 1883 );
-  bool connect    ( const char * host, uint16_t port = 1883 );
-  bool connectSSL ( IPAddress ip, uint16_t port = 8883 );
-	bool connectSSL ( const char* host, uint16_t port = 8883 );
+  bool connect    ( IPAddress ip, uint16_t port = 1883, bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
+  bool connect    ( const char * host, uint16_t port = 1883,  bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
+  bool connectSSL ( IPAddress ip, uint16_t port = 8883, bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
+	bool connectSSL ( const char* host, uint16_t port = 8883, bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
 
 	bool disconnect ( void );
 
 	bool publish    ( const char* topic, MQTTString message, uint8_t qos =MQTT_QOS_AT_MOST_ONCE, bool retained = false );
-
+	bool subscribe  ( const char* topicFilter, uint8_t qos, messageHandler mh);
 };
 
 #endif /* _ADAFRUIT_MQTT_H__ */
