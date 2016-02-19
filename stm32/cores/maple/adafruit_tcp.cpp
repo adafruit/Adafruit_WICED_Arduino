@@ -99,7 +99,7 @@ int AdafruitTCP::connect(IPAddress ip, uint16_t port)
   };
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
-  VERIFY(sdep_n(SDEP_CMD_TCP_CONNECT, para_count, para_arr, NULL, &_tcp_handle), false);
+  VERIFY(sdep_n(SDEP_CMD_TCP_CONNECT, para_count, para_arr, NULL, &_tcp_handle));
   this->install_callback();
 
   return true;
@@ -113,7 +113,7 @@ int AdafruitTCP::connect(IPAddress ip, uint16_t port)
 int AdafruitTCP::connect(const char* host, uint16_t port)
 {
   IPAddress ip;
-  VERIFY( Feather.hostByName(host, ip), false );
+  VERIFY( Feather.hostByName(host, ip) );
   return this->connect(ip, port);
 }
 
@@ -139,7 +139,7 @@ int AdafruitTCP::connectSSL(IPAddress ip, uint16_t port)
   };
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t) /*- (common_name ? 0 : 1)*/;
 
-  VERIFY(sdep_n(SDEP_CMD_TCP_CONNECT, para_count , para_arr, NULL, &_tcp_handle), false);
+  VERIFY(sdep_n(SDEP_CMD_TCP_CONNECT, para_count , para_arr, NULL, &_tcp_handle));
 
   this->install_callback();
   return true;
@@ -153,7 +153,7 @@ int AdafruitTCP::connectSSL(IPAddress ip, uint16_t port)
 int AdafruitTCP::connectSSL(const char* host, uint16_t port)
 {
   IPAddress ip;
-  VERIFY( Feather.hostByName(host, ip), false );
+  VERIFY( Feather.hostByName(host, ip) );
   return this->connectSSL(ip, port);
 }
 
@@ -205,7 +205,7 @@ int AdafruitTCP::read(uint8_t* buf, size_t size)
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
   // TODO check case when read bytes < size
-  VERIFY( sdep_n(SDEP_CMD_TCP_READ, para_count, para_arr, &size16, buf), 0);
+  VERIFY_RETURN( sdep_n(SDEP_CMD_TCP_READ, para_count, para_arr, &size16, buf), 0);
 
   _bytesRead += size;
   return size;
@@ -237,7 +237,7 @@ size_t AdafruitTCP::write(const uint8_t* content, size_t len)
   };
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
   
-  VERIFY( sdep_n(SDEP_CMD_TCP_WRITE, para_count, para_arr, NULL, NULL), 0);
+  VERIFY_RETURN( sdep_n(SDEP_CMD_TCP_WRITE, para_count, para_arr, NULL, NULL), 0);
 
   // if packet is not buffered --> send out immediately
   if (!_packet_buffering) this->flush();
@@ -290,11 +290,10 @@ int AdafruitTCP::peek()
       { .len = 4, .p_value = &_tcp_handle },
       { .len = 4, .p_value = &_timeout    },
   };
+  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
   char ch = EOF;
-  sdep_n(SDEP_CMD_TCP_PEEK,
-         sizeof(para_arr)/sizeof(sdep_cmd_para_t), para_arr,
-         NULL, &ch);
+  sdep_n(SDEP_CMD_TCP_PEEK, para_count, para_arr, NULL, &ch);
 
   return (int) ch;
 }
@@ -359,7 +358,7 @@ void AdafruitTCP::stop()
 {
   if ( _tcp_handle == 0 ) return;
 
-  sdep(SDEP_CMD_TCP_CLOSE, 4, &_tcp_handle, NULL, NULL);
+  sdep(SDEP_CMD_TCP_DISCONNECT, 4, &_tcp_handle, NULL, NULL);
   this->reset();
 }
 

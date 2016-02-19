@@ -130,7 +130,8 @@ extern "C"
 #define ASSERT_TRUE(condition  , error)  ASSERT_DEFINE( , (condition), error, "%s", "")
 #define ASSERT_FALSE(condition , error)  ASSERT_DEFINE( ,!(condition), error, "%s", "")
 
-#define VERIFY(condition, error)         VERIFY_DEFINE( , (condition), error)
+#define VERIFY(condition)                if ( !(condition) ) return false;
+#define VERIFY_RETURN(condition, error)  if ( !(condition) ) return error;
 #define VERIFY_RETVOID(condition)        VERIFY_DEFINE( , (condition), VOID_RETURN)
 
 //--------------------------------------------------------------------+

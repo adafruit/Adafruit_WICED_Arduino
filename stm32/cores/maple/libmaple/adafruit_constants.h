@@ -205,7 +205,7 @@ typedef enum {
   SDEP_CMD_TCP_WRITE           = 0x0091,                                                       //!< SDEP_CMD_TCP_WRITE
   SDEP_CMD_TCP_FLUSH           = 0x0092,                                                       //!< SDEP_CMD_TCP_FLUSH
   SDEP_CMD_TCP_READ            = 0x0093,                                                       //!< SDEP_CMD_TCP_READ
-  SDEP_CMD_TCP_CLOSE           = 0x0094,                                                       //!< SDEP_CMD_TCP_CLOSE
+  SDEP_CMD_TCP_DISCONNECT      = 0x0094,                                                       //!< SDEP_CMD_TCP_DISCONNECT
   SDEP_CMD_TCP_AVAILABLE       = 0x0095,                                                       //!< SDEP_CMD_TCP_AVAILABLE
   SDEP_CMD_TCP_PEEK            = 0x0096,                                                       //!< SDEP_CMD_TCP_PEEK
   SDEP_CMD_TCP_STATUS          = 0x0097,                                                       //!< SDEP_CMD_TCP_STATUS

@@ -188,11 +188,11 @@ int AdafruitHTTP::endOfHeaderReached()
       { .len = 4, .p_value = &http_handle },
       { .len = 4, .p_value = &timeout     },
   };
+  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
   uint8_t result;
-  VERIFY(ERROR_NONE == FEATHERLIB->sdep_execute_n(SDEP_CMD_HTTPENDOFHEADER,
-                                                  sizeof(para_arr)/sizeof(sdep_cmd_para_t),
-                                                  para_arr, NULL, &result), 0);
+  if (ERROR_NONE != FEATHERLIB->sdep_execute_n(SDEP_CMD_HTTPENDOFHEADER, para_count, para_arr, NULL, &result) )
+    return 0;
 
   if (result) http_state = HEADER_PASSED;
 
@@ -210,10 +210,9 @@ int AdafruitHTTP::skipHeader()
       { .len = 4, .p_value = &http_handle },
       { .len = 4, .p_value = &timeout     },
   };
+  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
-  int error = FEATHERLIB->sdep_execute_n(SDEP_CMD_HTTPSKIPHEADER,
-                                         sizeof(para_arr)/sizeof(sdep_cmd_para_t),
-                                         para_arr, NULL, NULL);
+  int error = FEATHERLIB->sdep_execute_n(SDEP_CMD_HTTPSKIPHEADER, para_count, para_arr, NULL, NULL);
 
   if (error == ERROR_NONE) http_state = HEADER_PASSED;
 
@@ -248,11 +247,12 @@ int AdafruitHTTP::read(uint8_t* buf, size_t size)
       { .len = 2, .p_value = &size16      },
       { .len = 4, .p_value = &timeout     },
   };
+  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
   // TODO check case when read bytes < size
-  VERIFY(ERROR_NONE == FEATHERLIB->sdep_execute_n(SDEP_CMD_TCP_READ,
-                                                  sizeof(para_arr)/sizeof(sdep_cmd_para_t),
-                                                  para_arr, &size16, buf), -1);
+  if (ERROR_NONE != FEATHERLIB->sdep_execute_n(SDEP_CMD_TCP_READ, para_count, para_arr, &size16, buf))
+    return -1;
+
   if (http_state == HEADER_PASSED) byteRead += size;
   return size;
 }
@@ -262,7 +262,8 @@ int AdafruitHTTP::available()
   if ( http_handle == 0 ) return 0;
 
   uint8_t result;
-  VERIFY(ERROR_NONE == FEATHERLIB->sdep_execute(SDEP_CMD_TCP_AVAILABLE, 4, &http_handle, NULL, &result), 0);
+  if (ERROR_NONE != FEATHERLIB->sdep_execute(SDEP_CMD_TCP_AVAILABLE, 4, &http_handle, NULL, &result))
+    return 0;
 
   return result;
 }
@@ -276,6 +277,6 @@ void AdafruitHTTP::close()
 {
   if ( http_handle == 0 ) return;
 
-  FEATHERLIB->sdep_execute(SDEP_CMD_TCP_CLOSE, 4, &http_handle, NULL, NULL);
+  FEATHERLIB->sdep_execute(SDEP_CMD_TCP_DISCONNECT, 4, &http_handle, NULL, NULL);
   this->reset();
 }

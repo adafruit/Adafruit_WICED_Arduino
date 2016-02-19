@@ -12,28 +12,36 @@
  any redistribution
 *********************************************************************/
 
-#include "adafruit_feather.h"
+#include <adafruit_feather.h>
+#include <adafruit_mqtt.h>
 
-#define WLAN_SSID            "yourSSID"
-#define WLAN_PASS            "yourPassword"
+#define WLAN_SSID      "thach"
+#define WLAN_PASS      "thach367"
 
-// target by hostname
-const char target_hostname[] = "adafruit.com";
+// Public Broker description http://test.mosquitto.org/
+// 1883 : MQTT, unencrypted
+// 8883 : MQTT, encrypted
+#define BROKER_HOST    "test.mosquitto.org"
+#define BROKER_PORT    1883
 
-// target by IP String
-const char target_ip_str[] = "8.8.8.8";
+#define CLIENTID       "Adafruit Feather"
+#define WILL_TOPIC     "adafruit/feather/will"
+#define WILL_MESSAGE   "Good Bye!!"
 
-void disconnect_callback(void)
-{
-  Serial.println("disconnect_callback(): Disconnected");
-}
+// Public user/pass are not required
+AdafruitMQTT mqtt(CLIENTID);
 
+/**************************************************************************/
+/*!
+    @brief  Connect to defined Access Point
+*/
+/**************************************************************************/
 bool connectAP(void)
 {
   // Attempt to connect to an AP
   Serial.print("Attempting to connect to: ");
   Serial.println(WLAN_SSID);
-  
+
   if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
   {
     Serial.println("Connected!");
@@ -56,19 +64,25 @@ bool connectAP(void)
 void setup()
 {
   Serial.begin(115200);
-  
+
   // wait for Serial
   while (!Serial) delay(1);
-
-  Serial.println("GetHostByName Example\r\n");
-
-  // Set disconnection callback
-  Feather.setDisconnectCallback(disconnect_callback);
+  Serial.println("MQTT Test Example\r\n");
 
   while ( !connectAP() )
   {
     delay(500); // delay between each attempt
   }
+
+  Serial.printf("Connecting to " BROKER_HOST " port %d ... ", BROKER_PORT);
+
+  if ( !mqtt.connect(BROKER_HOST, BROKER_PORT) )
+  {
+    Serial.printf("Failed! %s (%d)", Feather.errstr(), Feather.errno());
+    while(1) delay(1);
+  }
+
+  Serial.println("OK");
 }
 
 /**************************************************************************/
@@ -77,25 +91,5 @@ void setup()
 */
 /**************************************************************************/
 void loop()
-{ 
-  if ( Feather.connected() )
-  {
-    // Resolve and ping hostname
-    IPAddress ipaddr;
-   
-    ipaddr = Feather.hostByName(target_hostname);
-    Serial.print(target_hostname);
-    Serial.print(": ");
-    Serial.println(ipaddr);
-    
-    ipaddr = Feather.hostByName(target_ip_str);
-    Serial.print(target_ip_str);
-    Serial.print(": ");
-    Serial.println(ipaddr);
-
-    Serial.println();
-    Serial.println("Try again in 10 seconds");
-    Serial.println();
-    delay(10000);
-  }
+{
 }

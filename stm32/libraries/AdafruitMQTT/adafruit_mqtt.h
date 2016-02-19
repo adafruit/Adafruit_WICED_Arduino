@@ -42,6 +42,13 @@
 #include <IPAddress.h>
 #include <adafruit_feather.h>
 
+enum
+{
+  MQTT_QOS_AT_MOST_ONCE,
+  MQTT_QOS_AT_LEAST_ONCE,
+  MQTT_QOS_EXACTLY_ONCE,
+};
+
 class MQTTString
 {
 public:
@@ -69,7 +76,11 @@ class AdafruitMQTT : public AdafruitSDEP
 {
 protected:
   AdafruitTCP tcp;
+  uint32_t  _mqtt_handle;
 
+  bool _connected;
+
+  // Connect Packet Data
   const char * _clientID;
   const char * _username;
   const char * _password;
@@ -77,23 +88,24 @@ protected:
   uint16_t    _keepalive_sec; // in seconds
   uint8_t     _cleansession;
 
-  MQTTString _will_topic;
-  MQTTString _will_message;
-  uint8_t    _will_qos;
-  uint8_t    _will_retained;
+  const char* _will_topic;
+  MQTTString  _will_message;
+  uint8_t     _will_qos;
+  uint8_t     _will_retained;
 
-  uint32_t  _mqtt_handle;
 
   bool connectBroker(void);
   bool init(void)
   {
-    _keepalive_sec = 60;
-    _cleansession  = 1;
     _mqtt_handle   = 0;
-
+    _connected     = 0;
     tcp.usePacketBuffering(true);
 
+    _keepalive_sec = 60;
+    _cleansession  = 1;
     _clientID = _username = _password = NULL;
+
+    _will_qos = _will_retained = 0;
   }
 
 public:
@@ -126,7 +138,7 @@ public:
   // Set MQTT last will topic, payload, QOS, and retain. This needs
   // to be called before connect() because it is sent as part of the
   // connect control packet.
-  void will(MQTTString topic, MQTTString message, uint8_t qos =0, uint8_t retained =0)
+  void will(const char* topic, MQTTString message, uint8_t qos =MQTT_QOS_AT_MOST_ONCE, uint8_t retained =0)
   {
     _will_topic    = topic;
     _will_message  = message;
@@ -135,10 +147,16 @@ public:
   }
 
   // API
+  bool connected  ( void ) { return _connected; }
+
   bool connect    ( IPAddress ip, uint16_t port = 1883 );
   bool connect    ( const char * host, uint16_t port = 1883 );
   bool connectSSL ( IPAddress ip, uint16_t port = 8883 );
 	bool connectSSL ( const char* host, uint16_t port = 8883 );
+
+	bool disconnect ( void );
+
+	bool publish    ( const char* topic, MQTTString message, uint8_t qos =MQTT_QOS_AT_MOST_ONCE, bool retained = false );
 
 };
 

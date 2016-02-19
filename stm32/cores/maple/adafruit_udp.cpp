@@ -122,7 +122,7 @@ int AdafruitUDP::parsePacket()
   };
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
-  VERIFY(sdep_n(SDEP_CMD_UDP_PACKET_INFO, para_count, para_arr, NULL, &response), 0);
+  VERIFY_RETURN(sdep_n(SDEP_CMD_UDP_PACKET_INFO, para_count, para_arr, NULL, &response), 0);
 
   _rcvIP   = response.remote_ip;
   _rcvPort = response.remote_port;
@@ -184,7 +184,7 @@ int AdafruitUDP::read(unsigned char* buf, size_t size)
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
   // TODO check case when read bytes < size
-  VERIFY(sdep_n(SDEP_CMD_UDP_READ, para_count, para_arr, &size16, buf), -1);
+  VERIFY_RETURN(sdep_n(SDEP_CMD_UDP_READ, para_count, para_arr, &size16, buf), -1);
 
   _bytesRead += size;
   return size;
@@ -207,7 +207,7 @@ int AdafruitUDP::peek()
   };
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
-  VERIFY(sdep_n(SDEP_CMD_UDP_PEEK, para_count, para_arr, NULL, &data), -1);
+  VERIFY_RETURN(sdep_n(SDEP_CMD_UDP_PEEK, para_count, para_arr, NULL, &data), -1);
   return (int) data;
 }
 
@@ -221,7 +221,7 @@ int AdafruitUDP::available()
   if ( _udp_handle == 0 ) return 0;
 
   int32_t result = 0;
-  VERIFY(sdep(SDEP_CMD_UDP_AVAILABLE, 4, &_udp_handle, NULL, &result), 0);
+  VERIFY_RETURN(sdep(SDEP_CMD_UDP_AVAILABLE, 4, &_udp_handle, NULL, &result), 0);
 
   return result;
 }
@@ -294,7 +294,7 @@ size_t AdafruitUDP::write(const uint8_t* buffer, size_t size)
   };
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
-  VERIFY(sdep_n(SDEP_CMD_UDP_WRITE, para_count, para_arr, NULL, NULL), 0);
+  VERIFY_RETURN(sdep_n(SDEP_CMD_UDP_WRITE, para_count, para_arr, NULL, NULL), 0);
   return size;
 }
 

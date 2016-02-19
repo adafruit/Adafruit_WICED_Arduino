@@ -42,18 +42,18 @@ bool AdafruitMQTT::connectBroker(void)
 
   sdep_cmd_para_t para_arr[] =
   {
-      { .len = 4                 , .p_value = &tcp_handle       },
-      { .len = 2                 , .p_value = &_keepalive        },
-      { .len = 1                 , .p_value = &_cleansession     },
-      // ID, user, pass
-      { .len = strlen(_clientID) , .p_value = _clientID          },
-      { .len = strlen(_username) , .p_value = _username          },
-      { .len = strlen(_password) , .p_value = _password          },
+      { .len = 4                   , .p_value = &tcp_handle        },
+      { .len = 2                   , .p_value = &_keepalive_sec    },
+      { .len = 1                   , .p_value = &_cleansession     },
+      // ID                        , user, pass
+      { .len = strlen(_clientID)   , .p_value = _clientID          },
+      { .len = strlen(_username)   , .p_value = _username          },
+      { .len = strlen(_password)   , .p_value = _password          },
       // will para
-      { .len = _will_topic.len   , .p_value = _will_topic.data   },
-      { .len = _will_message.len , .p_value = _will_message.data },
-      { .len = 1                 , .p_value = &_will_qos         },
-      { .len = 1                 , .p_value = &_will_retained    },
+      { .len = strlen(_will_topic) , .p_value = _will_topic        },
+      { .len = _will_message.len   , .p_value = _will_message.data },
+      { .len = 1                   , .p_value = &_will_qos         },
+      { .len = 1                   , .p_value = &_will_retained    },
   };
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
@@ -62,14 +62,16 @@ bool AdafruitMQTT::connectBroker(void)
 
 bool AdafruitMQTT::connect ( IPAddress ip, uint16_t port )
 {
-  VERIFY ( tcp.connect(ip, port), false);
-  return connectBroker();
+  VERIFY ( tcp.connect(ip, port) );
+  _connected = connectBroker();
+
+  return _connected;
 }
 
 bool AdafruitMQTT::connect ( const char * host, uint16_t port )
 {
   IPAddress ip;
-  VERIFY( Feather.hostByName(host, ip), false );
+  VERIFY( Feather.hostByName(host, ip) );
   return this->connect(ip, port);
 }
 
@@ -77,14 +79,48 @@ bool AdafruitMQTT::connect ( const char * host, uint16_t port )
 bool AdafruitMQTT::connectSSL(IPAddress ip, uint16_t port)
 {
   // Call AdafruitTCP connect
-  VERIFY( tcp.connectSSL(ip, port), false);
-  return connectBroker();
+  VERIFY( tcp.connectSSL(ip, port) );
+  _connected = connectBroker();
+
+  return _connected;
 }
 
 bool AdafruitMQTT::connectSSL ( const char* host, uint16_t port )
 {
   IPAddress ip;
-  VERIFY( Feather.hostByName(host, ip), false );
+  VERIFY( Feather.hostByName(host, ip) );
   return this->connectSSL(ip, port);
+}
+
+bool AdafruitMQTT::disconnect ( void )
+{
+  // skip if not connected
+  if ( !_connected ) return true;
+
+  // Send Disconnect Packet to Broker
+  VERIFY( sdep(SDEP_CMD_MQTTDISCONNECT, 4, &_mqtt_handle, NULL, NULL) );
+
+  // Disconnect TCP
+  tcp.stop();
+
+  _connected = false;
+  return true;
+}
+
+bool AdafruitMQTT::publish( const char* topic, MQTTString message, uint8_t qos, bool retained )
+{
+  VERIFY( _connected );
+
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = 4             , .p_value = &_mqtt_handle },
+      { .len = 1             , .p_value = &qos          },
+      { .len = 1             , .p_value = &retained     },
+      { .len = strlen(topic) , .p_value = topic         },
+      { .len = message.len   , .p_value = message.data  },
+  };
+  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
+
+  return sdep_n(SDEP_CMD_MQTTPUBLISH, para_count, para_arr, NULL, NULL);
 }
 

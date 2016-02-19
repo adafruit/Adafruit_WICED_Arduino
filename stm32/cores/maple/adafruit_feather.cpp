@@ -167,7 +167,7 @@ bool AdafruitFeather::connect(void)
 /******************************************************************************/
 bool AdafruitFeather::connect(const char *ssid)
 {
-  VERIFY(ssid != NULL && strlen(ssid) > 0, false);
+  VERIFY(ssid != NULL && strlen(ssid) > 0);
 
   uint16_t resp_len = sizeof(wl_ap_info_t);
   _connected = sdep(SDEP_CMD_CONNECT, strlen(ssid), ssid,
@@ -182,7 +182,7 @@ bool AdafruitFeather::connect(const char *ssid)
 /******************************************************************************/
 bool AdafruitFeather::connect(const char *ssid, const char *key, int enc_type)
 {
-  VERIFY(ssid != NULL && strlen(ssid) > 0, false);
+  VERIFY(ssid != NULL && strlen(ssid) > 0);
 
   sdep_cmd_para_t para_arr[] =
   {
@@ -419,10 +419,10 @@ IPAddress AdafruitFeather::hostByName( const char* hostname)
 /******************************************************************************/
 bool AdafruitFeather::hostByName( const char* hostname, IPAddress& result)
 {
-  VERIFY(_connected, false);
+  VERIFY(_connected);
 
   uint32_t ip_addr = 0;
-  VERIFY( sdep(SDEP_CMD_DNSLOOKUP, strlen(hostname), hostname, NULL, &ip_addr), false);
+  VERIFY( sdep(SDEP_CMD_DNSLOOKUP, strlen(hostname), hostname, NULL, &ip_addr) );
 
   result = ip_addr;
   return true;
@@ -477,7 +477,7 @@ uint32_t AdafruitFeather::ping(IPAddress ipaddr)
 int AdafruitFeather::scanNetworks(wl_ap_info_t ap_list[], uint8_t max_ap)
 {
   uint16_t length = max_ap*sizeof(wl_ap_info_t);
-  VERIFY( sdep(SDEP_CMD_SCAN, 0, NULL, &length, ap_list), 0);
+  VERIFY_RETURN( sdep(SDEP_CMD_SCAN, 0, NULL, &length, ap_list), 0);
 
   return length/sizeof(wl_ap_info_t);
 }
@@ -673,7 +673,7 @@ bool AdafruitFeather::getISO8601Time(iso8601_time_t* iso8601_time)
 uint32_t AdafruitFeather::getUtcTime(void)
 {
   uint32_t utc_time;
-  VERIFY ( sdep(SDEP_CMD_GET_UTC_TIME, 0, NULL, NULL, &utc_time), 0);
+  VERIFY_RETURN(sdep(SDEP_CMD_GET_UTC_TIME, 0, NULL, NULL, &utc_time), 0);
 
   return utc_time;
 }
