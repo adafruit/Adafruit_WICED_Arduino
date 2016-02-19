@@ -94,7 +94,7 @@ protected:
   // If enabled, data is written to a buffer until the network packet is full
   // (~1500 bytes) or until .flush() is called
   // Default = false (buffering disabled)
-	bool     _packet_buffering;
+  bool     _packet_buffering;
 
   // Callback prototypes
   tcpcallback_t rx_callback;
