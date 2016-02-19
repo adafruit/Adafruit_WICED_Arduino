@@ -106,26 +106,18 @@ bool connectAP(void)
   return Feather.connected();
 }
 
-void receive_callback(AdafruitTCP* pTCP)
+void receive_callback(void)
 { 
   // if there are incoming bytes available
   // from the server, read then print them:
-#if 0
-  while (pTCP->available() > 0 )
-  {
-    char c = pTCP->read();
-    Serial.write( (isprint(c) || iscntrl(c)) ? c : '.');
-  }
-#else
   int c;
-  while ( (c = pTCP->read())> 0 )
+  while ( (c = http.read())> 0 )
   {
     Serial.write( (isprint(c) || iscntrl(c)) ? ((char)c) : '.');
   }
-#endif
 }
 
-void disconnect_callback(AdafruitTCP* pTCP)
+void disconnect_callback(void)
 { 
   Serial.println();
   Serial.println("---------------------");

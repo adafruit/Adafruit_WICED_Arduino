@@ -50,23 +50,9 @@ extern "C"
 
 class AdafruitTCP : public Client, public AdafruitSDEP
 {
-protected:
-  uint32_t  _tcp_handle;
-  uint32_t  _bytesRead;
-
-  // If enabled, data is written to a buffer until the network packet is full
-  // (~1500 bytes) or until .flush() is called
-  // Default = false (buffering disabled)
-	bool     _packet_buffering;
-
-  // Callback prototypes
-  void (*rx_callback)         (AdafruitTCP* pTCP);
-  void (*disconnect_callback) (AdafruitTCP* pTCP);
-
-  void install_callback ( void );
-  void reset            ( void );
-
 public:
+  typedef void (*tcpcallback_t)(void);
+
   AdafruitTCP ( void );
   virtual ~AdafruitTCP();
 
@@ -95,11 +81,27 @@ public:
   using Print::write;
 
   // Set callback handlers
-  void setReceivedCallback    ( void (*fp) (AdafruitTCP* pTCP) );
-  void setDisconnectCallback  ( void (*fp) (AdafruitTCP* pTCP) );
+  void setReceivedCallback    ( tcpcallback_t fp );
+  void setDisconnectCallback  ( tcpcallback_t fp );
 
   friend err_t adafruit_tcp_receive_callback(void* socket, void* p_tcp);
   friend err_t adafruit_tcp_disconnect_callback(void* socket, void* p_tcp);
+
+protected:
+  uint32_t  _tcp_handle;
+  uint32_t  _bytesRead;
+
+  // If enabled, data is written to a buffer until the network packet is full
+  // (~1500 bytes) or until .flush() is called
+  // Default = false (buffering disabled)
+	bool     _packet_buffering;
+
+  // Callback prototypes
+  tcpcallback_t rx_callback;
+  tcpcallback_t disconnect_callback;
+
+  void install_callback ( void );
+  void reset            ( void );
 };
 
 #endif

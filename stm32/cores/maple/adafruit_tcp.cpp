@@ -334,7 +334,7 @@ void AdafruitTCP::install_callback(void)
     @brief  Sets the data received callback for the user code
 */
 /******************************************************************************/
-void AdafruitTCP::setReceivedCallback( void (*fp) (AdafruitTCP* pTCP) )
+void AdafruitTCP::setReceivedCallback( tcpcallback_t fp )
 {
   rx_callback = fp;
 }
@@ -344,7 +344,7 @@ void AdafruitTCP::setReceivedCallback( void (*fp) (AdafruitTCP* pTCP) )
     @brief  Sets the disconnect callback for the user code
 */
 /******************************************************************************/
-void AdafruitTCP::setDisconnectCallback( void (*fp) (AdafruitTCP* pTCP))
+void AdafruitTCP::setDisconnectCallback( tcpcallback_t fp )
 {
   disconnect_callback = fp;
 }
@@ -378,7 +378,7 @@ err_t adafruit_tcp_receive_callback(void* socket, void* p_tcp)
   // Integrity check
   if ( *((uint32_t*) pTCP->_tcp_handle) == ((uint32_t) socket) )
   {
-    if (pTCP->rx_callback) pTCP->rx_callback(pTCP);
+    if (pTCP->rx_callback) pTCP->rx_callback();
   }
 
   return ERROR_NONE;
@@ -391,7 +391,7 @@ err_t adafruit_tcp_disconnect_callback(void* socket, void* p_tcp)
   // Integrity check
   if ( *((uint32_t*) pTCP->_tcp_handle) == ((uint32_t) socket) )
   {
-    if (pTCP->disconnect_callback) pTCP->disconnect_callback(pTCP);
+    if (pTCP->disconnect_callback) pTCP->disconnect_callback();
   }
 
   return ERROR_NONE;
