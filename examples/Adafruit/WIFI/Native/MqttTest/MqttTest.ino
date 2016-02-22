@@ -27,7 +27,7 @@
 #define CLIENTID          "Adafruit Feather"
 
 #define TOPIC             "adafruit/feather"
-#define SUBSCRIBED_TOPIC  "adafruit/*"
+#define SUBSCRIBED_TOPIC  "adafruit/+"  // All topic within adafruit/
 
 #define WILL_MESSAGE      "Good Bye!!"
 #define PUBLISH_MESSAGE   "Hello from Adafruit WICED Feather"
@@ -107,15 +107,21 @@ void setup()
 /**************************************************************************/
 /*!
     @brief  Subscribed callback
-    @note message is array of bytes, not null-terminated C string, don't 
-    try to use Serial.print(), use Serial.write() instead
+    @note topic and message are UTF8 String (len+data), not null-terminated C string, 
+    don't try to use Serial.print() directly. Try to use Serial.write() instead or 
+    MQTTString datatype.
 */
 /**************************************************************************/
-void subscribed_callback(char* topic, uint8_t* message, size_t len)
+void subscribed_callback(char* topic_data, size_t topic_len, uint8_t* mess_data, size_t mess_len)
 {
-  Serial.printf("[Subscribed] %s : ");
-  Serial.write(message, len);
-  Serial.println();
+  // Use MQTTString type for easy printing UTF8
+  MQTTString topic(topic_data, topic_len);
+  MQTTString message(mess_data, mess_len);
+  
+  Serial.print("[Subscribed] ");
+  Serial.print(topic);
+  Serial.print(" : ") ;
+  Serial.println(message);
 }
 
 /**************************************************************************/

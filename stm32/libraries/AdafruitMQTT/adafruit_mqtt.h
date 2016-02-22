@@ -38,6 +38,7 @@
 #define _ADAFRUIT_MQTT_H__
 
 #include <Arduino.h>
+#include <Printable.h>
 #include <Client.h>
 #include <IPAddress.h>
 #include <adafruit_feather.h>
@@ -51,7 +52,7 @@ enum
 
 #define MQTT_KEEPALIVE_DEFAULT    60 // in seconds
 
-class MQTTString
+class MQTTString : public Printable
 {
 public:
   int len;
@@ -72,6 +73,15 @@ public:
 
     return *this;
   }
+
+  virtual size_t printTo(Print& p) const
+  {
+    p.write(this->data, len);
+  }
+
+  explicit operator const char*() const { return data; }
+  explicit operator const uint8_t*() const { return ( const uint8_t*) data; }
+  explicit operator const unsigned char*() const { return (const unsigned char*) data; }
 };
 
 class AdafruitMQTT : public AdafruitSDEP
@@ -107,7 +117,7 @@ protected:
 
 public:
   // messageHandler must not be changed since featherlib uses the same signature
-  typedef void (*messageHandler)(char* topic, uint8_t* message, size_t len);
+  typedef void (*messageHandler)(char* topic_data, size_t topic_len, uint8_t* mess_data, size_t Mmess_len);
 
   AdafruitMQTT(const char * clientID, const char* username, const char* password)
   {
