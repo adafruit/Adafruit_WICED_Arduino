@@ -80,7 +80,7 @@ void setup()
   }
   
   // MQTT to auto print out error code & halted
-  mqtt.erractions(true, true);
+  mqtt.err_actions(true, true);
 
   // Will must be set before connect, since it is part of connect data
   mqtt.will(TOPIC, WILL_MESSAGE, MQTT_QOS_AT_LEAST_ONCE);
