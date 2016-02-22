@@ -212,7 +212,6 @@ public:
   uint32_t getUtcTime(void);
 
   //------------- API below this are subjected to be refactor -------------//
-
   err_t connectAP(char const* ssid, char const* passwd);
 
   err_t startAP(char* ssid, char* passwd);
@@ -225,25 +224,8 @@ public:
   err_t httpsRequestWithCallback(const char* url, const char* ca_cert, const char* content, uint8_t method);
   void       addHttpDataReceivedCallBack(ada_http_callback ada_httpCallback = NULL);
 
-  /* MQTT Commands */
-  err_t mqttLastWill(bool isOnlineTopic, char* topic, char* value, uint8_t qos, uint8_t retain);
-  err_t mqttGenerateRandomID(char* clientID, uint8_t length);
-  err_t mqttConnect(char* host, uint16_t port, char* clientID, char* username, char* password);
-  err_t mqttTLSConnect(char* host, uint16_t port, char* clientID, char *username, char* password, const char* ca_cert);
-  err_t mqttDisconnect(void);
-  err_t mqttPublish(char* topic, char* value, uint8_t qos, uint8_t retain);
-  err_t mqttSubscribe(char* topic, uint8_t qos);
-  err_t mqttUnsubscribe(char* topic);
-
-  /* IRQ Commands */
-  err_t irqRead(uint16_t* response_length, uint8_t* response);
-  err_t irqCount(uint16_t* n_items);
-  err_t irqAvailable(uint16_t* n_available);
-  err_t irqClear(void);
-
   /* callback from featherlib */
   friend void http_rx_callback (uint8_t* data, uint16_t data_length, uint16_t avail);
-
   friend void adafruit_wifi_disconnect_callback(void);
 };
 

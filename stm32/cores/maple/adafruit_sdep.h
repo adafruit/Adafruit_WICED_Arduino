@@ -56,7 +56,7 @@ protected:
 
     if ( _err_halt && (ERROR_NONE != _errno) )
     {
-      Serial.println("\r\n--- HALTED ---\r\n");
+      Serial.println("\r\n--- FEATHER HALTED ---\r\n");
       while(1) delay(1);
     }
   }

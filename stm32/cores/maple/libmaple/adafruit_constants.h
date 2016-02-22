@@ -180,11 +180,11 @@ typedef enum {
   SDEP_CMD_SFLASHLIST          = 0x0051, /**< List SPI flash contents              */          //!< SDEP_CMD_SFLASHLIST
 
   /* MQTT Commands */
-  SDEP_CMD_MQTTCONNECT         = 0x0061, /**< Connect to a broker                  */          //!< SDEP_CMD_MQTTCONNECT
-  SDEP_CMD_MQTTDISCONNECT      = 0x0062, /**< Disconnect from a broker             */          //!< SDEP_CMD_MQTTDISCONNECT
-  SDEP_CMD_MQTTPUBLISH         = 0x0063, /**< Publish a message to a topic         */          //!< SDEP_CMD_MQTTPUBLISH
-  SDEP_CMD_MQTTSUBSCRIBE       = 0x0064, /**< Subscribe to a topic                 */          //!< SDEP_CMD_MQTTSUBSCRIBE
-  SDEP_CMD_MQTTUNSUBSCRIBE     = 0x0065, /**< Unsubscribe from a topic             */          //!< SDEP_CMD_MQTTUNSUBSCRIBE
+  SDEP_CMD_MQTTCONNECT         = 0x0060, /**< Connect to a broker                  */          //!< SDEP_CMD_MQTTCONNECT
+  SDEP_CMD_MQTTDISCONNECT      = 0x0061, /**< Disconnect from a broker             */          //!< SDEP_CMD_MQTTDISCONNECT
+  SDEP_CMD_MQTTPUBLISH         = 0x0062, /**< Publish a message to a topic         */          //!< SDEP_CMD_MQTTPUBLISH
+  SDEP_CMD_MQTTSUBSCRIBE       = 0x0063, /**< Subscribe to a topic                 */          //!< SDEP_CMD_MQTTSUBSCRIBE
+  SDEP_CMD_MQTTUNSUBSCRIBE     = 0x0064, /**< Unsubscribe from a topic             */          //!< SDEP_CMD_MQTTUNSUBSCRIBE
 
   /* IRQ Commands */
   SDEP_CMD_IRQREAD             = 0x0070, /**< Read from async response fifo        */          //!< SDEP_CMD_IRQREAD
