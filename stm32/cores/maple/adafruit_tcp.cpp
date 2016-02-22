@@ -195,7 +195,6 @@ int AdafruitTCP::read(uint8_t* buf, size_t size)
   if ( _tcp_handle == 0 ) return 0;
 
   uint16_t size16 = (uint16_t) size;
-
   sdep_cmd_para_t para_arr[] =
   {
       { .len = 4, .p_value = &_tcp_handle },
@@ -204,11 +203,11 @@ int AdafruitTCP::read(uint8_t* buf, size_t size)
   };
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
-  // TODO check case when read bytes < size
-  VERIFY_RETURN( sdep_n(SDEP_CMD_TCP_READ, para_count, para_arr, &size16, buf), 0);
+  uint16_t readlen = size16;
+  VERIFY_RETURN( sdep_n(SDEP_CMD_TCP_READ, para_count, para_arr, &readlen, buf), 0);
 
-  _bytesRead += size;
-  return size;
+  _bytesRead += readlen;
+  return readlen;
 }
 
 /******************************************************************************/
