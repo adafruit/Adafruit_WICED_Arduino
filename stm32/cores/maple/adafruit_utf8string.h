@@ -37,6 +37,42 @@
 #ifndef _ADAFRUIT_UTF8STRING_H_
 #define _ADAFRUIT_UTF8STRING_H_
 
+#include <Arduino.h>
+#include <Printable.h>
+
+class UTF8String : public Printable
+{
+public:
+  int len;
+  const char* data;
+
+  UTF8String(void) { len = 0; data = NULL; }
+
+  UTF8String(const char* cstring            ) { len = strlen(cstring); data = cstring;  }
+  UTF8String(const char* bytes, int size    ) { len = size; data = bytes;               }
+  UTF8String(const uint8_t* bytes, int size ) { len = size; data = (const char*) bytes; }
+
+  UTF8String& operator = (const UTF8String& rhs)
+  {
+    if (this == &rhs) return *this;
+
+    this->len = rhs.len;
+    this->data = rhs.data;
+
+    return *this;
+  }
+
+  bool operator == (const char *cstr) const { return (strlen(cstr) == len) && !memcmp(data, cstr, len); }
+
+  virtual size_t printTo(Print& p) const
+  {
+    p.write(this->data, len);
+  }
+
+  explicit operator const char*() const { return data; }
+  explicit operator const uint8_t*() const { return ( const uint8_t*) data; }
+  explicit operator const unsigned char*() const { return (const unsigned char*) data; }
+};
 
 
 #endif /* _ADAFRUIT_UTF8STRING_H_ */

@@ -10,6 +10,7 @@ AdafruitSDEP	KEYWORD1
 AdafruitFeather	KEYWORD1
 AdafruitTCP	KEYWORD1
 AdafruitUDP	KEYWORD1
+UTF8String	KEYWORD1
 
 #######################################
 # AdafruitSDEP Methods and Functions (KEYWORD2)
@@ -20,6 +21,7 @@ sdep	KEYWORD2
 sdep_n	KEYWORD2
 errno	KEYWORD2
 errstr	KEYWORD2
+err_actions	KEYWORD2
 
 #######################################
 # AdafruitFeather Methods and Functions (KEYWORD2)
@@ -33,6 +35,7 @@ firmwareVersion	KEYWORD2
 arduinoVersion	KEYWORD2
 
 connect	KEYWORD2
+begin	KEYWORD2
 connected	KEYWORD2
 disconnect	KEYWORD2
 
@@ -59,13 +62,21 @@ scanNetworks	KEYWORD2
 hostByName	KEYWORD2
 ping	KEYWORD2
 
+tlsRequireVerification	KEYWORD2
+setRootCertificates	KEYWORD2
+
 #######################################
 # AdafruitTCP Methods and Functions (KEYWORD2)
 #######################################
 
 usePacketBuffering	KEYWORD2
+getHandle	KEYWORD2
+
+connect	KEYWORD2
 connectSSL	KEYWORD2
+connected	KEYWORD2
 stop	KEYWORD2
+
 setReceivedCallback	KEYWORD2
 setDisconnectCallback	KEYWORD2
 

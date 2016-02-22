@@ -52,40 +52,6 @@ enum
 
 #define MQTT_KEEPALIVE_DEFAULT    60 // in seconds
 
-class MQTTString : public Printable
-{
-public:
-  int len;
-  const char* data;
-
-  MQTTString(void) { len = 0; data = NULL; }
-
-  MQTTString(const char* cstring            ) { len = strlen(cstring); data = cstring;  }
-  MQTTString(const char* bytes, int size    ) { len = size; data = bytes;               }
-  MQTTString(const uint8_t* bytes, int size ) { len = size; data = (const char*) bytes; }
-
-  MQTTString& operator = (const MQTTString& rhs)
-  {
-    if (this == &rhs) return *this;
-
-    this->len = rhs.len;
-    this->data = rhs.data;
-
-    return *this;
-  }
-
-  bool operator == (const char *cstr) const { return (strlen(cstr) == len) && !memcmp(data, cstr, len); }
-
-  virtual size_t printTo(Print& p) const
-  {
-    p.write(this->data, len);
-  }
-
-  explicit operator const char*() const { return data; }
-  explicit operator const uint8_t*() const { return ( const uint8_t*) data; }
-  explicit operator const unsigned char*() const { return (const unsigned char*) data; }
-};
-
 class AdafruitMQTT : public AdafruitSDEP
 {
 protected:
@@ -100,7 +66,7 @@ protected:
   const char * _password;
 
   const char* _will_topic;
-  MQTTString  _will_message;
+  UTF8String  _will_message;
   uint8_t     _will_qos;
   uint8_t     _will_retained;
 
@@ -150,7 +116,7 @@ public:
   // Set MQTT last will topic, payload, QOS, and retain. This needs
   // to be called before connect() because it is sent as part of the
   // connect control packet.
-  void will(const char* topic, MQTTString message, uint8_t qos =MQTT_QOS_AT_MOST_ONCE, uint8_t retained =0)
+  void will(const char* topic, UTF8String message, uint8_t qos =MQTT_QOS_AT_MOST_ONCE, uint8_t retained =0)
   {
     _will_topic    = topic;
     _will_message  = message;
@@ -168,7 +134,7 @@ public:
 
   bool disconnect ( void );
 
-  bool publish    ( const char* topic, MQTTString message, uint8_t qos =MQTT_QOS_AT_MOST_ONCE, bool retained = false );
+  bool publish    ( const char* topic, UTF8String message, uint8_t qos =MQTT_QOS_AT_MOST_ONCE, bool retained = false );
   bool subscribe  ( const char* topicFilter, uint8_t qos, messageHandler mh);
   bool unsubscribe( const char* topicFilter );
 };

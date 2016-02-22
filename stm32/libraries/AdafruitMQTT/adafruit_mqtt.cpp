@@ -114,7 +114,7 @@ bool AdafruitMQTT::disconnect ( void )
   return true;
 }
 
-bool AdafruitMQTT::publish( const char* topic, MQTTString message, uint8_t qos, bool retained )
+bool AdafruitMQTT::publish( const char* topic, UTF8String message, uint8_t qos, bool retained )
 {
   VERIFY( _connected );
 

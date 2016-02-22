@@ -119,14 +119,14 @@ void setup()
 /**************************************************************************/
 void subscribed_callback(char* topic_data, size_t topic_len, uint8_t* mess_data, size_t mess_len)
 {
-  // Use MQTTString type for easy printing UTF8
-  MQTTString topic(topic_data, topic_len);
-  MQTTString message(mess_data, mess_len);
+  // Use UTF8String type for easy printing UTF8
+  UTF8String utf8Topic(topic_data, topic_len);
+  UTF8String utf8Message(mess_data, mess_len);
   
   Serial.print("[Subscribed1] ");
-  Serial.print(topic);
+  Serial.print(utf8Topic);
   Serial.print(" : ") ;
-  Serial.println(message);
+  Serial.println(utf8Message);
 }
 
 /**************************************************************************/
@@ -139,17 +139,17 @@ void subscribed_callback(char* topic_data, size_t topic_len, uint8_t* mess_data,
 /**************************************************************************/
 void subscribed2_callback(char* topic_data, size_t topic_len, uint8_t* mess_data, size_t mess_len)
 {
-  // Use MQTTString type for easy printing UTF8
-  MQTTString topic(topic_data, topic_len);
-  MQTTString message(mess_data, mess_len);
-
+  // Use UTF8String type for easy printing UTF8
+  UTF8String utf8Topic(topic_data, topic_len);
+  UTF8String utf8Message(mess_data, mess_len);
+  
   Serial.print("[Subscribed2] ");
-  Serial.print(topic);
+  Serial.print(utf8Topic);
   Serial.print(" : ") ;
-  Serial.println(message);
+  Serial.println(utf8Message);
 
   // Unsubscribe topic2 if recieved "unsubscribe" message
-  if ( message == "unsubscribe" )
+  if ( utf8Message == "unsubscribe" )
   {
     Serial.print("Unsubscribing to " SUBSCRIBED_TOPIC2 " ... ");
     mqtt.unsubscribe(SUBSCRIBED_TOPIC2); // halted if failed

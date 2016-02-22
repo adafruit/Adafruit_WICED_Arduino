@@ -45,6 +45,7 @@
 
 #include "adafruit_constants.h"
 #include "adafruit_featherlib.h"
+#include "adafruit_utf8string.h"
 #include "adafruit_sdep.h"
 #include "adafruit_tcp.h"
 #include "adafruit_udp.h"
