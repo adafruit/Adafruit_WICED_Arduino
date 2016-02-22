@@ -17,6 +17,8 @@ connect	KEYWORD2
 connectSSL	KEYWORD2
 connected	KEYWORD2
 publish	KEYWORD2
+subscribe	KEYWORD2
+will	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
