@@ -28,6 +28,7 @@
 
 #define TOPIC             "adafruit/feather"
 #define SUBSCRIBED_TOPIC  "adafruit/+"  // All topic within adafruit/
+#define SUBSCRIBED_TOPIC2 "adafruit/test"
 
 #define WILL_MESSAGE      "Good Bye!!"
 #define PUBLISH_MESSAGE   "Hello from Adafruit WICED Feather"
@@ -93,8 +94,12 @@ void setup()
   mqtt.publish(TOPIC, PUBLISH_MESSAGE); // halted if failed
   Serial.println("OK");
 
-  Serial.print("Suscribing to " SUBSCRIBED_TOPIC " ... ");
+  Serial.print("Subscribing to " SUBSCRIBED_TOPIC " ... ");
   mqtt.subscribe(SUBSCRIBED_TOPIC, MQTT_QOS_AT_MOST_ONCE, subscribed_callback); // halted if failed
+  Serial.println("OK");
+
+  Serial.print("Subscribing to " SUBSCRIBED_TOPIC2 " ... ");
+  mqtt.subscribe(SUBSCRIBED_TOPIC2, MQTT_QOS_AT_MOST_ONCE, subscribed2_callback); // halted if failed
   Serial.println("OK");
 
   // To test Will message, pull out power and wait for Keep Alive interval to pass 
@@ -118,10 +123,38 @@ void subscribed_callback(char* topic_data, size_t topic_len, uint8_t* mess_data,
   MQTTString topic(topic_data, topic_len);
   MQTTString message(mess_data, mess_len);
   
-  Serial.print("[Subscribed] ");
+  Serial.print("[Subscribed1] ");
   Serial.print(topic);
   Serial.print(" : ") ;
   Serial.println(message);
+}
+
+/**************************************************************************/
+/*!
+    @brief  Subscribed callback
+    @note topic and message are UTF8 String (len+data), not null-terminated C string,
+    don't try to use Serial.print() directly. Try to use Serial.write() instead or
+    MQTTString datatype.
+*/
+/**************************************************************************/
+void subscribed2_callback(char* topic_data, size_t topic_len, uint8_t* mess_data, size_t mess_len)
+{
+  // Use MQTTString type for easy printing UTF8
+  MQTTString topic(topic_data, topic_len);
+  MQTTString message(mess_data, mess_len);
+
+  Serial.print("[Subscribed2] ");
+  Serial.print(topic);
+  Serial.print(" : ") ;
+  Serial.println(message);
+
+  // Unsubscribe topic2 if recieved "unsubscribe" message
+  if ( message == "unsubscribe" )
+  {
+    Serial.print("Unsubscribing to " SUBSCRIBED_TOPIC2 " ... ");
+    mqtt.unsubscribe(SUBSCRIBED_TOPIC2); // halted if failed
+    Serial.println("OK");
+  }
 }
 
 /**************************************************************************/
