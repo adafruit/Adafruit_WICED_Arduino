@@ -180,7 +180,6 @@ typedef enum {
   SDEP_CMD_SFLASHLIST          = 0x0051, /**< List SPI flash contents              */          //!< SDEP_CMD_SFLASHLIST
 
   /* MQTT Commands */
-  SDEP_CMD_MQTTLASTWILL        = 0x0060, /**< Get Last Will message                */          //!< SDEP_CMD_MQTTLASTWILL
   SDEP_CMD_MQTTCONNECT         = 0x0061, /**< Connect to a broker                  */          //!< SDEP_CMD_MQTTCONNECT
   SDEP_CMD_MQTTDISCONNECT      = 0x0062, /**< Disconnect from a broker             */          //!< SDEP_CMD_MQTTDISCONNECT
   SDEP_CMD_MQTTPUBLISH         = 0x0063, /**< Publish a message to a topic         */          //!< SDEP_CMD_MQTTPUBLISH

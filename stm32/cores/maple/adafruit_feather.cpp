@@ -1349,19 +1349,6 @@ void AdafruitFeather::addHttpDataReceivedCallBack(ada_http_callback ada_httpCall
   ada_http_rx_callback = ada_httpCallback;
 }
 
-/******************************************************************************/
-/*!
-    @brief  Register the MQTT event callback handler
-
-    @param[in]    ada_mqttCallback    MQTT Callback handler from Arduino code
-*/
-/******************************************************************************/
-void AdafruitFeather::addMqttCallBack(ada_mqtt_callback ada_mqttCallback)
-{
-  ada_mqtt_evt_callback = ada_mqttCallback;
-}
-
-
 //--------------------------------------------------------------------+
 // Callbacks
 //--------------------------------------------------------------------+
@@ -1403,18 +1390,5 @@ void http_rx_callback(uint8_t* data, uint16_t data_length, uint16_t avail)
   if (Feather.ada_http_rx_callback != NULL)
   {
     Feather.ada_http_rx_callback(data, data_length, avail);
-  }
-}
-
-/******************************************************************************/
-/*!
-    @brief  MQTT Callback from featherlib when a new event occurs
-*/
-/******************************************************************************/
-void mqtt_evt_callback(mqtt_evt_opcode_t event, uint16_t len, uint8_t* data)
-{
-  if (Feather.ada_mqtt_evt_callback != NULL)
-  {
-    Feather.ada_mqtt_evt_callback(event, len, data);
   }
 }

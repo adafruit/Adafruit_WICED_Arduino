@@ -107,13 +107,10 @@ extern "C"
   void adafruit_wifi_disconnect_callback(void);
 
   void http_rx_callback (uint8_t* data, uint16_t data_length, uint16_t avail);
-  void mqtt_evt_callback(mqtt_evt_opcode_t event, uint16_t len, uint8_t* data);
-
 }
 
 /* Callback prototypes */
 typedef void (*ada_http_callback)(uint8_t* data, uint16_t data_length, uint16_t avail);
-typedef void (*ada_mqtt_callback)(mqtt_evt_opcode_t event, uint16_t len, uint8_t* data);
 
 class AdafruitFeather : public AdafruitSDEP
 {
@@ -126,7 +123,6 @@ private:
   bool          _connected;
 
   ada_http_callback  ada_http_rx_callback;
-  ada_mqtt_callback  ada_mqtt_evt_callback;
 
 //  void (*wlan_connect_callback)(void);
   void (*wlan_disconnect_callback)(void);
@@ -238,7 +234,6 @@ public:
   err_t mqttPublish(char* topic, char* value, uint8_t qos, uint8_t retain);
   err_t mqttSubscribe(char* topic, uint8_t qos);
   err_t mqttUnsubscribe(char* topic);
-  void       addMqttCallBack(ada_mqtt_callback ada_mqttCallback = NULL);
 
   /* IRQ Commands */
   err_t irqRead(uint16_t* response_length, uint8_t* response);
@@ -248,7 +243,6 @@ public:
 
   /* callback from featherlib */
   friend void http_rx_callback (uint8_t* data, uint16_t data_length, uint16_t avail);
-  friend void mqtt_evt_callback(mqtt_evt_opcode_t event, uint16_t len, uint8_t* data);
 
   friend void adafruit_wifi_disconnect_callback(void);
 };

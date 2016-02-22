@@ -46,7 +46,6 @@
 extern void __attribute__((noreturn)) start_c(void);
 extern void USBSerial_callback(uint32_t eid, void* p_data);
 extern void http_rx_callback(uint8_t* data, uint16_t data_length, uint16_t avail);
-extern void mqtt_evt_callback(mqtt_evt_opcode_t event, uint16_t len, uint8_t* data);
 
 //extern void adafruit_wifi_connect_callback(void);
 extern void adafruit_wifi_disconnect_callback(void);
@@ -65,7 +64,6 @@ ATTR_USED adafruit_arduino_t const adafruit_arduino =
 
     .cdc_serial_event_cb = USBSerial_callback,
     .http_callback       = http_rx_callback,
-    .mqtt_callback       = mqtt_evt_callback,
 
 //    .wifi_connect_callback = adafruit_wifi_connect_callback,
     .wifi_disconnect_callback = adafruit_wifi_disconnect_callback,

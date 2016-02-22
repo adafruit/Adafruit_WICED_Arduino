@@ -74,7 +74,7 @@ typedef struct ATTR_ALIGNED(512)
   uint32_t reserved3;
   void (*cdc_serial_event_cb)(uint32_t eid, void* p_data);
   void (*http_callback)(uint8_t* data, uint16_t data_length, uint16_t avail);
-  void (*mqtt_callback)(mqtt_evt_opcode_t event, uint16_t len, uint8_t* data);
+  uint32_t reserved10;
 
   uint32_t reserved4[12];
 

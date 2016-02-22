@@ -117,7 +117,7 @@ protected:
 
 public:
   // messageHandler must not be changed since featherlib uses the same signature
-  typedef void (*messageHandler)(char* topic_data, size_t topic_len, uint8_t* mess_data, size_t Mmess_len);
+  typedef void (*messageHandler)(char* topic_data, size_t topic_len, uint8_t* mess_data, size_t mess_len);
 
   AdafruitMQTT(const char * clientID, const char* username, const char* password)
   {
@@ -162,12 +162,12 @@ public:
   bool connect    ( IPAddress ip, uint16_t port = 1883, bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
   bool connect    ( const char * host, uint16_t port = 1883,  bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
   bool connectSSL ( IPAddress ip, uint16_t port = 8883, bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
-	bool connectSSL ( const char* host, uint16_t port = 8883, bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
+  bool connectSSL ( const char* host, uint16_t port = 8883, bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
 
-	bool disconnect ( void );
+  bool disconnect ( void );
 
-	bool publish    ( const char* topic, MQTTString message, uint8_t qos =MQTT_QOS_AT_MOST_ONCE, bool retained = false );
-	bool subscribe  ( const char* topicFilter, uint8_t qos, messageHandler mh);
+  bool publish    ( const char* topic, MQTTString message, uint8_t qos =MQTT_QOS_AT_MOST_ONCE, bool retained = false );
+  bool subscribe  ( const char* topicFilter, uint8_t qos, messageHandler mh);
 };
 
 #endif /* _ADAFRUIT_MQTT_H__ */

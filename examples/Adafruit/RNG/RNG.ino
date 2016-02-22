@@ -1,7 +1,6 @@
 /*
   Random Number Generator (RNG) Example
   1. Generate a 32-bit random number
-  2. Generate a 23-character random ID
 
   author: huynguyen
  */
@@ -42,17 +41,6 @@ void loop() {
   else
   {
     Serial.println(F("Failed to generate a random number!"));
-  }
-
-  char clientID[24];
-  if (Feather.mqttGenerateRandomID(clientID, 23) == 0)
-  {
-    Serial.print(F("Generated a 23-character ID: "));
-    Serial.println(clientID);
-  }
-  else
-  {
-    Serial.println(F("Failed to generate a random ID!"));
   }
   
   Serial.println(F(""));
