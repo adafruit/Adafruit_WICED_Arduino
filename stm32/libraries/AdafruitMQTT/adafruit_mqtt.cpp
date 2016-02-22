@@ -146,3 +146,17 @@ bool AdafruitMQTT::subscribe( const char* topicFilter, uint8_t qos, messageHandl
 
   return sdep_n(SDEP_CMD_MQTTSUBSCRIBE, para_count, para_arr, NULL, NULL);
 }
+
+bool AdafruitMQTT::unsubscribe( const char* topicFilter )
+{
+  VERIFY( _connected && topicFilter != NULL );
+
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = 4                   , .p_value = &_mqtt_handle },
+      { .len = strlen(topicFilter) , .p_value = topicFilter   },
+  };
+  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
+
+  return sdep_n(SDEP_CMD_MQTTUNSUBSCRIBE, para_count, para_arr, NULL, NULL);
+}

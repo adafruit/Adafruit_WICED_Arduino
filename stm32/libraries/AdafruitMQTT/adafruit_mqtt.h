@@ -168,6 +168,7 @@ public:
 
   bool publish    ( const char* topic, MQTTString message, uint8_t qos =MQTT_QOS_AT_MOST_ONCE, bool retained = false );
   bool subscribe  ( const char* topicFilter, uint8_t qos, messageHandler mh);
+  bool unsubscribe( const char* topicFilter );
 };
 
 #endif /* _ADAFRUIT_MQTT_H__ */
