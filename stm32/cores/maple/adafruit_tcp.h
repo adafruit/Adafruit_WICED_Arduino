@@ -84,6 +84,8 @@ public:
   virtual int      peek       ( void );
   virtual void     flush      ( void );
 
+  int read( char* buf, size_t size) { return read((uint8_t*) buf, size); }
+
   using Print::write;
 
   // Set callback handlers

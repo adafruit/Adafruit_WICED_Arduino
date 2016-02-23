@@ -67,9 +67,9 @@ const char * server_arr[][2] =
     
 };
 
-// You can set your own server & uri here
+// You can set your own server & url here
 const char * server = server_arr[SERVER_ID][0];
-const char * uri    = server_arr[SERVER_ID][1];
+const char * url    = server_arr[SERVER_ID][1];
 
 // Use the HTTP class
 AdafruitHTTP http;
@@ -151,8 +151,8 @@ void setup()
   http.addHeader("Accept", "text/html");
   http.addHeader("Connection", "keep-alive");
 
-  Serial.printf("Requesting '%s' ... ", uri);
-  http.get(server, uri); // Will halted if an error occurs
+  Serial.printf("Requesting '%s' ... ", url);
+  http.get(server, url); // Will halted if an error occurs
   Serial.println("OK");
 }
 

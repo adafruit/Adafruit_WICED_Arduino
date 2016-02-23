@@ -37,17 +37,14 @@
 #include "adafruit_http.h"
 
 #define HTTP_GET      "GET"
+#define HTTP_POST     "POST"
 #define HTTP_VERSION  "HTTP/1.1"
 
 AdafruitHTTP::AdafruitHTTP()
 {
   _packet_buffering = true;
-  _header_count     = 0;
 
-  for(uint8_t i=0; i<ADAFRUIT_HTTP_MAX_HEADER; i++)
-  {
-    _headers[i].name = _headers[i].value = NULL;
-  }
+  this->clearHeaders();
 }
 
 bool AdafruitHTTP::addHeader(const char* name, const char* value)
@@ -61,22 +58,45 @@ bool AdafruitHTTP::addHeader(const char* name, const char* value)
   return true;
 }
 
-int AdafruitHTTP::get(char const * hostname, char const *uri)
+bool AdafruitHTTP::clearHeaders(void)
 {
-  printf(HTTP_GET " %s " HTTP_VERSION, uri);
-  println();
+  _header_count     = 0;
+  for(uint8_t i=0; i<ADAFRUIT_HTTP_MAX_HEADER; i++)
+  {
+    _headers[i].name = _headers[i].value = NULL;
+  }
+}
 
-  printf("Host: %s", hostname);
-  println();
-
+void AdafruitHTTP::sendHeaders(void)
+{
   for(uint8_t i=0; i<_header_count; i++)
   {
     printf("%s: %s", _headers[i].name, _headers[i].value);
     println();
   }
-  
-  // End of header
-  println();
-  
+
+  println(); // End of header
+}
+
+
+bool AdafruitHTTP::get(char const * host, char const *url)
+{
+  printf(HTTP_GET " %s " HTTP_VERSION, url); println();
+  printf("Host: %s", host); println();
+
+  sendHeaders();
+  flush();
+}
+
+bool AdafruitHTTP::post(char const * host, char const *url, char const* encoded_data)
+{
+  printf(HTTP_POST " %s " HTTP_VERSION, url); println();
+  printf("Host: %s", host); println();
+
+  sendHeaders();
+
+  // send data
+  println(encoded_data);
+
   flush();
 }
