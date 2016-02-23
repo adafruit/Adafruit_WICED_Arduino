@@ -81,6 +81,19 @@ setReceivedCallback	KEYWORD2
 setDisconnectCallback	KEYWORD2
 
 #######################################
+# AdafruitUDP Methods and Functions (KEYWORD2)
+#######################################
+
+begin	KEYWORD2
+stop	KEYWORD2
+beginPacket	KEYWORD2
+endPacket	KEYWORD2
+parsePacket	KEYWORD2
+remoteIP	KEYWORD2
+remotePort	KEYWORD2
+setReceivedCallback	KEYWORD2
+
+#######################################
 # Constants (LITERAL1)
 #######################################
 
