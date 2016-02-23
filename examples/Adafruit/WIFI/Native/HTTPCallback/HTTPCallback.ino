@@ -27,7 +27,6 @@
 
 #include <adafruit_feather.h>
 #include <adafruit_http.h>
-#include "certificates.h"
 
 #define WLAN_SSID            "yourSSID"
 #define WLAN_PASS            "yourPass"
@@ -124,7 +123,7 @@ void setup()
   // wait for Serial port to connect. Needed for native USB port only
   while (!Serial) delay(1);
   
-  Serial.println("WebClientSSL Example");
+  Serial.println("HTTP Callback Example");
   Serial.println();
 
   while( !connectAP() )
@@ -133,20 +132,7 @@ void setup()
   }
 
   printWifiStatus();
-
-#if 0 // currently disabl Certificate verification
-  // Setting Certificates chain of the server
-  Serial.print("Setting Root CA chain ... ");
-  if ( Feather.setRootCertificatesDER(root_certs, sizeof(root_certs)) )
-  {
-    Serial.println("done");
-  }else
-  {
-    Serial.println("failed");
-  }
-#endif
-  
-  
+ 
   // Tell the MQTT client to auto print error codes and halt on errors
   http.err_actions(true, true);
 
