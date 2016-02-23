@@ -50,7 +50,7 @@ void setup()
   // wait for Serial port to connect. Needed for native USB port only
   while (!Serial) delay(1);
 
-  Serial.println("UDP Echo Callback Example");
+  Serial.println("UDP Echo Server Callback Example");
   Serial.println();
 
   while( !connectAP() )
