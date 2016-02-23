@@ -206,8 +206,6 @@ public:
 
 
   //------------- API below this are subjected to be refactor -------------//
-  err_t connectAP(char const* ssid, char const* passwd);
-
   err_t startAP(char* ssid, char* passwd);
   err_t startAP(void);
   err_t stopAP(void);

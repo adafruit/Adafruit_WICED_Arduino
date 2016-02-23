@@ -484,36 +484,6 @@ int AdafruitFeather::scanNetworks(wl_ap_info_t ap_list[], uint8_t max_ap)
 
 /******************************************************************************/
 /*!
-    @brief  Attempt to connect to the specified access point
-
-    @param[in]      ssid    SSID of Wi-Fi access point
-
-    @param[in]      passwd  Password of Wi-Fi access point
-
-    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
-            a specific error if something went wrong.
-
-            The passwd could be NULL or empty string if it does not exist
-*/
-/******************************************************************************/
-err_t AdafruitFeather::connectAP(char const* ssid, char const* passwd)
-{
-  if (ssid == NULL || ssid == "") return ERROR_SDEP_INVALIDPARAMETER;
-
-  sdep_cmd_para_t para_arr[] =
-  {
-      { .len = strlen(ssid)  , .p_value = ssid   },
-      { .len = strlen(passwd), .p_value = passwd },
-  };
-  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
-
-  err_t error = FEATHERLIB->sdep_execute_n(SDEP_CMD_CONNECT, para_count, para_arr, NULL, NULL);
-
-  return error;
-}
-
-/******************************************************************************/
-/*!
     @brief  Disconnects from the access point if a connection exists
 
     @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
