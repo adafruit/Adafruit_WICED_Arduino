@@ -44,9 +44,6 @@
 /******************************************************************************/
 AdafruitTCP::AdafruitTCP(void)
 {
-  rx_callback         = NULL;
-  disconnect_callback = NULL;
-
   this->reset();
 }
 
@@ -71,6 +68,11 @@ void AdafruitTCP::reset()
   _tcp_handle       = 0;
   _bytesRead        = 0;
   _packet_buffering = false;
+
+  _tls_verification = false;
+
+  rx_callback         = NULL;
+  disconnect_callback = NULL;
 }
 
 void AdafruitTCP::usePacketBuffering(bool enable)
@@ -87,15 +89,17 @@ int AdafruitTCP::connect(IPAddress ip, uint16_t port)
 {
   if ( !Feather.connected() ) return 0;
 
-  uint32_t ipv4 = (uint32_t) ip;
-  uint8_t is_tls = 0;
+  uint32_t ipv4      = (uint32_t) ip;
+  uint8_t is_tls     = 0;
+  uint8_t tls_option = _tls_verification ? TLS_VERIFICATION_REQUIRED : TLS_NO_VERIFICATION;
 
   sdep_cmd_para_t para_arr[] =
   {
-      { .len = 4, .p_value = &ipv4     },
-      { .len = 2, .p_value = &port     },
-      { .len = 1, .p_value = &is_tls   },
-      { .len = 4, .p_value = &_timeout },
+      { .len = 4, .p_value = &ipv4       },
+      { .len = 2, .p_value = &port       },
+      { .len = 4, .p_value = &_timeout   },
+      { .len = 1, .p_value = &is_tls     },
+      { .len = 1, .p_value = &tls_option },
   };
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
@@ -124,17 +128,18 @@ int AdafruitTCP::connect(const char* host, uint16_t port)
 /******************************************************************************/
 int AdafruitTCP::connectSSL(IPAddress ip, uint16_t port)
 {
-  uint32_t ipv4 = (uint32_t) ip;
-  uint8_t is_tls = 1;
-
+  uint32_t ipv4      = (uint32_t) ip;
+  uint8_t is_tls     = 1;
+  uint8_t tls_option = _tls_verification ? TLS_VERIFICATION_REQUIRED : TLS_NO_VERIFICATION;
 //  uint8_t namelen = (common_name ? strlen(common_name) : 0);
 
   sdep_cmd_para_t para_arr[] =
   {
       { .len = 4 , .p_value = &ipv4       },
       { .len = 2 , .p_value = &port       },
-      { .len = 1 , .p_value = &is_tls     },
       { .len = 4 , .p_value = &_timeout   },
+      { .len = 1 , .p_value = &is_tls     },
+      { .len = 1, .p_value = &tls_option },
       //{ .len = namelen , .p_value = common_name },
   };
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t) /*- (common_name ? 0 : 1)*/;

@@ -63,9 +63,12 @@ public:
   virtual int      connect    ( IPAddress ip, uint16_t port );
   virtual int      connect    ( const char * host, uint16_t port );
   virtual int      connectSSL ( IPAddress ip, uint16_t port );
-	virtual int      connectSSL ( const char* host, uint16_t port );
+  virtual int      connectSSL ( const char* host, uint16_t port );
   virtual uint8_t  connected  ( void );
   virtual void     stop       ( void );
+
+  bool             tlsRequireVerification (bool required) { _tls_verification = required; }
+
 
   virtual operator bool() { return _tcp_handle != 0; }
 
@@ -90,6 +93,8 @@ public:
 protected:
   uint32_t  _tcp_handle;
   uint32_t  _bytesRead;
+
+  bool      _tls_verification;
 
   // If enabled, data is written to a buffer until the network packet is full
   // (~1500 bytes) or until .flush() is called

@@ -525,17 +525,6 @@ void AdafruitFeather::disconnect(void)
   _connected = !sdep(SDEP_CMD_DISCONNECT, 0, NULL, NULL, NULL);
 }
 
-/******************************************************************************/
-/*!
-    @brief Require TLS verification for server (default is true)
-*/
-/******************************************************************************/
-bool AdafruitFeather::tlsRequireVerification(bool required)
-{
-  uint8_t tls_option = required ? TLS_VERIFICATION_REQUIRED : TLS_NO_VERIFICATION;
-  return sdep(SDEP_CMD_TLS_REQUIRE_VERIFICATION, 1, &tls_option, NULL, NULL);
-}
-
 #if 0
 /******************************************************************************/
 /*!

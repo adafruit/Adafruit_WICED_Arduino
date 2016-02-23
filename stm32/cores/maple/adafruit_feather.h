@@ -151,12 +151,6 @@ public:
   bool begin     (const char *ssid ) { return this->connect(ssid); }
   bool begin     ( const char *ssid, const char *key, int enc_type = ENC_TYPE_AUTO ) { return this->connect(ssid, key, enc_type); }
 
-  //bool connect ( const char *ssid, uint8_t key_idx, const char* key );
-
-  //bool connect ( const String &ssid, uint8_t key_idx, const String &key ) { return connect(ssid.c_str(), key_idx, key.c_str()); }
-  //bool connect ( const String &ssid ) { return connect(ssid.c_str()); }
-  //bool connect ( const String &ssid, const String &key, int enc_type = ENC_TYPE_AUTO ) { return connect(ssid.c_str(), key.c_str(), enc_type); }
-
   bool connected (void) { return _connected; }
   void disconnect(void);
 
@@ -201,16 +195,15 @@ public:
   bool       hostByName( const String &hostname, IPAddress& result ) { return hostByName( hostname.c_str(), result ); }
 
   // TODO more advanced ping command
-  uint32_t   ping(char const* host);
-  uint32_t   ping(IPAddress ip);
+  uint32_t   ping                  (char const* host);
+  uint32_t   ping                  (IPAddress ip);
+  bool       getISO8601Time        (iso8601_time_t* iso8601_time);
+  uint32_t   getUtcTime            (void);
 
-  // SSL/TLS API
-  bool      tlsRequireVerification(bool required);
-  bool      setRootCertificates(uint8_t const* root_certs_der, uint16_t len);
+  // TLS Root Certification Chain
+  bool      setRootCertificates    (uint8_t const* root_certs_der, uint16_t len);
 //  bool      setRootCertificatesPEM(char const* root_certs_pem);
 
-  bool     getISO8601Time(iso8601_time_t* iso8601_time);
-  uint32_t getUtcTime(void);
 
   //------------- API below this are subjected to be refactor -------------//
   err_t connectAP(char const* ssid, char const* passwd);

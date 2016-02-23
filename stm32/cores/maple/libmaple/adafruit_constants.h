@@ -148,7 +148,6 @@ typedef enum {
   SDEP_CMD_WIFI_PROFILE_SAVE   = 0x002A, ///< Save the current connect AP to profile list
   SDEP_CMD_WIFI_PROFILE_GET    = 0x002B, ///< Get AP's profile info
   SDEP_CMD_TLS_SET_ROOT_CERTS  = 0x002C, ///< Set ROOT CA Chain
-  SDEP_CMD_TLS_REQUIRE_VERIFICATION = 0x002D, ///< Enable/Disable TLS server's verification
 
   /* Network Commands */
   SDEP_CMD_PING                = 0x0030, /**< Ping                                 */          //!< SDEP_CMD_PING

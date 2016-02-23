@@ -155,11 +155,10 @@ void setup()
   }
 #endif
   
-  // Disable certificate verification (accept any server)
-  Feather.tlsRequireVerification(false);
-
   Serial.printf("\r\nStarting connection to %s port %d...\r\n", server,HTTPS_PORT );
   
+  // Disable certificate verification (accept any server)
+  http.tlsRequireVerification(false);
   http.setTimeout(10000);
   http.setReceivedCallback(receive_callback);
   http.setDisconnectCallback(disconnect_callback);
