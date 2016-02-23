@@ -88,10 +88,10 @@ public:
 
 protected:
   uint32_t  _udp_handle;
-	uint16_t  _rcvPort;
-	uint32_t  _rcvIP;
-	uint16_t  _sndPort;
-	uint32_t  _sndIP;
+  uint16_t  _rcvPort;
+  uint32_t  _rcvIP;
+  uint16_t  _sndPort;
+  uint32_t  _sndIP;
   uint32_t  _bytesRead;
 
   udpcallback_t rx_callback;
