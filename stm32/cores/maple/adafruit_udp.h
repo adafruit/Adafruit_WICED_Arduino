@@ -42,28 +42,26 @@
 
 #define ADAFRUIT_UDP_TIMEOUT  1000
 
+extern "C"
+{
+  err_t adafruit_udp_receive_callback(void* socket, void* p_udp);
+}
+
 class AdafruitUDP : public UDP, public AdafruitSDEP
 {
-protected:
-  uint32_t  _udp_handle;
-	uint16_t  _rcvPort;
-	uint32_t  _rcvIP;
-	uint16_t  _sndPort;
-	uint32_t  _sndIP;
-  uint32_t  _bytesRead;
-
-  int (*rx_callback) (void *, void*);
-  void reset(void);
-
 public:
+  typedef void (*udpcallback_t)(void);
+
   AdafruitUDP();
 
   // UDP API
   virtual uint8_t   begin       ( uint16_t port );
   virtual void      stop        ( void );
+
   virtual int       beginPacket ( IPAddress ip, uint16_t port );
   virtual int       beginPacket ( const char *host, uint16_t port );
   virtual int       endPacket   ( void );
+
   virtual int       parsePacket ( void );
   virtual IPAddress remoteIP    ( void );
   virtual uint16_t  remotePort  ( void );
@@ -83,8 +81,22 @@ public:
 
   using Print::write;
 
-  // callback
-  void  setReceivedCallback ( int (*fp) (void*, void*) );
+  // Callbacks ( must be set before begin() )
+  void  setReceivedCallback ( udpcallback_t fp );
+
+  friend err_t adafruit_udp_receive_callback(void* socket, void* p_udp);
+
+protected:
+  uint32_t  _udp_handle;
+	uint16_t  _rcvPort;
+	uint32_t  _rcvIP;
+	uint16_t  _sndPort;
+	uint32_t  _sndIP;
+  uint32_t  _bytesRead;
+
+  udpcallback_t rx_callback;
+
+  void reset(void);
 };
 
 #endif

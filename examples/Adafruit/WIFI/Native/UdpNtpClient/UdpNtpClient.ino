@@ -20,7 +20,7 @@
 #include "adafruit_udp.h"
 
 char ssid[] = "yourSSID";  //  your network SSID (name)
-char pass[] = "yourPassword";       // your network password
+char pass[] = "yourPass";       // your network password
 
 unsigned int localPort = 2390;      // local port to listen for UDP packets
 

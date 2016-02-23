@@ -44,7 +44,7 @@
 int ledPin = PA15;
 
 // Change the SERVER_ID to match the generated certificates.h
-#define SERVER_ID    14
+#define SERVER_ID    0
 
 const char * server_arr[][2] =
 {

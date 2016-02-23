@@ -43,8 +43,6 @@
 /******************************************************************************/
 AdafruitUDP::AdafruitUDP()
 {
-  rx_callback = NULL;
-  _timeout    = ADAFRUIT_UDP_TIMEOUT;
   this->reset();
 }
 
@@ -60,9 +58,11 @@ void AdafruitUDP::reset(void)
 
   _rcvPort    = 0;
   _rcvIP      = 0;
-
   _sndIP      = 0;
   _sndPort    = 0;
+
+  rx_callback = NULL;
+  _timeout    = ADAFRUIT_UDP_TIMEOUT;
 }
 
 /******************************************************************************/
@@ -75,12 +75,15 @@ uint8_t AdafruitUDP::begin(uint16_t port)
   if ( !Feather.connected() ) return 0;
 
   uint8_t interface = WIFI_INTERFACE_STATION;
+  uint32_t this_value = (uint32_t) this;
+
   sdep_cmd_para_t para_arr[] =
   {
-      { .len = 1, .p_value = &interface },
-      { .len = 2, .p_value = &port      },
+      { .len = 1, .p_value = &interface  },
+      { .len = 2, .p_value = &port       },
+      { .len = 4, .p_value = &this_value },
   };
-  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
+  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t) - (rx_callback == NULL ? 1 : 0);
 
   return sdep_n(SDEP_CMD_UDP_CREATE, para_count, para_arr, NULL, &_udp_handle);
 }
@@ -314,7 +317,29 @@ void AdafruitUDP::flush()
     @brief  Sets the data received callback for the user code
 */
 /******************************************************************************/
-void AdafruitUDP::setReceivedCallback( int (*fp) (void*, void*) )
+void AdafruitUDP::setReceivedCallback( udpcallback_t fp )
 {
   rx_callback = fp;
+}
+
+
+//--------------------------------------------------------------------+
+// Callbacks
+//--------------------------------------------------------------------+
+/******************************************************************************/
+/*!
+    @brief This callback is invoked when there is data received
+*/
+/******************************************************************************/
+err_t adafruit_udp_receive_callback(void* socket, void* p_udp)
+{
+  AdafruitUDP* pUDP = (AdafruitUDP*) p_udp;
+
+  // Integrity check
+  if ( *((uint32_t*) pUDP->_udp_handle) == ((uint32_t) socket) )
+  {
+    if (pUDP->rx_callback) pUDP->rx_callback();
+  }
+
+  return ERROR_NONE;
 }
