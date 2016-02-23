@@ -56,7 +56,7 @@ bool connectAP(void)
     Serial.printf("Failed! %s (%d)", Feather.errstr(), Feather.errno());
     Serial.println();
   }
-  Serial.println("");
+  Serial.println();
 
   return Feather.connected();
 }

@@ -42,6 +42,8 @@
 #include <IPAddress.h>
 #include "adafruit_feather.h"
 
+#define ADAFRUIT_TCP_TIMEOUT  200
+
 extern "C"
 {
   err_t adafruit_tcp_receive_callback(void* arg, void* p_tcp);

@@ -40,7 +40,7 @@
 #include <Arduino.h>
 #include <Udp.h>
 
-#define ADAFRUIT_UDP_TIMEOUT  1000
+#define ADAFRUIT_UDP_TIMEOUT  200
 
 extern "C"
 {

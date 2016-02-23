@@ -81,28 +81,17 @@ bool connectAP(void)
   Serial.print("Attempting to connect to: ");
   Serial.println(WLAN_SSID);
 
-  // Connect using saved profile if possible since it re-connect much quicker
-  if ( Feather.checkProfile(WLAN_SSID) )
-  {
-    Feather.connect();
-  }else
-  {
-    Feather.clearProfiles();
-    if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
-    {
-      Feather.saveConnectedProfile();
-    }
-  }
-
-  if ( Feather.connected() )
+  if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
   {
     Serial.println("Connected!");
-  } else
+  }
+  else
   {
     Serial.printf("Failed! %s (%d)", Feather.errstr(), Feather.errno());
+    Serial.println();
   }
-  
   Serial.println();
+
   return Feather.connected();
 }
 
@@ -138,7 +127,7 @@ void setup()
 
   while( !connectAP() )
   {
-    delay(100);
+    delay(500);
   }
 
   printWifiStatus();
@@ -159,7 +148,7 @@ void setup()
   
   // Disable certificate verification (accept any server)
   http.tlsRequireVerification(false);
-  http.setTimeout(10000);
+  http.setTimeout(1000);
   http.setReceivedCallback(receive_callback);
   http.setDisconnectCallback(disconnect_callback);
 

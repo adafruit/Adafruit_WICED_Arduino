@@ -66,6 +66,8 @@ public:
     virtual size_t write(unsigned char);
     virtual size_t write(const uint8_t *buffer, size_t size);
 
+    using Print::write;
+
     /* callback from featherlib */
     friend void USBSerial_callback(uint32_t eid, void* p_data);
 };
