@@ -67,7 +67,7 @@ public:
   virtual uint8_t  connected  ( void );
   virtual void     stop       ( void );
 
-  bool             tlsRequireVerification (bool required) { _tls_verification = required; }
+  void             tlsRequireVerification (bool required) { _tls_verification = required; }
 
 
   virtual operator bool() { return _tcp_handle != 0; }
