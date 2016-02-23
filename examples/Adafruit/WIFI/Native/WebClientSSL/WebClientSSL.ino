@@ -26,7 +26,7 @@
 */
 
 #include <adafruit_feather.h>
-#include <AdafruitNet.h>
+#include <adafruit_http.h>
 #include "certificates.h"
 
 #define WLAN_SSID            "yourSSID"
@@ -39,7 +39,7 @@
 // Some server such as facebook check the user_agent header to
 // return data accordingly. Setting curl to mimics command line browser !!
 // For list of popular user agent http://www.useragentstring.com/pages/useragentstring.php
-#define USER_AGENT_HEADER    "User-Agent: curl/7.45.0"
+#define USER_AGENT_HEADER    "curl/7.45.0"
 
 int ledPin = PA15;
 
@@ -73,7 +73,7 @@ const char * server = server_arr[SERVER_ID][0];
 const char * uri    = server_arr[SERVER_ID][1];
 
 // Use the HTTP class
-HTTPClient http;
+AdafruitHTTP http;
 
 bool connectAP(void)
 {
@@ -113,6 +113,8 @@ void disconnect_callback(void)
   Serial.println("DISCONNECTED CALLBACK");
   Serial.println("---------------------");
   Serial.println();
+
+  http.stop();
 }
 
 void setup()
@@ -144,31 +146,32 @@ void setup()
   }
 #endif
   
-  Serial.printf("\r\nStarting connection to %s port %d...\r\n", server,HTTPS_PORT );
   
+  // Tell the MQTT client to auto print error codes and halt on errors
+  http.err_actions(true, true);
+
   // Disable certificate verification (accept any server)
   http.tlsRequireVerification(false);
   http.setTimeout(1000);
   http.setReceivedCallback(receive_callback);
   http.setDisconnectCallback(disconnect_callback);
 
-  if ( http.connectSSL(server, HTTPS_PORT) )
-  {
-    Serial.println("connected to server");
+  Serial.printf("Connecting to %s port %d ... ", server, HTTPS_PORT );
+  http.connectSSL(server, HTTPS_PORT); // Will halted if an error occurs
+  Serial.println("OK");
     
-    // Make a HTTP request:
-    http.addHeader(USER_AGENT_HEADER);
-    http.addHeader("Accept: text/html"); // only accept text field
-    http.addHeader("Connection: keep-alive");
-    http.get(server, uri);
-  }else
-  {
-    Serial.printf("Failed: %s (%d)", http.errstr(), http.errno());
-    Serial.println();
-  }
+  // Make a HTTP request:
+  http.addHeader("User-Agent", USER_AGENT_HEADER);
+  http.addHeader("Accept", "text/html");
+  http.addHeader("Connection", "keep-alive");
+
+  Serial.printf("Requesting '%s' ... ", uri);
+  http.get(server, uri); // Will halted if an error occurs
+  Serial.println("OK");
 }
 
-void loop() {
+void loop()
+{
   togglePin(ledPin);
   delay(250);
 }
@@ -187,5 +190,6 @@ void printWifiStatus() {
   Serial.print("signal strength (RSSI):");
   Serial.print(rssi);
   Serial.println(" dBm");
+  Serial.println();
 }
 

@@ -106,17 +106,47 @@ typedef enum
  */
 typedef enum
 {
-  ERROR_NONE                       = 0,
-  ERROR_OUT_OF_HEAP_SPACE          = 8,
-  ERROR_NOT_CONNECTED              = 20,
+  ERROR_NONE                        = 0,
+  ERROR_PENDING                     = 1,   /**< Pending */
+  ERROR_TIMEOUT                     = 2,   /**< Timeout */
+  ERROR_PARTIAL_RESULTS             = 3,   /**< Partial results */
+  ERROR_ERROR                       = 4,   /**< Error */
+  ERROR_BADARG                      = 5,   /**< Bad Arguments */
+  ERROR_BADOPTION                   = 6,   /**< Mode not supported */
+  ERROR_UNSUPPORTED                 = 7,   /**< Unsupported function */
+  ERROR_OUT_OF_HEAP_SPACE           = 8,   /**< Dynamic memory space exhausted */
+  ERROR_NOTUP                       = 9,   /**< Interface is not currently Up */
+  ERROR_UNFINISHED                  = 10,   /**< Operation not finished yet */
+  ERROR_CONNECTION_LOST             = 11,   /**< Connection to server lost */
+  ERROR_NOT_FOUND                   = 12,   /**< Item not found */
+  ERROR_PACKET_BUFFER_CORRUPT       = 13,   /**< Packet buffer corrupted */
+  ERROR_ROUTING_ERROR               = 14,   /**< Routing error */
+  ERROR_BADVALUE                    = 15,   /**< Bad value */
+  ERROR_WOULD_BLOCK                 = 16,   /**< Function would block */
+  ERROR_ABORTED                     = 17,   /**< Operation aborted */
+  ERROR_CONNECTION_RESET            = 18,   /**< Connection has been reset */
+  ERROR_CONNECTION_CLOSED           = 19,   /**< Connection is closed */
+  ERROR_NOT_CONNECTED               = 20,   /**< Connection is not connected */
+  ERROR_ADDRESS_IN_USE              = 21,   /**< Address is in use */
+  ERROR_NETWORK_INTERFACE_ERROR     = 22,   /**< Network interface error */
+  ERROR_ALREADY_CONNECTED           = 23,   /**< Socket is already connected */
+  ERROR_INVALID_INTERFACE           = 24,   /**< Interface specified in invalid */
+  ERROR_SOCKET_CREATE_FAIL          = 25,   /**< Socket creation failed */
+  ERROR_INVALID_SOCKET              = 26,   /**< Socket is invalid */
+  ERROR_CORRUPT_PACKET_BUFFER       = 27,   /**< Packet buffer is corrupted */
+  ERROR_UNKNOWN_NETWORK_STACK_ERROR = 28,   /**< Unknown network stack error */
+  ERROR_NO_STORED_AP_IN_DCT         = 29,   /**< DCT contains no AP credentials */
+  ERROR_STA_JOIN_FAILED             = 30,   /**< Join failed */
+  ERROR_PACKET_BUFFER_OVERFLOW      = 31,   /**< Packet buffer overflow */
+  ERROR_ALREADY_INITIALIZED         = 32,
 
-  ERROR_WWD_INVALID_KEY            = 1004,  /**< WWD 1004, Invalid AP Password */
-  ERROR_WWD_AUTHENTICATION_FAILED  = 1006,  /**< WWD 1006, Authentication error */
-  ERROR_WWD_NETWORK_NOT_FOUND      = 1024,  /**< WWD 1024, likely a range issue */
-  ERROR_WWD_UNABLE_TO_JOIN         = 1025,  /**< WWD 1025, likely a range issue */
-  ERROR_WWD_ACCESS_POINT_NOT_FOUND = 1066,
+  ERROR_WWD_INVALID_KEY             = 1004,  /**< WWD 1004, Invalid AP Password */
+  ERROR_WWD_AUTHENTICATION_FAILED   = 1006,  /**< WWD 1006, Authentication error */
+  ERROR_WWD_NETWORK_NOT_FOUND       = 1024,  /**< WWD 1024, likely a range issue */
+  ERROR_WWD_UNABLE_TO_JOIN          = 1025,  /**< WWD 1025, likely a range issue */
+  ERROR_WWD_ACCESS_POINT_NOT_FOUND  = 1066,
 
-  ERROR_SDEP_INVALIDPARAMETER      = 30002,
+  ERROR_SDEP_INVALIDPARAMETER       = 30002,
 } err_t;
 
 /**

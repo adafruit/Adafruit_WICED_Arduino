@@ -68,6 +68,7 @@ public:
   virtual int      connectSSL ( const char* host, uint16_t port );
   virtual uint8_t  connected  ( void );
   virtual void     stop       ( void );
+  void             disconnect ( void ) { stop(); }
 
   void             tlsRequireVerification (bool required) { _tls_verification = required; }
 

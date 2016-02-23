@@ -72,6 +72,7 @@ int AdafruitHTTP::get(char const * hostname, char const *uri)
   for(uint8_t i=0; i<_header_count; i++)
   {
     printf("%s: %s", _headers[i].name, _headers[i].value);
+    println();
   }
   
   // End of header
