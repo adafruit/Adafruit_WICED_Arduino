@@ -42,7 +42,7 @@
 AdafruitHTTP::AdafruitHTTP()
 {
   _packet_buffering = true;
-  _header_count = 0;
+  _header_count     = 0;
 
   for(uint8_t i=0; i<ADAFRUIT_HTTP_MAX_HEADER; i++)
   {
