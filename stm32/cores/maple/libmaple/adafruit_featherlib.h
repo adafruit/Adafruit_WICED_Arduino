@@ -53,14 +53,14 @@
 #define STDERR_FILENO         2
 #define FILENO_USB_SERIAL     3
 #define FILENO_USB_ATPARSER   4
-//#define FILENO_UART           5
+
+#define FEATHERLIB_BOOTLOADER_VERSION      (*((uint32_t*) 0x08000200)) // Bootloader version saved in flash
 
 //------------- Arduino Shared Structure -------------//
 #define CFG_ARDUINO_CODE_MAGIC    0xDEC0DED
 #define CFG_ARUDINO_CODE_VERSION  "0.1.0"
 
 #define RESERVED_           XSTRING_CONCAT_(_rerserved, __LINE__)
-
 
 //------------- Arduino Shared Structure -------------//
 typedef struct ATTR_ALIGNED(512)

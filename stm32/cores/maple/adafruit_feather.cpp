@@ -59,7 +59,7 @@ AdafruitFeather::AdafruitFeather(void)
 
   wlan_disconnect_callback = NULL;
 
-  uint8_t boot_version[4] = { U32_TO_U8S_BE(FEATHERLIB->firmware_version) };
+  uint8_t boot_version[4] = { U32_TO_U8S_BE(FEATHERLIB_BOOTLOADER_VERSION) };
 	sprintf(_boot_version, "%d.%d.%d", boot_version[0], boot_version[1], boot_version[2]);
 
   uint8_t fw_version[4] = { U32_TO_U8S_BE(FEATHERLIB->firmware_version) };
