@@ -55,10 +55,10 @@ protected:
   }_headers[ADAFRUIT_HTTP_MAX_HEADER];
 
 public:
-	AdafruitHTTP();
+  AdafruitHTTP();
 
-	bool addHeader(const char* name, const char* value);
-	int get(char const * hostname, char const *uri);
+  bool addHeader(const char* name, const char* value);
+  int get(char const * hostname, char const *uri);
 };
 
 
