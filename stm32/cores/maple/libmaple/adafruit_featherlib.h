@@ -59,42 +59,45 @@
 #define CFG_ARDUINO_CODE_MAGIC    0xDEC0DED
 #define CFG_ARUDINO_CODE_VERSION  "0.1.0"
 
+#define RESERVED_           XSTRING_CONCAT_(_rerserved, __LINE__)
+
+
+//------------- Arduino Shared Structure -------------//
 typedef struct ATTR_ALIGNED(512)
 {
   // 0 - 63
   uint32_t arduino_magic;
   char     version_str[8];
-  uint8_t  reserved1[52];
+  uint8_t  RESERVED_[52];
 
   // 64 - 127
   void (*startup) (void);
-  uint32_t reserved2[15];
+  uint32_t RESERVED_[15];
 
   // 128 - 191
-  uint32_t reserved3;
+  uint32_t RESERVED_;
   void (*cdc_serial_event_cb)(uint32_t eid, void* p_data);
-  void (*http_callback)(uint8_t* data, uint16_t data_length, uint16_t avail);
-  uint32_t reserved10;
+  uint32_t RESERVED_[2];
 
-  uint32_t reserved4[12];
+  uint32_t RESERVED_[12];
 
   // 192 - 255 (16 functions)
   void (*wifi_connect_callback)(void); // not used for now
   void (*wifi_disconnect_callback)(void);
-  uint32_t reserved5[2];
+  uint32_t RESERVED_[2];
 
   err_t (*tcp_connect_callback)(void* socket, void* p_tcp); // not used for now
   err_t (*tcp_receive_callback)(void* socket, void* p_tcp);
   err_t (*tcp_disconnect_callback)(void* socket, void* p_tcp);
-  uint32_t reserved6;
+  uint32_t RESERVED_;
 
   err_t (*udp_receive_callback)(void* socket, void* p_udp);
-  uint32_t reserved7[3];
+  uint32_t RESERVED_[3];
 
-  uint32_t reserved8[4];
+  uint32_t RESERVED_[4];
 
   // 256 - 512
-  uint32_t reserved100[64];
+  uint32_t RESERVED_[64];
 
 }adafruit_arduino_t;
 

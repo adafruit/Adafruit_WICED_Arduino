@@ -106,12 +106,7 @@ extern "C"
 {
 //  void adafruit_wifi_connect_callback(void);
   void adafruit_wifi_disconnect_callback(void);
-
-  void http_rx_callback (uint8_t* data, uint16_t data_length, uint16_t avail);
 }
-
-/* Callback prototypes */
-typedef void (*ada_http_callback)(uint8_t* data, uint16_t data_length, uint16_t avail);
 
 class AdafruitFeather : public AdafruitSDEP
 {
@@ -122,8 +117,6 @@ private:
 
   wl_ap_info_t  _ap_info;
   bool          _connected;
-
-  ada_http_callback  ada_http_rx_callback;
 
 //  void (*wlan_connect_callback)(void);
   void (*wlan_disconnect_callback)(void);
@@ -210,14 +203,7 @@ public:
   err_t startAP(void);
   err_t stopAP(void);
 
-  err_t httpRequest(const char* url, const char* content, uint8_t method, uint32_t buffer_length, uint8_t* buffer);
-  err_t httpsRequest(const char* url, const char* ca_cert, const char* content, uint8_t method, uint32_t buffer_length, uint8_t* buffer);
-  err_t httpRequestWithCallback(const char* url, const char* content, uint8_t method);
-  err_t httpsRequestWithCallback(const char* url, const char* ca_cert, const char* content, uint8_t method);
-  void       addHttpDataReceivedCallBack(ada_http_callback ada_httpCallback = NULL);
-
   /* callback from featherlib */
-  friend void http_rx_callback (uint8_t* data, uint16_t data_length, uint16_t avail);
   friend void adafruit_wifi_disconnect_callback(void);
 };
 

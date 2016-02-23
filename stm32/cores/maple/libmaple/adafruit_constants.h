@@ -183,6 +183,8 @@ typedef enum {
   SDEP_CMD_PING                = 0x0030, /**< Ping                                 */          //!< SDEP_CMD_PING
   SDEP_CMD_DNSLOOKUP           = 0x0031, /**< DNS lookup                           */          //!< SDEP_CMD_DNSLOOKUP
   SDEP_CMD_GET_ISO8601_TIME    = 0x0032, /**< Get time in ISO8601 format           */          //!< SDEP_CMD_GET_ISO8601_TIME
+
+  // obsolete
   SDEP_CMD_HTTPGETURI          = 0x0033, /**< HTTP Get URI                         */          //!< SDEP_CMD_HTTPGETURI
   SDEP_CMD_HTTPPOST            = 0x0034, /**< HTTP Post                            */          //!< SDEP_CMD_HTTPPOST
   SDEP_CMD_HTTPREQUEST         = 0x0035, /**< HTTP Request                         */          //!< SDEP_CMD_HTTPREQUEST
@@ -195,6 +197,8 @@ typedef enum {
   SDEP_CMD_HTTPEXTRACTHEADER   = 0x003C, /**< Extract HTTP header                  */          //!< SDEP_CMD_HTTPEXTRACTHEADER
   SDEP_CMD_HTTPENDOFHEADER     = 0x003D, /**< Check if end of HTTP header reached  */          //!< SDEP_CMD_HTTPENDOFHEADER
   SDEP_CMD_HTTPSKIPHEADER      = 0x003E, /**< Skip HTTP header                     */          //!< SDEP_CMD_HTTPSKIPHEADER
+  ///
+
   SDEP_CMD_GET_UTC_TIME        = 0x003F, ///< Get UTC time in seconds
 
   /* DEBUG Commands */
@@ -249,18 +253,6 @@ typedef enum {
   SDEP_CMD_UDP_PEEK            = 0x00A6,                                                       //!< SDEP_CMD_UDP_PEEK
   SDEP_CMD_UDP_PACKET_INFO     = 0x00A7,                                                       //!< SDEP_CMD_UDP_PACKET_INFO
 } sdep_command_t;
-
-/**
- * @enum mqtt_evt_opcode_t
- * @brief MQTT event opcodes
- */
-typedef enum
-{
-  MQTT_EVT_INVALID          = 0x00,  /**< Invalid event code            */
-  MQTT_EVT_DISCONNECTED     = 0x81,  /**< Link disconnected event code  */
-  MQTT_EVT_TOPIC_CHANGED    = 0x82   /**< Topic changed event code      */
-
-} mqtt_evt_opcode_t;
 
 enum
 {
