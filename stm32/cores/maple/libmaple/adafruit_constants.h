@@ -183,23 +183,7 @@ typedef enum {
   SDEP_CMD_PING                = 0x0030, /**< Ping                                 */          //!< SDEP_CMD_PING
   SDEP_CMD_DNSLOOKUP           = 0x0031, /**< DNS lookup                           */          //!< SDEP_CMD_DNSLOOKUP
   SDEP_CMD_GET_ISO8601_TIME    = 0x0032, /**< Get time in ISO8601 format           */          //!< SDEP_CMD_GET_ISO8601_TIME
-
-  // obsolete
-  SDEP_CMD_HTTPGETURI          = 0x0033, /**< HTTP Get URI                         */          //!< SDEP_CMD_HTTPGETURI
-  SDEP_CMD_HTTPPOST            = 0x0034, /**< HTTP Post                            */          //!< SDEP_CMD_HTTPPOST
-  SDEP_CMD_HTTPREQUEST         = 0x0035, /**< HTTP Request                         */          //!< SDEP_CMD_HTTPREQUEST
-  SDEP_CMD_HTTPSREQUEST        = 0x0036, /**< HTTPs Request                        */          //!< SDEP_CMD_HTTPSREQUEST
-  SDEP_CMD_HTTPREQUESTWITHCB   = 0x0037, /**< Async HTTP Request                   */          //!< SDEP_CMD_HTTPREQUESTWITHCB
-  SDEP_CMD_HTTPSREQUESTWITHCB  = 0x0038, /**< Async HTTPS Request                  */          //!< SDEP_CMD_HTTPSREQUESTWITHCB
-  SDEP_CMD_HTTPSENDREQUEST     = 0x0039, /**< Send HTTP Request (HTTP Class)       */          //!< SDEP_CMD_HTTPSENDREQUEST
-  SDEP_CMD_HTTPDATALENGTH      = 0x003A, /**< Get the length of packet's data      */          //!< SDEP_CMD_HTTPDATALENGTH
-  SDEP_CMD_HTTPRESPONSECODE    = 0x003B, /**< Get response code                    */          //!< SDEP_CMD_HTTPRESPONSECODE
-  SDEP_CMD_HTTPEXTRACTHEADER   = 0x003C, /**< Extract HTTP header                  */          //!< SDEP_CMD_HTTPEXTRACTHEADER
-  SDEP_CMD_HTTPENDOFHEADER     = 0x003D, /**< Check if end of HTTP header reached  */          //!< SDEP_CMD_HTTPENDOFHEADER
-  SDEP_CMD_HTTPSKIPHEADER      = 0x003E, /**< Skip HTTP header                     */          //!< SDEP_CMD_HTTPSKIPHEADER
-  ///
-
-  SDEP_CMD_GET_UTC_TIME        = 0x003F, ///< Get UTC time in seconds
+  SDEP_CMD_GET_UTC_TIME        = 0x0033, ///< Get UTC time in seconds
 
   /* DEBUG Commands */
   SDEP_CMD_STACKDUMP           = 0x0040, /**< Dump the stack                       */          //!< SDEP_CMD_STACKDUMP
