@@ -161,81 +161,81 @@ typedef enum {
   SDEP_CMD_ERROR_STRING        = 0x0006, /**< Get descriptive error string         */
 
   /* GPIO Command */
-  SDEP_CMD_GPIO                = 0x0010, /**< Set GPIO                             */          //!< SDEP_CMD_GPIO
-  SDEP_CMD_RANDOMNUMBER        = 0x0011, /**< Random Number                        */          //!< SDEP_CMD_RANDOMNUMBER
+  SDEP_CMD_GPIO                = 0x0100, /**< Set GPIO                             */          //!< SDEP_CMD_GPIO
+  SDEP_CMD_RANDOMNUMBER        = 0x0101, /**< Random Number                        */          //!< SDEP_CMD_RANDOMNUMBER
 
   /* WiFi Commands */
-  SDEP_CMD_SCAN                = 0x0020, /**< AP scan                              */          //!< SDEP_CMD_SCAN
-  SDEP_CMD_CONNECT             = 0x0021, /**< Connect to AP                        */          //!< SDEP_CMD_CONNECT
-  SDEP_CMD_DISCONNECT          = 0x0022, /**< Disconnect from AP                   */          //!< SDEP_CMD_DISCONNECT
-  SDEP_CMD_APSTART             = 0x0023, /**< Start AP                             */          //!< SDEP_CMD_APSTART
-  SDEP_CMD_APSTOP              = 0x0024, /**< Stop AP                              */          //!< SDEP_CMD_APSTOP
-  SDEP_CMD_WIFI_GET_RSSI       = 0x0025, ///< Get current RSSI
-  SDEP_CMD_WIFI_PROFILE_ADD    = 0x0026, ///< Add a network profile
-  SDEP_CMD_WIFI_PROFILE_DEL    = 0x0027, ///< Add a network profile
-  SDEP_CMD_WIFI_PROFILE_CLEAR  = 0x0028, ///< Clear all network profiles
-  SDEP_CMD_WIFI_PROFILE_CHECK  = 0x0029, ///< Check if a network profile existed
-  SDEP_CMD_WIFI_PROFILE_SAVE   = 0x002A, ///< Save the current connect AP to profile list
-  SDEP_CMD_WIFI_PROFILE_GET    = 0x002B, ///< Get AP's profile info
-  SDEP_CMD_TLS_SET_ROOT_CERTS  = 0x002C, ///< Set ROOT CA Chain
+  SDEP_CMD_SCAN                = 0x0200, /**< AP scan                              */          //!< SDEP_CMD_SCAN
+  SDEP_CMD_CONNECT             = 0x0201, /**< Connect to AP                        */          //!< SDEP_CMD_CONNECT
+  SDEP_CMD_DISCONNECT          = 0x0202, /**< Disconnect from AP                   */          //!< SDEP_CMD_DISCONNECT
+  SDEP_CMD_APSTART             = 0x0203, /**< Start AP                             */          //!< SDEP_CMD_APSTART
+  SDEP_CMD_APSTOP              = 0x0204, /**< Stop AP                              */          //!< SDEP_CMD_APSTOP
+  SDEP_CMD_WIFI_GET_RSSI       = 0x0205, ///< Get current RSSI
+  SDEP_CMD_WIFI_PROFILE_ADD    = 0x0206, ///< Add a network profile
+  SDEP_CMD_WIFI_PROFILE_DEL    = 0x0207, ///< Add a network profile
+  SDEP_CMD_WIFI_PROFILE_CLEAR  = 0x0208, ///< Clear all network profiles
+  SDEP_CMD_WIFI_PROFILE_CHECK  = 0x0209, ///< Check if a network profile existed
+  SDEP_CMD_WIFI_PROFILE_SAVE   = 0x020A, ///< Save the current connect AP to profile list
+  SDEP_CMD_WIFI_PROFILE_GET    = 0x020B, ///< Get AP's profile info
+  SDEP_CMD_TLS_SET_ROOT_CERTS  = 0x020C, ///< Set ROOT CA Chain
 
   /* Network Commands */
-  SDEP_CMD_PING                = 0x0030, /**< Ping                                 */          //!< SDEP_CMD_PING
-  SDEP_CMD_DNSLOOKUP           = 0x0031, /**< DNS lookup                           */          //!< SDEP_CMD_DNSLOOKUP
-  SDEP_CMD_GET_ISO8601_TIME    = 0x0032, /**< Get time in ISO8601 format           */          //!< SDEP_CMD_GET_ISO8601_TIME
-  SDEP_CMD_GET_UTC_TIME        = 0x0033, ///< Get UTC time in seconds
+  SDEP_CMD_PING                = 0x0300, /**< Ping                                 */          //!< SDEP_CMD_PING
+  SDEP_CMD_DNSLOOKUP           = 0x0301, /**< DNS lookup                           */          //!< SDEP_CMD_DNSLOOKUP
+  SDEP_CMD_GET_ISO8601_TIME    = 0x0302, /**< Get time in ISO8601 format           */          //!< SDEP_CMD_GET_ISO8601_TIME
+  SDEP_CMD_GET_UTC_TIME        = 0x0303, ///< Get UTC time in seconds
 
   /* DEBUG Commands */
-  SDEP_CMD_STACKDUMP           = 0x0040, /**< Dump the stack                       */          //!< SDEP_CMD_STACKDUMP
-  SDEP_CMD_STACKSIZE           = 0x0041, /**< Get stack size                       */          //!< SDEP_CMD_STACKSIZE
-  SDEP_CMD_HEAPDUMP            = 0x0042, /**< Dump the heap                        */          //!< SDEP_CMD_HEAPDUMP
-  SDEP_CMD_HEAPSIZE            = 0x0043, /**< Get heap size                        */          //!< SDEP_CMD_HEAPSIZE
-  SDEP_CMD_THREADLIST          = 0x0044, /**< Get Thread information               */          //!< SDEP_CMD_THREADLIST
+  SDEP_CMD_STACKDUMP           = 0x0400, /**< Dump the stack                       */          //!< SDEP_CMD_STACKDUMP
+  SDEP_CMD_STACKSIZE           = 0x0401, /**< Get stack size                       */          //!< SDEP_CMD_STACKSIZE
+  SDEP_CMD_HEAPDUMP            = 0x0402, /**< Dump the heap                        */          //!< SDEP_CMD_HEAPDUMP
+  SDEP_CMD_HEAPSIZE            = 0x0403, /**< Get heap size                        */          //!< SDEP_CMD_HEAPSIZE
+  SDEP_CMD_THREADLIST          = 0x0404, /**< Get Thread information               */          //!< SDEP_CMD_THREADLIST
 
   /* SPI Flash Commands */
-  SDEP_CMD_SFLASHFORMAT        = 0x0050, /**< Format SPI flash memory              */          //!< SDEP_CMD_SFLASHFORMAT
-  SDEP_CMD_SFLASHLIST          = 0x0051, /**< List SPI flash contents              */          //!< SDEP_CMD_SFLASHLIST
+  SDEP_CMD_SFLASHFORMAT        = 0x0500, /**< Format SPI flash memory              */          //!< SDEP_CMD_SFLASHFORMAT
+  SDEP_CMD_SFLASHLIST          = 0x0501, /**< List SPI flash contents              */          //!< SDEP_CMD_SFLASHLIST
 
   /* MQTT Commands */
-  SDEP_CMD_MQTTCONNECT         = 0x0060, /**< Connect to a broker                  */          //!< SDEP_CMD_MQTTCONNECT
-  SDEP_CMD_MQTTDISCONNECT      = 0x0061, /**< Disconnect from a broker             */          //!< SDEP_CMD_MQTTDISCONNECT
-  SDEP_CMD_MQTTPUBLISH         = 0x0062, /**< Publish a message to a topic         */          //!< SDEP_CMD_MQTTPUBLISH
-  SDEP_CMD_MQTTSUBSCRIBE       = 0x0063, /**< Subscribe to a topic                 */          //!< SDEP_CMD_MQTTSUBSCRIBE
-  SDEP_CMD_MQTTUNSUBSCRIBE     = 0x0064, /**< Unsubscribe from a topic             */          //!< SDEP_CMD_MQTTUNSUBSCRIBE
+  SDEP_CMD_MQTTCONNECT         = 0x0600, /**< Connect to a broker                  */          //!< SDEP_CMD_MQTTCONNECT
+  SDEP_CMD_MQTTDISCONNECT      = 0x0601, /**< Disconnect from a broker             */          //!< SDEP_CMD_MQTTDISCONNECT
+  SDEP_CMD_MQTTPUBLISH         = 0x0602, /**< Publish a message to a topic         */          //!< SDEP_CMD_MQTTPUBLISH
+  SDEP_CMD_MQTTSUBSCRIBE       = 0x0603, /**< Subscribe to a topic                 */          //!< SDEP_CMD_MQTTSUBSCRIBE
+  SDEP_CMD_MQTTUNSUBSCRIBE     = 0x0604, /**< Unsubscribe from a topic             */          //!< SDEP_CMD_MQTTUNSUBSCRIBE
 
   /* IRQ Commands */
-  SDEP_CMD_IRQREAD             = 0x0070, /**< Read from async response fifo        */          //!< SDEP_CMD_IRQREAD
-  SDEP_CMD_IRQCOUNT            = 0x0071, /**< Number of records in async fifo      */          //!< SDEP_CMD_IRQCOUNT
-  SDEP_CMD_IRQAVAIL            = 0x0072, /**< Number of records LEFT in async fifo */          //!< SDEP_CMD_IRQAVAIL
-  SDEP_CMD_IRQCLEAR            = 0x0073, /**< Clear async fifo & deassert IRQ      */          //!< SDEP_CMD_IRQCLEAR
+  SDEP_CMD_IRQREAD             = 0x0700, /**< Read from async response fifo        */          //!< SDEP_CMD_IRQREAD
+  SDEP_CMD_IRQCOUNT            = 0x0701, /**< Number of records in async fifo      */          //!< SDEP_CMD_IRQCOUNT
+  SDEP_CMD_IRQAVAIL            = 0x0702, /**< Number of records LEFT in async fifo */          //!< SDEP_CMD_IRQAVAIL
+  SDEP_CMD_IRQCLEAR            = 0x0703, /**< Clear async fifo & deassert IRQ      */          //!< SDEP_CMD_IRQCLEAR
 
   /* Gateway Commands */
-  SDEP_CMD_GET_IPV4_ADDRESS    = 0x0080, /**< Get IPv4 Address                     */          //!< SDEP_CMD_GET_IPV4_ADDRESS
-  SDEP_CMD_GET_IPV6_ADDRESS    = 0x0081, /**< Get IPv6 Address                     */          //!< SDEP_CMD_GET_IPV6_ADDRESS
-  SDEP_CMD_GET_GATEWAY_ADDRESS = 0x0082, /**< Get Gateway's IPv4 Address           */          //!< SDEP_CMD_GET_GATEWAY_ADDRESS
-  SDEP_CMD_GET_NETMASK         = 0x0083, /**< Get Netmask's IPv4 Address           */          //!< SDEP_CMD_GET_NETMASK
-  SDEP_CMD_GET_MAC_ADDRESS     = 0x0084, /**< Get MAC Address                      */          //!< SDEP_CMD_GET_MAC_ADDRESS
+  SDEP_CMD_GET_IPV4_ADDRESS    = 0x0800, /**< Get IPv4 Address                     */          //!< SDEP_CMD_GET_IPV4_ADDRESS
+  SDEP_CMD_GET_IPV6_ADDRESS    = 0x0801, /**< Get IPv6 Address                     */          //!< SDEP_CMD_GET_IPV6_ADDRESS
+  SDEP_CMD_GET_GATEWAY_ADDRESS = 0x0802, /**< Get Gateway's IPv4 Address           */          //!< SDEP_CMD_GET_GATEWAY_ADDRESS
+  SDEP_CMD_GET_NETMASK         = 0x0803, /**< Get Netmask's IPv4 Address           */          //!< SDEP_CMD_GET_NETMASK
+  SDEP_CMD_GET_MAC_ADDRESS     = 0x0804, /**< Get MAC Address                      */          //!< SDEP_CMD_GET_MAC_ADDRESS
 
   /* TCP Commnads */
-  SDEP_CMD_TCP_CONNECT         = 0x0090,                                                       //!< SDEP_CMD_TCP_CONNECT
-  SDEP_CMD_TCP_WRITE           = 0x0091,                                                       //!< SDEP_CMD_TCP_WRITE
-  SDEP_CMD_TCP_FLUSH           = 0x0092,                                                       //!< SDEP_CMD_TCP_FLUSH
-  SDEP_CMD_TCP_READ            = 0x0093,                                                       //!< SDEP_CMD_TCP_READ
-  SDEP_CMD_TCP_DISCONNECT      = 0x0094,                                                       //!< SDEP_CMD_TCP_DISCONNECT
-  SDEP_CMD_TCP_AVAILABLE       = 0x0095,                                                       //!< SDEP_CMD_TCP_AVAILABLE
-  SDEP_CMD_TCP_PEEK            = 0x0096,                                                       //!< SDEP_CMD_TCP_PEEK
-  SDEP_CMD_TCP_STATUS          = 0x0097,                                                       //!< SDEP_CMD_TCP_STATUS
-  SDEP_CMD_TCP_SET_CALLBACK    = 0x0098,                                                       //!< SDEP_CMD_TCP_SET_CALLBACK
+  SDEP_CMD_TCP_CONNECT         = 0x0900,                                                       //!< SDEP_CMD_TCP_CONNECT
+  SDEP_CMD_TCP_WRITE           = 0x0901,                                                       //!< SDEP_CMD_TCP_WRITE
+  SDEP_CMD_TCP_FLUSH           = 0x0902,                                                       //!< SDEP_CMD_TCP_FLUSH
+  SDEP_CMD_TCP_READ            = 0x0903,                                                       //!< SDEP_CMD_TCP_READ
+  SDEP_CMD_TCP_DISCONNECT      = 0x0904,                                                       //!< SDEP_CMD_TCP_DISCONNECT
+  SDEP_CMD_TCP_AVAILABLE       = 0x0905,                                                       //!< SDEP_CMD_TCP_AVAILABLE
+  SDEP_CMD_TCP_PEEK            = 0x0906,                                                       //!< SDEP_CMD_TCP_PEEK
+  SDEP_CMD_TCP_STATUS          = 0x0907,                                                       //!< SDEP_CMD_TCP_STATUS
+  SDEP_CMD_TCP_SET_CALLBACK    = 0x0908,                                                       //!< SDEP_CMD_TCP_SET_CALLBACK
 
   /* UDP Commands */
-  SDEP_CMD_UDP_CREATE          = 0x00A0,                                                       //!< SDEP_CMD_UDP_CREATE
-  SDEP_CMD_UDP_WRITE           = 0x00A1,                                                       //!< SDEP_CMD_UDP_WRITE
-  SDEP_CMD_UDP_FLUSH           = 0x00A2,                                                       //!< SDEP_CMD_UDP_FLUSH
-  SDEP_CMD_UDP_READ            = 0x00A3,                                                       //!< SDEP_CMD_UDP_READ
-  SDEP_CMD_UDP_CLOSE           = 0x00A4,                                                       //!< SDEP_CMD_UDP_CLOSE
-  SDEP_CMD_UDP_AVAILABLE       = 0x00A5,                                                       //!< SDEP_CMD_UDP_AVAILABLE
-  SDEP_CMD_UDP_PEEK            = 0x00A6,                                                       //!< SDEP_CMD_UDP_PEEK
-  SDEP_CMD_UDP_PACKET_INFO     = 0x00A7,                                                       //!< SDEP_CMD_UDP_PACKET_INFO
+  SDEP_CMD_UDP_CREATE          = 0x0A00,                                                       //!< SDEP_CMD_UDP_CREATE
+  SDEP_CMD_UDP_WRITE           = 0x0A01,                                                       //!< SDEP_CMD_UDP_WRITE
+  SDEP_CMD_UDP_FLUSH           = 0x0A02,                                                       //!< SDEP_CMD_UDP_FLUSH
+  SDEP_CMD_UDP_READ            = 0x0A03,                                                       //!< SDEP_CMD_UDP_READ
+  SDEP_CMD_UDP_CLOSE           = 0x0A04,                                                       //!< SDEP_CMD_UDP_CLOSE
+  SDEP_CMD_UDP_AVAILABLE       = 0x0A05,                                                       //!< SDEP_CMD_UDP_AVAILABLE
+  SDEP_CMD_UDP_PEEK            = 0x0A06,                                                       //!< SDEP_CMD_UDP_PEEK
+  SDEP_CMD_UDP_PACKET_INFO     = 0x0A07,                                                       //!< SDEP_CMD_UDP_PACKET_INFO
 } sdep_command_t;
 
 enum
