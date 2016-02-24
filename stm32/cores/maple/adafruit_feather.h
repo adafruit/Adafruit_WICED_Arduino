@@ -198,10 +198,10 @@ public:
 //  bool      setRootCertificatesPEM(char const* root_certs_pem);
 
 
-  //------------- API below this are subjected to be refactor -------------//
-  err_t startAP(char* ssid, char* passwd);
-  err_t startAP(void);
-  err_t stopAP(void);
+  // Enable later when complete
+//  err_t startAP(char* ssid, char* passwd);
+//  err_t startAP(void);
+//  err_t stopAP(void);
 
   /* callback from featherlib */
   friend void adafruit_wifi_disconnect_callback(void);

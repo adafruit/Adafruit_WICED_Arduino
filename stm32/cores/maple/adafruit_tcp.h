@@ -44,6 +44,7 @@
 
 #define ADAFRUIT_TCP_TIMEOUT  200
 
+// Callback proxy from Featherlib
 extern "C"
 {
   err_t adafruit_tcp_receive_callback(void* arg, void* p_tcp);
@@ -71,7 +72,6 @@ public:
   void             disconnect ( void ) { stop(); }
 
   void             tlsRequireVerification (bool required) { _tls_verification = required; }
-
 
   virtual operator bool() { return _tcp_handle != 0; }
 

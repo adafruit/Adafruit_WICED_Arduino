@@ -547,6 +547,7 @@ bool AdafruitFeather::setRootCertificates(uint8_t const* root_certs_der, uint16_
   return sdep_n(SDEP_CMD_TLS_SET_ROOT_CERTS, para_count, para_arr, NULL, NULL);
 }
 
+#if 0
 /******************************************************************************/
 /*!
     @brief  Starts AP mode on the module, causing the module to advertise a new
@@ -605,6 +606,7 @@ err_t AdafruitFeather::stopAP(void)
 {
   return FEATHERLIB->sdep_execute(SDEP_CMD_APSTOP, 0, NULL, NULL, NULL);
 }
+#endif
 
 /******************************************************************************/
 /*!
