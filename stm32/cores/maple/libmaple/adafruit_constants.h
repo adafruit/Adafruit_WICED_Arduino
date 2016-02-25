@@ -146,6 +146,8 @@ typedef enum
   ERROR_WWD_UNABLE_TO_JOIN          = 1025,  /**< WWD 1025, likely a range issue */
   ERROR_WWD_ACCESS_POINT_NOT_FOUND  = 1066,
 
+  ERROR_TLS_UNTRUSTED_CERTIFICATE   = 5035,  /**< TLS verification failed */
+
   ERROR_SDEP_INVALIDPARAMETER       = 30002,
 } err_t;
 

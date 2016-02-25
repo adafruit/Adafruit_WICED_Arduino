@@ -43,7 +43,7 @@ CFILE_FOOTER = '''
 class AdafruitCert(object):
     #def __init__(self):
 
-    def generate(self, filename):
+    def convert(self, filename):
         '''Generating certificates.h from PEM file (only the last certificate)'''
         # We only need the Root CA which is the last certificate in the chain
         (cdata, count) = self.pem2c(self.opencert(filename)[-1])
@@ -71,7 +71,7 @@ class AdafruitCert(object):
             # - Linux may need '-CApath /etc/ssl/certs'
             check_output(("echo '' | openssl s_client -connect %s:%d -showcerts | awk '/BEGIN CERT/ {p=1}; p; /END CERT/ {p=0}' > %s") % (hostname, port, file_pem), shell=True)
 
-        self.generate(file_pem)
+        self.convert(file_pem)
 
     def opencert(self, filename):
         # Open PEM file and split cert chain into list
@@ -137,9 +137,9 @@ if (len(sys.argv) < 2):
   print ("Usage: python %s <hostname>")%(sys.argv[0])
   sys.exit()
 
-pycert.generate(sys.argv[1])
+pycert.download(sys.argv[1])
 '''
 
 #pycert.download("www.google.com")
 #pycert.create_bundle()
-pycert.generate("verisign.cer")
+#pycert.convert("verisign.cer")
