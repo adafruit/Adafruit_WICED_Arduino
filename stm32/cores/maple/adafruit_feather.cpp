@@ -503,7 +503,7 @@ void AdafruitFeather::disconnect(void)
     PEM counterpart.
 */
 /******************************************************************************/
-bool AdafruitFeather::setRootCA(uint8_t const* root_ca, uint16_t len)
+bool AdafruitFeather::addRootCA(uint8_t const* root_ca, uint16_t len)
 {
 //  return sdep(SDEP_CMD_TLS_SET_ROOT_CERTS, len, root_ca, NULL, NULL);
   // TODO use sdep instead of sdep_n
@@ -513,7 +513,7 @@ bool AdafruitFeather::setRootCA(uint8_t const* root_ca, uint16_t len)
   };
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
-  return sdep_n(SDEP_CMD_TLS_SET_ROOT_CA, para_count, para_arr, NULL, NULL);
+  return sdep_n(SDEP_CMD_TLS_ADD_ROOT_CA, para_count, para_arr, NULL, NULL);
 }
 
 #if 0

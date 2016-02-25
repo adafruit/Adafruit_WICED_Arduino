@@ -42,7 +42,7 @@
 #include <IPAddress.h>
 #include "adafruit_feather.h"
 
-#define ADAFRUIT_TCP_TIMEOUT  200
+#define ADAFRUIT_TCP_TIMEOUT  1000
 
 // Callback proxy from Featherlib
 extern "C"

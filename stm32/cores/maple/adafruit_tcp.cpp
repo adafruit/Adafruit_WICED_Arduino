@@ -44,6 +44,8 @@
 /******************************************************************************/
 AdafruitTCP::AdafruitTCP(void)
 {
+  rx_callback         = NULL;
+  disconnect_callback = NULL;
   this->reset();
 }
 
@@ -70,9 +72,7 @@ void AdafruitTCP::reset()
   _packet_buffering = false;
   _tls_verification = true;
 
-  rx_callback         = NULL;
-  disconnect_callback = NULL;
-  _timeout            = ADAFRUIT_TCP_TIMEOUT;
+  _timeout          = ADAFRUIT_TCP_TIMEOUT;
 }
 
 void AdafruitTCP::usePacketBuffering(bool enable)

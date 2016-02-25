@@ -44,7 +44,7 @@
 int ledPin = PA15;
 
 // Change the SERVER_ID to match the generated certificates.h
-#define SERVER_ID    1
+#define SERVER_ID    10
 
 const char * server_arr[][2] =
 {
@@ -113,8 +113,6 @@ void disconnect_callback(void)
   Serial.println("DISCONNECTED CALLBACK");
   Serial.println("---------------------");
   Serial.println();
-
-  http.stop();
 }
 
 void setup()
@@ -134,14 +132,13 @@ void setup()
 
   printWifiStatus();
 
-  // Set Root CA Chain
-  Feather.setRootCA(rootca_certs, ROOTCA_CERTS_LEN);
+  // Add Root CA Chain to pre-flashed chain
+  Feather.addRootCA(rootca_certs, ROOTCA_CERTS_LEN);
  
   // Tell the MQTT client to auto print error codes and halt on errors
   http.err_actions(true, true);
 
-  // Disable certificate verification (accept any server)
-  http.setTimeout(1000);
+  // Set up callback
   http.setReceivedCallback(receive_callback);
   http.setDisconnectCallback(disconnect_callback);
 
@@ -157,6 +154,24 @@ void setup()
   Serial.printf("Requesting '%s' ... ", uri);
   http.get(server, uri); // Will halted if an error occurs
   Serial.println("OK");
+
+#if 0
+  delay(20000);
+
+  if ( !http.available() )
+    http.stop();
+
+  const char * next_server = server_arr[1][0];
+  const char * next_uri    = server_arr[1][1];
+
+  Serial.printf("Connecting to %s port %d ... ", next_server, HTTPS_PORT );
+  http.connectSSL(next_server, HTTPS_PORT); // Will halted if an error occurs
+  Serial.println("OK");
+
+  Serial.printf("Requesting '%s' ... ", next_uri);
+  http.get(next_server, next_uri); // Will halted if an error occurs
+  Serial.println("OK");
+#endif
 }
 
 void loop()

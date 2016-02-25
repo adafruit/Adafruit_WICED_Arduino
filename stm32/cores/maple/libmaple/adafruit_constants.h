@@ -189,7 +189,7 @@ typedef enum {
   SDEP_CMD_WIFI_PROFILE_CHECK  = 0x0409,    ///< Check if a network profile exists
   SDEP_CMD_WIFI_PROFILE_SAVE   = 0x040A,    ///< Save current connected profile to NVM
   SDEP_CMD_WIFI_PROFILE_GET    = 0x040B,    ///< Get AP's profile info
-  SDEP_CMD_TLS_SET_ROOT_CA     = 0x040C,    ///< Set ROOT CA Chain
+  SDEP_CMD_TLS_ADD_ROOT_CA     = 0x040C,    ///< Set ROOT CA Chain
 
   // Gateway Commands
   SDEP_CMD_GET_IPV4_ADDRESS    = 0x0500,    ///< Get IPv4 address from an interface

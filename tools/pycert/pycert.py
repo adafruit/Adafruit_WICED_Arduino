@@ -6,6 +6,9 @@ import os.path
 import operator
 from subprocess import check_output
 
+#******************************************************************************
+# Configuration
+#******************************************************************************
 # Path to bundle file in relative to pycert.py
 BUNDLE_FILE = os.path.dirname(sys.argv[0]) + '/certificates/cacert.pem'
 
@@ -34,20 +37,16 @@ CFILE_FOOTER = '''
 #endif /* ifndef _CERTIFICATES_H_ */
 '''
 
+#******************************************************************************
+# Class Implementation
+#******************************************************************************
 class AdafruitCert(object):
     #def __init__(self):
 
-    def generate(self, hostname, port=443):
-        "Generating certificates.h"
-        file_pem = hostname + '.crt'
-
-        # Download certificates if not download already
-        if not os.path.isfile(file_pem):
-            self.download(hostname, port)
-        self.opencert(file_pem)
-
+    def generate(self, filename):
+        '''Generating certificates.h from PEM file (only the last certificate)'''
         # We only need the Root CA which is the last certificate in the chain
-        (cdata, count) = self.pem2c(self.opencert(file_pem)[-1])
+        (cdata, count) = self.pem2c(self.opencert(filename)[-1])
 
         # Write C Header file
         self.writeCFlile(cdata, count)
@@ -58,15 +57,21 @@ class AdafruitCert(object):
         for cert in self.opencert(BUNDLE_FILE):
             (cdata, count) = tuple( map(operator.add, (cdata,count), self.pem2c(cert) ) )
 
-        print cdata
-        print count
+        self.writeCFlile(cdata, count)
 
     def download(self, hostname, port=443):
-        print "Downloading certificates from " + hostname + ' port ' + str(port)
-        # Server cert is first, later is RootCA
-        # - Windows: it is best to installed cygwin (and have cygwin/bin in PATH)
-        # - Linux may need '-CApath /etc/ssl/certs'
-        check_output(("echo '' | openssl s_client -connect %s:%d -showcerts | awk '/BEGIN CERT/ {p=1}; p; /END CERT/ {p=0}' > %s.crt") % (hostname, port, hostname), shell=True)
+        '''Download and generate certificate from a hostname'''
+        file_pem = hostname + '.crt'
+
+        # Download certificates if not download already
+        if not os.path.isfile(file_pem):
+            print "Downloading certificates from " + hostname + ' port ' + str(port)
+            # Server cert is first, later is RootCA
+            # - Windows: it is best to installed cygwin (and have cygwin/bin in PATH)
+            # - Linux may need '-CApath /etc/ssl/certs'
+            check_output(("echo '' | openssl s_client -connect %s:%d -showcerts | awk '/BEGIN CERT/ {p=1}; p; /END CERT/ {p=0}' > %s") % (hostname, port, file_pem), shell=True)
+
+        self.generate(file_pem)
 
     def opencert(self, filename):
         # Open PEM file and split cert chain into list
@@ -119,6 +124,10 @@ class AdafruitCert(object):
         f_out.write("};\n")
         f_out.write(CFILE_FOOTER)
 
+
+#******************************************************************************
+# Interface
+#******************************************************************************
 pycert = AdafruitCert()
 
 '''
@@ -131,5 +140,6 @@ if (len(sys.argv) < 2):
 pycert.generate(sys.argv[1])
 '''
 
-#pycert.generate("www.google.com")
-pycert.create_bundle()
+#pycert.download("www.google.com")
+#pycert.create_bundle()
+pycert.generate("verisign.cer")
