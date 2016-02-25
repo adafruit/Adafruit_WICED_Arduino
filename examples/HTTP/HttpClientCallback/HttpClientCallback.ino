@@ -35,9 +35,9 @@
 
 #define S3_SERVER             "adafruit-download.s3.amazonaws.com"
 
-// Some server such as facebook check the user_agent header to
-// return data accordingly. Setting curl to mimics command line browser !!
-// For list of popular user agent http://www.useragentstring.com/pages/useragentstring.php
+// Some servers such as Facebook check the user_agent header to
+// return data accordingly. Setting 'curl' mimics a command line browser.
+// For a list of popular user agents see: http://www.useragentstring.com/pages/useragentstring.php
 #define USER_AGENT_HEADER    "curl/7.45.0"
 
 int ledPin = PA15;
@@ -120,7 +120,7 @@ void setup()
 {
   Serial.begin(115200);
 
-  // wait for Serial port to connect. Needed for native USB port only
+  // Wait for the USB serial port to connect. Needed for native USB port only
   while (!Serial) delay(1);
   
   Serial.println("HTTP Client Callback Example");
@@ -133,17 +133,21 @@ void setup()
 
   printWifiStatus();
  
-  // Tell the MQTT client to auto print error codes and halt on errors
+  // Tell the HTTP client to auto print error codes and halt on errors
   http.err_actions(true, true);
 
-  // Disable certificate verification (accept any server)
+  // Optional: Disable certificate verification (accept any server)
   http.tlsRequireVerification(false);
+
+  // Set the HTTP client timeout (in ms)  
   http.setTimeout(1000);
+  
+  // Set the callback handlers
   http.setReceivedCallback(receive_callback);
   http.setDisconnectCallback(disconnect_callback);
 
   Serial.printf("Connecting to %s port %d ... ", server, HTTPS_PORT );
-  http.connectSSL(server, HTTPS_PORT); // Will halted if an error occurs
+  http.connectSSL(server, HTTPS_PORT); // Will halt if an error occurs
   Serial.println("OK");
     
   // Make a HTTP request:
@@ -152,7 +156,7 @@ void setup()
   http.addHeader("Connection", "keep-alive");
 
   Serial.printf("Requesting '%s' ... ", url);
-  http.get(server, url); // Will halted if an error occurs
+  http.get(server, url); // Will halt if an error occurs
   Serial.println("OK");
 }
 
@@ -162,20 +166,20 @@ void loop()
   delay(250);
 }
 
-
-void printWifiStatus() {
-  // print your WiFi shield's IP address:
+void printWifiStatus() 
+{
+  // Display the IP address:
   Serial.print("IP Address: ");
   Serial.println( IPAddress(Feather.localIP()) );
 
+  // Display the gateway address
   Serial.print("Gateway : ");
   Serial.println( IPAddress(Feather.gatewayIP()) );
 
-  // print the received signal strength:
+  // Display the received signal strength indicator (RSSI):
   long rssi = Feather.RSSI();
   Serial.print("signal strength (RSSI):");
   Serial.print(rssi);
   Serial.println(" dBm");
   Serial.println();
 }
-
