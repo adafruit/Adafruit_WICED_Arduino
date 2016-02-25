@@ -194,9 +194,7 @@ public:
   uint32_t   getUtcTime            (void);
 
   // TLS Root Certification Chain
-  bool      setRootCertificates    (uint8_t const* root_certs_der, uint16_t len);
-//  bool      setRootCertificatesPEM(char const* root_certs_pem);
-
+  bool      setRootCA              (uint8_t const* root_ca, uint16_t len);
 
   // Enable later when complete
 //  err_t startAP(char* ssid, char* passwd);

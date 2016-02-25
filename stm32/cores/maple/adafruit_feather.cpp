@@ -493,37 +493,6 @@ void AdafruitFeather::disconnect(void)
   _connected = !sdep(SDEP_CMD_DISCONNECT, 0, NULL, NULL, NULL);
 }
 
-#if 0
-/******************************************************************************/
-/*!
-    @brief  Set Root CA certificates in PEM format. PEM format is base64 encoded,
-            and in form
-
-            -----BEGIN CERTIFICATE-----
-            ..........KEYS.............
-            -----END CERTIFICATE-----
-
-    @note   Feather works natively with DER (binary) format, therefore it will convert
-    PEM --> DER format and need to malloc 2-3KB of SRAM hold the result. To save
-    Memory usage, please consider to use the PEM format.
-*/
-/******************************************************************************/
-bool AdafruitFeather::setRootCertificatesPEM(char const* root_certs_pem)
-{
-  uint16_t len = (root_certs_pem ? strlen(root_certs_pem) : 0 );
-//  return sdep(SDEP_CMD_TLS_SET_ROOT_CERTS, len, root_certs_pem, NULL, NULL);
-  // TODO use sdep instead of sdep_n
-  sdep_cmd_para_t para_arr[] =
-  {
-      { .len = len  , .p_value = root_certs_pem },
-  };
-  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
-
-  return sdep_n(SDEP_CMD_TLS_SET_ROOT_CERTS, para_count, para_arr, NULL, NULL);
-
-}
-#endif
-
 /******************************************************************************/
 /*!
     @brief  Set Root CA certificates in DER format. DER format is binary format,
@@ -534,17 +503,17 @@ bool AdafruitFeather::setRootCertificatesPEM(char const* root_certs_pem)
     PEM counterpart.
 */
 /******************************************************************************/
-bool AdafruitFeather::setRootCertificates(uint8_t const* root_certs_der, uint16_t len)
+bool AdafruitFeather::setRootCA(uint8_t const* root_ca, uint16_t len)
 {
-//  return sdep(SDEP_CMD_TLS_SET_ROOT_CERTS, len, root_certs_der, NULL, NULL);
+//  return sdep(SDEP_CMD_TLS_SET_ROOT_CERTS, len, root_ca, NULL, NULL);
   // TODO use sdep instead of sdep_n
   sdep_cmd_para_t para_arr[] =
   {
-      { .len = len  , .p_value = root_certs_der },
+      { .len = len  , .p_value = root_ca },
   };
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
-  return sdep_n(SDEP_CMD_TLS_SET_ROOT_CERTS, para_count, para_arr, NULL, NULL);
+  return sdep_n(SDEP_CMD_TLS_SET_ROOT_CA, para_count, para_arr, NULL, NULL);
 }
 
 #if 0
