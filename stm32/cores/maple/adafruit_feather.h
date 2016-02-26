@@ -55,16 +55,6 @@
 #define WIFI_SCAN_RESULT_LEN      52
 #define WIFI_MAX_PROFILE          5
 
-enum {
-  GET_METHOD    = 0x01,
-  POST_METHOD   = 0x02,
-};
-
-enum {
-  DISABLE       = 0x00,
-  ENABLE        = 0x01,
-};
-
 typedef struct ATTR_PACKED
 {
   char     ssid[WIFI_MAX_SSID_LEN+1];
@@ -119,6 +109,7 @@ private:
   bool          _connected;
 
   bool          _rootca_init;
+  bool          _rootca_default_en;
 
 //  void (*wlan_connect_callback)(void);
   void (*wlan_disconnect_callback)(void);
@@ -196,8 +187,10 @@ public:
   uint32_t   getUtcTime            (void);
 
   // TLS Root Certification Chain
-  bool       initRootCA             (void);
-  bool       addRootCA              (uint8_t const* root_ca, uint16_t len);
+  bool       useDefaultRootCA      (bool enabled) { _rootca_default_en = enabled; }
+  bool       initRootCA            (void);
+  bool       addRootCA             (uint8_t const* root_ca, uint16_t len);
+  bool       clearRootCA           (void);
 
   // Enable later when complete
 //  err_t startAP(char* ssid, char* passwd);
@@ -213,9 +206,22 @@ extern AdafruitFeather Feather;
 //--------------------------------------------------------------------+
 // DEBUG HELPER
 //--------------------------------------------------------------------+
+#define DBG_ENABLE      1
+
+#if DBG_ENABLE
+
 #define DBG_LOCATION()  Serial.printf("%s: %d: \r\n", __PRETTY_FUNCTION__, __LINE__)
 #define DBG_INT(x)      Serial.printf(#x " = %ld\r\n", (uint32_t) (x) )
 #define DBG_HEX(x)      Serial.printf(#x " = %08lx\r\n", (uint32_t) (x) )
 #define DBG_STR(x)      Serial.printf(#x " = %s\r\n", (char*)(x) )
+#define DBG_HEAP()      Serial.printf("%s: %d: Heap free: %d\r\n", __FUNCTION__, __LINE__, FEATHERLIB->heap_get_free_size())
+
+#else
+
+#define DBG_LOCATION()
+#define DBG_INT(x)
+#define DBG_HEX(x)#define DBG_STR(x)#define DBG_HEAP()
+
+#endif
 
 #endif

@@ -89,6 +89,8 @@ int AdafruitTCP::connect(IPAddress ip, uint16_t port)
 {
   if ( !Feather.connected() ) return 0;
 
+  DBG_HEAP();
+
   uint32_t ipv4      = (uint32_t) ip;
   uint8_t is_tls     = 0;
   uint8_t tls_option = _tls_verification ? TLS_VERIFICATION_REQUIRED : TLS_NO_VERIFICATION;
@@ -105,6 +107,8 @@ int AdafruitTCP::connect(IPAddress ip, uint16_t port)
 
   VERIFY(sdep_n(SDEP_CMD_TCP_CONNECT, para_count, para_arr, NULL, &_tcp_handle));
   this->install_callback();
+
+  DBG_HEAP();
 
   return true;
 }
@@ -130,8 +134,14 @@ int AdafruitTCP::connectSSL(IPAddress ip, uint16_t port)
 {
   if ( !Feather.connected() ) return 0;
 
-  // Init Root CA first if not initialized
-  VERIFY( Feather.initRootCA() );
+  // Only need to init Root CA if verification is enabled
+  if ( _tls_verification )
+  {
+    // Init Root CA first if not initialized
+    VERIFY( Feather.initRootCA() );
+  }
+
+  DBG_HEAP();
 
   uint32_t ipv4      = (uint32_t) ip;
   uint8_t is_tls     = 1;
@@ -150,8 +160,10 @@ int AdafruitTCP::connectSSL(IPAddress ip, uint16_t port)
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t) /*- (common_name ? 0 : 1)*/;
 
   VERIFY(sdep_n(SDEP_CMD_TCP_CONNECT, para_count , para_arr, NULL, &_tcp_handle));
-
   this->install_callback();
+
+  DBG_HEAP();
+
   return true;
 }
 
@@ -367,8 +379,12 @@ void AdafruitTCP::stop()
 {
   if ( _tcp_handle == 0 ) return;
 
+  DBG_HEAP();
+
   sdep(SDEP_CMD_TCP_DISCONNECT, 4, &_tcp_handle, NULL, NULL);
   this->reset();
+
+  DBG_HEAP();
 }
 
 

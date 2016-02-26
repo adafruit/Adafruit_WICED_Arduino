@@ -54,8 +54,9 @@ AdafruitFeather Feather;
 /******************************************************************************/
 AdafruitFeather::AdafruitFeather(void)
 {
-  _connected   = false;
-  _rootca_init = false;
+  _connected         = false;
+  _rootca_init       = false;
+  _rootca_default_en = true;
   memclr(&_ap_info, sizeof(wl_ap_info_t));
 
   wlan_disconnect_callback = NULL;
@@ -496,20 +497,42 @@ void AdafruitFeather::disconnect(void)
 
 /******************************************************************************/
 /*!
-    @brief  Initialize Root CA chain with built-in certificates. Please check
-    document @docname for the list of issuer.
+    @brief  Initialize Root CA chain. The default RootCA will be used if it is
+    not disabled by useDefaultRootCA() previously.
 
     @note   This function must be called before any other TLS functions to work
     properly ( addRootCA, connectSSL ). For user convenience, this function is
     implicitly invoke when needed.
+
+    This function is safe to call multiple times, only the first is executed
 */
 /******************************************************************************/
 bool AdafruitFeather::initRootCA(void)
 {
-  // Skip if already initialized
-  if (_rootca_init) return true;
-  _rootca_init = sdep(SDEP_CMD_TLS_INIT_ROOT_CA, 0, NULL, NULL, NULL);
+  // Skip if already initialized or not enabled by user
+  if (_rootca_init || !_rootca_default_en) return true;
+
+  DBG_HEAP();
+  // enable the Default Root CA
+  _rootca_init = sdep(SDEP_CMD_TLS_DEFAULT_ROOT_CA, 0, NULL, NULL, NULL);
+  DBG_HEAP();
   return _rootca_init;
+}
+
+/******************************************************************************/
+/*!
+    @brief  Clear and free all resource of the whole Root CA including The Default
+    and additional custom one
+*/
+/******************************************************************************/
+bool AdafruitFeather::clearRootCA(void)
+{
+  VERIFY( sdep(SDEP_CMD_TLS_CLEAR_ROOT_CA, 0, NULL, NULL, NULL) );
+
+  _rootca_init = false; // de-init
+//  _rootca_default_en = true;
+
+  return true;
 }
 
 /******************************************************************************/
@@ -525,7 +548,7 @@ bool AdafruitFeather::initRootCA(void)
 bool AdafruitFeather::addRootCA(uint8_t const* root_ca, uint16_t len)
 {
   // Init Root CA first if not initialized
-  if (!_rootca_init) VERIFY( this->initRootCA() ) ;
+  VERIFY( this->initRootCA() ) ;
 
 //  return sdep(SDEP_CMD_TLS_SET_ROOT_CERTS, len, root_ca, NULL, NULL);
   // TODO use sdep instead of sdep_n

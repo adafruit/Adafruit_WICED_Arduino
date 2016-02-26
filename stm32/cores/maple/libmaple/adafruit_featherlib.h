@@ -122,7 +122,7 @@ typedef struct ATTR_ALIGNED(512)
   char     firmware_builddate[12]; // e.g "Dec 07 2015"
   uint32_t sdk_version;
 
-  uint8_t  reserved[76];
+  uint8_t  RESERVED_[76];
 
   // SDEP Command
   err_t (*sdep_execute) (uint16_t  cmd_id     ,
@@ -133,26 +133,29 @@ typedef struct ATTR_ALIGNED(512)
                           uint8_t   para_count   , sdep_cmd_para_t const* para_arr,
                           uint16_t* p_result_len , void* p_result);
 
-  uint32_t sdep_reserved[6];
+  uint32_t RESERVED_[6];
 
   // RTOS API
   uint32_t (*rtos_delay_ms) (uint32_t ms);
   uint32_t (*rtos_delay_us) (uint32_t us);
   void     (*rtos_yield) (void);
-  uint32_t rtos_reserved[13];
+  uint32_t RESERVED_[13];
 
   // Peripheral API
   uint32_t (*system_millis) (void);
   bool     (*sflash_is_available)(void);
-  uint32_t peripheral_reserved[14];
+  uint32_t RESERVED_[14];
 
   // FILE Interface
   int (*file_write) (int file, char *ptr, int len);
   int (*file_read)  (int file, char *ptr, int len);
   int (*file_peek)  (int file);
-  uint32_t file_reserved;
+  uint32_t RESERVED_;
 
-  //
+  // DEBUG
+  int32_t  (*heap_get_free_size)(void);
+  uint32_t RESERVED_[3];
+
 }adafruit_featherlib_t;
 
 ASSERT_STATIC( sizeof(adafruit_featherlib_t) == 512 );
@@ -167,26 +170,6 @@ static inline bool is_within(uint32_t lower, uint32_t value, uint32_t upper)
 {
   return (lower <= value) && (value <= upper);
 }
-
-#if 0
-
-#define DBG_SERIAL STDOUT_FILENO
-
-#define DBG_LOCATION()       do {\
-    FEATHERLIB->file_write(DBG_SERIAL, (char*) __PRETTY_FUNCTION__, strlen(__PRETTY_FUNCTION__));\
-    FEATHERLIB->file_write(DBG_SERIAL, ": ", 2);\
-    FEATHERLIB->file_write(DBG_SERIAL, XSTRING_(__LINE__), strlen( XSTRING_(__LINE__) ));\
-    FEATHERLIB->file_write(DBG_SERIAL, "\r\n", 2);\
-  } while(0)
-
-#define DBG_INT(x)       do {\
-    FEATHERLIB->file_write(DBG_SERIAL, #x, strlen(#x));\
-    FEATHERLIB->file_write(DBG_SERIAL, " = ", 3);\
-    char ch[2] = { x+ '0', 0 } ;\
-    FEATHERLIB->file_write(DBG_SERIAL, ch, 1);\
-    FEATHERLIB->file_write(DBG_SERIAL, "\r\n", 2);\
-  } while(0)
-#endif
 
 #ifdef __cplusplus
  }

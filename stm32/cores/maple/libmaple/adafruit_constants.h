@@ -41,12 +41,19 @@
  extern "C" {
 #endif
 
-#define SHARED_ENABLED     0x00008000
-#define WPA_SECURITY       0x00200000
-#define WPA2_SECURITY      0x00400000
-#define ENTERPRISE_ENABLED 0x02000000
-#define WPS_ENABLED        0x10000000
-#define IBSS_ENABLED       0x20000000
+enum
+{
+  WIFI_INTERFACE_STATION = 0,
+  WIFI_INTERFACE_AP      = 1,
+  WIFI_INTERFACE_P2P     = 2,
+};
+
+#define SHARED_ENABLED            0x00008000
+#define WPA_SECURITY              0x00200000
+#define WPA2_SECURITY             0x00400000
+#define ENTERPRISE_ENABLED        0x02000000
+#define WPS_ENABLED               0x10000000
+#define IBSS_ENABLED              0x20000000
 
 #define OPEN_AUTH                 0x0000
 #define SHARED_AUTH               0x0001
@@ -54,13 +61,6 @@
 #define TKIP_ENABLED              0x0002
 #define AES_ENABLED               0x0004
 #define WSEC_SWFLAG               0x0008
-
-enum
-{
-  WIFI_INTERFACE_STATION = 0,
-  WIFI_INTERFACE_AP      = 1,
-  WIFI_INTERFACE_P2P     = 2,
-};
 
 typedef enum
 {
@@ -191,8 +191,9 @@ typedef enum {
   SDEP_CMD_WIFI_PROFILE_CHECK  = 0x0409,    ///< Check if a network profile exists
   SDEP_CMD_WIFI_PROFILE_SAVE   = 0x040A,    ///< Save current connected profile to NVM
   SDEP_CMD_WIFI_PROFILE_GET    = 0x040B,    ///< Get AP's profile info
-  SDEP_CMD_TLS_INIT_ROOT_CA    = 0x040C,    ///< Init ROOT CA using built-in chain
+  SDEP_CMD_TLS_DEFAULT_ROOT_CA = 0x040C,    ///< Enable the default Root CA list
   SDEP_CMD_TLS_ADD_ROOT_CA     = 0x040D,    ///< Add an custom ROOT CA to current Chain
+  SDEP_CMD_TLS_CLEAR_ROOT_CA   = 0x040E,    ///< Clear the whole ROOT CA chain
 
   // Gateway Commands
   SDEP_CMD_GET_IPV4_ADDRESS    = 0x0500,    ///< Get IPv4 address from an interface
