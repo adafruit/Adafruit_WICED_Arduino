@@ -3,12 +3,12 @@
 The following root CAs are no included in the default WICED list, but
 are provided here pre-compiled into .h format for convenience sake:
 
-## WICED Default Root CAs
+## Feather Combined Default Root CAs
 
 **Filename**: featherdefaults
 
 This file contains the default root CAs that are pre-flashed in FeatherLib. It
-includes the following root CAs:
+includes the following entries:
 
 - AddTrust External Root
 - Baltimore CybertTrust Root
