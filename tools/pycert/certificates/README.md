@@ -1,8 +1,5 @@
 # Root Certificate Authorities
 
-The following root CAs are no included in the default WICED list, but
-are provided here pre-compiled into .h format for convenience sake:
-
 ## Feather Combined Default Root CAs
 
 **Filename**: featherdefaults
