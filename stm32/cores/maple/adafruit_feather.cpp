@@ -54,7 +54,8 @@ AdafruitFeather Feather;
 /******************************************************************************/
 AdafruitFeather::AdafruitFeather(void)
 {
-  _connected = false;
+  _connected   = false;
+  _rootca_init = false;
   memclr(&_ap_info, sizeof(wl_ap_info_t));
 
   wlan_disconnect_callback = NULL;
@@ -495,6 +496,24 @@ void AdafruitFeather::disconnect(void)
 
 /******************************************************************************/
 /*!
+    @brief  Initialize Root CA chain with built-in certificates. Please check
+    document @docname for the list of issuer.
+
+    @note   This function must be called before any other TLS functions to work
+    properly ( addRootCA, connectSSL ). For user convenience, this function is
+    implicitly invoke when needed.
+*/
+/******************************************************************************/
+bool AdafruitFeather::initRootCA(void)
+{
+  // Skip if already initialized
+  if (_rootca_init) return true;
+  _rootca_init = sdep(SDEP_CMD_TLS_INIT_ROOT_CA, 0, NULL, NULL, NULL);
+  return _rootca_init;
+}
+
+/******************************************************************************/
+/*!
     @brief  Set Root CA certificates in DER format. DER format is binary format,
             and is the native format that Feather works with.
 
@@ -505,6 +524,9 @@ void AdafruitFeather::disconnect(void)
 /******************************************************************************/
 bool AdafruitFeather::addRootCA(uint8_t const* root_ca, uint16_t len)
 {
+  // Init Root CA first if not initialized
+  if (!_rootca_init) VERIFY( this->initRootCA() ) ;
+
 //  return sdep(SDEP_CMD_TLS_SET_ROOT_CERTS, len, root_ca, NULL, NULL);
   // TODO use sdep instead of sdep_n
   sdep_cmd_para_t para_arr[] =

@@ -118,6 +118,8 @@ private:
   wl_ap_info_t  _ap_info;
   bool          _connected;
 
+  bool          _rootca_init;
+
 //  void (*wlan_connect_callback)(void);
   void (*wlan_disconnect_callback)(void);
 
@@ -194,6 +196,7 @@ public:
   uint32_t   getUtcTime            (void);
 
   // TLS Root Certification Chain
+  bool       initRootCA             (void);
   bool       addRootCA              (uint8_t const* root_ca, uint16_t len);
 
   // Enable later when complete

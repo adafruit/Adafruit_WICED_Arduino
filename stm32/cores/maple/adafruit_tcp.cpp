@@ -128,6 +128,11 @@ int AdafruitTCP::connect(const char* host, uint16_t port)
 /******************************************************************************/
 int AdafruitTCP::connectSSL(IPAddress ip, uint16_t port)
 {
+  if ( !Feather.connected() ) return 0;
+
+  // Init Root CA first if not initialized
+  VERIFY( Feather.initRootCA() );
+
   uint32_t ipv4      = (uint32_t) ip;
   uint8_t is_tls     = 1;
   uint8_t tls_option = _tls_verification ? TLS_VERIFICATION_REQUIRED : TLS_NO_VERIFICATION;
