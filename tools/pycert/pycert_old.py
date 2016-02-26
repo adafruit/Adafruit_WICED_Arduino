@@ -10,7 +10,7 @@ from subprocess import check_output
 # Configuration
 #******************************************************************************
 # Path to bundle file in relative to pycert.py
-BUNDLE_FILE = os.path.dirname(sys.argv[0]) + '/certificates/cacert.pem'
+BUNDLE_FILE = os.path.dirname(sys.argv[0]) + '/certificates/featherdefaults.pem'
 
 CFILE_FILENAME = "certificates.h"
 CFILE_VARIABLE = "rootca_certs"
@@ -141,5 +141,5 @@ pycert.download(sys.argv[1])
 '''
 
 #pycert.download("www.google.com")
-#pycert.create_bundle()
+pycert.create_bundle()
 #pycert.convert("verisign.cer")
