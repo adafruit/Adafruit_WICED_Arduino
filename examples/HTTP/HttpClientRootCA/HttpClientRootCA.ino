@@ -44,8 +44,26 @@
 int ledPin = PA15;
 
 // Change the SERVER_ID to match the generated certificates.h
-#define SERVER_ID    10
+#define SERVER_ID    12
 
+#if 1
+const char * server_arr[][2] =
+{
+    [0 ] = { "www.adafruit.com"     , "/" },
+    [1 ] = { "twitter.com"          , "/" },
+    [2 ] = { "www.google.com"       , "/" },
+    [3 ] = { "www.facebook.com"     , "/" },
+    [4 ] = { "www.yahoo.com"        , "/" },
+    [5 ] = { "aws.amazon.com"        , "/" },
+    
+    // S3 server to test large files, 
+    [6] = { S3_SERVER, "/text_10KB.txt" },
+    [7] = { S3_SERVER, "/text_100KB.txt"},
+    [8] = { S3_SERVER, "/text_1MB.txt"  },
+    [9] = { S3_SERVER, "/text_1MB.txt"  },
+};
+
+#else
 const char * server_arr[][2] =
 {
     [0 ] = { "www.adafruit.com"     , "/" },
@@ -65,8 +83,10 @@ const char * server_arr[][2] =
     [12] = { S3_SERVER, "/text_10KB.txt" },
     [13] = { S3_SERVER, "/text_100KB.txt"},
     [14] = { S3_SERVER, "/text_1MB.txt"  },
+    [15] = { S3_SERVER, "/text_1MB.txt"  },
     
 };
+#endif
 
 // You can set your own server & uri here
 const char * server = server_arr[SERVER_ID][0];
@@ -133,7 +153,7 @@ void setup()
   printWifiStatus();
 
   // Add Root CA Chain to pre-flashed chain
-  Feather.addRootCA(rootca_certs, ROOTCA_CERTS_LEN);
+  //Feather.addRootCA(rootca_certs, ROOTCA_CERTS_LEN);
  
   // Tell the MQTT client to auto print error codes and halt on errors
   http.err_actions(true, true);
@@ -154,24 +174,6 @@ void setup()
   Serial.printf("Requesting '%s' ... ", uri);
   http.get(server, uri); // Will halted if an error occurs
   Serial.println("OK");
-
-#if 0
-  delay(20000);
-
-  if ( !http.available() )
-    http.stop();
-
-  const char * next_server = server_arr[1][0];
-  const char * next_uri    = server_arr[1][1];
-
-  Serial.printf("Connecting to %s port %d ... ", next_server, HTTPS_PORT );
-  http.connectSSL(next_server, HTTPS_PORT); // Will halted if an error occurs
-  Serial.println("OK");
-
-  Serial.printf("Requesting '%s' ... ", next_uri);
-  http.get(next_server, next_uri); // Will halted if an error occurs
-  Serial.println("OK");
-#endif
 }
 
 void loop()

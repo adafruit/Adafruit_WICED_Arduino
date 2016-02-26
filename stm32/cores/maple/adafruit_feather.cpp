@@ -510,7 +510,11 @@ void AdafruitFeather::disconnect(void)
 bool AdafruitFeather::initRootCA(void)
 {
   // Skip if already initialized or not enabled by user
-  if (_rootca_init || !_rootca_default_en) return true;
+  if (_rootca_init || !_rootca_default_en)
+  {
+    _rootca_init = true;
+    return true;
+  }
 
   DBG_HEAP();
   // enable the Default Root CA
