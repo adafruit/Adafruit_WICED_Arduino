@@ -206,7 +206,9 @@ extern AdafruitFeather Feather;
 //--------------------------------------------------------------------+
 // DEBUG HELPER
 //--------------------------------------------------------------------+
-#define DBG_ENABLE      1
+#ifndef DBG_ENABLE
+#define DBG_ENABLE      0
+#endif
 
 #if DBG_ENABLE
 
