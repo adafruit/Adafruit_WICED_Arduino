@@ -44,9 +44,8 @@
 int ledPin = PA15;
 
 // Change the SERVER_ID to match the generated certificates.h
-#define SERVER_ID    0
+#define SERVER_ID    6
 
-#if 1
 const char * server_arr[][2] =
 {
     [0 ] = { "www.adafruit.com"     , "/" },
@@ -60,33 +59,7 @@ const char * server_arr[][2] =
     [6] = { S3_SERVER, "/text_10KB.txt" },
     [7] = { S3_SERVER, "/text_100KB.txt"},
     [8] = { S3_SERVER, "/text_1MB.txt"  },
-    [9] = { S3_SERVER, "/text_1MB.txt"  },
 };
-
-#else
-const char * server_arr[][2] =
-{
-    [0 ] = { "www.adafruit.com"     , "/" },
-    [1 ] = { "www.google.com"       , "/" },
-    [2 ] = { "www.arduino.cc"       , "/" },
-    [3 ] = { "www.yahoo.com"        , "/" },
-    [4 ] = { "www.microsoft.com"    , "/" },
-    [5 ] = { "www.reddit.com"       , "/" },
-    [6 ] = { "news.ycombinator.com" , "/" },
-    [7 ] = { "www.facebook.com"     , "/" },
-    [8 ] = { "www.geotrust.com"     , "/" },
-    [9 ] = { "www.eff.org"          , "/" },
-    [10] = { "twitter.com"          , "/" },
-    [11] = { "www.flickr.com"       , "/" },
-
-    // S3 server to test large files, 
-    [12] = { S3_SERVER, "/text_10KB.txt" },
-    [13] = { S3_SERVER, "/text_100KB.txt"},
-    [14] = { S3_SERVER, "/text_1MB.txt"  },
-    [15] = { S3_SERVER, "/text_1MB.txt"  },
-    
-};
-#endif
 
 // You can set your own server & uri here
 const char * server = server_arr[SERVER_ID][0];
@@ -152,27 +125,28 @@ void setup()
 
   printWifiStatus();
 
-  // Add Root CA Chain to pre-flashed chain
+  // Add Root CA Chain to pre-flashed chain (if necessary)
   //Feather.addRootCA(rootca_certs, ROOTCA_CERTS_LEN);
  
   // Tell the MQTT client to auto print error codes and halt on errors
   http.err_actions(true, true);
 
-  // Set up callback
+  // Set up callbacks
   http.setReceivedCallback(receive_callback);
   http.setDisconnectCallback(disconnect_callback);
 
+  // Start a secure connection
   Serial.printf("Connecting to %s port %d ... ", server, HTTPS_PORT );
-  http.connectSSL(server, HTTPS_PORT); // Will halted if an error occurs
+  http.connectSSL(server, HTTPS_PORT); // Will halt if an error occurs
   Serial.println("OK");
     
-  // Make a HTTP request:
+  // Make a HTTP request
   http.addHeader("User-Agent", USER_AGENT_HEADER);
   http.addHeader("Accept", "text/html");
   http.addHeader("Connection", "keep-alive");
 
   Serial.printf("Requesting '%s' ... ", uri);
-  http.get(server, uri); // Will halted if an error occurs
+  http.get(server, uri); // Will halt if an error occurs
   Serial.println("OK");
 }
 
@@ -182,12 +156,11 @@ void loop()
   delay(250);
 }
 
-
-void printWifiStatus() {
-  // print your WiFi shield's IP address:
+void printWifiStatus() 
+{
+  // print the IP address and gateway:
   Serial.print("IP Address: ");
   Serial.println( IPAddress(Feather.localIP()) );
-
   Serial.print("Gateway : ");
   Serial.println( IPAddress(Feather.gatewayIP()) );
 

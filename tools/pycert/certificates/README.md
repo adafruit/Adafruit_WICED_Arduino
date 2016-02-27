@@ -1,8 +1,5 @@
 # Root Certificate Authorities
 
-The following root CAs are no included in the default WICED list, but
-are provided here pre-compiled into .h format for convenience sake:
-
 ## Feather Combined Default Root CAs
 
 **Filename**: featherdefaults
@@ -10,21 +7,8 @@ are provided here pre-compiled into .h format for convenience sake:
 This file contains the default root CAs that are pre-flashed in FeatherLib. It
 includes the following entries:
 
-- AddTrust External Root
-- Baltimore CybertTrust Root
-- DigiCert High Assurance EV Root
-- GeoTrust Global
-- GeoTrust Primary
-- Go Daddy Root
-- Verisign Class 3 Public Primary
-- Equifax
-
-## Other Pre-Compiled Root CAs
-
-### Starfield Class 2 CA
-
-**Filename**: certificate_starfieldclass2
-
-#### Associated Websites
-
-- [Amazon AWS](aws.amazon.com)
+- DigiCert High Assurance EV Root CA
+- GeoTrust Global CA
+- GeoTrust Primary Certification Authority - G3
+- VeriSign Class 3 Public Primary Certification Authority - G5
+- Starfield Services Root Certificate Authority - G2
