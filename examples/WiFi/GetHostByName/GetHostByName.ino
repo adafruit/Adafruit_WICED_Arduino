@@ -48,7 +48,7 @@ bool connectAP(void)
     Serial.printf("Failed! %s (%d)", Feather.errstr(), Feather.errno());
     Serial.println();
   }
-  Serial.println("");
+  Serial.println();
 
   return Feather.connected();
 }
@@ -67,6 +67,9 @@ void setup()
 
   Serial.println("GetHostByName Example\r\n");
 
+  // Print all software verions
+  Feather.printVersions();
+
   // Set disconnection callback
   Feather.setDisconnectCallback(disconnect_callback);
 
@@ -74,6 +77,9 @@ void setup()
   {
     delay(500); // delay between each attempt
   }
+
+  // Print network info
+  Feather.printNetwork();
 }
 
 /**************************************************************************/
@@ -90,12 +96,12 @@ void loop()
    
     ipaddr = Feather.hostByName(target_hostname);
     Serial.print(target_hostname);
-    Serial.print(": ");
+    Serial.print(" -> ");
     Serial.println(ipaddr);
     
     ipaddr = Feather.hostByName(target_ip_str);
     Serial.print(target_ip_str);
-    Serial.print(": ");
+    Serial.print("      -> ");
     Serial.println(ipaddr);
 
     Serial.println();
@@ -104,3 +110,4 @@ void loop()
     delay(10000);
   }
 }
+

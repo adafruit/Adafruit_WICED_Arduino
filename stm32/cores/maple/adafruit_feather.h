@@ -197,6 +197,11 @@ public:
 //  err_t startAP(void);
 //  err_t stopAP(void);
 
+
+  // Helper functions
+  void      printVersions(Print& p = Serial);
+  void      printNetwork(Print& p = Serial);
+
   /* callback from featherlib */
   friend void adafruit_wifi_disconnect_callback(void);
 };

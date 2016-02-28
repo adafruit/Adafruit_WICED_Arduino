@@ -655,6 +655,41 @@ uint32_t AdafruitFeather::getUtcTime(void)
   return utc_time;
 }
 
+void AdafruitFeather::printVersions(Print& p)
+{
+  p.print("Bootloader version      : ");
+  p.println(Feather.bootloaderVersion());
+
+  p.print("SDK version             : ");
+  p.println(Feather.sdkVersion());
+
+  p.print("Firmware version        : ");
+  p.println(Feather.firmwareVersion());
+
+  p.print("Arduino library version : ");
+  p.println(Feather.arduinoVersion());
+  p.println();
+}
+
+void AdafruitFeather::printNetwork(Print& p)
+{
+  if (!_connected)
+  {
+    p.println("NOT CONNECTED");
+    return;
+  }
+
+  uint8_t mac[6];
+  macAddress(mac);
+
+  p.printf("SSID   : %s (%d dBm)\r\n", _ap_info.ssid, RSSI());
+  p.print ("MAC    : "); p.printf("%02X:%02X:%02X:%02X:%02X:%02X\r\n", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+  p.print ("LocalIP: "); p.println( IPAddress(localIP())     );
+  p.print ("Gateway: "); p.println( IPAddress(gatewayIP())   );
+  p.print ("Subnet : "); p.println( IPAddress(subnetMask())  );
+  p.println();
+}
+
 //--------------------------------------------------------------------+
 // Callbacks
 //--------------------------------------------------------------------+
