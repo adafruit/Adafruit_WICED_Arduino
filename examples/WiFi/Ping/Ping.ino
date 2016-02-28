@@ -26,37 +26,15 @@ const char target_ip_str[] = "8.8.8.8";
 // Ping target by IPAddress object
 IPAddress target_ip(8, 8, 4, 4);
 
-
+/**************************************************************************/
+/*!
+    @brief  Network disconnect callback
+*/
+/**************************************************************************/
 void disconnect_callback(void)
 {
   Serial.println("disconnect_callback(): Disconnected");
 }
-
-/**************************************************************************/
-/*!
-    @brief  Connect to defined Access Point
-*/
-/**************************************************************************/
-bool connectAP(void)
-{
-  // Attempt to connect to an AP
-  Serial.print("Attempting to connect to: ");
-  Serial.println(WLAN_SSID);
-
-  if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
-  {
-    Serial.println("Connected!");
-  }
-  else
-  {
-    Serial.printf("Failed! %s (%d)", Feather.errstr(), Feather.errno());
-    Serial.println();
-  }
-  Serial.println();
-
-  return Feather.connected();
-}
-
 
 /**************************************************************************/
 /*!
@@ -137,4 +115,29 @@ void loop()
     Serial.println();
     delay(10000);
   }
+}
+
+/**************************************************************************/
+/*!
+    @brief  Connect to defined Access Point
+*/
+/**************************************************************************/
+bool connectAP(void)
+{
+  // Attempt to connect to an AP
+  Serial.print("Attempting to connect to: ");
+  Serial.println(WLAN_SSID);
+
+  if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
+  {
+    Serial.println("Connected!");
+  }
+  else
+  {
+    Serial.printf("Failed! %s (%d)", Feather.errstr(), Feather.errno());
+    Serial.println();
+  }
+  Serial.println();
+
+  return Feather.connected();
 }

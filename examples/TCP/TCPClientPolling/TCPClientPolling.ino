@@ -25,31 +25,6 @@ AdafruitTCP tcp;
 
 /**************************************************************************/
 /*!
-    @brief  Connect to defined Access Point
-*/
-/**************************************************************************/
-bool connectAP(void)
-{
-  // Attempt to connect to an AP
-  Serial.print("Attempting to connect to: ");
-  Serial.println(WLAN_SSID);
-
-  if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
-  {
-    Serial.println("Connected!");
-  }
-  else
-  {
-    Serial.printf("Failed! %s (%d)", Feather.errstr(), Feather.errno());
-    Serial.println();
-  }
-  Serial.println();
-
-  return Feather.connected();
-}
-
-/**************************************************************************/
-/*!
     @brief  The setup function runs once when reset the board
 */
 /**************************************************************************/
@@ -61,6 +36,9 @@ void setup()
   while (!Serial) delay(1);
 
   Serial.println("TCP Client Example With Polling\r\n");
+
+  // Print all software verions
+  Feather.printVersions();
 
   while ( !connectAP() )
   {
@@ -89,6 +67,11 @@ void setup()
   // tcp.flush();
 }
 
+/**************************************************************************/
+/*!
+    @brief  The loop function runs over and over again forever
+*/
+/**************************************************************************/
 void loop()
 {
   // If there are incoming bytes available
@@ -109,4 +92,29 @@ void loop()
     // Do nothing forevermore:
     while (true) delay(1);
   }
+}
+
+/**************************************************************************/
+/*!
+    @brief  Connect to defined Access Point
+*/
+/**************************************************************************/
+bool connectAP(void)
+{
+  // Attempt to connect to an AP
+  Serial.print("Attempting to connect to: ");
+  Serial.println(WLAN_SSID);
+
+  if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
+  {
+    Serial.println("Connected!");
+  }
+  else
+  {
+    Serial.printf("Failed! %s (%d)", Feather.errstr(), Feather.errno());
+    Serial.println();
+  }
+  Serial.println();
+
+  return Feather.connected();
 }

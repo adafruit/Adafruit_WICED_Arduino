@@ -17,6 +17,11 @@
 #define MAX_SCAN_NUM   20
 wl_ap_info_t scan_result[MAX_SCAN_NUM];
 
+/**************************************************************************/
+/*!
+    @brief  The setup function runs once when reset the board
+*/
+/**************************************************************************/
 void setup()
 {
   Serial.begin(115200);
@@ -27,6 +32,11 @@ void setup()
   Serial.println("Scan Network Example\r\n");
 }
 
+/**************************************************************************/
+/*!
+    @brief  The loop function runs over and over again forever
+*/
+/**************************************************************************/
 void loop()
 {
   Serial.println();
@@ -38,6 +48,11 @@ void loop()
   delay(10000);
 }
 
+/**************************************************************************/
+/*!
+    @brief  Scan and list avaialable network nearby
+*/
+/**************************************************************************/
 void listNetworks()
 {
   int numSsid = Feather.scanNetworks(scan_result, MAX_SCAN_NUM);
@@ -63,6 +78,11 @@ void listNetworks()
   }
 }
 
+/**************************************************************************/
+/*!
+    @brief  Helper to print encryption type
+*/
+/**************************************************************************/
 char const* getEncryptionStr(int32_t encType)
 {
   // read the encryption type and print out the name:

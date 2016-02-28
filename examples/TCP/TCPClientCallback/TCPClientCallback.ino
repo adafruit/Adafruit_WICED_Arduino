@@ -47,31 +47,6 @@ void disconnect_callback(void)
 
 /**************************************************************************/
 /*!
-    @brief  Connect to defined Access Point
-*/
-/**************************************************************************/
-bool connectAP(void)
-{
-  // Attempt to connect to an AP
-  Serial.print("Attempting to connect to: ");
-  Serial.println(WLAN_SSID);
-
-  if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
-  {
-    Serial.println("Connected!");
-  }
-  else
-  {
-    Serial.printf("Failed! %s (%d)", Feather.errstr(), Feather.errno());
-    Serial.println();
-  }
-  Serial.println();
-
-  return Feather.connected();
-}
-
-/**************************************************************************/
-/*!
     @brief  The setup function runs once when reset the board
 */
 /**************************************************************************/
@@ -125,4 +100,29 @@ void setup()
 /**************************************************************************/
 void loop()
 {
+}
+
+/**************************************************************************/
+/*!
+    @brief  Connect to defined Access Point
+*/
+/**************************************************************************/
+bool connectAP(void)
+{
+  // Attempt to connect to an AP
+  Serial.print("Attempting to connect to: ");
+  Serial.println(WLAN_SSID);
+
+  if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
+  {
+    Serial.println("Connected!");
+  }
+  else
+  {
+    Serial.printf("Failed! %s (%d)", Feather.errstr(), Feather.errno());
+    Serial.println();
+  }
+  Serial.println();
+
+  return Feather.connected();
 }

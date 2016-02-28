@@ -18,7 +18,14 @@
 #define WLAN_PASS     "yourPassword"
 #define ENC_TYPE      ENC_TYPE_WPA2_AES
 
-void setup() {
+
+/**************************************************************************/
+/*!
+    @brief  The setup function runs once when reset the board
+*/
+/**************************************************************************/
+void setup()
+{
   Serial.begin(115200);
 
   // wait for serial port to connect. Needed for native USB port only
@@ -72,7 +79,13 @@ void setup() {
   Feather.printNetwork();
 }
 
-void loop() {
+/**************************************************************************/
+/*!
+    @brief  The loop function runs over and over again forever
+*/
+/**************************************************************************/
+void loop()
+{
   // Print every 10 seconds
   delay(10000);
 
