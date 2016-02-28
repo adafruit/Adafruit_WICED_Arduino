@@ -17,18 +17,18 @@
 #define MAX_SCAN_NUM   20
 wl_ap_info_t scan_result[MAX_SCAN_NUM];
 
-void setup() {
-  //Initialize serial and wait for port to open:
-  Serial.begin(9600);
-  while (!Serial) {
-    delay(1); // wait for serial port to connect. Needed for native USB port only
-  }
+void setup()
+{
+  Serial.begin(115200);
 
-  // Print WiFi MAC address:
-  printMacAddress();
+  // wait for serial port to connect. Needed for native USB port only
+  while (!Serial) delay(1);
+
+  Serial.println("Scan Network Example\r\n");
 }
 
-void loop() {
+void loop()
+{
   Serial.println();
   Serial.println("Scanning available networks...");
   listNetworks();
@@ -38,52 +38,36 @@ void loop() {
   delay(10000);
 }
 
-void printMacAddress() {
-  // the MAC address of your Wifi shield
-  byte mac[6];
-
-  // print your MAC address:
-  Feather.macAddress(mac);
-  Serial.print("MAC: ");
-  Serial.print(mac[5], HEX);  Serial.print(":");
-  Serial.print(mac[4], HEX);  Serial.print(":");
-  Serial.print(mac[3], HEX);  Serial.print(":");
-  Serial.print(mac[2], HEX);  Serial.print(":");
-  Serial.print(mac[1], HEX);  Serial.print(":");
-  Serial.println(mac[0], HEX);
-}
-
-void listNetworks() {
-  // scan for nearby networks:
-  Serial.println("** Scanned Networks **");
+void listNetworks()
+{
   int numSsid = Feather.scanNetworks(scan_result, MAX_SCAN_NUM);
-  if (numSsid < 0)
-  {
-    Serial.println("Couldn't get a wifi connection");
-    return;
-  }
 
   // print the list of networks seen:
-  Serial.print("number of available networks:");
+  Serial.print("Number of available networks:");
   Serial.println(numSsid);
 
+  if (numSsid == 0) return;
+
   // print the network number and name for each network found:
-  Serial.printf("ID SSID                 Enc  Ch Strength\n");
-  for (int i = 0; i < numSsid; i++) {
-    Serial.printf("%02d %-20s %-04s %02d %02d dBm", 
+  Serial.printf("ID SSID                 Enc  Ch Signal\n");
+  for (int i = 0; i < numSsid; i++)
+  {
+    Serial.printf("%02d %-20s %-04s %02d %02d (dBm)", 
                   i,
                   (scan_result[i].ssid[i] == 0) ? "*" : scan_result[i].ssid, // hidden SSID display as "*"
-                  getEncryptionType( scan_result[i].security ),
+                  getEncryptionStr( scan_result[i].security ),
                   scan_result[i].channel,
                   scan_result[i].rssi);
+
     Serial.println();
   }
 }
 
-char const* getEncryptionType(int32_t thisType) 
+char const* getEncryptionStr(int32_t encType)
 {
   // read the encryption type and print out the name:
-  switch (thisType) {
+  switch (encType)
+  {
     case ENC_TYPE_WEP:
     case ENC_TYPE_WEP_SHARED:
       return "WEP";
