@@ -151,15 +151,15 @@ public:
   int32_t   profileEncryptionType ( uint8_t pos);
 
   // Info functions
-  uint8_t   *macAddress     ( uint8_t *mac );
-  uint32_t  localIP         ( void );
-  uint32_t  subnetMask      ( void );
-  uint32_t  gatewayIP       ( void );
+  uint8_t*    macAddress      ( uint8_t *mac );
+  uint32_t    localIP         ( void );
+  uint32_t    subnetMask      ( void );
+  uint32_t    gatewayIP       ( void );
 
-  char*     SSID            ( void );
-  int32_t   RSSI            ( void );
-  int32_t   encryptionType  ( void );
-  uint8_t*  BSSID           ( uint8_t* bssid );
+  char*       SSID            ( void );
+  int32_t     RSSI            ( void );
+  int32_t     encryptionType  ( void );
+  uint8_t*    BSSID           ( uint8_t* bssid );
 
   // Callback
 //  void setConnectCallback( void (*fp) (void));
@@ -199,8 +199,10 @@ public:
 
 
   // Helper functions
-  void      printVersions(Print& p = Serial);
-  void      printNetwork(Print& p = Serial);
+  void      printVersions   (Print& p = Serial);
+  void      printNetwork    (Print& p = Serial);
+  void      printEncryption (int32_t enc, Print& p = Serial);
+
 
   /* callback from featherlib */
   friend void adafruit_wifi_disconnect_callback(void);

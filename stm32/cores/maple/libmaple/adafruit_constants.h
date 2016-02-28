@@ -48,55 +48,55 @@ enum
   WIFI_INTERFACE_P2P     = 2,
 };
 
-#define SHARED_ENABLED            0x00008000
-#define WPA_SECURITY              0x00200000
-#define WPA2_SECURITY             0x00400000
-#define ENTERPRISE_ENABLED        0x02000000
-#define WPS_ENABLED               0x10000000
-#define IBSS_ENABLED              0x20000000
+#define ENC_SHARED_ENABLED            0x00008000
+#define ENC_WPA_SECURITY              0x00200000
+#define ENC_WPA2_SECURITY             0x00400000
+#define ENC_ENTERPRISE_ENABLED        0x02000000
+#define ENC_WPS_ENABLED               0x10000000
+#define ENC_IBSS_ENABLED              0x20000000
 
-#define OPEN_AUTH                 0x0000
-#define SHARED_AUTH               0x0001
-#define WEP_ENABLED               0x0001
-#define TKIP_ENABLED              0x0002
-#define AES_ENABLED               0x0004
-#define WSEC_SWFLAG               0x0008
+#define ENC_OPEN_AUTH                 0x0000
+#define ENC_SHARED_AUTH               0x0001
+#define ENC_WEP_ENABLED               0x0001
+#define ENC_TKIP_ENABLED              0x0002
+#define ENC_AES_ENABLED               0x0004
+#define ENC_WSEC_SWFLAG               0x0008
 
 typedef enum
 {
-  ENC_TYPE_AUTO       = -1,                                               /**< Auto detection                         */
-  ENC_TYPE_OPEN       = 0,                                                /**< Open security                           */
+  ENC_TYPE_AUTO           = -1,                                                         /**< Auto detection                         */
+  ENC_TYPE_OPEN           = 0,                                                          /**< Open security                           */
 
   // WEP
-  ENC_TYPE_WEP        = WEP_ENABLED,                                      /**< WEP Security with open authentication   */
-  ENC_TYPE_WEP_SHARED = ( WEP_ENABLED | SHARED_ENABLED ),                 /**< WEP Security with shared authentication */
+  ENC_TYPE_WEP            = ENC_WEP_ENABLED,                                            /**< WEP Security with open authentication   */
+  ENC_TYPE_WEP_SHARED     = ( ENC_WEP_ENABLED | ENC_SHARED_ENABLED ),                   /**< WEP Security with shared authentication */
 
   // WPA Personal
-  ENC_TYPE_WPA_TKIP   = ( WPA_SECURITY  | TKIP_ENABLED ),                 /**< WPA Security with TKIP                  */
-  ENC_TYPE_WPA_AES    = ( WPA_SECURITY  | AES_ENABLED ),                  /**< WPA Security with AES                   */
-  ENC_TYPE_WPA_MIXED  = ( WPA_SECURITY  | AES_ENABLED | TKIP_ENABLED ),   /**< WPA Security with AES & TKIP            */
+  ENC_TYPE_WPA_TKIP       = ( ENC_WPA_SECURITY  | ENC_TKIP_ENABLED ),                   /**< WPA Security with TKIP                  */
+  ENC_TYPE_WPA_AES        = ( ENC_WPA_SECURITY  | ENC_AES_ENABLED ),                    /**< WPA Security with AES                   */
+  ENC_TYPE_WPA_MIXED      = ( ENC_WPA_SECURITY  | ENC_AES_ENABLED | ENC_TKIP_ENABLED ), /**< WPA Security with AES & TKIP            */
 
   // WPA2 Personal
-  ENC_TYPE_WPA2_AES   = ( WPA2_SECURITY | AES_ENABLED ),                  /**< WPA2 Security with AES                  */
-  ENC_TYPE_WPA2_TKIP  = ( WPA2_SECURITY | TKIP_ENABLED ),                 /**< WPA2 Security with TKIP                 */
-  ENC_TYPE_WPA2_MIXED = ( WPA2_SECURITY | AES_ENABLED | TKIP_ENABLED ),   /**< WPA2 Security with AES & TKIP           */
+  ENC_TYPE_WPA2_AES       = ( ENC_WPA2_SECURITY | ENC_AES_ENABLED ),                    /**< WPA2 Security with AES                  */
+  ENC_TYPE_WPA2_TKIP      = ( ENC_WPA2_SECURITY | ENC_TKIP_ENABLED ),                   /**< WPA2 Security with TKIP                 */
+  ENC_TYPE_WPA2_MIXED     = ( ENC_WPA2_SECURITY | ENC_AES_ENABLED | ENC_TKIP_ENABLED ), /**< WPA2 Security with AES & TKIP           */
 
   // WPA Enterprise
-  ENC_TYPE_WPA_TKIP_ENT   = ( ENTERPRISE_ENABLED | WPA_SECURITY  | TKIP_ENABLED ),
-  ENC_TYPE_WPA_AES_ENT    = ( ENTERPRISE_ENABLED | WPA_SECURITY  | AES_ENABLED ),
-  ENC_TYPE_WPA_MIXED_ENT  = ( ENTERPRISE_ENABLED | WPA_SECURITY  | AES_ENABLED | TKIP_ENABLED ),
+  ENC_TYPE_WPA_TKIP_ENT   = ( ENC_ENTERPRISE_ENABLED | ENC_WPA_SECURITY  | ENC_TKIP_ENABLED ),
+  ENC_TYPE_WPA_AES_ENT    = ( ENC_ENTERPRISE_ENABLED | ENC_WPA_SECURITY  | ENC_AES_ENABLED ),
+  ENC_TYPE_WPA_MIXED_ENT  = ( ENC_ENTERPRISE_ENABLED | ENC_WPA_SECURITY  | ENC_AES_ENABLED | ENC_TKIP_ENABLED ),
 
   // WPA2 Enterprise
-  ENC_TYPE_WPA2_TKIP_ENT  = ( ENTERPRISE_ENABLED | WPA2_SECURITY | TKIP_ENABLED ),
-  ENC_TYPE_WPA2_AES_ENT   = ( ENTERPRISE_ENABLED | WPA2_SECURITY | AES_ENABLED ),
-  ENC_TYPE_WPA2_MIXED_ENT = ( ENTERPRISE_ENABLED | WPA2_SECURITY | AES_ENABLED | TKIP_ENABLED ),
+  ENC_TYPE_WPA2_TKIP_ENT  = ( ENC_ENTERPRISE_ENABLED | ENC_WPA2_SECURITY | ENC_TKIP_ENABLED ),
+  ENC_TYPE_WPA2_AES_ENT   = ( ENC_ENTERPRISE_ENABLED | ENC_WPA2_SECURITY | ENC_AES_ENABLED ),
+  ENC_TYPE_WPA2_MIXED_ENT = ( ENC_ENTERPRISE_ENABLED | ENC_WPA2_SECURITY | ENC_AES_ENABLED | ENC_TKIP_ENABLED ),
 
   // WPS
-  ENC_TYPE_WPS_OPEN   = ( WPS_ENABLED ),                                   /**< WPS with open security                  */
-  ENC_TYPE_WPS_SECURE = ( WPS_ENABLED | AES_ENABLED),                      /**< WPS with AES security                   */
+  ENC_TYPE_WPS_OPEN       = ( ENC_WPS_ENABLED ),                                        /**< WPS with open security                  */
+  ENC_TYPE_WPS_SECURE     = ( ENC_WPS_ENABLED | ENC_AES_ENABLED),                       /**< WPS with AES security                   */
 
   // IBSS
-  ENC_TYPE_IBSS_OPEN      = ( IBSS_ENABLED )
+  ENC_TYPE_IBSS_OPEN      = ( ENC_IBSS_ENABLED )
 } wl_enc_type_t;
 
 

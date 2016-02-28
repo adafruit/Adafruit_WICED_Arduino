@@ -655,6 +655,11 @@ uint32_t AdafruitFeather::getUtcTime(void)
   return utc_time;
 }
 
+/******************************************************************************/
+/*!
+    @brief  Helper to print out all the software versions
+*/
+/******************************************************************************/
 void AdafruitFeather::printVersions(Print& p)
 {
   p.print("Bootloader version      : ");
@@ -671,6 +676,11 @@ void AdafruitFeather::printVersions(Print& p)
   p.println();
 }
 
+/******************************************************************************/
+/*!
+    @brief  Helper to print out all network status
+*/
+/******************************************************************************/
 void AdafruitFeather::printNetwork(Print& p)
 {
   if (!_connected)
@@ -683,11 +693,68 @@ void AdafruitFeather::printNetwork(Print& p)
   macAddress(mac);
 
   p.printf("SSID   : %s (%d dBm)\r\n", _ap_info.ssid, RSSI());
+  p.print ("Encrypt: "); this->printEncryption(_ap_info.security, p); p.println();
   p.print ("MAC    : "); p.printf("%02X:%02X:%02X:%02X:%02X:%02X\r\n", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
   p.print ("LocalIP: "); p.println( IPAddress(localIP())     );
   p.print ("Gateway: "); p.println( IPAddress(gatewayIP())   );
   p.print ("Subnet : "); p.println( IPAddress(subnetMask())  );
   p.println();
+}
+
+/******************************************************************************/
+/*!
+    @brief  Helper to print out Encryption string
+*/
+/******************************************************************************/
+void AdafruitFeather::printEncryption(int32_t enc, Print& p)
+{
+  // Open
+  if ( enc == ENC_TYPE_OPEN )
+  {
+    p.print("OPEN");
+    return;
+  }
+
+  // WEP
+  if ( enc & ENC_WEP_ENABLED )
+  {
+    p.print( "WEP_");
+    p.print( (enc & ENC_SHARED_ENABLED) ? "SHARE" : "OPEN");
+  }
+
+  // WPA & WPA2
+  if ( (enc & ENC_WPA_SECURITY) || (enc & ENC_WPA2_SECURITY) )
+  {
+    p.print((enc & ENC_WPA2_SECURITY) ? "WPA2_" : "WPA_");
+
+    if ((enc & ENC_AES_ENABLED) && (enc & ENC_TKIP_ENABLED))
+    {
+      p.print("MIXED");
+    }
+    else if (enc & ENC_TKIP_ENABLED)
+    {
+      p.print("TKIP");
+    }
+    else if (enc & ENC_AES_ENABLED)
+    {
+      p.print("AES");
+    }else
+    {
+      // Something wrong
+    }
+
+    if (enc & ENC_ENTERPRISE_ENABLED) p.print("_ENTERPRISE");
+  }
+
+  // WPS
+  if ( enc & ENC_WPS_ENABLED   )
+  {
+    p.print("WPS_");
+    p.print((enc & ENC_AES_ENABLED) ? "SECURE" : "OPEN");
+  }
+
+  // IBSS
+  if ( enc & ENC_IBSS_ENABLED  )  p.print("IBSS_OPEN");
 }
 
 //--------------------------------------------------------------------+

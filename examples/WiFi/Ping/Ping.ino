@@ -81,8 +81,8 @@ void setup()
     delay(500); // delay between each attempt
   }
 
-  // Print network info
-  Feather.printNetwork();;
+  // Connected: Print network info
+  Feather.printNetwork();
 }
 
 /**************************************************************************/
