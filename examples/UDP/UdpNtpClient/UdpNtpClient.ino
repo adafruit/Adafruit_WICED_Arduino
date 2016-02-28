@@ -16,11 +16,10 @@
 
  */
 
-#include "adafruit_feather.h"
-#include "adafruit_udp.h"
+#include <adafruit_feather.h>
 
-char ssid[] = "yourSSID";  //  your network SSID (name)
-char pass[] = "yourPass";       // your network password
+#define WLAN_SSID            "yourSSID"
+#define WLAN_PASS            "yourPassword"
 
 unsigned int localPort = 2390;      // local port to listen for UDP packets
 
@@ -35,14 +34,23 @@ AdafruitUDP Udp;
 
 void setup()
 {
-  // Open serial communications and wait for port to open:
   Serial.begin(115200);
-  while (!Serial) {
-    delay(1); // wait for serial port to connect. Needed for native USB port only
-  }
+
+  // wait for serial port to connect. Needed for native USB port only
+  while (!Serial) delay(1);
 
   Serial.println("UDP NTP Client Example\r\n");
-  connectToAP();
+
+  // Print all software verions
+  Feather.printVersions();
+
+  while ( !connectAP() )
+  {
+    delay(500); // delay between each attempt
+  }
+
+  // Connected: Print network info
+  Feather.printNetwork();
 
   Serial.println("\nStarting connection to server...");
 
@@ -132,22 +140,27 @@ unsigned long sendNTPpacket(IPAddress& address)
   //Serial.println("6");
 }
 
-void connectToAP() 
+/**************************************************************************/
+/*!
+    @brief  Connect to defined Access Point
+*/
+/**************************************************************************/
+bool connectAP(void)
 {
-  // Attempt to connect to the Wifi network:
-  do
+  // Attempt to connect to an AP
+  Serial.print("Attempting to connect to: ");
+  Serial.println(WLAN_SSID);
+
+  if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
   {
-    Serial.print("Attempting to connect to: ");
-    Serial.println(ssid);
-  } while( !Feather.connect(ssid, pass) ) ;
+    Serial.println("Connected!");
+  }
+  else
+  {
+    Serial.printf("Failed! %s (%d)", Feather.errstr(), Feather.errno());
+    Serial.println();
+  }
+  Serial.println();
 
-  Serial.println("Connected!");
-
-  // print IP address
-  Serial.print("IP Address: ");
-  Serial.println( Feather.localIP() );
-
-  // print the received signal strength:
-  Serial.printf("signal strength (RSSI): %d dBm", Feather.RSSI());
+  return Feather.connected();
 }
-
