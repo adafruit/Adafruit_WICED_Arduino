@@ -12,11 +12,24 @@
  any redistribution
 *********************************************************************/
 
+/* How to run this example
+* 1. Change ssid/pass to match your network
+* 2. Choose the SERVER_ID or use your own server e.g www.adafruit.com
+* 3. cd to this folder & and get_certificates.py script as follows
+*      $ python get_certificates.py www.adafruit.com
+* 4. The script will genearate certificates.h contains certificate chain
+* of the server. You may need to close and re-open this sketch to reload
+* 5. Compile and run this sketch
+* 
+* NOTE: to create self-signed certificate for localhost
+* https://gist.github.com/sl4m/5091803
+*/
+
 #include <adafruit_feather.h>
 #include <adafruit_http.h>
 
-#define WLAN_SSID            "thach"
-#define WLAN_PASS            "thach367"
+#define WLAN_SSID            "yourSSID"
+#define WLAN_PASS            "yourPassword"
 
 #define SERVER               "www.adafruit.com"     // The TCP server to connect to
 #define PAGE                 "/testwifi/index.html" // The HTTP resource to request
