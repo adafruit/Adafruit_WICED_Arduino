@@ -62,7 +62,7 @@ void setup()
 {
   Serial.begin(115200);
   
-  // wait for Serial
+  // wait for serial port to connect. Needed for native USB port only
   while (!Serial) delay(1);
 
   Serial.println("GetHostByName Example\r\n");

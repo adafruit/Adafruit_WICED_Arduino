@@ -65,7 +65,7 @@ bool connectAP(void)
 /**************************************************************************/
 void setup()
 {
-  // wait for Serial
+  // wait for serial port to connect. Needed for native USB port only
   while (!Serial) delay(1);
 
   Serial.println(F("Ping Example\r\n"));

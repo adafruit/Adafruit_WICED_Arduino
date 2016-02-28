@@ -73,7 +73,7 @@ void setup() {
 }
 
 void loop() {
-  // Print RSSI every 10 seconds
+  // Print every 10 seconds
   delay(10000);
 
   Serial.print("Signal strength (RSSI): ");
