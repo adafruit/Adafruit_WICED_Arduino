@@ -11,6 +11,7 @@ version=0.1.0
 compiler.path={runtime.tools.arm-none-eabi-gcc.path}/bin/
 compiler.c.cmd=arm-none-eabi-gcc
 compiler.c.flags=-c -g -Os -w -MMD -ffunction-sections -fdata-sections -nostdlib --param max-inline-insns-single=500 -DBOARD_{build.variant} -D{build.vect} -D{build.density} -DERROR_LED_PORT={build.error_led_port} -DERROR_LED_PIN={build.error_led_pin} {compiler.extra_includes}
+#compiler.c.flags=-c -g -Os -w -MMD -ffunction-sections -fdata-sections -nostdlib --param max-inline-insns-single=500 -DBOARD_{build.variant} -D{build.vect} -D{build.density} -DERROR_LED_PORT={build.error_led_port} -DERROR_LED_PIN={build.error_led_pin} {compiler.extra_includes} -DDBG_ENABLE=1
 
 compiler.c.elf.cmd=arm-none-eabi-g++
 compiler.c.elf.flags=-Os -Wl,--gc-sections -Wl,--defsym,FIRMWARE_MAGIC_OFFSET=512
@@ -20,6 +21,7 @@ compiler.S.flags=-c -g -x assembler-with-cpp -MMD {compiler.extra_includes}
 
 compiler.cpp.cmd=arm-none-eabi-g++
 compiler.cpp.flags=-c -g -Os -w -MMD -ffunction-sections -fdata-sections -nostdlib --param max-inline-insns-single=500 -fno-rtti -fno-exceptions -DBOARD_{build.variant} -D{build.vect} -D{build.density} -DERROR_LED_PORT={build.error_led_port} -DERROR_LED_PIN={build.error_led_pin} {compiler.extra_includes}
+#compiler.cpp.flags=-c -g -Os -w -MMD -ffunction-sections -fdata-sections -nostdlib --param max-inline-insns-single=500 -fno-rtti -fno-exceptions -DBOARD_{build.variant} -D{build.vect} -D{build.density} -DERROR_LED_PORT={build.error_led_port} -DERROR_LED_PIN={build.error_led_pin} {compiler.extra_includes} -DDBG_ENABLE=1
 
 compiler.ar.cmd=arm-none-eabi-ar
 compiler.ar.flags=rcs
@@ -98,7 +100,7 @@ recipe.size.regex.data=^(?:\.data|\.bss|\.noinit)\s+([0-9]+).*
 
 # Upload using Adafruit bootloader over DFU
 tools.adafruit_upload.cmd=feather_dfu.py
-tools.adafruit_upload.path={runtime.hardware.path}/tools
+tools.adafruit_upload.path={runtime.hardware.path}/tools/feather_dfu
 tools.adafruit_upload.upload.params.verbose=-d
 tools.adafruit_upload.upload.params.quiet=
 tools.adafruit_upload.upload.pattern=python "{path}/{cmd}" {upload.subcommand} "{upload.binfile}"
