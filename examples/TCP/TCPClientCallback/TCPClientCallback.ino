@@ -115,7 +115,7 @@ void setup()
 
   // Data is buffered and will only be sent when the network packet is full
   // or flush() is called to optimize network usage
-  // adatcp.flush();
+  // tcp.flush();
 }
 
 /**************************************************************************/
