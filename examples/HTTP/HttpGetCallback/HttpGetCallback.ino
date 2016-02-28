@@ -89,7 +89,7 @@ void setup()
   // Wait for the USB serial port to connect. Needed for native USB port only
   while (!Serial) delay(1);
   
-  Serial.println("HTTP Client Callback Example\r\n");
+  Serial.println("HTTP Get Callback Example\r\n");
 
   // Print all software verions
   Feather.printVersions();
