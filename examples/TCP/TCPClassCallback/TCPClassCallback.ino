@@ -1,91 +1,128 @@
+/*********************************************************************
+ This is an example for our Feather WIFI modules
+
+ Pick one up today in the adafruit shop!
+
+ Adafruit invests time and resources providing this open source code,
+ please support Adafruit and open-source hardware by purchasing
+ products from Adafruit!
+
+ MIT license, check LICENSE for more information
+ All text above, and the splash screen below must be included in
+ any redistribution
+*********************************************************************/
 
 #include <adafruit_feather.h>
-#include <adafruit_tcp.h>
 
-char const     ssid[ ]   = "SSIDNAME";             // Your network SSID (name)
-char const     pass[ ]   = "PASSWORD";             // Your network password (use for WPA, or use as key for WEP)
-char const     server[ ] = "www.adafruit.com";     // The TCP server to connect to
-const uint16_t port      = 80;                     // The TCP port to use
-char const     page[ ]   = "/testwifi/index.html"; // The HTTP resource to request
+#define WLAN_SSID            "yourSSID"
+#define WLAN_PASS            "yourPassword"
 
-AdafruitTCP adatcp;
+#define SERVER               "www.adafruit.com"     // The TCP server to connect to
+#define PAGE                 "/testwifi/index.html" // The HTTP resource to request
+#define PORT                 80                     // The TCP port to use
 
-int receive_callback(void* arg1, void* arg2)
+AdafruitTCP tcp;
+
+void receive_callback(void)
 {
-  (void) arg1; // reserved for future use
-  (void) arg2; // reserved for future use
-
-  Serial.println("Receive callback");
-
   // if there are incoming bytes available
   // from the server, read then print them:
-  while (adatcp.available())
+  while ( tcp.available() )
   {
-    char c = adatcp.read();
-    Serial.write(c);
+    int c = tcp.read();
+    Serial.write( (isprint(c) || iscntrl(c)) ? ((char)c) : '.');
   }
-
-  return 0;
 }
 
-int disconnect_callback(void* arg1, void* arg2)
+void disconnect_callback(void)
 {
-  (void) arg1; // reserved for future use
-  (void) arg2; // reserved for future use
-
   Serial.println();
-  Serial.println("disconnect_callback.");
+  Serial.println("---------------------");
+  Serial.println("DISCONNECTED CALLBACK");
+  Serial.println("---------------------");
+  Serial.println();
 
-  adatcp.stop();
-
-  return 0;
+  tcp.stop();
 }
 
+/**************************************************************************/
+/*!
+    @brief  Connect to defined Access Point
+*/
+/**************************************************************************/
+bool connectAP(void)
+{
+  // Attempt to connect to an AP
+  Serial.print("Attempting to connect to: ");
+  Serial.println(WLAN_SSID);
+
+  if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
+  {
+    Serial.println("Connected!");
+  }
+  else
+  {
+    Serial.printf("Failed! %s (%d)", Feather.errstr(), Feather.errno());
+    Serial.println();
+  }
+  Serial.println();
+
+  return Feather.connected();
+}
+
+/**************************************************************************/
+/*!
+    @brief  The setup function runs once when reset the board
+*/
+/**************************************************************************/
 void setup()
 {
-  //Initialize Serial and wait for port to open:
   Serial.begin(115200);
-  while (!Serial)
-  {
-    // wait for Serial port to connect. Needed for native USB port only
-    delay(1);
-  }
+
+  // wait for serial port to connect. Needed for native USB port only
+  while (!Serial) delay(1);
 
   Serial.println("TCP Example With Callback\r\n");
 
-  // Attempt to connect to the Wifi network:
-  do
-  {
-    Serial.print("Attempting to connect to: ");
-    Serial.println(ssid);
-  } while( !Feather.connect(ssid, pass) ) ;
+  // Print all software verions
+  Feather.printVersions();
 
-  Serial.println("Connected!");
-  Serial.println("\nStarting connection to server...");
+  while ( !connectAP() )
+  {
+    delay(500); // delay between each attempt
+  }
+
+  // Connected: Print network info
+  Feather.printNetwork();
+
+  // Tell the TCP client to auto print error codes and halt on errors
+  tcp.err_actions(true, true);
 
   // Install callback
-  adatcp.setReceivedCallback(receive_callback);
-  adatcp.setDisconnectCallback(disconnect_callback);
+  tcp.setReceivedCallback(receive_callback);
+  tcp.setDisconnectCallback(disconnect_callback);
 
-  // If we can connect to the TCP Server, report it via Serial.print
-  if (adatcp.connect(server, port))
-  {
-    Serial.println("Connected to server");
-    // Make an HTTP request:
-    adatcp.printf("GET %s HTTP/1.1\r\n", page);
-    adatcp.print("Host: "); adatcp.println(server);
-    adatcp.println("Connection: close");
-    adatcp.println();
+  // Start connection
+  Serial.printf("Connecting to %s port %d ... ", SERVER, PORT);
+  tcp.connect(SERVER, PORT); // Will halt if an error occurs
+  Serial.println("OK");
 
-    // Data is buffered and will only be sent when the network packet is full
-    // or flush() is called to optimize network usage
-    // adatcp.flush();
-  } else
-  {
-    Serial.println("Failed to connect to server");
-  }
+  // Make an HTTP request:
+  tcp.printf("GET %s HTTP/1.1\r\n", PAGE);
+  tcp.print("Host: "); tcp.println(SERVER);
+  tcp.println("Connection: close");
+  tcp.println();
+
+  // Data is buffered and will only be sent when the network packet is full
+  // or flush() is called to optimize network usage
+  // adatcp.flush();
 }
 
+/**************************************************************************/
+/*!
+    @brief  The loop function runs over and over again forever
+*/
+/**************************************************************************/
 void loop()
 {
 }
