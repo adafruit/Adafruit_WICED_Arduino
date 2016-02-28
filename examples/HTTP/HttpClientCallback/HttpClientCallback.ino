@@ -12,28 +12,15 @@
  any redistribution
 *********************************************************************/
 
-/* How to run this example
-* 1. Change ssid/pass to match your network
-* 2. Choose the SERVER_ID or use your own server e.g www.adafruit.com
-* 3. cd to this folder & and get_certificates.py script as follows
-*      $ python get_certificates.py www.adafruit.com
-* 4. The script will genearate certificates.h contains certificate chain
-* of the server. You may need to close and re-open this sketch to reload
-* 5. Compile and run this sketch
-* 
-* NOTE: to create self-signed certificate for localhost
-* https://gist.github.com/sl4m/5091803
-*/
-
 #include <adafruit_feather.h>
 #include <adafruit_http.h>
 
-#define WLAN_SSID            "yourSSID"
-#define WLAN_PASS            "yourPass"
+#define WLAN_SSID            "thach"
+#define WLAN_PASS            "thach367"
 
-#define HTTPS_PORT            443
-
-#define S3_SERVER             "adafruit-download.s3.amazonaws.com"
+#define SERVER               "www.adafruit.com"     // The TCP server to connect to
+#define PAGE                 "/testwifi/index.html" // The HTTP resource to request
+#define PORT                 80                     // The TCP port to use
 
 // Some servers such as Facebook check the user_agent header to
 // return data accordingly. Setting 'curl' mimics a command line browser.
@@ -42,38 +29,103 @@
 
 int ledPin = PA15;
 
-// Change the SERVER_ID to match the generated certificates.h
-#define SERVER_ID    0
-
-const char * server_arr[][2] =
-{
-    [0 ] = { "www.adafruit.com"     , "/" },
-    [1 ] = { "www.google.com"       , "/" },
-    [2 ] = { "www.arduino.cc"       , "/" },
-    [3 ] = { "www.yahoo.com"        , "/" },
-    [4 ] = { "www.microsoft.com"    , "/" },
-    [5 ] = { "www.reddit.com"       , "/" },
-    [6 ] = { "news.ycombinator.com" , "/" },
-    [7 ] = { "www.facebook.com"     , "/" },
-    [8 ] = { "www.geotrust.com"     , "/" },
-    [9 ] = { "www.eff.org"          , "/" },
-    [10] = { "twitter.com"          , "/" },
-    [11] = { "www.flickr.com"       , "/" },
-
-    // S3 server to test large files, 
-    [12] = { S3_SERVER, "/text_10KB.txt" },
-    [13] = { S3_SERVER, "/text_100KB.txt"},
-    [14] = { S3_SERVER, "/text_1MB.txt"  },
-    
-};
-
-// You can set your own server & url here
-const char * server = server_arr[SERVER_ID][0];
-const char * url    = server_arr[SERVER_ID][1];
-
 // Use the HTTP class
 AdafruitHTTP http;
 
+/**************************************************************************/
+/*!
+    @brief  TCP/HTTP received callback
+*/
+/**************************************************************************/
+void receive_callback(void)
+{ 
+  // if there are incoming bytes available
+  // from the server, read then print them:
+  while ( http.available() )
+  {
+    int c = http.read();
+    Serial.write( (isprint(c) || iscntrl(c)) ? ((char)c) : '.');
+  }
+}
+
+/**************************************************************************/
+/*!
+    @brief  TCP/HTTP disconnect callback
+*/
+/**************************************************************************/
+void disconnect_callback(void)
+{ 
+  Serial.println();
+  Serial.println("---------------------");
+  Serial.println("DISCONNECTED CALLBACK");
+  Serial.println("---------------------");
+  Serial.println();
+
+  http.stop();
+}
+
+/**************************************************************************/
+/*!
+    @brief  The setup function runs once when reset the board
+*/
+/**************************************************************************/
+void setup()
+{
+  Serial.begin(115200);
+
+  // Wait for the USB serial port to connect. Needed for native USB port only
+  while (!Serial) delay(1);
+  
+  Serial.println("HTTP Client Callback Example\r\n");
+
+  // Print all software verions
+  Feather.printVersions();
+
+  while ( !connectAP() )
+  {
+    delay(500); // delay between each attempt
+  }
+
+  // Connected: Print network info
+  Feather.printNetwork();
+ 
+  // Tell the HTTP client to auto print error codes and halt on errors
+  http.err_actions(true, true);
+  
+  // Set the callback handlers
+  http.setReceivedCallback(receive_callback);
+  http.setDisconnectCallback(disconnect_callback);
+
+  Serial.printf("Connecting to %s port %d ... ", SERVER, PORT);
+  http.connect(SERVER, PORT); // Will halt if an error occurs
+  Serial.println("OK");
+    
+  // Make a HTTP request:
+  http.addHeader("User-Agent", USER_AGENT_HEADER);
+  http.addHeader("Accept", "text/html");
+  http.addHeader("Connection", "keep-alive");
+
+  Serial.printf("Requesting '%s' ... ", PAGE);
+  http.get(SERVER, PAGE); // Will halt if an error occurs
+  Serial.println("OK");
+}
+
+/**************************************************************************/
+/*!
+    @brief  The loop function runs over and over again forever
+*/
+/**************************************************************************/
+void loop()
+{
+  togglePin(ledPin);
+  delay(250);
+}
+
+/**************************************************************************/
+/*!
+    @brief  Connect to defined Access Point
+*/
+/**************************************************************************/
 bool connectAP(void)
 {
   // Attempt to connect to an AP
@@ -92,94 +144,4 @@ bool connectAP(void)
   Serial.println();
 
   return Feather.connected();
-}
-
-void receive_callback(void)
-{ 
-  // if there are incoming bytes available
-  // from the server, read then print them:
-  int c;
-  while ( (c = http.read())> 0 )
-  {
-    Serial.write( (isprint(c) || iscntrl(c)) ? ((char)c) : '.');
-  }
-}
-
-void disconnect_callback(void)
-{ 
-  Serial.println();
-  Serial.println("---------------------");
-  Serial.println("DISCONNECTED CALLBACK");
-  Serial.println("---------------------");
-  Serial.println();
-
-  http.stop();
-}
-
-void setup()
-{
-  Serial.begin(115200);
-
-  // Wait for the USB serial port to connect. Needed for native USB port only
-  while (!Serial) delay(1);
-  
-  Serial.println("HTTP Client Callback Example");
-  Serial.println();
-
-  while( !connectAP() )
-  {
-    delay(500);
-  }
-
-  printWifiStatus();
- 
-  // Tell the HTTP client to auto print error codes and halt on errors
-  http.err_actions(true, true);
-
-  // Optional: Disable certificate verification (accept any server)
-  http.tlsRequireVerification(false);
-
-  // Set the HTTP client timeout (in ms)  
-  http.setTimeout(1000);
-  
-  // Set the callback handlers
-  http.setReceivedCallback(receive_callback);
-  http.setDisconnectCallback(disconnect_callback);
-
-  Serial.printf("Connecting to %s port %d ... ", server, HTTPS_PORT );
-  http.connectSSL(server, HTTPS_PORT); // Will halt if an error occurs
-  Serial.println("OK");
-    
-  // Make a HTTP request:
-  http.addHeader("User-Agent", USER_AGENT_HEADER);
-  http.addHeader("Accept", "text/html");
-  http.addHeader("Connection", "keep-alive");
-
-  Serial.printf("Requesting '%s' ... ", url);
-  http.get(server, url); // Will halt if an error occurs
-  Serial.println("OK");
-}
-
-void loop()
-{
-  togglePin(ledPin);
-  delay(250);
-}
-
-void printWifiStatus() 
-{
-  // Display the IP address:
-  Serial.print("IP Address: ");
-  Serial.println( IPAddress(Feather.localIP()) );
-
-  // Display the gateway address
-  Serial.print("Gateway : ");
-  Serial.println( IPAddress(Feather.gatewayIP()) );
-
-  // Display the received signal strength indicator (RSSI):
-  long rssi = Feather.RSSI();
-  Serial.print("signal strength (RSSI):");
-  Serial.print(rssi);
-  Serial.println(" dBm");
-  Serial.println();
 }
