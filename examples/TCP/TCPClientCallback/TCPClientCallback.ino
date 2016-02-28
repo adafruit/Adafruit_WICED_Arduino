@@ -23,6 +23,11 @@
 
 AdafruitTCP tcp;
 
+/**************************************************************************/
+/*!
+    @brief  TCP received callback
+*/
+/**************************************************************************/
 void receive_callback(void)
 {
   // if there are incoming bytes available
@@ -34,6 +39,11 @@ void receive_callback(void)
   }
 }
 
+/**************************************************************************/
+/*!
+    @brief  TCP disconnect callback
+*/
+/**************************************************************************/
 void disconnect_callback(void)
 {
   Serial.println();
