@@ -34,6 +34,32 @@ void disconnect_callback(void)
 
 /**************************************************************************/
 /*!
+    @brief  Connect to defined Access Point
+*/
+/**************************************************************************/
+bool connectAP(void)
+{
+  // Attempt to connect to an AP
+  Serial.print("Attempting to connect to: ");
+  Serial.println(WLAN_SSID);
+
+  if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
+  {
+    Serial.println("Connected!");
+  }
+  else
+  {
+    Serial.printf("Failed! %s (%d)", Feather.errstr(), Feather.errno());
+    Serial.println();
+  }
+  Serial.println();
+
+  return Feather.connected();
+}
+
+
+/**************************************************************************/
+/*!
     @brief  The setup function runs once when reset the board
 */
 /**************************************************************************/
@@ -44,23 +70,19 @@ void setup()
 
   Serial.println(F("Ping Example\r\n"));
 
+  // Print all software verions
+  Feather.printVersions();
+
   // Set disconnection callback
   Feather.setDisconnectCallback(disconnect_callback);
   
-  // Attempt to connect to an AP
-  Serial.print("Attempting to connect to: ");
-  Serial.println(WLAN_SSID);
+  while ( !connectAP() )
+  {
+    delay(500); // delay between each attempt
+  }
 
-  if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
-  {
-    Serial.println(F("Connected!"));
-  }
-  else
-  {
-    Serial.print(F("Failed! Error: 0x"));
-    Serial.println(Feather.errno(), HEX);
-  }
-  Serial.println("");
+  // Print network info
+  Feather.printNetwork();;
 }
 
 /**************************************************************************/
@@ -87,7 +109,7 @@ void loop()
     Serial.println();
 
     // Ping IP Address in String format
-    Serial.printf("Pinging %s : ", target_ip_str);
+    Serial.printf("Pinging %s      : ", target_ip_str);
     resp_ms = Feather.ping(target_ip_str);
     if (resp_ms != 0)
     {
@@ -99,7 +121,7 @@ void loop()
     Serial.println();
 
     // Ping specific IP Address
-    Serial.printf("Pinging %s : ", target_ip.toCharArray());
+    Serial.printf("Pinging %s      : ", target_ip.toCharArray());
     resp_ms = Feather.ping(target_ip);
     if (resp_ms != 0)
     {
