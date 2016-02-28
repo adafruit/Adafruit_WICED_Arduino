@@ -15,16 +15,17 @@
 #include <adafruit_feather.h>
 #include <adafruit_tcp.h>
 
-char ssid[] = "yourSSID";     //  your network SSID (name)
-char pass[] = "yourPassword";  // your network password (use for WPA, or use as key for WEP)
+#define WLAN_SSID            "yourSSID"
+#define WLAN_PASS            "yourPassword"
+
 
 // your local PC's IP to test the throughput
 // Run this command to create a server on your PC
-// nc -l 8888 
-IPAddress server_ip(192, 168, 0, 114);
+// > nc -l 8888
+IPAddress server_ip(192, 168, 0, 20);
 const uint16_t port = 8888;
 
-AdafruitTCP client;
+AdafruitTCP tcp;
 
 // Each member has 50 chars
 const char * testData[10] =
@@ -43,37 +44,76 @@ const char * testData[10] =
 
 const uint32_t testStepLen = strlen(testData[0]);
 
+/**************************************************************************/
+/*!
+    @brief  Connect to defined Access Point
+*/
+/**************************************************************************/
+bool connectAP(void)
+{
+  // Attempt to connect to an AP
+  Serial.print("Attempting to connect to: ");
+  Serial.println(WLAN_SSID);
+
+  if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
+  {
+    Serial.println("Connected!");
+  }
+  else
+  {
+    Serial.printf("Failed! %s (%d)", Feather.errstr(), Feather.errno());
+    Serial.println();
+  }
+  Serial.println();
+
+  return Feather.connected();
+}
+
+/**************************************************************************/
+/*!
+    @brief  The setup function runs once when reset the board
+*/
+/**************************************************************************/
 void setup()
 {
   Serial.begin(115200);
 
-  // Wait for serial port to connect
+  // wait for serial port to connect. Needed for native USB port only
   while (!Serial) delay(1);
 
-  // attempt to connect to Wifi network:
-  do{
-    Serial.print("Attempting to connect to SSID: ");
-    Serial.println(ssid);
-  }while( !Feather.connect(ssid, pass) );
+  Serial.println("Throughput Example\r\n");
 
-  Serial.println("Connected to WiFi");
-  printWifiStatus();
+  // Print all software verions
+  Feather.printVersions();
+
+  while ( !connectAP() )
+  {
+    delay(500); // delay between each attempt
+  }
+
+  // Connected: Print network info
+  Feather.printNetwork();
 
   Serial.print("\nStarting connection to ");
   Serial.print(server_ip);
   Serial.printf(":%d\r\n", port);
   
-  client.usePacketBuffering(true); // use packet buffering for maximum performance
-  client.connect(server_ip, port);
+  tcp.usePacketBuffering(true); // use packet buffering for maximum performance
+  tcp.connect(server_ip, port);
 }
 
+/**************************************************************************/
+/*!
+    @brief  The loop function runs over and over again forever
+*/
+/**************************************************************************/
 void loop()
 {
-  // if the server's disconnected, stop the client:
-  if (!client.connected())
+  // if the server's disconnected, stop the tcp:
+  if (!tcp.connected())
   {
     Serial.println("not connected or disconncted.");
-    client.stop();
+    tcp.stop();
 
     // do nothing forevermore:
     while (true) {
@@ -92,7 +132,7 @@ void loop()
   start = millis();
   while (remaining_loop > 0)
   {
-    client.write( testData[sent_loop%10] );
+    tcp.write( testData[sent_loop%10] );
 
     sent_loop++;
     remaining_loop--;
@@ -100,7 +140,7 @@ void loop()
 
   // Data is buffered and only be sent when network packet is full
   // or flush() is called to optimize network usage
-  client.flush();
+  tcp.flush();
 
   // print result
   stop = millis() - start;
@@ -108,28 +148,11 @@ void loop()
 
   // if there are incoming bytes available
   // from the server, read them and print them:
-  while (client.available()) {
-    char c = client.read();
+  while ( tcp.available() )
+  {
+    char c = tcp.read();
     Serial.write(c);
   }
-}
-
-
-void printWifiStatus() {
-  // print the SSID of the network you're attached to:
-  Serial.print("SSID: ");
-  Serial.println(Feather.SSID());
-
-  // print your WiFi shield's IP address:
-  IPAddress ip = Feather.localIP();
-  Serial.print("IP Address: ");
-  Serial.println(ip);
-
-  // print the received signal strength:
-  long rssi = Feather.RSSI();
-  Serial.print("signal strength (RSSI):");
-  Serial.print(rssi);
-  Serial.println(" dBm");
 }
 
 void getUserInput(char buffer[], uint8_t maxSize)
