@@ -82,7 +82,7 @@ void setup()
   // wait for serial port to connect. Needed for native USB port only
   while (!Serial) delay(1);
 
-  Serial.println("TCP Example With Callback\r\n");
+  Serial.println("TCP Client Example With Callback\r\n");
 
   // Print all software verions
   Feather.printVersions();

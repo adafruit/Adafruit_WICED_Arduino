@@ -1,71 +1,110 @@
-#include "adafruit_feather.h"
-#include "adafruit_tcp.h"
+/*********************************************************************
+ This is an example for our Feather WIFI modules
 
-char const     ssid[ ]   = "SSIDNAME";             // Your network SSID (name)
-char const     pass[ ]   = "PASSWORD";             // Your network password (use for WPA, or use as key for WEP)
-char const     server[ ] = "www.adafruit.com";     // The TCP server to connect to
-const uint16_t port      = 80;                     // The TCP port to use
-char const     page[ ]   = "/testwifi/index.html"; // The HTTP resource to request
+ Pick one up today in the adafruit shop!
 
-AdafruitTCP adatcp;
+ Adafruit invests time and resources providing this open source code,
+ please support Adafruit and open-source hardware by purchasing
+ products from Adafruit!
 
+ MIT license, check LICENSE for more information
+ All text above, and the splash screen below must be included in
+ any redistribution
+*********************************************************************/
+
+#include <adafruit_feather.h>
+
+#define WLAN_SSID            "yourSSID"
+#define WLAN_PASS            "yourPassword"
+
+#define SERVER               "www.adafruit.com"     // The TCP server to connect to
+#define PAGE                 "/testwifi/index.html" // The HTTP resource to request
+#define PORT                 80                     // The TCP port to use
+
+AdafruitTCP tcp;
+
+/**************************************************************************/
+/*!
+    @brief  Connect to defined Access Point
+*/
+/**************************************************************************/
+bool connectAP(void)
+{
+  // Attempt to connect to an AP
+  Serial.print("Attempting to connect to: ");
+  Serial.println(WLAN_SSID);
+
+  if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
+  {
+    Serial.println("Connected!");
+  }
+  else
+  {
+    Serial.printf("Failed! %s (%d)", Feather.errstr(), Feather.errno());
+    Serial.println();
+  }
+  Serial.println();
+
+  return Feather.connected();
+}
+
+/**************************************************************************/
+/*!
+    @brief  The setup function runs once when reset the board
+*/
+/**************************************************************************/
 void setup()
 {
-  //Initialize Serial and wait for port to open:
   Serial.begin(115200);
-  while (!Serial)
+
+  // wait for serial port to connect. Needed for native USB port only
+  while (!Serial) delay(1);
+
+  Serial.println("TCP Client Example With Polling\r\n");
+
+  while ( !connectAP() )
   {
-    // wait for Serial port to connect. Needed for native USB port only
-    delay(1);
+    delay(500); // delay between each attempt
   }
 
-  Serial.println("TCP Example With Polling\r\n");
+  // Connected: Print network info
+  Feather.printNetwork();
 
-  // Attempt to connect to the Wifi network:
-  do
-  {
-    Serial.print("Attempting to connect to: ");
-    Serial.println(ssid);
-  } while( !Feather.connect(ssid, pass) ) ;
+  // Tell the TCP client to auto print error codes and halt on errors
+  tcp.err_actions(true, true);
 
-  Serial.println("Connected!");
-  Serial.println("\nStarting connection to server...");
+   // Start connection
+  Serial.printf("Connecting to %s port %d ... ", SERVER, PORT);
+  tcp.connect(SERVER, PORT); // Will halt if an error occurs
+  Serial.println("OK");
 
-  // If we can connect to the TCP Server, report it via Serial.print
-  if (adatcp.connect(server, port))
-  {
-    Serial.println("Connected to server");
-    // Make an HTTP request:
-    adatcp.print("GET "); adatcp.print(page); adatcp.println(" HTTP/1.1");
-    adatcp.print("Host: "); adatcp.println(server);
-    adatcp.println("Connection: close");
-    adatcp.println();
+  // Make an HTTP request:
+  tcp.printf("GET %s HTTP/1.1\r\n", PAGE);
+  tcp.print("Host: "); tcp.println(SERVER);
+  tcp.println("Connection: close");
+  tcp.println();
 
-    // Data is buffered and will only be sent when the network packet is full
-    // or flush() is called to optimize network usage
-    // adatcp.flush();
-  } else
-  {
-    Serial.println("Failed to connect to server");
-  }
+  // Data is buffered and will only be sent when the network packet is full
+  // or flush() is called to optimize network usage
+  // tcp.flush();
 }
 
 void loop()
 {
   // If there are incoming bytes available
   // from the server, read then print them:
-  while (adatcp.available())
+  while (tcp.available())
   {
-    char c = adatcp.read();
-    Serial.write(c);
+    int c = tcp.read();
+    Serial.write( (isprint(c) || iscntrl(c)) ? ((char)c) : '.');
   }
 
   // If the server's disconnected, stop the client:
-  if (!adatcp.connected())
+  if ( !tcp.connected() )
   {
     Serial.println();
     Serial.println("Disconnecting from server.");
-    adatcp.stop();
+    tcp.stop();
 
     // Do nothing forevermore:
     while (true) delay(1);
