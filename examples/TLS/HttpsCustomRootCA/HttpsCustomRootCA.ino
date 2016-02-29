@@ -17,13 +17,17 @@
  * Default RootCA list can be included (linked with user's if needed) or
  * just opt-out. To run the demo
  * 1. Change ssid/pass to match your network
- * 2. Choose the SERVER_ID or use your own server e.g www.adafruit.com
- * 3. cd to this folder & and get_certificates.py script as follows
- *      $ python get_certificates.py www.adafruit.com
- * 4. The script will genearate certificates.h contains certificate chain
- * of the server. You may need to close and re-open this sketch to reload
- * 5. Compile and run this sketch
+ * 2. Change the SERVER you want to connect e.g www.reddit.com
+ * 3. One of follows
+ *    - Use the tools/pycert to download & generate server's certificates
+ *        python pycert.py download www.reddit.com
+ *    - Download the root certificate using your browser in PEM format and convert it
+ *        python pycert.py convert DigiCertGlobalRootCA.pem
+ *        Note: Root CA of www.reddit.com is DigiCertGlobalRootCA
  *
+ * 4. The script will genearate certificates.h contains certificate chain
+ * of the server. Copy the generated header to sketch's folder
+ * 5. Open & and run this sketch
 */
 
 #include <adafruit_feather.h>

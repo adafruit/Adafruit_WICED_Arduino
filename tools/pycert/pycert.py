@@ -28,7 +28,7 @@ CERT_VAR_DEFAULT = 'rootca_certs'          # Cert data variable name.
 # NOTE: If you're changing the template make sure to escape all curly braces
 # with a double brace (like {{ or }}) or else Python will try to interpret as a
 # string format variable.
-CFILE_TEMPLATE = """
+CFILE_TEMPLATE = """\
 #ifndef _{guard_name}_H_
 #define _{guard_name}_H_
 
