@@ -41,7 +41,7 @@ void setup()
 
   Serial.println("UDP NTP Client Example\r\n");
 
-  // Print all software verions
+  // Print all software versions
   Feather.printVersions();
 
   while ( !connectAP() )

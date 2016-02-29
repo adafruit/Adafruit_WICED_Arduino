@@ -58,7 +58,7 @@ void setup()
 
   Serial.println("Throughput Example\r\n");
 
-  // Print all software verions
+  // Print all software versions
   Feather.printVersions();
 
   while ( !connectAP() )

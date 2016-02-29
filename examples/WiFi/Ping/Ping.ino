@@ -48,7 +48,7 @@ void setup()
 
   Serial.println(F("Ping Example\r\n"));
 
-  // Print all software verions
+  // Print all software versions
   Feather.printVersions();
 
   // Set disconnection callback

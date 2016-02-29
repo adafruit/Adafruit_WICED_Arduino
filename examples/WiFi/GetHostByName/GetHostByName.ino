@@ -42,7 +42,7 @@ void setup()
 
   Serial.println("GetHostByName Example\r\n");
 
-  // Print all software verions
+  // Print all software versions
   Feather.printVersions();
 
   // Set disconnection callback

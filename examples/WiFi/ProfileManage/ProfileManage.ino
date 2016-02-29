@@ -33,7 +33,7 @@ void setup()
 
   Serial.println(F("Profile Manage Example\r\n"));
   
-  // Print all software verions
+  // Print all software versions
   Feather.printVersions();
 
   // Print AP profile list
