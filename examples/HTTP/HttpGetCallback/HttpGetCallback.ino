@@ -109,7 +109,7 @@ void setup()
 
   // Send the HTTP request
   Serial.printf("Requesting '%s' ... ", PAGE);
-  http.get(SERVER, PAGE); // Will halt if an error occurs
+  http.get(PAGE); // Will halt if an error occurs
   Serial.println("OK");
 }
 

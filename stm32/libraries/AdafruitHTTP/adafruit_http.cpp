@@ -43,9 +43,23 @@
 AdafruitHTTP::AdafruitHTTP()
 {
   _packet_buffering = true;
+  _server = NULL;
 
   this->clearHeaders();
 }
+
+int AdafruitHTTP::connect( const char * host, uint16_t port )
+{
+  _server = host;
+  return AdafruitTCP::connect(host, port);
+}
+
+int AdafruitHTTP::connectSSL( const char* host, uint16_t port )
+{
+  _server = host;
+  return AdafruitTCP::connectSSL(host, port);
+}
+
 
 bool AdafruitHTTP::addHeader(const char* name, const char* value)
 {
@@ -85,14 +99,22 @@ void AdafruitHTTP::sendHeaders(size_t content_len)
   println(); // End of header
 }
 
-
 bool AdafruitHTTP::get(char const * host, char const *url)
 {
   printf(HTTP_GET " %s " HTTP_VERSION, url); println();
   printf("Host: %s", host); println();
 
+  Serial.printf("Host: %s", host); Serial.println();
+
   sendHeaders(0);
   flush();
+}
+
+bool AdafruitHTTP::get(char const *url)
+{
+  if(_server == NULL) return false;
+
+  this->get(_server, url);
 }
 
 bool AdafruitHTTP::post(char const * host, char const *url, char const* data)
@@ -106,4 +128,11 @@ bool AdafruitHTTP::post(char const * host, char const *url, char const* data)
   println(data);
 
   flush();
+}
+
+bool AdafruitHTTP::post(char const *url, char const* data)
+{
+  if(_server == NULL) return false;
+
+  this->get(url, data);
 }

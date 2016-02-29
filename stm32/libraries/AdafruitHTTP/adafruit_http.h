@@ -47,6 +47,8 @@
 class AdafruitHTTP : public AdafruitTCP
 {
 protected:
+  const char* _server;
+
   uint8_t _header_count;
 
   struct {
@@ -63,7 +65,14 @@ public:
   bool clearHeaders(void);
 
   bool get(char const * host, char const *url);
+  bool get(char const *url);
+
   bool post(char const * host, char const *url, char const* data);
+  bool post(char const *url, char const* data);
+
+  // TCP API
+  virtual int connect    ( const char * host, uint16_t port );
+  virtual int connectSSL ( const char* host, uint16_t port );
 };
 
 
