@@ -12,48 +12,40 @@
  any redistribution
 *********************************************************************/
 
-/*  This example use the default RootCA list to access secured sites
- *  that can be verified by default list. 
- *  1. Change ssid/pass to match your network
- *  2. Choose the SERVER_ID or use your own server e.g www.adafruit.com
- *  3. Compile and run the sketch
-*/
+/* This example connect to Adafruit's large text file (10KB, 100KB, 1MB)
+ * to test the large data handling. In addition to print the contents,
+ * the sketch also compute checksum of the content to compare with one
+ * calculated by other mean.
+ *
+ * To run the sketch
+ * 1. Change SSID/Pass
+ * 2. Choose the file to download by change FILE_ID
+ * 3. Combine and run the sketch
+ * */
 
 #include <adafruit_feather.h>
 #include <adafruit_http.h>
 
-#define WLAN_SSID            "yourSSID"
-#define WLAN_PASS            "yourPass"
+#define WLAN_SSID             "yourSSID"
+#define WLAN_PASS             "yourPass"
 
+#define SERVER                "adafruit-download.s3.amazonaws.com"
 #define HTTPS_PORT            443
 
-#define ADAFRUIT_S3_SERVER    "adafruit-download.s3.amazonaws.com"
+int ledPin = PA15;
 
-// Some servers such as Facebook check the user_agent header to
-// return data accordingly. Setting 'curl' mimics a command line browser.
-// For a list of popular user agents see: 
-//  http://www.useragentstring.com/pages/useragentstring.php
-#define USER_AGENT_HEADER    "curl/7.45.0"
+// Change the SERVER_ID to match the generated certificates.h
+#define FILE_ID    2
 
-// Change the SERVER_ID to pick the website to test with
-#define SERVER_ID    0
-
-const char * server_arr[][2] =
+// S3 server to test large files,
+const char * file_arr[] =
 {
-    [0] = { "www.adafruit.com"       , "/" },
-    [1] = { "twitter.com"            , "/" },
-    [2] = { "www.google.com"         , "/" },
-    [3] = { "www.facebook.com"       , "/" },
-    [4] = { "us.yahoo.com"           , "/" },
-    [5] = { "aws.amazon.com"         , "/" },
-    [6] = { "github.com"             , "/" },
+    [0] = "/text_10KB.txt"  ,
+    [1] = "/text_100KB.txt" ,
+    [2] = "/text_1MB.txt"   ,
 };
 
-// You can set your own server & url here
-const char * server = server_arr[SERVER_ID][0];
-const char * url    = server_arr[SERVER_ID][1];
-
-int ledPin = PA15;
+const char * url = file_arr[FILE_ID];
 
 // Use the HTTP class
 AdafruitHTTP http;
@@ -64,7 +56,7 @@ AdafruitHTTP http;
 */
 /**************************************************************************/
 void receive_callback(void)
-{ 
+{
   // if there are incoming bytes available
   // from the server, read then print them:
   while ( http.available() )
@@ -80,7 +72,7 @@ void receive_callback(void)
 */
 /**************************************************************************/
 void disconnect_callback(void)
-{ 
+{
   Serial.println();
   Serial.println("---------------------");
   Serial.println("DISCONNECTED CALLBACK");
@@ -101,8 +93,8 @@ void setup()
 
   // Wait for the USB serial port to connect. Needed for native USB port only
   while (!Serial) delay(1);
-  
-  Serial.println("HTTPS Default Root CA Example\r\n");
+
+  Serial.println("HTTPS Large Data Example\r\n");
 
   // Print all software versions
   Feather.printVersions();
@@ -114,28 +106,25 @@ void setup()
 
   // Connected: Print network info
   Feather.printNetwork();
- 
+
   // Tell the HTTP client to auto print error codes and halt on errors
   http.err_actions(true, true);
 
-  // Set the HTTP client timeout (in ms)  
-  http.setTimeout(1000);
-  
-  // Set the callback handlers
+  // Set up callbacks
   http.setReceivedCallback(receive_callback);
   http.setDisconnectCallback(disconnect_callback);
 
-  Serial.printf("Connecting to %s port %d ... ", server, HTTPS_PORT );
-  http.connectSSL(server, HTTPS_PORT); // Will halt if an error occurs
+  // Start a secure connection
+  Serial.printf("Connecting to %s port %d ... ", SERVER, HTTPS_PORT );
+  http.connectSSL(SERVER, HTTPS_PORT); // Will halt if an error occurs
   Serial.println("OK");
-    
-  // Make a HTTP request:
-  http.addHeader("User-Agent", USER_AGENT_HEADER);
+
+  // Make a HTTP request
   http.addHeader("Accept", "text/html");
   http.addHeader("Connection", "keep-alive");
 
   Serial.printf("Requesting '%s' ... ", url);
-  http.get(server, url); // Will halt if an error occurs
+  http.get(SERVER, url); // Will halt if an error occurs
   Serial.println("OK");
 }
 
