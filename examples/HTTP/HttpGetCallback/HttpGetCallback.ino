@@ -1,5 +1,5 @@
 /*********************************************************************
- This is an example for our Feather WIFI modules
+ This is an example for our WICED Feather WIFI modules
 
  Pick one up today in the adafruit shop!
 
@@ -11,19 +11,6 @@
  All text above, and the splash screen below must be included in
  any redistribution
 *********************************************************************/
-
-/* How to run this example
-* 1. Change ssid/pass to match your network
-* 2. Choose the SERVER_ID or use your own server e.g www.adafruit.com
-* 3. cd to this folder & and get_certificates.py script as follows
-*      $ python get_certificates.py www.adafruit.com
-* 4. The script will genearate certificates.h contains certificate chain
-* of the server. You may need to close and re-open this sketch to reload
-* 5. Compile and run this sketch
-* 
-* NOTE: to create self-signed certificate for localhost
-* https://gist.github.com/sl4m/5091803
-*/
 
 #include <adafruit_feather.h>
 #include <adafruit_http.h>
@@ -51,8 +38,8 @@ AdafruitHTTP http;
 */
 /**************************************************************************/
 void receive_callback(void)
-{ 
-  // if there are incoming bytes available
+{
+  // If there are incoming bytes available
   // from the server, read then print them:
   while ( http.available() )
   {
@@ -67,7 +54,7 @@ void receive_callback(void)
 */
 /**************************************************************************/
 void disconnect_callback(void)
-{ 
+{
   Serial.println();
   Serial.println("---------------------");
   Serial.println("DISCONNECTED CALLBACK");
@@ -79,21 +66,22 @@ void disconnect_callback(void)
 
 /**************************************************************************/
 /*!
-    @brief  The setup function runs once when reset the board
+    @brief  The setup function runs once when the board comes out of reset
 */
 /**************************************************************************/
 void setup()
 {
   Serial.begin(115200);
 
-  // Wait for the USB serial port to connect. Needed for native USB port only
+  // Wait for the USB serial to connect. Needed for native USB port only.
   while (!Serial) delay(1);
-  
-  Serial.println("HTTP Get Callback Example\r\n");
 
-  // Print all software verions
+  Serial.println("HTTP Get Example (Callback Based)\r\n");
+
+  // Print all software versions
   Feather.printVersions();
 
+  // Try to connect to an AP
   while ( !connectAP() )
   {
     delay(500); // delay between each attempt
@@ -101,23 +89,25 @@ void setup()
 
   // Connected: Print network info
   Feather.printNetwork();
- 
+
   // Tell the HTTP client to auto print error codes and halt on errors
   http.err_actions(true, true);
-  
+
   // Set the callback handlers
   http.setReceivedCallback(receive_callback);
   http.setDisconnectCallback(disconnect_callback);
 
+  // Connect to the HTTP server
   Serial.printf("Connecting to %s port %d ... ", SERVER, PORT);
   http.connect(SERVER, PORT); // Will halt if an error occurs
   Serial.println("OK");
-    
-  // Make a HTTP request:
+
+  // Setup the HTTP request with any required header entries
   http.addHeader("User-Agent", USER_AGENT_HEADER);
   http.addHeader("Accept", "text/html");
   http.addHeader("Connection", "keep-alive");
 
+  // Send the HTTP request
   Serial.printf("Requesting '%s' ... ", PAGE);
   http.get(SERVER, PAGE); // Will halt if an error occurs
   Serial.println("OK");
@@ -125,7 +115,7 @@ void setup()
 
 /**************************************************************************/
 /*!
-    @brief  The loop function runs over and over again forever
+    @brief  The loop function runs over and over again
 */
 /**************************************************************************/
 void loop()
@@ -136,7 +126,7 @@ void loop()
 
 /**************************************************************************/
 /*!
-    @brief  Connect to defined Access Point
+    @brief  Connect to the defined access point (AP)
 */
 /**************************************************************************/
 bool connectAP(void)

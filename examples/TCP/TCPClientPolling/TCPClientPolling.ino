@@ -1,5 +1,5 @@
 /*********************************************************************
- This is an example for our Feather WIFI modules
+ This is an example for our WICED Feather WIFI modules
 
  Pick one up today in the adafruit shop!
 
@@ -32,12 +32,12 @@ void setup()
 {
   Serial.begin(115200);
 
-  // wait for serial port to connect. Needed for native USB port only
+  // Wait for the serial port to connect. Needed for native USB port only.
   while (!Serial) delay(1);
 
-  Serial.println("TCP Client Example With Polling\r\n");
+  Serial.println("TCP Client Example (Polling)\r\n");
 
-  // Print all software verions
+  // Print all software versions
   Feather.printVersions();
 
   while ( !connectAP() )
@@ -51,7 +51,7 @@ void setup()
   // Tell the TCP client to auto print error codes and halt on errors
   tcp.err_actions(true, true);
 
-   // Start connection
+  // Start connection
   Serial.printf("Connecting to %s port %d ... ", SERVER, PORT);
   tcp.connect(SERVER, PORT); // Will halt if an error occurs
   Serial.println("OK");
@@ -82,14 +82,14 @@ void loop()
     Serial.write( (isprint(c) || iscntrl(c)) ? ((char)c) : '.');
   }
 
-  // If the server's disconnected, stop the client:
+  // If the server is disconnected, stop the client:
   if ( !tcp.connected() )
   {
     Serial.println();
     Serial.println("Disconnecting from server.");
     tcp.stop();
 
-    // Do nothing forevermore:
+    // Hang around here forever!
     while (true) delay(1);
   }
 }

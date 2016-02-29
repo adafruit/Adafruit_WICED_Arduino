@@ -15,14 +15,13 @@
 /* How to run this example
 * 1. Change ssid/pass to match your network
 * 2. Choose the SERVER_ID or use your own server e.g www.adafruit.com
-* 3. cd to this folder & and get_certificates.py script as follows
-*      $ python get_certificates.py www.adafruit.com
-* 4. The script will genearate certificates.h contains certificate chain
-* of the server. You may need to close and re-open this sketch to reload
+* If necessary:
+*    3. cd to /tools/pycert and run pycert.py as follows:
+*       $ python pycert.py download www.adafruit.com
+*    4. The script will generate certificates.h, whicf holds the certificate
+*       chain of the server. You may need to close and re-open this sketch to
+*       reload it.
 * 5. Compile and run this sketch
-* 
-* NOTE: to create self-signed certificate for localhost
-* https://gist.github.com/sl4m/5091803
 */
 
 #include <adafruit_feather.h>
@@ -54,8 +53,8 @@ const char * server_arr[][2] =
     [3 ] = { "www.facebook.com"     , "/" },
     [4 ] = { "www.yahoo.com"        , "/" },
     [5 ] = { "aws.amazon.com"        , "/" },
-    
-    // S3 server to test large files, 
+
+    // S3 server to test large files,
     [6] = { S3_SERVER, "/text_10KB.txt" },
     [7] = { S3_SERVER, "/text_100KB.txt"},
     [8] = { S3_SERVER, "/text_1MB.txt"  },
@@ -89,7 +88,7 @@ bool connectAP(void)
 }
 
 void receive_callback(void)
-{ 
+{
   // if there are incoming bytes available
   // from the server, read then print them:
   int c;
@@ -100,7 +99,7 @@ void receive_callback(void)
 }
 
 void disconnect_callback(void)
-{ 
+{
   Serial.println();
   Serial.println("---------------------");
   Serial.println("DISCONNECTED CALLBACK");
@@ -112,9 +111,9 @@ void setup()
 {
   Serial.begin(115200);
 
-  // wait for Serial port to connect. Needed for native USB port only
+  // Wait for the Serial port to connect. Needed for native USB port only.
   while (!Serial) delay(1);
-  
+
   Serial.println("HTTP Client Callback Example");
   Serial.println();
 
@@ -127,8 +126,8 @@ void setup()
 
   // Add Root CA Chain to pre-flashed chain (if necessary)
   //Feather.addRootCA(rootca_certs, ROOTCA_CERTS_LEN);
- 
-  // Tell the MQTT client to auto print error codes and halt on errors
+
+  // Tell the HTTP client to auto print error codes and halt on errors
   http.err_actions(true, true);
 
   // Set up callbacks
@@ -139,7 +138,7 @@ void setup()
   Serial.printf("Connecting to %s port %d ... ", server, HTTPS_PORT );
   http.connectSSL(server, HTTPS_PORT); // Will halt if an error occurs
   Serial.println("OK");
-    
+
   // Make a HTTP request
   http.addHeader("User-Agent", USER_AGENT_HEADER);
   http.addHeader("Accept", "text/html");
@@ -156,7 +155,7 @@ void loop()
   delay(250);
 }
 
-void printWifiStatus() 
+void printWifiStatus()
 {
   // print the IP address and gateway:
   Serial.print("IP Address: ");
@@ -171,4 +170,3 @@ void printWifiStatus()
   Serial.println(" dBm");
   Serial.println();
 }
-

@@ -64,12 +64,12 @@ void setup()
 {
   Serial.begin(115200);
 
-  // wait for serial port to connect. Needed for native USB port only
+  // Wait for the serial port to connect. Needed for native USB port only.
   while (!Serial) delay(1);
 
-  Serial.println("TCP Client Example With Callback\r\n");
+  Serial.println("TCP Client Example (Callbacks)\r\n");
 
-  // Print all software verions
+  // Print all software versions
   Feather.printVersions();
 
   while ( !connectAP() )
@@ -83,7 +83,7 @@ void setup()
   // Tell the TCP client to auto print error codes and halt on errors
   tcp.err_actions(true, true);
 
-  // Install callback
+  // Install callbacks
   tcp.setReceivedCallback(receive_callback);
   tcp.setDisconnectCallback(disconnect_callback);
 

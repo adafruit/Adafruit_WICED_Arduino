@@ -59,12 +59,12 @@ void setup()
 {
   Serial.begin(115200);
 
-  // wait for serial port to connect. Needed for native USB port only
+  // wait for the serial port to connect. Needed for native USB port only.
   while (!Serial) delay(1);
 
   Serial.println("UDP Echo Server Callback Example\r\n");
 
-  // Print all software verions
+  // Print all software versions
   Feather.printVersions();
 
   while ( !connectAP() )
@@ -78,8 +78,11 @@ void setup()
 
   // Tell the UDP client to auto print error codes and halt on errors
   udp.err_actions(true, true);
+
+  // Set the RX callback handler
   udp.setReceivedCallback(received_callback);
 
+  // Start the UDP server
   Serial.printf("Openning UDP at port %d ... ", LOCAL_PORT);
   udp.begin(LOCAL_PORT);
   Serial.println("OK");
@@ -97,7 +100,6 @@ void setup()
 /**************************************************************************/
 void loop()
 {
-
 }
 
 /**************************************************************************/
