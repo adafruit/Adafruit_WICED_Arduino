@@ -12,22 +12,30 @@
  any redistribution
 *********************************************************************/
 
-/* This example access a secured site whose RootCA is not covered by
- * the default RootCA list to demostrate the ability to add user RootCA.
- * Default RootCA list can be included (linked with user's if needed) or
- * just opt-out. To run the demo
- * 1. Change ssid/pass to match your network
- * 2. Change the SERVER you want to connect e.g www.reddit.com
- * 3. One of follows
- *    - Use the tools/pycert to download & generate server's certificates
- *        python pycert.py download www.reddit.com
- *    - Download the root certificate using your browser in PEM format and convert it
- *        python pycert.py convert DigiCertGlobalRootCA.pem
- *        Note: Root CA of www.reddit.com is DigiCertGlobalRootCA
+/* This example attempts tp access a secure site whose RootCA is not
+ * covered by the default RootCA list. It demostrates the ability to
+ * add user RootCAs.
  *
- * 4. The script will genearate certificates.h contains certificate chain
- * of the server. Copy the generated header to sketch's folder
- * 5. Open & and run this sketch
+ * The default RootCA list can be included (linked with custom
+ * RootCAs if necessary) or you can disable the default list to save
+ * memory.
+ *
+ * To run the demo:
+ *
+ * 1. Change the ssid/pass defines to match your access point
+ * 2. Change the SERVER you want to connect e.g www.reddit.com
+ * 3. Do one of following:
+ *    - Use tools/pycert/pycert.py to download & generate the
+        target server's certificates:
+ *      $ python pycert.py download www.reddit.com
+ *    - Download the root certificate using your browser in PEM
+        format and convert it:
+ *      $ python pycert.py convert DigiCertGlobalRootCA.pem
+ *        Note: Root CA of www.reddit.com is DigiCertGlobalRootCA
+ * 4. The script will genearate certificates.h, which contains the
+ *    certificate chain of the server. Copy the generated header to
+ *    this sketch's folder.
+ * 5. Open and run this sketch
 */
 
 #include <adafruit_feather.h>
@@ -41,17 +49,19 @@
 #define PAGE                    "/"
 #define HTTPS_PORT              443
 
-// RootCA take RAM to manage ~900 bytes for each certificates in the chain
-// Default RootCA has 5 --> 4.5 KB of FeatherLib's SRAM is used to manage.
-// Lack of memory could cause FeatherLib to malfunction in some cases.
-// It is advised that Default RootCA is opt-out if you only need to
-// connect to one specific website (or sites that RootCA is not included in
-// the default  chain).
+// RootCAs require a lot of SRAM to manage (~900 bytes for each certificate
+// in the chain). The default RootCA has 5 certificates, so ~4.5 KB of
+// FeatherLib's SRAM is used to manage them.
+// A lack of memory could cause FeatherLib to malfunction in some cases.
+// It is advised to disable the default RootCA list if you only need to
+// connect to one specific website (or sites where the RootCA is not
+// included in the default root certificate chain).
 #define INCLUDE_DEFAULT_ROOTCA  0
 
-// Some server such as facebook check the user_agent header to
-// return data accordingly. Setting curl to mimics command line browser !!
-// For list of popular user agent http://www.useragentstring.com/pages/useragentstring.php
+// Some servers such as Facebook check the user_agent header to
+// return data accordingly. Setting curl to mimics command line browser.
+// For a list of popular user agent see:
+// http://www.useragentstring.com/pages/useragentstring.php
 #define USER_AGENT_HEADER    "curl/7.45.0"
 
 int ledPin = PA15;
@@ -66,7 +76,7 @@ AdafruitHTTP http;
 /**************************************************************************/
 void receive_callback(void)
 { 
-  // if there are incoming bytes available
+  // If there are incoming bytes available
   // from the server, read then print them:
   while ( http.available() )
   {
@@ -91,14 +101,14 @@ void disconnect_callback(void)
 
 /**************************************************************************/
 /*!
-    @brief  The setup function runs once when reset the board
+    @brief  The setup function runs once when coming out of reset
 */
 /**************************************************************************/
 void setup()
 {
   Serial.begin(115200);
 
-  // wait for Serial port to connect. Needed for native USB port only
+  // Wait for the serial port to connect. Only needed for native USB CDC.
   while (!Serial) delay(1);
   
   Serial.println("HTTPS Custom Root CA Example");
@@ -108,7 +118,7 @@ void setup()
 
   while ( !connectAP() )
   {
-    delay(500); // delay between each attempt
+    delay(500); // Small delay between each attempt
   }
 
   // Connected: Print network info
@@ -144,7 +154,7 @@ void setup()
 
 /**************************************************************************/
 /*!
-    @brief  The loop function runs over and over again forever
+    @brief  The loop function runs over and over again
 */
 /**************************************************************************/
 void loop()
