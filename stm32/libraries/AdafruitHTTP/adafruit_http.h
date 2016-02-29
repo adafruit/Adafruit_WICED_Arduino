@@ -54,7 +54,7 @@ protected:
     const char* value;
   }_headers[ADAFRUIT_HTTP_MAX_HEADER];
 
-  void sendHeaders(void);
+  void sendHeaders(size_t content_len);
 
 public:
   AdafruitHTTP();
@@ -63,7 +63,7 @@ public:
   bool clearHeaders(void);
 
   bool get(char const * host, char const *url);
-  bool post(char const * host, char const *url, char const* encoded_data);
+  bool post(char const * host, char const *url, char const* data);
 };
 
 

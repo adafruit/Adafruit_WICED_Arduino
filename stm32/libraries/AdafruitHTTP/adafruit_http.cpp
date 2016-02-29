@@ -67,11 +67,18 @@ bool AdafruitHTTP::clearHeaders(void)
   }
 }
 
-void AdafruitHTTP::sendHeaders(void)
+void AdafruitHTTP::sendHeaders(size_t content_len)
 {
   for(uint8_t i=0; i<_header_count; i++)
   {
     printf("%s: %s", _headers[i].name, _headers[i].value);
+    println();
+  }
+
+  // Add "Content-Length" if available
+  if (content_len)
+  {
+    printf("Content-Length: %u", content_len);
     println();
   }
 
@@ -84,19 +91,19 @@ bool AdafruitHTTP::get(char const * host, char const *url)
   printf(HTTP_GET " %s " HTTP_VERSION, url); println();
   printf("Host: %s", host); println();
 
-  sendHeaders();
+  sendHeaders(0);
   flush();
 }
 
-bool AdafruitHTTP::post(char const * host, char const *url, char const* encoded_data)
+bool AdafruitHTTP::post(char const * host, char const *url, char const* data)
 {
   printf(HTTP_POST " %s " HTTP_VERSION, url); println();
   printf("Host: %s", host); println();
 
-  sendHeaders();
+  sendHeaders( strlen(data) );
 
   // send data
-  println(encoded_data);
+  println(data);
 
   flush();
 }
