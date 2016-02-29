@@ -30,8 +30,8 @@
 #include <adafruit_http.h>
 #include "certificates.h"
 
-#define WLAN_SSID               "thach"
-#define WLAN_PASS               "thach367"
+#define WLAN_SSID               "yourSSID"
+#define WLAN_PASS               "yourPass"
 
 #define SERVER                  "www.reddit.com"
 #define PAGE                    "/"
@@ -43,7 +43,7 @@
 // It is advised that Default RootCA is opt-out if you only need to
 // connect to one specific website (or sites that RootCA is not included in
 // the default  chain).
-#define INCLUDE_DEFAULT_ROOTCA  1
+#define INCLUDE_DEFAULT_ROOTCA  0
 
 // Some server such as facebook check the user_agent header to
 // return data accordingly. Setting curl to mimics command line browser !!
