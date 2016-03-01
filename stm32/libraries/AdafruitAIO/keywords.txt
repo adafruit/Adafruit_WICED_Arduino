@@ -6,19 +6,24 @@
 # Datatypes (KEYWORD1)
 #######################################
 
-AdafruitHTTP	KEYWORD1
+AdafruitMQTT	KEYWORD1
 
 #######################################
-# AdafruitHTTP Methods and Functions (KEYWORD2)
+# AdafruitSDEP Methods and Functions (KEYWORD2)
 #######################################
 
-addHeader	KEYWORD2
-clearHeaders	KEYWORD2
-get	KEYWORD2
-post	KEYWORD2
+will	KEYWORD2
+connect	KEYWORD2
+connectSSL	KEYWORD2
+connected	KEYWORD2
+publish	KEYWORD2
+subscribe	KEYWORD2
+unsubscribe	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
 #######################################
 
-ADAFRUIT_HTTP_MAX_HEADER	LITERAL1
+MQTT_QOS_AT_MOST_ONCE	LITERAL1
+MQTT_QOS_AT_LEAST_ONCE	LITERAL1
+MQTT_QOS_EXACTLY_ONCE	LITERAL1

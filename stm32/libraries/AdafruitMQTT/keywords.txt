@@ -16,6 +16,7 @@ will	KEYWORD2
 connect	KEYWORD2
 connectSSL	KEYWORD2
 connected	KEYWORD2
+disconnect	KEYWORD2
 publish	KEYWORD2
 subscribe	KEYWORD2
 unsubscribe	KEYWORD2
