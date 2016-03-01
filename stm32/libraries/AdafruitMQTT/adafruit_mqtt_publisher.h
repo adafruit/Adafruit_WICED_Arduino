@@ -43,14 +43,15 @@
 class AdafruitMQTTPublisher : public Print
 {
 protected:
-  AdafruitMQTT& _mqtt;
+  AdafruitMQTT* _mqtt;
   const char*   _topic;
   uint8_t       _qos;
   bool          _retained;
 
 public:
-  AdafruitMQTTPublisher(AdafruitMQTT& mqtt, const char* topic, uint8_t qos = MQTT_QOS_AT_MOST_ONCE) : _mqtt(mqtt)
+  AdafruitMQTTPublisher(AdafruitMQTT* mqtt, const char* topic, uint8_t qos = MQTT_QOS_AT_MOST_ONCE)
   {
+    _mqtt = mqtt;
     _topic = topic;
     _qos  = qos;
     _retained = false;
@@ -60,7 +61,7 @@ public:
 
   virtual size_t write(const uint8_t *buf, size_t len)
   {
-    _mqtt.publish(_topic, UTF8String(buf, len), _qos, _retained);
+    _mqtt->publish(_topic, UTF8String(buf, len), _qos, _retained);
   }
 
   virtual size_t write(uint8_t ch) { return write(&ch, 1); }

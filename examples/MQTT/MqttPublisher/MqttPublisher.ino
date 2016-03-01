@@ -51,7 +51,7 @@
 #define WILL_MESSAGE      "Goodbye!!"
 
 AdafruitMQTT          mqtt(CLIENTID);
-AdafruitMQTTPublisher publisher(mqtt, TOPIC, MQTT_QOS_AT_LEAST_ONCE);
+AdafruitMQTTPublisher publisher(&mqtt, TOPIC, MQTT_QOS_AT_LEAST_ONCE);
 
 /**************************************************************************/
 /*!
