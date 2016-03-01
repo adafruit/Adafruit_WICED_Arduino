@@ -183,3 +183,8 @@ bool AdafruitMQTT::unsubscribe( const char* topicFilter )
 
   return sdep_n(SDEP_CMD_MQTTUNSUBSCRIBE, para_count, para_arr, NULL, NULL);
 }
+
+void AdafruitMQTT::setDisconnectCallback  ( void (*fp) (void) )
+{
+  tcp.setDisconnectCallback(fp);
+}

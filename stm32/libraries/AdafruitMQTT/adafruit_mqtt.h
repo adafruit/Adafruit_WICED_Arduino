@@ -113,6 +113,7 @@ public:
   }
 
   void clientID(const char* client) { _clientID = client; }
+  void setDisconnectCallback  ( void (*fp) (void) );
 
   // API
   bool connected  ( void ) { return _connected; }
