@@ -165,6 +165,9 @@ ASSERT_STATIC( sizeof(adafruit_featherlib_t) == 512 );
 
 #define FEATHERLIB_API_EXISTS(func)  is_within(FEATHERLIB_BASE, (uint32_t) FEATHERLIB->func, 0x80DFFFF)
 
+//--------------------------------------------------------------------+
+// HELPER
+//--------------------------------------------------------------------+
 static inline bool is_within(uint32_t lower, uint32_t value, uint32_t upper) ATTR_ALWAYS_INLINE ATTR_CONST;
 static inline bool is_within(uint32_t lower, uint32_t value, uint32_t upper)
 {

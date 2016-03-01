@@ -120,9 +120,6 @@ public:
   void factoryReset(void);
   void nvmReset(void);
 
-  // TODO change return type to bool
-  err_t randomNumber(uint32_t* random32bit);
-
   char const* bootloaderVersion ( void );
   char const* sdkVersion        ( void );
   char const* firmwareVersion   ( void );

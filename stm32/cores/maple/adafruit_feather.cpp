@@ -131,23 +131,6 @@ char const* AdafruitFeather::arduinoVersion ( void )
   return adafruit_arduino.version_str;
 }
 
-
-/******************************************************************************/
-/*!
-    @brief  Return a 32-bit random number
-
-    @param[out]     random32bit       The returned 32-bit random number
-
-    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
-            a specific error if something went wrong.
-*/
-/******************************************************************************/
-err_t AdafruitFeather::randomNumber(uint32_t* random32bit)
-{
-  sdep(SDEP_CMD_RANDOMNUMBER, 0, NULL, NULL, (uint8_t*)random32bit);
-  return _errno;
-}
-
 /******************************************************************************/
 /*!
     @brief Connect using saved profiles

@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*!
-    @file     adafruit_aio.h
+    @file     rng.h
     @author   hathach
 
     @section LICENSE
@@ -34,35 +34,30 @@
 */
 /**************************************************************************/
 
-#ifndef _ADAFRUIT_AIO_H_
-#define _ADAFRUIT_AIO_H_
+#ifndef _RNG_H_
+#define _RNG_H_
 
-#include <Arduino.h>
-#include <Printable.h>
-#include <Client.h>
-#include <IPAddress.h>
-#include <adafruit_feather.h>
-#include <adafruit_mqtt.h>
+#ifdef __cplusplus
+ extern "C" {
+#endif
 
-#define AIO_SERVER          "io.adafruit.com"
-#define AIO_UNSECURED_PORT  1883
-#define AIO_SECURED_PORT    8883
+#include "libmaple_types.h"
+#include "libmaple.h"
 
-class AdafruitAIO : public AdafruitMQTT
+/******************************************************************************/
+/*!
+    @brief  Return a 32-bit random number using hardware generator
+*/
+/******************************************************************************/
+static inline uint32_t rng_random(void)
 {
-protected:
+  uint32_t result;
+  FEATHERLIB->sdep_execute(SDEP_CMD_RANDOMNUMBER, 0, NULL, NULL, &result);
+  return result;
+}
 
-public:
-  AdafruitAIO(const char* username, const char* password) : AdafruitMQTT(username, password) {}
+#ifdef __cplusplus
+ }
+#endif
 
-  bool connect   (bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
-  bool connectSSL(bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
-  using AdafruitMQTT::connect;
-  using AdafruitMQTT::connectSSL;
-
-  bool updateFeed(const char* feed, UTF8String message, uint8_t qos=MQTT_QOS_AT_MOST_ONCE, bool retained=false);
-};
-
-#include "adafruit_aio_feed.h"
-
-#endif /* _ADAFRUIT_AIO_H_ */
+#endif /* _RNG_H_ */

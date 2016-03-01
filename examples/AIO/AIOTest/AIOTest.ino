@@ -37,11 +37,14 @@
 // AdafruitAIOwill auto append "username/feeds/" prefix to your feed
 #define AIO_FEED          "photocell"
 
+// Connect using TLS/SSL or not
 #define USE_TLS           1
-#define CLIENTID          "Adafruit Feather"
 
-AdafruitAIO     aio(AIO_USERNAME, AIO_KEY, CLIENTID);
-AdafruitAIOFeed feed(&aio, AIO_FEED);
+// Uncomment to set your own ClientID, otherwise a random ClientID is used
+//#define CLIENTID          "Adafruit Feather"
+
+AdafruitAIO       aio(AIO_USERNAME, AIO_KEY);
+AdafruitAIOFeed   feed(&aio, AIO_FEED);
 
 int value = 0;
 
@@ -73,6 +76,11 @@ void setup()
   // Tell the MQTT client to auto print error codes and halt on errors
   aio.err_actions(true, true);
 
+  // Set ClientID if defined
+  #ifdef CLIENTID
+  aio.clientID(CLIENTID);
+  #endif
+
   Serial.print("Connecting to io.adafruit.com ... ");
   if ( USE_TLS )
   {
@@ -93,9 +101,10 @@ void loop()
 {
   value = (value+1) % 100;
 
-  Serial.print("Updating feed " AIO_FEED " ... ");
+  Serial.print("Updating feed " AIO_FEED " : ");
+  Serial.print(value);
   feed.print(value);
-  Serial.println("OK");
+  Serial.println(" ... OK");
 
   delay(1000);
 }

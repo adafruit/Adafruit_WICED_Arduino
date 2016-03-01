@@ -83,29 +83,17 @@ protected:
     _will_qos = _will_retained = 0;
   }
 
+  void randomClientID(char* clientid);
+
 public:
   // messageHandler must not be changed since featherlib uses the same signature
   typedef void (*messageHandler)(char* topic_data, size_t topic_len, uint8_t* mess_data, size_t mess_len);
-
-  AdafruitMQTT( const char* username, const char* password, const char * clientID)
-  {
-    init();
-    _clientID = clientID;
-    _username = username;
-    _password = password;
-  }
 
   AdafruitMQTT(const char* username, const char* password)
   {
     init();
     _username = username;
     _password = password;
-  }
-
-  AdafruitMQTT(const char * clientID)
-  {
-    init();
-    _clientID = clientID;
   }
 
   AdafruitMQTT()
@@ -123,6 +111,8 @@ public:
     _will_qos      = qos;
     _will_retained = retained;
   }
+
+  void clientID(const char* client) { _clientID = client; }
 
   // API
   bool connected  ( void ) { return _connected; }

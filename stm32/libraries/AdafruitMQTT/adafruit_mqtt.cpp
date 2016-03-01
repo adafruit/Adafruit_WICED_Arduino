@@ -35,10 +35,33 @@
 /**************************************************************************/
 
 #include "adafruit_mqtt.h"
+#include "rng.h"
+
+static const char alphanum[] = "0123456789" "ABCDEFGHIJKLMNOPQRSTUVWXYZ" "abcdefghijklmnopqrstuvwxyz";
+
+void AdafruitMQTT::randomClientID(char* clientid)
+{
+  // length is from 10 to 23
+  uint8_t length = 10+(rng_random()%13);
+
+  for (uint8_t i = 0; i < length; i++)
+  {
+    clientid[i] = alphanum[rng_random() % (sizeof(alphanum) -  1)];
+  }
+  clientid[length] = 0;
+}
 
 bool AdafruitMQTT::connectBroker(bool cleanSession, uint16_t keepalive_sec)
 {
   uint32_t tcp_handle = tcp.getHandle();
+
+  // _clientID is not set, generate an random for it
+  char random_id[24];
+  if (_clientID == NULL)
+  {
+    this->randomClientID(random_id);
+    _clientID = random_id;
+  }
 
   sdep_cmd_para_t para_arr[] =
   {

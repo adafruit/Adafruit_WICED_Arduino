@@ -39,18 +39,20 @@
 #define WLAN_SSID         "yourSSID"
 #define WLAN_PASS         "yourPass"
 
+// Connect using TLS/SSL or not
 #define USE_TLS           0
 
 #define BROKER_HOST       "test.mosquitto.org"
 #define BROKER_PORT       (USE_TLS ? 8883 : 1883 )
 
-#define CLIENTID          "Adafruit Feather"
+// Uncomment to set your own ClientID, otherwise a random ClientID is used
+//#define CLIENTID          "Adafruit Feather"
 
 #define TOPIC             "adafruit/feather"
 #define PUBLISH_MESSAGE   "Hello from Adafruit WICED Feather"
 #define WILL_MESSAGE      "Goodbye!!"
 
-AdafruitMQTT mqtt(CLIENTID);
+AdafruitMQTT mqtt;
 
 /**************************************************************************/
 /*!
@@ -79,6 +81,11 @@ void setup()
 
   // Tell the MQTT client to auto print error codes and halt on errors
   mqtt.err_actions(true, true);
+
+  // Set ClientID if defined
+  #ifdef CLIENTID
+  mqtt.clientID(CLIENTID);
+  #endif
 
   // Last will must be set before connecting since it is part of the connection data
   mqtt.will(TOPIC, WILL_MESSAGE, MQTT_QOS_AT_LEAST_ONCE);
