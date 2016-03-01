@@ -65,7 +65,7 @@ void setup()
   // Wait for the USB serial port to connect. Needed for native USB port only
   while (!Serial) delay(1);
 
-  Serial.println("MQTT Publish Example\r\n");
+  Serial.println("MQTT Publish using Publisher Example\r\n");
 
   // Print all software versions
   Feather.printVersions();
