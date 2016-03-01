@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*!
-    @file     adafruit_publish.h
+    @file     adafruit_mqtt_publisher.h
     @author   hathach
 
     @section LICENSE
@@ -34,8 +34,8 @@
 */
 /**************************************************************************/
 
-#ifndef _ADAFRUIT_PUBLISHER_H_
-#define _ADAFRUIT_PUBLISHER_H_
+#ifndef _ADAFRUIT_MQTT_PUBLISHER_H_
+#define _ADAFRUIT_MQTT_PUBLISHER_H_
 
 #include <Arduino.h>
 #include <adafruit_feather.h>
@@ -67,4 +67,4 @@ public:
   using Print::write;
 };
 
-#endif /* _ADAFRUIT_PUBLISHER_H_ */
+#endif /* _ADAFRUIT_MQTT_PUBLISHER_H_ */
