@@ -58,10 +58,12 @@ public:
 
   bool connect   (bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
   bool connectSSL(bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
-
-  // MQTT API
   using AdafruitMQTT::connect;
   using AdafruitMQTT::connectSSL;
+
+  bool update(const char* feed, UTF8String message, uint8_t qos =MQTT_QOS_AT_MOST_ONCE);
 };
+
+#include "adafruit_aio_feed.h"
 
 #endif /* _ADAFRUIT_AIO_H_ */
