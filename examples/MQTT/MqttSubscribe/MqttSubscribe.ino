@@ -16,8 +16,17 @@
 #include <adafruit_mqtt.h>
 #include "certificate_mosquitto.h"
 
-/* This sketch connect to the public MQTT server (with/without TLS)
- * and publish message to a topic every 5 seconds.
+/* This sketch demostate subscribe/unsubscribe with callback.
+ * It will connect to the public MQTT server (with/without TLS)
+ * and subscribe to defined TOPIC_SUBSCRIBE.
+ * - When a message is received, it will echo back at TOPIC_ECHO
+ * - If the message is "unsubscribe", Feather will unsubscribe from
+ * TOPIC_SUBSCRIBE and won't be able to echo back afterwards.
+ * 
+ * Note: TOPIC_SUBSCRIBE and TOPIC_ECHO must not include each other
+ * (e.g must not "adafruit/+" and "adafruit/echo"), since this will
+ * cause and infinite loop (received -> echo -> received -> ....)
+ *
  * For publish server detail see http://test.mosquitto.org/
  *  - Port 1883 : MQTT, unencrypted
  *  - Port 8883 : MQTT, encrypted (TLS)
@@ -29,8 +38,10 @@
  * To run this demo
  * 1. Change SSID/PASS
  * 2. Decide whether you want to use TLS/SSL or not (USE_TLS)
- * 3. Change CLIENTID, TOPIC, PUBLISH_MESSAGE, WILL_MESSAGE if you want
+ * 3. Change CLIENTID, TOPIC, WILL_MESSAGE if you want
  * 4. Compile and run
+ * 5. Use MQTT desktop client to connect to the same sever and publish to any topic started with
+ * "adafruit/feather/" . To be able to recieve the echo message, please also subcribe to "adafruit/feather_echo"
  */
 
 #define WLAN_SSID         "yourSSID"
@@ -39,12 +50,14 @@
 #define USE_TLS           0
 
 #define BROKER_HOST       "test.mosquitto.org"
-#define BROKER_PORT       (USE_TLS ? 8883 : 1883 )
+#define BROKER_PORT       (USE_TLS ? 8883 : 1883)
 
 #define CLIENTID          "Adafruit Feather"
 
-#define TOPIC             "adafruit/feather"
-#define PUBLISH_MESSAGE   "Hello from Adafruit WICED Feather"
+#define TOPIC_SUBSCRIBE   "adafruit/feather/+"
+#define TOPIC_ECHO        "adafruit/feather_echo"
+
+#define WILL_TOPIC        "adafruit/feather"
 #define WILL_MESSAGE      "Goodbye!!"
 
 AdafruitMQTT mqtt(CLIENTID);
@@ -61,7 +74,7 @@ void setup()
   // Wait for the USB serial port to connect. Needed for native USB port only
   while (!Serial) delay(1);
 
-  Serial.println("MQTT Example\r\n");
+  Serial.println("MQTT Subscribe Example\r\n");
 
   // Print all software versions
   Feather.printVersions();
@@ -78,10 +91,9 @@ void setup()
   mqtt.err_actions(true, true);
 
   // Last will must be set before connecting since it is part of the connection data
-  mqtt.will(TOPIC, WILL_MESSAGE, MQTT_QOS_AT_LEAST_ONCE);
+  mqtt.will(WILL_TOPIC, WILL_MESSAGE, MQTT_QOS_AT_LEAST_ONCE);
 
   Serial.printf("Connecting to " BROKER_HOST " port %d ... ", BROKER_PORT);
-  
   if (USE_TLS)
   {  
     // Disable default RootCA to save SRAM since we don't need to
@@ -97,7 +109,10 @@ void setup()
   {
     mqtt.connect(BROKER_HOST, BROKER_PORT);
   }
-  
+  Serial.println("OK");
+
+  Serial.print("Subscribing to " TOPIC_SUBSCRIBE " ... ");
+  mqtt.subscribe(TOPIC_SUBSCRIBE, MQTT_QOS_AT_MOST_ONCE, subscribed_callback); // Will halted if an error occurs
   Serial.println("OK");
 }
 
@@ -108,11 +123,47 @@ void setup()
 /**************************************************************************/
 void loop()
 {
-  Serial.print("Publishing to " TOPIC " ... ");
-  mqtt.publish(TOPIC, PUBLISH_MESSAGE); // Will halted if an error occurs
-  Serial.println("OK");
 
-  delay(5000);
+}
+
+/**************************************************************************/
+/*!
+    @brief  Subscribe callback handler
+
+    @param  topic_data  topic name's contents in byte array (not null terminated)
+    @param  topic_len   topic name's length
+
+    @param  mess_data   message's contents in byte array (not null terminated)
+    @param  mess_len    message's length
+
+    @note   'topic_data' and 'mess_data' are byte array without null-terminated
+    like C-style string. Don't try to use Serial.print() directly, use the UTF8String
+    datatype or Serial.write() instead.
+*/
+/**************************************************************************/
+void subscribed_callback(char* topic_data, size_t topic_len, uint8_t* mess_data, size_t mess_len)
+{
+  // Use UTF8String class for easy printing of UTF8 data
+  UTF8String utf8Topic(topic_data, topic_len);
+  UTF8String utf8Message(mess_data, mess_len);
+
+  // Print out topic name and message
+  Serial.print("[Subscribed] ");
+  Serial.print(utf8Topic);
+  Serial.print(" : ") ;
+  Serial.println(utf8Message);
+
+  // Echo back
+  mqtt.publish(TOPIC_ECHO, utf8Message); // Will halted if an error occurs
+
+  // Unsubscribe from SUBSCRIBED_TOPIC2 if we received an "unsubscribe" message
+  // Won't be able to echo anymore
+  if ( utf8Message == "unsubscribe" )
+  {
+    Serial.print("Unsubscribing from " TOPIC_SUBSCRIBE " ... ");
+    mqtt.unsubscribe(TOPIC_SUBSCRIBE); // Will halt if fails
+    Serial.println("OK");
+  }
 }
 
 /**************************************************************************/

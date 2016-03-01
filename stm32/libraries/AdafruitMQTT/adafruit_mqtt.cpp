@@ -114,17 +114,17 @@ bool AdafruitMQTT::disconnect ( void )
   return true;
 }
 
-bool AdafruitMQTT::publish( const char* topic, UTF8String message, uint8_t qos, bool retained )
+bool AdafruitMQTT::publish( UTF8String topic, UTF8String message, uint8_t qos, bool retained )
 {
   VERIFY( _connected );
 
   sdep_cmd_para_t para_arr[] =
   {
-      { .len = 4             , .p_value = &_mqtt_handle },
-      { .len = strlen(topic) , .p_value = topic         },
-      { .len = message.len   , .p_value = message.data  },
-      { .len = 1             , .p_value = &qos          },
-      { .len = 1             , .p_value = &retained     },
+      { .len = 4           , .p_value = &_mqtt_handle },
+      { .len = topic.len   , .p_value = topic.data    },
+      { .len = message.len , .p_value = message.data  },
+      { .len = 1           , .p_value = &qos          },
+      { .len = 1           , .p_value = &retained     },
   };
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 

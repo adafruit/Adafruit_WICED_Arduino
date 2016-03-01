@@ -134,7 +134,7 @@ public:
 
   bool disconnect ( void );
 
-  bool publish    ( const char* topic, UTF8String message, uint8_t qos =MQTT_QOS_AT_MOST_ONCE, bool retained = false );
+  bool publish    ( UTF8String topic, UTF8String message, uint8_t qos =MQTT_QOS_AT_MOST_ONCE, bool retained = false );
   bool subscribe  ( const char* topicFilter, uint8_t qos, messageHandler mh);
   bool unsubscribe( const char* topicFilter );
 };

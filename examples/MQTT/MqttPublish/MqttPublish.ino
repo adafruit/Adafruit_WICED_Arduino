@@ -18,6 +18,7 @@
 
 /* This sketch connect to the public MQTT server (with/without TLS)
  * and publish message to a topic every 5 seconds.
+ *
  * For publish server detail see http://test.mosquitto.org/
  *  - Port 1883 : MQTT, unencrypted
  *  - Port 8883 : MQTT, encrypted (TLS)
@@ -31,6 +32,8 @@
  * 2. Decide whether you want to use TLS/SSL or not (USE_TLS)
  * 3. Change CLIENTID, TOPIC, PUBLISH_MESSAGE, WILL_MESSAGE if you want
  * 4. Compile and run
+ * 5. Use MQTT desktop client to connect to same sever and subscribe to the defined topic
+ * to monitor the published message.
  */
 
 #define WLAN_SSID         "yourSSID"
@@ -61,7 +64,7 @@ void setup()
   // Wait for the USB serial port to connect. Needed for native USB port only
   while (!Serial) delay(1);
 
-  Serial.println("MQTT Example\r\n");
+  Serial.println("MQTT Publish Example\r\n");
 
   // Print all software versions
   Feather.printVersions();
@@ -81,7 +84,6 @@ void setup()
   mqtt.will(TOPIC, WILL_MESSAGE, MQTT_QOS_AT_LEAST_ONCE);
 
   Serial.printf("Connecting to " BROKER_HOST " port %d ... ", BROKER_PORT);
-  
   if (USE_TLS)
   {  
     // Disable default RootCA to save SRAM since we don't need to
@@ -97,7 +99,6 @@ void setup()
   {
     mqtt.connect(BROKER_HOST, BROKER_PORT);
   }
-  
   Serial.println("OK");
 }
 
@@ -109,7 +110,7 @@ void setup()
 void loop()
 {
   Serial.print("Publishing to " TOPIC " ... ");
-  mqtt.publish(TOPIC, PUBLISH_MESSAGE); // Will halted if an error occurs
+  mqtt.publish(TOPIC, PUBLISH_MESSAGE, MQTT_QOS_AT_LEAST_ONCE); // Will halted if an error occurs
   Serial.println("OK");
 
   delay(5000);
