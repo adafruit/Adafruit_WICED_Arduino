@@ -87,7 +87,7 @@ public:
   // messageHandler must not be changed since featherlib uses the same signature
   typedef void (*messageHandler)(char* topic_data, size_t topic_len, uint8_t* mess_data, size_t mess_len);
 
-  AdafruitMQTT(const char * clientID, const char* username, const char* password)
+  AdafruitMQTT( const char* username, const char* password, const char * clientID)
   {
     init();
     _clientID = clientID;

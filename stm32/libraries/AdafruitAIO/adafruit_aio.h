@@ -53,8 +53,8 @@ class AdafruitAIO : public AdafruitMQTT
 protected:
 
 public:
-  AdafruitAIO(const char * clientID, const char* username, const char* password): AdafruitMQTT(clientID, username, password) {}
   AdafruitAIO(const char* username, const char* password) : AdafruitMQTT(username, password) {}
+  AdafruitAIO(const char* username, const char* password, const char * clientID): AdafruitMQTT(username, password, clientID) {}
 
   bool connect   (bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
   bool connectSSL(bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
