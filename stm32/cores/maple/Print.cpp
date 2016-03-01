@@ -92,25 +92,25 @@ size_t Print::print(unsigned long n, int base) {
 }
 
 size_t Print::print(long long n, int base) {
-    if (base == BYTE) 
-	{
-        return write((uint8_t)n);
-    }
-    if (n < 0) {
-        print('-');
-        n = -n;
-    }
-    return printNumber(n, base);
+  if (base == BYTE)
+  {
+    return write((uint8_t)n);
+  }
+  if (n < 0) {
+    print('-');
+    n = -n;
+  }
+  return printNumber(n, base);
 }
 
 size_t Print::print(unsigned long long n, int base) {
-size_t c=0;
-    if (base == BYTE) {
-        c= write((uint8_t)n);
-    } else {
-        c= printNumber(n, base);
-    }
-	return c;
+  size_t c=0;
+  if (base == BYTE) {
+    c= write((uint8_t)n);
+  } else {
+    c= printNumber(n, base);
+  }
+  return c;
 }
 
 size_t Print::print(double n, int digits) {
@@ -225,28 +225,48 @@ size_t Print::printf(const char * format, ...)
  */
 
 size_t Print::printNumber(unsigned long long n, uint8_t base) {
-    unsigned char buf[CHAR_BIT * sizeof(long long)];
-    unsigned long i = 0;
-	size_t s=0;
-    if (n == 0) {
-        print('0');
-        return 1;
-    }
+  unsigned char buf[CHAR_BIT * sizeof(long long)];
+  unsigned char buf2[CHAR_BIT * sizeof(long long)];
+  unsigned long i = 0;
+  size_t s=0;
+  if (n == 0) {
+    print('0');
+    return 1;
+  }
 
-    while (n > 0) {
-        buf[i++] = n % base;
-        n /= base;
-    }
+  while (n > 0) {
+    buf[i++] = n % base;
+    n /= base;
+  }
 
-    for (; i > 0; i--) {
-        s += print((char)(buf[i - 1] < 10 ?
-                     '0' + buf[i - 1] :
-                     'A' + buf[i - 1] - 10));
-    }
-	return s;
+  for (; i > 0; i--) {
+    buf2[s++] = (char) (buf[i - 1] < 10 ?
+                        '0' + buf[i - 1] :
+                        'A' + buf[i - 1] - 10);
+
+//    s += print((char)(buf[i - 1] < 10 ?
+//        '0' + buf[i - 1] :
+//        'A' + buf[i - 1] - 10));
+  }
+
+  s = write(buf2, s);
+  return s;
 }
 
+size_t Print::printFloat(double number, uint8_t digits)
+{
+  char buf[256];
+  size_t s=0;
 
+  char format[] = "%.0f";
+  format[2] += digits;
+
+  s = snprintf(buf, 256, format, number);
+  s = write(buf, s);
+  return s;
+}
+
+#if 0
 /* According to snprintf(),
  *
  * nextafter((double)numeric_limits<long long>::max(), 0.0) ~= 9.22337e+18
@@ -308,4 +328,4 @@ size_t s=0;
     }
 	return s;
 }
-
+#endif
