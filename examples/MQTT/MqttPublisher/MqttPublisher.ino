@@ -50,8 +50,8 @@
 #define PUBLISH_MESSAGE   "Hello from Adafruit WICED Feather"
 #define WILL_MESSAGE      "Goodbye!!"
 
-AdafruitMQTT mqtt(CLIENTID);
-AdafruitPublisher publisher(mqtt, TOPIC, MQTT_QOS_AT_LEAST_ONCE);
+AdafruitMQTT          mqtt(CLIENTID);
+AdafruitMQTTPublisher publisher(mqtt, TOPIC, MQTT_QOS_AT_LEAST_ONCE);
 
 /**************************************************************************/
 /*!

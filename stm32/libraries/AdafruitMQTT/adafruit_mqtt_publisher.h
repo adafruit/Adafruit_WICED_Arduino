@@ -40,7 +40,7 @@
 #include <Arduino.h>
 #include <adafruit_feather.h>
 
-class AdafruitPublisher : public Print
+class AdafruitMQTTPublisher : public Print
 {
 protected:
   AdafruitMQTT& _mqtt;
@@ -49,7 +49,7 @@ protected:
   bool          _retained;
 
 public:
-  AdafruitPublisher(AdafruitMQTT& mqtt, const char* topic, uint8_t qos = MQTT_QOS_AT_MOST_ONCE) : _mqtt(mqtt)
+  AdafruitMQTTPublisher(AdafruitMQTT& mqtt, const char* topic, uint8_t qos = MQTT_QOS_AT_MOST_ONCE) : _mqtt(mqtt)
   {
     _topic = topic;
     _qos  = qos;
