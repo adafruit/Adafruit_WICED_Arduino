@@ -16,24 +16,27 @@
 #include <adafruit_mqtt.h>
 #include "certificate_mosquitto.h"
 
-/* This sketch connect to the public MQTT server (with/without TLS)
- * and publish message to a topic every 5 seconds.
+/* This sketch connects to a public MQTT server (with/without TLS)
+ * and publishes a message to the specified topic every 5 seconds.
  *
- * For publish server detail see http://test.mosquitto.org/
- *  - Port 1883 : MQTT, unencrypted
- *  - Port 8883 : MQTT, encrypted (TLS)
+ * - Server : test.mosquitto.org
+ * - Port   : 1883 // MQTT - unencrypted
+ * - Port   : 8883 // MQTT - encrypted (TLS)
  *
- * Note: You need an MQTT desktop client such as
- * - Lightweight Java included in the repo: org.eclipse.paho.mqtt.utility-1.0.0.jar
- * - https://learn.adafruit.com/desktop-mqtt-client-for-adafruit-io/installing-software
+ * Note: may You need an MQTT desktop client such as the lightweight
+ * Java client included in this repo: org.eclipse.paho.mqtt.utility-1.0.0.jar
+ * 
+ * For details on configuring your system for MQTT see:
+ * https://learn.adafruit.com/desktop-mqtt-client-for-adafruit-io/installing-software
  *
- * To run this demo
- * 1. Change SSID/PASS
+ * To run this demo:
+ * 1. Change the SSID/PASS to match your access point
  * 2. Decide whether you want to use TLS/SSL or not (USE_TLS)
- * 3. Change CLIENTID, TOPIC, PUBLISH_MESSAGE, WILL_MESSAGE if you want
+ * 3. Change CLIENTID, TOPIC, PUBLISH_MESSAGE, WILL_MESSAGE
  * 4. Compile and run
- * 5. Use MQTT desktop client to connect to same sever and subscribe to the defined topic
- * to monitor the published message.
+ * 5. Use an MQTT desktop client to connect to the same sever and
+ *    subscribe to the defined topic to monitor the published
+ *    message(s).
  */
 
 #define WLAN_SSID         "yourSSID"
