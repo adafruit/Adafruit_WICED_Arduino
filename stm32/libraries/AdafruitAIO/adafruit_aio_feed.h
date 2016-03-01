@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*!
-    @file     adafruit_mqtt_publisher.h
+    @file     adafruit_aio_feed.h
     @author   hathach
 
     @section LICENSE
@@ -34,38 +34,33 @@
 */
 /**************************************************************************/
 
-#ifndef _ADAFRUIT_MQTT_PUBLISHER_H_
-#define _ADAFRUIT_MQTT_PUBLISHER_H_
+#ifndef _ADAFRUIT_AIO_FEED_H_
+#define _ADAFRUIT_AIO_FEED_H_
 
 #include <Arduino.h>
+#include <Printable.h>
+#include <Client.h>
+#include <IPAddress.h>
 #include <adafruit_feather.h>
+#include <adafruit_aio.h>
+#include <adafruit_mqtt.h>
 
-class AdafruitMQTTPublisher : public Print
+class AdafruitAIOFeed : public AdafruitMQTTPublisher
 {
 protected:
-  AdafruitMQTT* _mqtt;
-  const char*   _topic;
-  uint8_t       _qos;
-  bool          _retained;
 
 public:
-  AdafruitMQTTPublisher(AdafruitMQTT* mqtt, const char* topic, uint8_t qos = MQTT_QOS_AT_MOST_ONCE, bool retained = false)
+  AdafruitAIOFeed(AdafruitAIO* aio, const char* feed, uint8_t qos = MQTT_QOS_AT_MOST_ONCE, bool retained = false) : AdafruitMQTTPublisher(aio, feed, qos, retained)
   {
-    _mqtt     = mqtt;
-    _topic    = topic;
-    _qos      = qos;
-    _retained = retained;
   }
-
-  void retain(bool on) { _retained = on; }
 
   virtual size_t write(const uint8_t *buf, size_t len)
   {
-    _mqtt->publish(_topic, UTF8String(buf, len), _qos, _retained);
+    ((AdafruitAIO*)_mqtt)->updateFeed(_topic, UTF8String(buf, len), _qos, _retained);
   }
 
   virtual size_t write(uint8_t ch) { return write(&ch, 1); }
   using Print::write;
 };
 
-#endif /* _ADAFRUIT_MQTT_PUBLISHER_H_ */
+#endif /* _ADAFRUIT_AIO_FEED_H_ */

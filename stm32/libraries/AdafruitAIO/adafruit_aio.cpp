@@ -39,11 +39,25 @@
 bool AdafruitAIO::connect(bool cleanSession, uint16_t keepalive_sec)
 {
   VERIFY(_username != NULL && _password != NULL);
-  return connect(AIO_SERVER, AIO_UNSECURED_PORT, cleanSession, keepalive_sec);
+  return this->connect(AIO_SERVER, AIO_UNSECURED_PORT, cleanSession, keepalive_sec);
 }
 
 bool AdafruitAIO::connectSSL(bool cleanSession, uint16_t keepalive_sec)
 {
   VERIFY(_username != NULL && _password != NULL);
-  return connectSSL(AIO_SERVER, AIO_SECURED_PORT, cleanSession, keepalive_sec);
+  return this->connectSSL(AIO_SERVER, AIO_SECURED_PORT, cleanSession, keepalive_sec);
+}
+
+bool AdafruitAIO::updateFeed(const char* feed, UTF8String message, uint8_t qos, bool retained)
+{
+  // feed path = username/feeds/feedid
+  char * feedfull = (char*) malloc( strlen(_username) + 7 + strlen(feed) + 1 );
+  strcpy(feedfull, _username);
+  strcat(feedfull, "/feeds/");
+  strcat(feedfull, feed);
+
+  bool result = this->publish(feedfull, message, qos, retained);
+  free(feedfull);
+
+  return result;
 }

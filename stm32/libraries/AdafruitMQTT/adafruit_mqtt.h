@@ -137,8 +137,6 @@ public:
   bool publish    ( UTF8String topic, UTF8String message, uint8_t qos =MQTT_QOS_AT_MOST_ONCE, bool retained = false );
   bool subscribe  ( const char* topicFilter, uint8_t qos, messageHandler mh);
   bool unsubscribe( const char* topicFilter );
-
-  const char* username() { return _username; }
 };
 
 #include <adafruit_mqtt_publisher.h>
