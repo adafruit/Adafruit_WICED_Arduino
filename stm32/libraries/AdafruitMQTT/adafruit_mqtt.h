@@ -127,10 +127,10 @@ public:
   // API
   bool connected  ( void ) { return _connected; }
 
-  bool connect    ( IPAddress ip, uint16_t port = 1883, bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
-  bool connect    ( const char * host, uint16_t port = 1883,  bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
-  bool connectSSL ( IPAddress ip, uint16_t port = 8883, bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
-  bool connectSSL ( const char* host, uint16_t port = 8883, bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
+  bool connect    ( IPAddress ip     , uint16_t port = 1883, bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
+  bool connect    ( const char* host , uint16_t port = 1883, bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
+  bool connectSSL ( IPAddress ip     , uint16_t port = 8883, bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
+  bool connectSSL ( const char* host , uint16_t port = 8883, bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
 
   bool disconnect ( void );
 

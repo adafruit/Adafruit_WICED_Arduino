@@ -36,3 +36,14 @@
 
 #include "adafruit_aio.h"
 
+bool AdafruitAIO::connect(bool cleanSession, uint16_t keepalive_sec)
+{
+  VERIFY(_username != NULL && _password != NULL);
+  return connect(AIO_SERVER, AIO_UNSECURED_PORT, cleanSession, keepalive_sec);
+}
+
+bool AdafruitAIO::connectSSL(bool cleanSession, uint16_t keepalive_sec)
+{
+  VERIFY(_username != NULL && _password != NULL);
+  return connectSSL(AIO_SERVER, AIO_SECURED_PORT, cleanSession, keepalive_sec);
+}

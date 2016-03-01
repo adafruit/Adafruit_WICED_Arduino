@@ -44,12 +44,24 @@
 #include <adafruit_feather.h>
 #include <adafruit_mqtt.h>
 
+#define AIO_SERVER          "io.adafruit.com"
+#define AIO_UNSECURED_PORT  1883
+#define AIO_SECURED_PORT    8883
+
 class AdafruitAIO : public AdafruitMQTT
 {
 protected:
 
 public:
+  AdafruitAIO(const char * clientID, const char* username, const char* password): AdafruitMQTT(clientID, username, password) {}
+  AdafruitAIO(const char* username, const char* password) : AdafruitMQTT(username, password) {}
 
+  bool connect   (bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
+  bool connectSSL(bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
+
+  // MQTT API
+  using AdafruitMQTT::connect;
+  using AdafruitMQTT::connectSSL;
 };
 
 #endif /* _ADAFRUIT_AIO_H_ */
