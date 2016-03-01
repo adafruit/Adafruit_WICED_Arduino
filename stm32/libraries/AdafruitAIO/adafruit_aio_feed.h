@@ -50,7 +50,7 @@ class AdafruitAIOFeed : public AdafruitMQTTPublisher
 protected:
 
 public:
-  AdafruitAIOFeed(AdafruitAIO* aio, const char* feed, uint8_t qos = MQTT_QOS_AT_MOST_ONCE, bool retained = false) : AdafruitMQTTPublisher(aio, feed, qos, retained)
+  AdafruitAIOFeed(AdafruitAIO* aio, const char* feed, uint8_t qos = MQTT_QOS_AT_MOST_ONCE, bool retain = false) : AdafruitMQTTPublisher(aio, feed, qos, retain)
   {
   }
 
