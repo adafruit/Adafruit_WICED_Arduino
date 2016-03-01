@@ -49,12 +49,12 @@ protected:
   bool          _retained;
 
 public:
-  AdafruitMQTTPublisher(AdafruitMQTT* mqtt, const char* topic, uint8_t qos = MQTT_QOS_AT_MOST_ONCE, bool retained = false)
+  AdafruitMQTTPublisher(AdafruitMQTT* mqtt, const char* topic, uint8_t qos = MQTT_QOS_AT_MOST_ONCE, bool retain = false)
   {
     _mqtt     = mqtt;
     _topic    = topic;
     _qos      = qos;
-    _retained = retained;
+    _retained = retain;
   }
 
   void retain(bool on) { _retained = on; }
