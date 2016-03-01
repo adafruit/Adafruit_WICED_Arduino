@@ -139,4 +139,6 @@ public:
   bool unsubscribe( const char* topicFilter );
 };
 
+#include <adafruit_publisher.h>
+
 #endif /* _ADAFRUIT_MQTT_H__ */
