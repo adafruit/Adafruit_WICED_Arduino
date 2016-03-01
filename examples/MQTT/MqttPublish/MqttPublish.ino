@@ -56,6 +56,20 @@ AdafruitMQTT mqtt;
 
 /**************************************************************************/
 /*!
+    @brief  Disconnect handler for MQTT broker connection
+*/
+/**************************************************************************/
+void disconnect_callback(void)
+{
+  Serial.println();
+  Serial.println("-----------------------------");
+  Serial.println("DISCONNECTED FROM MQTT BROKER");
+  Serial.println("-----------------------------");
+  Serial.println();
+}
+
+/**************************************************************************/
+/*!
     @brief  The setup function runs once when the board comes out of reset
 */
 /**************************************************************************/
@@ -89,6 +103,9 @@ void setup()
 
   // Last will must be set before connecting since it is part of the connection data
   mqtt.will(TOPIC, WILL_MESSAGE, MQTT_QOS_AT_LEAST_ONCE);
+
+  // Set the disconnect callback handler
+  mqtt.setDisconnectCallback(disconnect_callback);
 
   Serial.printf("Connecting to " BROKER_HOST " port %d ... ", BROKER_PORT);
   if (USE_TLS)
