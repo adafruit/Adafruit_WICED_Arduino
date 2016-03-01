@@ -5,14 +5,18 @@
 #
 # Dependencies:
 #   click - Install with 'sudo pip install click' (omit sudo on windows)
+#   PyOpenSSL - See homepage: https://pyopenssl.readthedocs.org/en/latest/
+#               Should just be a 'sudo pip install pyopenssl' command, HOWEVER
+#               on Windows you probably need a precompiled binary version.  See:
+#                 http://www.egenix.com/products/python/pyOpenSSL/
 #
-# No other dependencies other than Python!  In particular this tool does _not_
-# use OpenSSL and instead uses Python's built in SSL library functions.
 import os
+import socket
 import ssl
 import textwrap
 
 import click
+from OpenSSL import crypto, SSL
 
 # Default values:
 CERT_LEN_VAR_DEFAULT = 'ROOTCA_CERTS_LEN'  # Cert data length variable name.
@@ -52,6 +56,25 @@ const uint8_t {cert_var}[{cert_length_var}] = {{
 """
 
 # Useful helper functions:
+def get_server_cert_chain(address, port):
+    """Attempt to retrieve the full SSL cert chain from the provided server
+    address & port.  Will return a list with the full cert chain as PyOpenSSL
+    X509 objects, or None if the chain couldn't be retrieved for some reason.
+    """
+    # Use PyOpenSSL to initiate an SSL connection and get the full cert chain.
+    # Sadly Python's built in SSL library can't do this so we must use this
+    # OpenSSL-based library.
+    ctx = SSL.Context(SSL.SSLv23_METHOD)
+    soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    ssl_soc = SSL.Connection(ctx, soc)
+    ssl_soc.connect((address, port))
+    try:
+        ssl_soc.do_handshake()
+        return ssl_soc.get_peer_cert_chain()
+    finally:
+        ssl_soc.shutdown()
+        soc.close()
+
 def DER_to_header(cert_der, output_file, cert_var, cert_length_var):
     """Convert a binary DER format certificate into a C header that will
     import and expose the certificate to a sketch.  Cert_der should be a binary
@@ -84,7 +107,7 @@ def PEM_split(cert_pem):
     # Split cert based on begin certificate sections, then reconstruct as an
     # array of individual cert strings.
     delineator = '-----BEGIN CERTIFICATE-----'
-    return ["{0}{1}".format(delineator, x) for x in cert_pem.split(delineator)]
+    return ["{0}{1}".format(delineator, x) for x in cert_pem.strip().split(delineator) if x != '']
 
 def PEM_to_header(pems, cert_var, cert_length_var, output, full_chain):
     """Combine a collection of PEM format certificates into a single C header
@@ -97,11 +120,14 @@ def PEM_to_header(pems, cert_var, cert_length_var, output, full_chain):
     """
     cert_der = bytearray()
     for p in pems:
-        # Parse out the root/last cert if requested.
-        if not full_chain:
-            p = PEM_split(p)[-1]
-        # Convert PEM to binary DER format and add to result.
-        cert_der.extend(bytearray(ssl.PEM_cert_to_DER_cert(p)))
+        certs = PEM_split(p)
+        if full_chain:
+            # Go through each cert in the chain and convert to DER format.
+            for cert_pem in certs:
+                cert_der.extend(bytearray(ssl.PEM_cert_to_DER_cert(cert_pem)))
+        else:
+            # Otherwise just grab the last cert in the chain (the root) and convert.
+            cert_der.extend(bytearray(ssl.PEM_cert_to_DER_cert(certs[-1])))
     # Save DER as a C style header.
     DER_to_header(cert_der, output, cert_var, cert_length_var)
     click.echo('Wrote {0}'.format(output.name))
@@ -162,10 +188,17 @@ def download(port, cert_var, cert_length_var, output, full_chain, domain):
     for d in domain:
         # Download the certificate (unfortunately python will _always_ try to
         # validate it so we have no control over turning that off).
-        cert_pem = ssl.get_server_certificate((d, port))
-        if cert_pem is None or cert_pem == '':
-            raise click.ClickException('Could not download and/or validate the certificate for {0} port {1}!'.format(d, port))
-        click.echo('Retrieved certificate for {0}'.format(d))
+        chain = get_server_cert_chain(d, port)
+        if chain is None:
+            raise click.ClickException('Could not download and/or validate the certificate chain for {0} port {1}!'.format(d, port))
+        click.echo('Retrieved certificate chain for {0}:'.format(d))
+        # Print the cert chain and convert to a PEM format string.
+        cert_pem = ''
+        for c in chain:
+            click.echo('  Subject: {0}'.format(str(c.get_subject())))
+            click.echo('  Issuer: {0}'.format(str(c.get_issuer())))
+            click.echo('  Not After: {0}'.format(str(c.get_notAfter())))
+            cert_pem += crypto.dump_certificate(crypto.FILETYPE_PEM, c)
         pems.append(cert_pem)
     # Combine PEMs and write output header.
     PEM_to_header(pems, cert_var, cert_length_var, output, full_chain)
