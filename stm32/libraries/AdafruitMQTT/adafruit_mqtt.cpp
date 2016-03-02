@@ -154,7 +154,7 @@ bool AdafruitMQTT::publish( UTF8String topic, UTF8String message, uint8_t qos, b
   return sdep_n(SDEP_CMD_MQTTPUBLISH, para_count, para_arr, NULL, NULL);
 }
 
-bool AdafruitMQTT::subscribe_internal(const char* topicFilter, uint8_t qos, messageHandler mh, bool copy_topic)
+bool AdafruitMQTT::subscribe_internal(const char* topicFilter, uint8_t qos, messageHandler_t mh, bool copy_topic)
 {
   VERIFY( _connected && topicFilter != NULL && mh != NULL );
 
@@ -171,12 +171,12 @@ bool AdafruitMQTT::subscribe_internal(const char* topicFilter, uint8_t qos, mess
   return sdep_n(SDEP_CMD_MQTTSUBSCRIBE, para_count, para_arr, NULL, NULL);
 }
 
-bool AdafruitMQTT::subscribe( const char* topicFilter, uint8_t qos, messageHandler mh)
+bool AdafruitMQTT::subscribe( const char* topicFilter, uint8_t qos, messageHandler_t mh)
 {
   return subscribe_internal(topicFilter, qos, mh, false);
 }
 
-bool AdafruitMQTT::subscribe_copy( const char* topicFilter, uint8_t qos, messageHandler mh)
+bool AdafruitMQTT::subscribe_copy( const char* topicFilter, uint8_t qos, messageHandler_t mh)
 {
   return subscribe_internal(topicFilter, qos, mh, true);
 }

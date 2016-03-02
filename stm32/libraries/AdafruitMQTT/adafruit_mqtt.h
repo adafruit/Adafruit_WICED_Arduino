@@ -55,8 +55,8 @@ enum
 class AdafruitMQTT : public AdafruitSDEP
 {
 public:
-  // messageHandler must not be changed since featherlib uses the same signature
-  typedef void (*messageHandler)(char* topic_data, size_t topic_len, uint8_t* mess_data, size_t mess_len);
+  // messageHandler_t must not be changed since featherlib uses the same signature
+  typedef void (*messageHandler_t)(char* topic_data, size_t topic_len, uint8_t* mess_data, size_t mess_len);
 
   AdafruitMQTT(const char* username, const char* password)
   {
@@ -95,8 +95,8 @@ public:
   bool disconnect     ( void );
 
   bool publish        ( UTF8String topic, UTF8String message, uint8_t qos =MQTT_QOS_AT_MOST_ONCE, bool retained = false );
-  bool subscribe      ( const char* topicFilter, uint8_t qos, messageHandler mh);
-  bool subscribe_copy ( const char* topicFilter, uint8_t qos, messageHandler mh);
+  bool subscribe      ( const char* topicFilter, uint8_t qos, messageHandler_t mh);
+  bool subscribe_copy ( const char* topicFilter, uint8_t qos, messageHandler_t mh);
   bool unsubscribe    ( const char* topicFilter );
 
 protected:
@@ -130,7 +130,7 @@ protected:
 
   void randomClientID(char* clientid);
 
-  bool subscribe_internal(const char* topicFilter, uint8_t qos, messageHandler mh, bool copy_topic);
+  bool subscribe_internal(const char* topicFilter, uint8_t qos, messageHandler_t mh, bool copy_topic);
 };
 
 #include <adafruit_mqtt_publisher.h>

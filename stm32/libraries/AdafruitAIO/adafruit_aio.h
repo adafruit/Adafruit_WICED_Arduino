@@ -63,7 +63,7 @@ public:
   using AdafruitMQTT::connectSSL;
 
   bool updateFeed(const char* feed, UTF8String message, uint8_t qos=MQTT_QOS_AT_MOST_ONCE, bool retain=true);
-  bool followFeed(const char* feed, uint8_t qos, messageHandler mh);
+  bool followFeed(const char* feed, uint8_t qos, messageHandler_t mh);
   bool unfollowFeed(const char* feed);
 };
 
