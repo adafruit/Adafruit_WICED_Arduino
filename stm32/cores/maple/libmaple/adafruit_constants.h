@@ -244,6 +244,12 @@ enum
   TLS_VERIFICATION_REQUIRED = 2,
 };
 
+enum
+{
+  TIMEOUT_NO_WAIT = 0,
+  TIMEOUT_FOREVER = UINT32_MAX
+};
+
 #ifdef __cplusplus
  }
 #endif

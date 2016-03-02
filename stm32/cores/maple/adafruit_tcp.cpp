@@ -44,8 +44,10 @@
 /******************************************************************************/
 AdafruitTCP::AdafruitTCP(void)
 {
-  rx_callback         = NULL;
-  disconnect_callback = NULL;
+  _connect_callback    = NULL;
+  _rx_callback         = NULL;
+  _disconnect_callback = NULL;
+
   this->reset();
 }
 
@@ -328,8 +330,8 @@ void AdafruitTCP::install_callback(void)
 {
   // connect callback is not supported yet
   bool connect_enabled    = false;
-  bool rx_enabled         = (rx_callback != NULL);
-  bool disconnect_enabled = (disconnect_callback != NULL);
+  bool rx_enabled         = (_rx_callback != NULL);
+  bool disconnect_enabled = (_disconnect_callback != NULL);
 
   // no callbacks are enabled
   if ( !(connect_enabled || rx_enabled || disconnect_enabled) ) return;
@@ -357,7 +359,7 @@ void AdafruitTCP::install_callback(void)
 /******************************************************************************/
 void AdafruitTCP::setReceivedCallback( tcpcallback_t fp )
 {
-  rx_callback = fp;
+  _rx_callback = fp;
 }
 
 /******************************************************************************/
@@ -367,7 +369,7 @@ void AdafruitTCP::setReceivedCallback( tcpcallback_t fp )
 /******************************************************************************/
 void AdafruitTCP::setDisconnectCallback( tcpcallback_t fp )
 {
-  disconnect_callback = fp;
+  _disconnect_callback = fp;
 }
 
 /******************************************************************************/
@@ -388,6 +390,27 @@ void AdafruitTCP::stop()
 }
 
 
+bool AdafruitTCP::listen     (uint16_t port, tcpcallback_t connect_callback)
+{
+
+}
+
+bool AdafruitTCP::accept     (uint32_t timeout)
+{
+
+}
+
+IPAddress AdafruitTCP::remoteIP   ( void )
+{
+
+}
+
+uint16_t  AdafruitTCP::remotePort ( void )
+{
+
+}
+
+
 //--------------------------------------------------------------------+
 // Callbacks
 //--------------------------------------------------------------------+
@@ -403,7 +426,7 @@ err_t adafruit_tcp_receive_callback(void* socket, void* p_tcp)
   // Integrity check
   if ( *((uint32_t*) pTCP->_tcp_handle) == ((uint32_t) socket) )
   {
-    if (pTCP->rx_callback) pTCP->rx_callback();
+    if (pTCP->_rx_callback) pTCP->_rx_callback();
   }
 
   return ERROR_NONE;
@@ -416,7 +439,21 @@ err_t adafruit_tcp_disconnect_callback(void* socket, void* p_tcp)
   // Integrity check
   if ( *((uint32_t*) pTCP->_tcp_handle) == ((uint32_t) socket) )
   {
-    if (pTCP->disconnect_callback) pTCP->disconnect_callback();
+    // TODO set connected as false ???
+    if (pTCP->_disconnect_callback) pTCP->_disconnect_callback();
+  }
+
+  return ERROR_NONE;
+}
+
+err_t adafruit_tcp_connect_callback(void* socket, void* p_tcp)
+{
+  AdafruitTCP* pTCP = (AdafruitTCP*) p_tcp;
+
+  // Integrity check
+  if ( *((uint32_t*) pTCP->_tcp_handle) == ((uint32_t) socket) )
+  {
+    if (pTCP->_connect_callback) pTCP->_connect_callback();
   }
 
   return ERROR_NONE;

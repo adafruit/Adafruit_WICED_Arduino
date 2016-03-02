@@ -47,8 +47,9 @@
 // Callback proxy from Featherlib
 extern "C"
 {
-  err_t adafruit_tcp_receive_callback(void* arg, void* p_tcp);
-  err_t adafruit_tcp_disconnect_callback(void* arg, void* p_tcp);
+  err_t adafruit_tcp_connect_callback    (void* arg, void* p_tcp);
+  err_t adafruit_tcp_receive_callback    (void* arg, void* p_tcp);
+  err_t adafruit_tcp_disconnect_callback (void* arg, void* p_tcp);
 }
 
 class AdafruitTCP : public Client, public AdafruitSDEP
@@ -62,6 +63,9 @@ public:
   void usePacketBuffering     ( bool enable );
   uint32_t getHandle          ( void ) { return _tcp_handle; }
 
+  void             tlsRequireVerification (bool required) { _tls_verification = required; }
+  virtual operator bool() { return _tcp_handle != 0; }
+
   // Client API
   virtual int      connect    ( IPAddress ip, uint16_t port );
   virtual int      connect    ( const char * host, uint16_t port );
@@ -71,9 +75,11 @@ public:
   virtual void     stop       ( void );
   void             disconnect ( void ) { stop(); }
 
-  void             tlsRequireVerification (bool required) { _tls_verification = required; }
-
-  virtual operator bool() { return _tcp_handle != 0; }
+  // Server API
+  virtual bool      listen     (uint16_t port, tcpcallback_t connect_callback = NULL);
+  virtual bool      accept     (uint32_t timeout);
+  virtual IPAddress remoteIP   ( void );
+  virtual uint16_t  remotePort ( void );
 
   // Stream API
   virtual int      read       ( void );
@@ -92,6 +98,7 @@ public:
   void setReceivedCallback    ( tcpcallback_t fp );
   void setDisconnectCallback  ( tcpcallback_t fp );
 
+  friend err_t adafruit_tcp_connect_callback(void* socket, void* p_tcp);
   friend err_t adafruit_tcp_receive_callback(void* socket, void* p_tcp);
   friend err_t adafruit_tcp_disconnect_callback(void* socket, void* p_tcp);
 
@@ -107,8 +114,9 @@ protected:
   bool     _packet_buffering;
 
   // Callback prototypes
-  tcpcallback_t rx_callback;
-  tcpcallback_t disconnect_callback;
+  tcpcallback_t _connect_callback;
+  tcpcallback_t _rx_callback;
+  tcpcallback_t _disconnect_callback;
 
   void install_callback ( void );
   void reset            ( void );

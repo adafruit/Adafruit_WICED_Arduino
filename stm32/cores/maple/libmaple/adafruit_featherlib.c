@@ -49,8 +49,9 @@ extern void USBSerial_callback(uint32_t eid, void* p_data);
 //extern void adafruit_wifi_connect_callback(void);
 extern void adafruit_wifi_disconnect_callback(void);
 
-extern err_t adafruit_tcp_receive_callback(void* socket, void* p_tcp);
-extern err_t adafruit_tcp_disconnect_callback(void* socket, void* p_tcp);
+extern err_t adafruit_tcp_connect_callback    (void* socket, void* p_tcp);
+extern err_t adafruit_tcp_receive_callback    (void* socket, void* p_tcp);
+extern err_t adafruit_tcp_disconnect_callback (void* socket, void* p_tcp);
 
 extern err_t adafruit_udp_receive_callback(void* socket, void* p_udp);
 
@@ -68,6 +69,7 @@ ATTR_USED adafruit_arduino_t const adafruit_arduino =
 //    .wifi_connect_callback    = adafruit_wifi_connect_callback,
     .wifi_disconnect_callback = adafruit_wifi_disconnect_callback,
 
+    .tcp_connect_callback     = adafruit_tcp_connect_callback,
     .tcp_receive_callback     = adafruit_tcp_receive_callback,
     .tcp_disconnect_callback  = adafruit_tcp_disconnect_callback,
 
