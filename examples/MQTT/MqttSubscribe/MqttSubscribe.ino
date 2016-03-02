@@ -23,8 +23,8 @@
  * and subscribe to defined TOPIC_SUBSCRIBE.
  * 
  * - When a message is received, it will echo back at TOPIC_ECHO
- * - If the message is unsubscribed (via .unsubscribe), Feather
- *   will unsubscribe from TOPIC_SUBSCRIBE and won't be able to
+ * - If the received message is "unsubscribe", Feather will
+ *   unsubscribe from TOPIC_SUBSCRIBE and won't be able to
  *   echo content back to the broker.
  * 
  * Note: TOPIC_SUBSCRIBE and TOPIC_ECHO must not be the same topic!
