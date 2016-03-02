@@ -76,7 +76,7 @@ bool AdafruitAIO::updateFeed(const char* feed, UTF8String message, uint8_t qos, 
 bool AdafruitAIO::followFeed(const char* feed, uint8_t qos, messageHandler mh)
 {
   char * feedfull = createFeed(feed);
-  bool result = this->subscribe(feedfull, qos, mh);
+  bool result = this->subscribe_copy(feedfull, qos, mh);
   removeFeed(feedfull);
 
   return result;
@@ -84,6 +84,10 @@ bool AdafruitAIO::followFeed(const char* feed, uint8_t qos, messageHandler mh)
 
 bool AdafruitAIO::unfollowFeed(const char* feed)
 {
+  char * feedfull = createFeed(feed);
+  bool result = this->unsubscribe(feedfull);
+  removeFeed(feedfull);
 
+  return result;
 }
 
