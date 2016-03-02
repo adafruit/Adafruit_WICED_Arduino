@@ -48,10 +48,25 @@
 class AdafruitAIOFeed : public AdafruitMQTTPublisher
 {
 protected:
+  AdafruitMQTT::messageHandler _mh;
 
 public:
   AdafruitAIOFeed(AdafruitAIO* aio, const char* feed, uint8_t qos = MQTT_QOS_AT_MOST_ONCE, bool retain = true) : AdafruitMQTTPublisher(aio, feed, qos, retain)
   {
+    _mh = NULL;
+  }
+
+  void setMessageHandler(AdafruitMQTT::messageHandler fp) { _mh = fp; }
+
+  bool follow(void)
+  {
+    VERIFY(_mh != NULL);
+    ((AdafruitAIO*)_mqtt)->followFeed(_topic, _qos, _mh);
+  }
+
+  bool unfollow(void)
+  {
+    ((AdafruitAIO*)_mqtt)->unfollowFeed(_topic);
   }
 
   virtual size_t write(const uint8_t *buf, size_t len)

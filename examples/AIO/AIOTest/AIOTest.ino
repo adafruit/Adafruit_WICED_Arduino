@@ -17,7 +17,8 @@
 #include <adafruit_aio.h>
 
 /* This sketch connect to the Adafruit IO sever io.adafruit.com
- * and update a defined feed every 1 second.
+ * and update a defined PHOTOCELL_FEED every 5 second. 
+ * It also follow ONOF_FEED to receive update from the AIO website
  *
  * To run this demo
  * 1. Change SSID/PASS
@@ -34,8 +35,9 @@
 #define AIO_USERNAME      "...your AIO username (see https://accounts.adafruit.com)..."
 #define AIO_KEY           "...your AIO key..."
 
-// AdafruitAIOwill auto append "username/feeds/" prefix to your feed
-#define AIO_FEED          "photocell"
+// AdafruitAIO will auto append "username/feeds/" prefix to your feed
+#define PHOTOCELL_FEED     "photocell"
+#define ONOFF_FEED         "onoff"
 
 // Connect using TLS/SSL or not
 #define USE_TLS           1
@@ -44,7 +46,9 @@
 //#define CLIENTID          "Adafruit Feather"
 
 AdafruitAIO       aio(AIO_USERNAME, AIO_KEY);
-AdafruitAIOFeed   feed(&aio, AIO_FEED);
+
+AdafruitAIOFeed   photocell(&aio, PHOTOCELL_FEED);
+AdafruitAIOFeed   onoff(&aio, ONOFF_FEED);
 
 int value = 0;
 
@@ -90,6 +94,12 @@ void setup()
     aio.connect(); // Will halted if an error occurs
   }
   Serial.println("OK");
+
+  // Set message handler for onoff feed
+  onoff.setMessageHandler(onoff_mess_handler);
+
+  // follow onoff state change
+  onoff.follow();
 }
 
 /**************************************************************************/
@@ -101,12 +111,40 @@ void loop()
 {
   value = (value+1) % 100;
 
-  Serial.print("Updating feed " AIO_FEED " : ");
+  Serial.print("Updating feed " PHOTOCELL_FEED " : ");
   Serial.print(value);
-  feed.print(value);
+  photocell.print(value);
   Serial.println(" ... OK");
 
-  delay(1000);
+  delay(5000);
+}
+
+/**************************************************************************/
+/*!
+    @brief  Subscribe callback handler
+
+    @param  topic_data  topic name's contents in byte array (not null terminated)
+    @param  topic_len   topic name's length
+
+    @param  mess_data   message's contents in byte array (not null terminated)
+    @param  mess_len    message's length
+
+    @note   'topic_data' and 'mess_data' are byte array without null-terminated
+    like C-style string. Don't try to use Serial.print() directly, use the UTF8String
+    datatype or Serial.write() instead.
+*/
+/**************************************************************************/
+void onoff_mess_handler(char* topic_data, size_t topic_len, uint8_t* mess_data, size_t mess_len)
+{
+  // Use UTF8String class for easy printing of UTF8 data
+  UTF8String utf8Topic(topic_data, topic_len);
+  UTF8String utf8Message(mess_data, mess_len);
+
+  // Print out topic name and message
+  Serial.print("[ONOFF Feed] ");
+  Serial.print(utf8Topic);
+  Serial.print(" : ") ;
+  Serial.println(utf8Message);  
 }
 
 /**************************************************************************/
