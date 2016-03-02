@@ -48,16 +48,42 @@ bool AdafruitAIO::connectSSL(bool cleanSession, uint16_t keepalive_sec)
   return this->connectSSL(AIO_SERVER, AIO_SECURED_PORT, cleanSession, keepalive_sec);
 }
 
-bool AdafruitAIO::updateFeed(const char* feed, UTF8String message, uint8_t qos, bool retained)
+char* AdafruitAIO::createFeed(const char* feedid)
 {
   // feed path = username/feeds/feedid
-  char * feedfull = (char*) malloc( strlen(_username) + 7 + strlen(feed) + 1 );
+  char * feedfull = (char*) malloc( strlen(_username) + 7 + strlen(feedid) + 1 );
   strcpy(feedfull, _username);
   strcat(feedfull, "/feeds/");
-  strcat(feedfull, feed);
+  strcat(feedfull, feedid);
 
-  bool result = this->publish(feedfull, message, qos, retained);
+  return feedfull;
+}
+
+void  AdafruitAIO::removeFeed(char* feedfull)
+{
   free(feedfull);
+}
+
+bool AdafruitAIO::updateFeed(const char* feed, UTF8String message, uint8_t qos, bool retain)
+{
+  char * feedfull = createFeed(feed);
+  bool result = this->publish(feedfull, message, qos, retain);
+  removeFeed(feedfull);
 
   return result;
 }
+
+bool AdafruitAIO::followFeed(const char* feed, uint8_t qos, messageHandler mh)
+{
+  char * feedfull = createFeed(feed);
+  bool result = this->subscribe(feedfull, qos, mh);
+  removeFeed(feedfull);
+
+  return result;
+}
+
+bool AdafruitAIO::unfollowFeed(const char* feed)
+{
+
+}
+

@@ -51,6 +51,8 @@
 class AdafruitAIO : public AdafruitMQTT
 {
 protected:
+  char* createFeed(const char* feedid);
+  void  removeFeed(char* feedfull);
 
 public:
   AdafruitAIO(const char* username, const char* password) : AdafruitMQTT(username, password) {}
@@ -60,7 +62,9 @@ public:
   using AdafruitMQTT::connect;
   using AdafruitMQTT::connectSSL;
 
-  bool updateFeed(const char* feed, UTF8String message, uint8_t qos=MQTT_QOS_AT_MOST_ONCE, bool retained=false);
+  bool updateFeed(const char* feed, UTF8String message, uint8_t qos=MQTT_QOS_AT_MOST_ONCE, bool retain=true);
+  bool followFeed(const char* feed, uint8_t qos, messageHandler mh);
+  bool unfollowFeed(const char* feed);
 };
 
 #include "adafruit_aio_feed.h"

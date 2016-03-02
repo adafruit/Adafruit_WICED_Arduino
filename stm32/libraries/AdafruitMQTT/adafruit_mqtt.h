@@ -54,37 +54,6 @@ enum
 
 class AdafruitMQTT : public AdafruitSDEP
 {
-protected:
-  AdafruitTCP tcp;
-  uint32_t  _mqtt_handle;
-
-  bool _connected;
-
-  // Connect Packet Data
-  const char * _clientID;
-  const char * _username;
-  const char * _password;
-
-  const char* _will_topic;
-  UTF8String  _will_message;
-  uint8_t     _will_qos;
-  uint8_t     _will_retained;
-
-
-  bool connectBroker(bool cleanSession, uint16_t keepalive_sec);
-  bool init(void)
-  {
-    _mqtt_handle   = 0;
-    _connected     = 0;
-    tcp.usePacketBuffering(true);
-
-    _clientID = _username = _password = NULL;
-
-    _will_qos = _will_retained = 0;
-  }
-
-  void randomClientID(char* clientid);
-
 public:
   // messageHandler must not be changed since featherlib uses the same signature
   typedef void (*messageHandler)(char* topic_data, size_t topic_len, uint8_t* mess_data, size_t mess_len);
@@ -116,18 +85,52 @@ public:
   void setDisconnectCallback  ( void (*fp) (void) );
 
   // API
-  bool connected  ( void ) { return _connected; }
+  bool connected      ( void ) { return _connected; }
 
-  bool connect    ( IPAddress ip     , uint16_t port = 1883, bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
-  bool connect    ( const char* host , uint16_t port = 1883, bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
-  bool connectSSL ( IPAddress ip     , uint16_t port = 8883, bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
-  bool connectSSL ( const char* host , uint16_t port = 8883, bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
+  bool connect        ( IPAddress ip     , uint16_t port = 1883, bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
+  bool connect        ( const char* host , uint16_t port = 1883, bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
+  bool connectSSL     ( IPAddress ip     , uint16_t port = 8883, bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
+  bool connectSSL     ( const char* host , uint16_t port = 8883, bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
 
-  bool disconnect ( void );
+  bool disconnect     ( void );
 
-  bool publish    ( UTF8String topic, UTF8String message, uint8_t qos =MQTT_QOS_AT_MOST_ONCE, bool retained = false );
-  bool subscribe  ( const char* topicFilter, uint8_t qos, messageHandler mh);
-  bool unsubscribe( const char* topicFilter );
+  bool publish        ( UTF8String topic, UTF8String message, uint8_t qos =MQTT_QOS_AT_MOST_ONCE, bool retained = false );
+  bool subscribe      ( const char* topicFilter, uint8_t qos, messageHandler mh);
+  bool subscribe_copy ( const char* topicFilter, uint8_t qos, messageHandler mh);
+  bool unsubscribe    ( const char* topicFilter );
+
+protected:
+  AdafruitTCP tcp;
+  uint32_t  _mqtt_handle;
+
+  bool _connected;
+
+  // Connect Packet Data
+  const char * _clientID;
+  const char * _username;
+  const char * _password;
+
+  const char* _will_topic;
+  UTF8String  _will_message;
+  uint8_t     _will_qos;
+  uint8_t     _will_retained;
+
+
+  bool connectBroker(bool cleanSession, uint16_t keepalive_sec);
+  bool init(void)
+  {
+    _mqtt_handle   = 0;
+    _connected     = 0;
+    tcp.usePacketBuffering(true);
+
+    _clientID = _username = _password = NULL;
+
+    _will_qos = _will_retained = 0;
+  }
+
+  void randomClientID(char* clientid);
+
+  bool subscribe_internal(const char* topicFilter, uint8_t qos, messageHandler mh, bool copy_topic);
 };
 
 #include <adafruit_mqtt_publisher.h>
