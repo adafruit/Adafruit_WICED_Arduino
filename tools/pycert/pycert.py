@@ -7,7 +7,10 @@
 #   click - Install with 'sudo pip install click' (omit sudo on windows)
 #   PyOpenSSL - See homepage: https://pyopenssl.readthedocs.org/en/latest/
 #               Should just be a 'sudo pip install pyopenssl' command, HOWEVER
-#               on Windows you probably need a precompiled binary version.  See:
+#               on Windows you probably need a precompiled binary version.  Try
+#               installing with pip and if you see errors when running that
+#               OpenSSL can't be found then try installing egenix's prebuilt
+#               PyOpenSSL library and OpenSSL lib:
 #                 http://www.egenix.com/products/python/pyOpenSSL/
 #
 import os
