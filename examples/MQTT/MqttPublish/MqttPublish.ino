@@ -32,7 +32,7 @@
  * To run this demo:
  * 1. Change the SSID/PASS to match your access point
  * 2. Decide whether you want to use TLS/SSL or not (USE_TLS)
- * 3. Change CLIENTID, TOPIC, PUBLISH_MESSAGE, WILL_MESSAGE
+ * 3. Change TOPIC, PUBLISH_MESSAGE, WILL_MESSAGE, enable CLIENTID if needed
  * 4. Compile and run
  * 5. Use an MQTT desktop client to connect to the same sever and
  *    subscribe to the defined topic to monitor the published

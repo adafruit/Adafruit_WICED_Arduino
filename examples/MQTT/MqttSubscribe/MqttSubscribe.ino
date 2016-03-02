@@ -29,7 +29,7 @@
  * 
  * Note: TOPIC_SUBSCRIBE and TOPIC_ECHO must not be the same topic!
  * (e.g must not "adafruit/+" and "adafruit/echo"), since this will
- * cause and infinite loop (received -> echo -> received -> ....)
+ * cause an infinite loop (received -> echo -> received -> ....)
  *
  * For details on the MQTT broker server see http://test.mosquitto.org/
  *  - Port 1883 : MQTT, unencrypted
@@ -44,7 +44,7 @@
  * To run this demo
  * 1. Change the SSID/PASS to match your access point
  * 2. Decide whether you want to use TLS/SSL or not (USE_TLS)
- * 3. Change CLIENTID, TOPIC, WILL_MESSAGE
+ * 3. Change TOPIC, WILL_MESSAGE, enable CLIENTID if needed
  * 4. Compile and run
  * 5. Use MQTT desktop client to connect to the same sever and publish to
  *    any topic beginning with "adafruit/feather/" . To be able to recieve
