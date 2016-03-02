@@ -16,32 +16,39 @@
 #include <adafruit_mqtt.h>
 #include "certificate_mosquitto.h"
 
-/* This sketch demostate subscribe/unsubscribe with callback.
- * It will connect to the public MQTT server (with/without TLS)
- * and subscribe to defined TOPIC_SUBSCRIBE.
- * - When a message is received, it will echo back at TOPIC_ECHO
- * - If the message is "unsubscribe", Feather will unsubscribe from
- * TOPIC_SUBSCRIBE and won't be able to echo back afterwards.
+/* This sketch demonstrates subscribe/unsubscribe activity with
+ * callbacks.
  * 
- * Note: TOPIC_SUBSCRIBE and TOPIC_ECHO must not include each other
+ * It will connect to a public MQTT server (with/without TLS)
+ * and subscribe to defined TOPIC_SUBSCRIBE.
+ * 
+ * - When a message is received, it will echo back at TOPIC_ECHO
+ * - If the message is unsubscribed (via .unsubscribe), Feather
+ *   will unsubscribe from TOPIC_SUBSCRIBE and won't be able to
+ *   echo content back to the broker.
+ * 
+ * Note: TOPIC_SUBSCRIBE and TOPIC_ECHO must not be the same topic!
  * (e.g must not "adafruit/+" and "adafruit/echo"), since this will
  * cause and infinite loop (received -> echo -> received -> ....)
  *
- * For publish server detail see http://test.mosquitto.org/
+ * For details on the MQTT broker server see http://test.mosquitto.org/
  *  - Port 1883 : MQTT, unencrypted
  *  - Port 8883 : MQTT, encrypted (TLS)
  *
- * Note: You need an MQTT desktop client such as
- * - Lightweight Java included in the repo: org.eclipse.paho.mqtt.utility-1.0.0.jar
+ * Note: may You need an MQTT desktop client such as the lightweight
+ * Java client included in this repo: org.eclipse.paho.mqtt.utility-1.0.0.jar
+ * 
+ * For information on configuring your system to work with MQTT see:
  * - https://learn.adafruit.com/desktop-mqtt-client-for-adafruit-io/installing-software
  *
  * To run this demo
- * 1. Change SSID/PASS
+ * 1. Change the SSID/PASS to match your access point
  * 2. Decide whether you want to use TLS/SSL or not (USE_TLS)
- * 3. Change CLIENTID, TOPIC, WILL_MESSAGE if you want
+ * 3. Change CLIENTID, TOPIC, WILL_MESSAGE
  * 4. Compile and run
- * 5. Use MQTT desktop client to connect to the same sever and publish to any topic started with
- * "adafruit/feather/" . To be able to recieve the echo message, please also subcribe to "adafruit/feather_echo"
+ * 5. Use MQTT desktop client to connect to the same sever and publish to
+ *    any topic beginning with "adafruit/feather/" . To be able to recieve
+ *    the echo message, please also subcribe to "adafruit/feather_echo".
  */
 
 #define WLAN_SSID         "yourSSID"
@@ -62,6 +69,20 @@
 #define WILL_MESSAGE      "Goodbye!!"
 
 AdafruitMQTT mqtt;
+
+/**************************************************************************/
+/*!
+    @brief  Disconnect handler for MQTT broker connection
+*/
+/**************************************************************************/
+void disconnect_callback(void)
+{
+  Serial.println();
+  Serial.println("-----------------------------");
+  Serial.println("DISCONNECTED FROM MQTT BROKER");
+  Serial.println("-----------------------------");
+  Serial.println();
+}
 
 /**************************************************************************/
 /*!
@@ -98,6 +119,9 @@ void setup()
 
   // Last will must be set before connecting since it is part of the connection data
   mqtt.will(WILL_TOPIC, WILL_MESSAGE, MQTT_QOS_AT_LEAST_ONCE);
+
+  // Set the disconnect callback handler
+  mqtt.setDisconnectCallback(disconnect_callback);
 
   Serial.printf("Connecting to " BROKER_HOST " port %d ... ", BROKER_PORT);
   if (USE_TLS)
