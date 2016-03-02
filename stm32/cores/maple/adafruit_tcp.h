@@ -75,12 +75,6 @@ public:
   virtual void     stop       ( void );
   void             disconnect ( void ) { stop(); }
 
-  // Server API
-  virtual bool      listen     (uint16_t port, tcpcallback_t connect_callback = NULL);
-  virtual bool      accept     (uint32_t timeout);
-  virtual IPAddress remoteIP   ( void );
-  virtual uint16_t  remotePort ( void );
-
   // Stream API
   virtual int      read       ( void );
   virtual int      read       ( uint8_t * buf, size_t size );

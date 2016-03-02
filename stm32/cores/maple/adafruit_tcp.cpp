@@ -34,7 +34,6 @@
 */
 /**************************************************************************/
 
-#include "adafruit_feather.h"
 #include "adafruit_tcp.h"
 
 /******************************************************************************/
@@ -93,12 +92,14 @@ int AdafruitTCP::connect(IPAddress ip, uint16_t port)
 
   DBG_HEAP();
 
-  uint32_t ipv4      = (uint32_t) ip;
-  uint8_t is_tls     = 0;
-  uint8_t tls_option = _tls_verification ? TLS_VERIFICATION_REQUIRED : TLS_NO_VERIFICATION;
+  uint8_t  interface  = WIFI_INTERFACE_STATION;
+  uint32_t ipv4       = (uint32_t) ip;
+  uint8_t  is_tls     = 0;
+  uint8_t  tls_option = _tls_verification ? TLS_VERIFICATION_REQUIRED : TLS_NO_VERIFICATION;
 
   sdep_cmd_para_t para_arr[] =
   {
+      { .len = 1, .p_value = &interface  },
       { .len = 4, .p_value = &ipv4       },
       { .len = 2, .p_value = &port       },
       { .len = 4, .p_value = &_timeout   },
@@ -145,21 +146,21 @@ int AdafruitTCP::connectSSL(IPAddress ip, uint16_t port)
 
   DBG_HEAP();
 
-  uint32_t ipv4      = (uint32_t) ip;
-  uint8_t is_tls     = 1;
-  uint8_t tls_option = _tls_verification ? TLS_VERIFICATION_REQUIRED : TLS_NO_VERIFICATION;
-//  uint8_t namelen = (common_name ? strlen(common_name) : 0);
+  uint8_t  interface  = WIFI_INTERFACE_STATION;
+  uint32_t ipv4       = (uint32_t) ip;
+  uint8_t  is_tls     = 1;
+  uint8_t  tls_option = _tls_verification ? TLS_VERIFICATION_REQUIRED : TLS_NO_VERIFICATION;
 
   sdep_cmd_para_t para_arr[] =
   {
-      { .len = 4 , .p_value = &ipv4       },
-      { .len = 2 , .p_value = &port       },
-      { .len = 4 , .p_value = &_timeout   },
-      { .len = 1 , .p_value = &is_tls     },
+      { .len = 1, .p_value = &interface  },
+      { .len = 4, .p_value = &ipv4       },
+      { .len = 2, .p_value = &port       },
+      { .len = 4, .p_value = &_timeout   },
+      { .len = 1, .p_value = &is_tls     },
       { .len = 1, .p_value = &tls_option },
-      //{ .len = namelen , .p_value = common_name },
   };
-  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t) /*- (common_name ? 0 : 1)*/;
+  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
   VERIFY(sdep_n(SDEP_CMD_TCP_CONNECT, para_count , para_arr, NULL, &_tcp_handle));
   this->install_callback();
@@ -387,27 +388,6 @@ void AdafruitTCP::stop()
   this->reset();
 
   DBG_HEAP();
-}
-
-
-bool AdafruitTCP::listen     (uint16_t port, tcpcallback_t connect_callback)
-{
-
-}
-
-bool AdafruitTCP::accept     (uint32_t timeout)
-{
-
-}
-
-IPAddress AdafruitTCP::remoteIP   ( void )
-{
-
-}
-
-uint16_t  AdafruitTCP::remotePort ( void )
-{
-
 }
 
 
