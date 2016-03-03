@@ -14,12 +14,12 @@
 
 #include <adafruit_feather.h>
 
-#define WLAN_SSID            "yourSSID"
-#define WLAN_PASS            "yourPass"
+#define WLAN_SSID            "thach"
+#define WLAN_PASS            "thach367"
 
 #define PORT                 80                     // The TCP port to use
 
-AdafruitTCPServer tcpserver;
+AdafruitTCPServer tcpserver(PORT);
 
 /**************************************************************************/
 /*!
@@ -87,7 +87,7 @@ void setup()
   tcpserver.setConnectCallback(connect_request_callback);
 
   // Starting server at defined port
-  tcpserver.begin(PORT);
+  tcpserver.begin();
 
   Serial.print("Listenning on port "); Serial.println(PORT);
 }

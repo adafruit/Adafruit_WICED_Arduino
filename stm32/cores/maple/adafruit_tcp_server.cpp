@@ -37,10 +37,10 @@
 #include "adafruit_feather.h"
 #include "adafruit_tcp_server.h"
 
-AdafruitTCPServer::AdafruitTCPServer(void)
+AdafruitTCPServer::AdafruitTCPServer(uint16_t port)
 {
   _tcp_handle          = NULL;
-  _port                = 0;
+  _port                = port;
   _has_connect_request = false;
   _connect_callback    = NULL;
 
@@ -53,9 +53,8 @@ AdafruitTCPServer::AdafruitTCPServer(void)
     @brief Call listen for the first time
 */
 /******************************************************************************/
-bool AdafruitTCPServer::begin(uint16_t port)
+bool AdafruitTCPServer::begin(void)
 {
-  _port = port;
   return listen(true);
 }
 

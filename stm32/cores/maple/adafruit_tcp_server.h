@@ -55,13 +55,13 @@ public:
   typedef void* tcp_handle_t;
   typedef void (*tcpserver_callback_t)(void);
 
-  AdafruitTCPServer(void);
+  AdafruitTCPServer(uint16_t port);
 
   void setConnectCallback    (tcpserver_callback_t fp) { _connect_callback    = fp; }
 
   // Server API
 
-  virtual bool        begin      (uint16_t port);
+  virtual bool        begin      ( void );
   virtual AdafruitTCP accept     ( void );
   virtual void        stop       ( void );
 
