@@ -39,54 +39,83 @@
 
 AdafruitTCPServer::AdafruitTCPServer(void)
 {
-  _tcp_handle = NULL;
+  _tcp_handle          = NULL;
+  _port                = 0;
+  _has_connect_request = false;
   _connect_callback    = NULL;
 
-  _tls_private_key = NULL;
-  _tls_certificate = NULL;
-  _tls_certlen     = 0;
+  _tls_private_key     = NULL;
+  _tls_certificate     = NULL;
+  _tls_certlen         = 0;
 }
-
+/******************************************************************************/
+/*!
+    @brief Call listen for the first time
+*/
+/******************************************************************************/
 bool AdafruitTCPServer::begin(uint16_t port)
 {
+  _port = port;
+  return listen(true);
+}
+
+/******************************************************************************/
+/*!
+    @brief
+    @para first_time whether this is the first time listen is called
+*/
+/******************************************************************************/
+bool AdafruitTCPServer::listen(bool first_time)
+{
   DBG_HEAP();
+  uint8_t  interface  = WIFI_INTERFACE_STATION;
+  uint32_t this_value = (uint32_t) this;
 
   _tcp_handle = malloc_named("TCPServer", TCP_SOCKET_HANDLE_SIZE);
-  uint8_t  interface      = WIFI_INTERFACE_STATION;
-  uint32_t this_value     = (uint32_t) this;
-  bool connect_enabled    = true;
 
   sdep_cmd_para_t para_arr[] =
   {
-      { .len = TCP_SOCKET_HANDLE_SIZE , .p_value = _tcp_handle         },
+      { .len = TCP_SOCKET_HANDLE_SIZE , .p_value = _tcp_handle },
 
-      { .len = 1 , .p_value = &interface          },
-      { .len = 2 , .p_value = &port               },
-      { .len = 4 , .p_value = &this_value         },
-      { .len = 1 , .p_value = &connect_enabled    },
+      { .len = 1 , .p_value = &interface  },
+      { .len = 2 , .p_value = &_port      },
+      { .len = 4 , .p_value = &this_value },
+      { .len = 1 , .p_value = &first_time },
   };
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
-  VERIFY( sdep_n(SDEP_CMD_TCP_LISTEN, para_count, para_arr, NULL, NULL) );
-
+  if( !sdep_n(SDEP_CMD_TCP_LISTEN, para_count, para_arr, NULL, NULL) )
+  {
+    free(_tcp_handle);
+    _tcp_handle = NULL;
+    return false;
+  }
   DBG_HEAP();
 
   return true;
 }
 
-bool AdafruitTCPServer::accept (void)
+AdafruitTCP AdafruitTCPServer::accept (void)
 {
+  if ( !_has_connect_request ) return AdafruitTCP();
 
+  // Accept the client connect request
+  if( !sdep(SDEP_CMD_TCP_ACCEPT, 4, &_tcp_handle, NULL, &response) ) return AdafruitTCP();
+  AdafruitTCP accepted_client = AdafruitTCP(_tcp_handle);
+
+  // Relisten to continue to serve other clients
+  (void) listen(false); // relisten : first_time = false
+
+  return accepted_client;
 }
 
-IPAddress AdafruitTCPServer::remoteIP ( void )
+void AdafruitTCPServer::stop ( void )
 {
-
-}
-
-uint16_t  AdafruitTCPServer::remotePort( void )
-{
-
+//  sdep_cmd_para_t para_arr[] =
+//  {
+//      { .len = 4 , .p_value = &_tcp_handle },
+//  };
+//  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 }
 
 //--------------------------------------------------------------------+
@@ -104,6 +133,7 @@ err_t adafruit_tcpserver_connect_callback(void* socket, void* p_tcpserver)
 
   DBG_LOCATION();
 
+  p_server->_has_connect_request = true;
   if (p_server->_connect_callback) p_server->_connect_callback();
 
   return ERROR_NONE;

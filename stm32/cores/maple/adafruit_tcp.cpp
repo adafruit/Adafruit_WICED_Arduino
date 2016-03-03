@@ -50,6 +50,15 @@ AdafruitTCP::AdafruitTCP(void)
   this->reset();
 }
 
+AdafruitTCP::AdafruitTCP ( tcp_handle_t handle )
+{
+  _rx_callback         = NULL;
+  _disconnect_callback = NULL;
+  this->reset();
+
+  _tcp_handle = handle;
+}
+
 /******************************************************************************/
 /*!
     @brief Destructor
@@ -69,6 +78,9 @@ AdafruitTCP::~AdafruitTCP()
 void AdafruitTCP::reset()
 {
   _tcp_handle       = NULL;
+  _remote_ip        = 0;
+  _remote_port      = 0;
+
   _bytesRead        = 0;
   _packet_buffering = false;
   _tls_verification = true;
@@ -80,23 +92,32 @@ bool AdafruitTCP::connect_internal ( uint8_t interface, uint32_t ipv4, uint16_t 
 {
   DBG_HEAP();
 
-   _tcp_handle = malloc_named("TCPClient", TCP_SOCKET_HANDLE_SIZE);
+  _remote_ip          = ipv4;
+  _remote_port        = port;
   uint8_t  tls_option = (is_tls && _tls_verification) ? TLS_VERIFICATION_REQUIRED : TLS_NO_VERIFICATION;
+
+  _tcp_handle = malloc_named("TCPClient", TCP_SOCKET_HANDLE_SIZE);
 
   sdep_cmd_para_t para_arr[] =
   {
       { .len = TCP_SOCKET_HANDLE_SIZE, .p_value = _tcp_handle },
 
-      { .len = 1, .p_value = &interface  },
-      { .len = 4, .p_value = &ipv4       },
-      { .len = 2, .p_value = &port       },
-      { .len = 4, .p_value = &_timeout   },
-      { .len = 1, .p_value = &is_tls     },
-      { .len = 1, .p_value = &tls_option },
+      { .len = 1, .p_value = &interface    },
+      { .len = 4, .p_value = &_remote_ip   },
+      { .len = 2, .p_value = &_remote_port },
+      { .len = 4, .p_value = &_timeout     },
+      { .len = 1, .p_value = &is_tls       },
+      { .len = 1, .p_value = &tls_option   },
   };
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
-  VERIFY(sdep_n(SDEP_CMD_TCP_CONNECT, para_count, para_arr, NULL, NULL));
+  if ( !sdep_n(SDEP_CMD_TCP_CONNECT, para_count, para_arr, NULL, NULL) )
+  {
+    free(_tcp_handle);
+    _tcp_handle = NULL;
+    return false;
+  }
+
   this->install_callback();
 
   DBG_HEAP();
@@ -169,6 +190,35 @@ uint8_t AdafruitTCP::connected()
   // TODO handle disconnection
   return ( _tcp_handle != NULL ) ? 1 : 0;
 }
+
+void AdafruitTCP::get_peer_info (void)
+{
+  struct ATTR_PACKED {
+    uint32_t remote_ip;
+    uint16_t remote_port;
+  } response;
+
+  if ( sdep(SDEP_CMD_TCP_PEER_INFO, 4, &_tcp_handle, NULL, &response) )
+  {
+    _remote_ip   = response.remote_ip;
+    _remote_port = response.remote_port;
+  }
+}
+
+IPAddress AdafruitTCP::remoteIP ( void )
+{
+  // only execute if remote IP is not available
+  if (_remote_ip == 0) get_peer_info();
+  return IPAddress(_remote_ip);
+}
+
+uint16_t  AdafruitTCP::remotePort ( void )
+{
+  // only execute if remote Port is not available
+  if (_remote_port == 0) get_peer_info();
+  return _remote_port;
+}
+
 
 /******************************************************************************/
 /*!
@@ -356,12 +406,13 @@ void AdafruitTCP::setDisconnectCallback( tcpcallback_t fp )
 /******************************************************************************/
 void AdafruitTCP::stop()
 {
-//  if ( !connected() ) return;
-
   DBG_HEAP();
+
+  if ( _tcp_handle == NULL) return;
 
   sdep(SDEP_CMD_TCP_DISCONNECT, 4, &_tcp_handle, NULL, NULL);
   free(_tcp_handle);
+
   this->reset();
 
   DBG_HEAP();

@@ -51,11 +51,8 @@ extern "C"
 class AdafruitTCPServer : public AdafruitSDEP
 {
 public:
-  enum
-  {
-    TCP_SOCKET_HANDLE_SIZE = AdafruitTCP::TCP_SOCKET_HANDLE_SIZE
-  };
-
+  enum { TCP_SOCKET_HANDLE_SIZE = AdafruitTCP::TCP_SOCKET_HANDLE_SIZE };
+  typedef void* tcp_handle_t;
   typedef void (*tcpserver_callback_t)(void);
 
   AdafruitTCPServer(void);
@@ -64,13 +61,14 @@ public:
 
   // Server API
 
-  virtual bool      begin      (uint16_t port);
-  virtual bool      accept     ( void );
-  virtual IPAddress remoteIP   ( void );
-  virtual uint16_t  remotePort ( void );
+  virtual bool        begin      (uint16_t port);
+  virtual AdafruitTCP accept     ( void );
+  virtual void        stop       ( void );
 
 protected:
-  void* _tcp_handle;
+  tcp_handle_t _tcp_handle;
+  bool _has_connect_request;
+  uint16_t _port;
 
   tcpserver_callback_t _connect_callback;
 
@@ -78,6 +76,8 @@ protected:
   void const * _tls_private_key;
   void const * _tls_certificate;
   uint32_t     _tls_certlen;
+
+  bool listen (bool first_time);
 
 public:
   friend err_t adafruit_tcpserver_connect_callback   (void* socket, void* p_tcpserver);

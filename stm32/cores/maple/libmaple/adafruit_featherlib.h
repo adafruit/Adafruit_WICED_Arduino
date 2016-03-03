@@ -86,17 +86,15 @@ typedef struct ATTR_ALIGNED(512)
   void (*wifi_disconnect_callback )(void);
   uint32_t RESERVED_[2];
 
+  err_t (*tcpserver_connect_callback    )(void* socket, void* p_tcpserver);
   err_t (*tcp_receive_callback          )(void* socket, void* p_tcp);
   err_t (*tcp_disconnect_callback       )(void* socket, void* p_tcp);
-  uint32_t RESERVED_[2];
-
-  err_t (*tcpserver_connect_callback    )(void* socket, void* p_tcpserver);
-  err_t (*tcpserver_receive_callback    )(void* socket, void* p_tcpserver);
-  err_t (*tcpserver_disconnect_callback )(void* socket, void* p_tcpserver);
-  uint32_t RESERVED_;
+  uint32_t RESERVED_[1];
 
   err_t (*udp_receive_callback          )(void* socket, void* p_udp);
   uint32_t RESERVED_[3];
+
+  uint32_t RESERVED_[4];
 
   // 256 - 512
   uint32_t RESERVED_[64];

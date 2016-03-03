@@ -58,6 +58,7 @@ public:
   typedef void* tcp_handle_t;
   typedef void (*tcpcallback_t)(void);
 
+  AdafruitTCP ( tcp_handle_t handle );
   AdafruitTCP ( void );
   virtual ~AdafruitTCP();
 
@@ -68,13 +69,15 @@ public:
   void     tlsRequireVerification (bool required) { _tls_verification = required; }
 
   // Client API
-  virtual int      connect    ( IPAddress ip, uint16_t port );
-  virtual int      connect    ( const char * host, uint16_t port );
-  virtual int      connectSSL ( IPAddress ip, uint16_t port );
-  virtual int      connectSSL ( const char* host, uint16_t port );
-  virtual uint8_t  connected  ( void );
-  virtual void     stop       ( void );
-  void             disconnect ( void ) { stop(); }
+  virtual int       connect    ( IPAddress ip, uint16_t port );
+  virtual int       connect    ( const char * host, uint16_t port );
+  virtual int       connectSSL ( IPAddress ip, uint16_t port );
+  virtual int       connectSSL ( const char* host, uint16_t port );
+  virtual uint8_t   connected  ( void );
+  virtual void      stop       ( void );
+  void              disconnect ( void ) { stop(); }
+  virtual IPAddress remoteIP   ( void );
+  virtual uint16_t  remotePort ( void );
 
   // Stream API
   virtual int      read       ( void );
@@ -101,6 +104,8 @@ protected:
   uint32_t     _bytesRead;
 
   bool         _tls_verification;
+  uint32_t     _remote_ip;
+  uint16_t     _remote_port;
 
   // If enabled, data is written to a buffer until the network packet is full
   // (~1500 bytes) or until .flush() is called
@@ -114,6 +119,7 @@ protected:
   bool connect_internal ( uint8_t interface, uint32_t ipv4, uint16_t port, uint8_t is_tls);
   void install_callback ( void );
   void reset            ( void );
+  bool get_peer_info    ( void );
 };
 
 #endif
