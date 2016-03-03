@@ -55,16 +55,17 @@ class AdafruitTCP : public Client, public AdafruitSDEP
 {
 public:
   enum { TCP_SOCKET_HANDLE_SIZE = 400 }; // need (352+20) bytes, 28 more is reserved
+  typedef void* tcp_handle_t;
   typedef void (*tcpcallback_t)(void);
 
   AdafruitTCP ( void );
   virtual ~AdafruitTCP();
 
   void usePacketBuffering     ( bool enable );
-  uint32_t getHandle          ( void ) { return _tcp_handle; }
+  uint32_t getHandle          ( void ) { return (uint32_t) _tcp_handle; }
 
   void             tlsRequireVerification (bool required) { _tls_verification = required; }
-  virtual operator bool() { return _tcp_handle != 0; }
+  virtual operator bool() { return _tcp_handle != NULL; }
 
   // Client API
   virtual int      connect    ( IPAddress ip, uint16_t port );
@@ -96,10 +97,10 @@ public:
   friend err_t adafruit_tcp_disconnect_callback(void* socket, void* p_tcp);
 
 protected:
-  uint32_t  _tcp_handle;
-  uint32_t  _bytesRead;
+  tcp_handle_t _tcp_handle;
+  uint32_t     _bytesRead;
 
-  bool      _tls_verification;
+  bool         _tls_verification;
 
   // If enabled, data is written to a buffer until the network packet is full
   // (~1500 bytes) or until .flush() is called
@@ -110,6 +111,7 @@ protected:
   tcpcallback_t _rx_callback;
   tcpcallback_t _disconnect_callback;
 
+  bool connect_internal ( uint8_t interface, uint32_t ipv4, uint16_t port, uint8_t is_tls);
   void install_callback ( void );
   void reset            ( void );
 };

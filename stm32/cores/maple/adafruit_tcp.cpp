@@ -68,7 +68,7 @@ AdafruitTCP::~AdafruitTCP()
 /******************************************************************************/
 void AdafruitTCP::reset()
 {
-  _tcp_handle       = 0;
+  _tcp_handle       = NULL;
   _bytesRead        = 0;
   _packet_buffering = false;
   _tls_verification = true;
@@ -81,21 +81,11 @@ void AdafruitTCP::usePacketBuffering(bool enable)
   _packet_buffering = enable;
 }
 
-/******************************************************************************/
-/*!
-    @brief
-*/
-/******************************************************************************/
-int AdafruitTCP::connect(IPAddress ip, uint16_t port)
+bool AdafruitTCP::connect_internal ( uint8_t interface, uint32_t ipv4, uint16_t port, uint8_t is_tls)
 {
-  if ( !Feather.connected() ) return 0;
-
   DBG_HEAP();
 
-  uint8_t  interface  = WIFI_INTERFACE_STATION;
-  uint32_t ipv4       = (uint32_t) ip;
-  uint8_t  is_tls     = 0;
-  uint8_t  tls_option = _tls_verification ? TLS_VERIFICATION_REQUIRED : TLS_NO_VERIFICATION;
+  uint8_t  tls_option = (is_tls && _tls_verification) ? TLS_VERIFICATION_REQUIRED : TLS_NO_VERIFICATION;
 
   sdep_cmd_para_t para_arr[] =
   {
@@ -114,6 +104,17 @@ int AdafruitTCP::connect(IPAddress ip, uint16_t port)
   DBG_HEAP();
 
   return true;
+}
+
+/******************************************************************************/
+/*!
+    @brief
+*/
+/******************************************************************************/
+int AdafruitTCP::connect(IPAddress ip, uint16_t port)
+{
+  if ( !Feather.connected() ) return 0;
+  return connect_internal(WIFI_INTERFACE_STATION, (uint32_t) ip, port, false);
 }
 
 /******************************************************************************/
@@ -144,30 +145,7 @@ int AdafruitTCP::connectSSL(IPAddress ip, uint16_t port)
     VERIFY( Feather.initRootCA() );
   }
 
-  DBG_HEAP();
-
-  uint8_t  interface  = WIFI_INTERFACE_STATION;
-  uint32_t ipv4       = (uint32_t) ip;
-  uint8_t  is_tls     = 1;
-  uint8_t  tls_option = _tls_verification ? TLS_VERIFICATION_REQUIRED : TLS_NO_VERIFICATION;
-
-  sdep_cmd_para_t para_arr[] =
-  {
-      { .len = 1, .p_value = &interface  },
-      { .len = 4, .p_value = &ipv4       },
-      { .len = 2, .p_value = &port       },
-      { .len = 4, .p_value = &_timeout   },
-      { .len = 1, .p_value = &is_tls     },
-      { .len = 1, .p_value = &tls_option },
-  };
-  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
-
-  VERIFY(sdep_n(SDEP_CMD_TCP_CONNECT, para_count , para_arr, NULL, &_tcp_handle));
-  this->install_callback();
-
-  DBG_HEAP();
-
-  return true;
+  return connect_internal(WIFI_INTERFACE_STATION, (uint32_t) ip, port, true);
 }
 
 /******************************************************************************/
@@ -191,7 +169,7 @@ uint8_t AdafruitTCP::connected()
 {
   // Handle not zero --> still connected
   // TODO handle disconnection
-  return ( _tcp_handle != 0 ) ? 1 : 0;
+  return ( _tcp_handle != NULL ) ? 1 : 0;
 }
 
 /******************************************************************************/
@@ -217,7 +195,7 @@ int AdafruitTCP::read()
 /******************************************************************************/
 int AdafruitTCP::read(uint8_t* buf, size_t size)
 {
-  if ( _tcp_handle == 0 ) return 0;
+  if ( !connected() ) return 0;
 
   uint16_t size16 = (uint16_t) size;
   sdep_cmd_para_t para_arr[] =
@@ -252,7 +230,7 @@ size_t AdafruitTCP::write( uint8_t b)
 /******************************************************************************/
 size_t AdafruitTCP::write(const uint8_t* content, size_t len)
 {
-  if (_tcp_handle == 0) return 0;
+  if ( !connected() ) return 0;
 
   sdep_cmd_para_t para_arr[] =
   {
@@ -276,7 +254,7 @@ size_t AdafruitTCP::write(const uint8_t* content, size_t len)
 /******************************************************************************/
 void AdafruitTCP::flush()
 {
-  if ( _tcp_handle == 0 ) return;
+  if ( !connected() ) return;
 
   // flush write
   sdep(SDEP_CMD_TCP_FLUSH, 4, &_tcp_handle, NULL, NULL);
@@ -292,7 +270,7 @@ void AdafruitTCP::flush()
 /******************************************************************************/
 int AdafruitTCP::available()
 {
-  if ( _tcp_handle == 0 ) return 0;
+  if ( !connected() ) return 0;
 
   int32_t result = 0;
   sdep(SDEP_CMD_TCP_AVAILABLE, 4, &_tcp_handle, NULL, &result);
@@ -307,7 +285,7 @@ int AdafruitTCP::available()
 /******************************************************************************/
 int AdafruitTCP::peek()
 {
-  if ( _tcp_handle == 0 ) return EOF;
+  if ( !connected() ) return EOF;
 
   sdep_cmd_para_t para_arr[] =
   {
@@ -380,7 +358,7 @@ void AdafruitTCP::setDisconnectCallback( tcpcallback_t fp )
 /******************************************************************************/
 void AdafruitTCP::stop()
 {
-  if ( _tcp_handle == 0 ) return;
+  if ( !connected() ) return;
 
   DBG_HEAP();
 
@@ -403,11 +381,7 @@ err_t adafruit_tcp_receive_callback(void* socket, void* p_tcp)
 {
   AdafruitTCP* pTCP = (AdafruitTCP*) p_tcp;
 
-  // Integrity check
-  if ( *((uint32_t*) pTCP->_tcp_handle) == ((uint32_t) socket) )
-  {
-    if (pTCP->_rx_callback) pTCP->_rx_callback();
-  }
+  if (pTCP->_rx_callback) pTCP->_rx_callback();
 
   return ERROR_NONE;
 }
@@ -421,12 +395,8 @@ err_t adafruit_tcp_disconnect_callback(void* socket, void* p_tcp)
 {
   AdafruitTCP* pTCP = (AdafruitTCP*) p_tcp;
 
-  // Integrity check
-  if ( *((uint32_t*) pTCP->_tcp_handle) == ((uint32_t) socket) )
-  {
-    // TODO set connected as false ???
-    if (pTCP->_disconnect_callback) pTCP->_disconnect_callback();
-  }
+  // TODO set connected as false ???
+  if (pTCP->_disconnect_callback) pTCP->_disconnect_callback();
 
   return ERROR_NONE;
 }
