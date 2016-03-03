@@ -39,6 +39,7 @@
 
 #include <Arduino.h>
 #include <Udp.h>
+#include "adafruit_sdep.h"
 
 #define ADAFRUIT_UDP_TIMEOUT  200
 

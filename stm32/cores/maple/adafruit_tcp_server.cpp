@@ -34,7 +34,18 @@
 */
 /**************************************************************************/
 
+#include "adafruit_feather.h"
 #include "adafruit_tcp_server.h"
+
+AdafruitTCPServer::AdafruitTCPServer(uint8_t max_clients)
+{
+  _max_clients = max_clients;
+  memclr(_tcpserver_handle, TCP_SERVER_HANDLE_SIZE);
+
+  _connect_callback    = NULL;
+  _rx_callback         = NULL;
+  _disconnect_callback = NULL;
+}
 
 bool AdafruitTCPServer::begin(uint16_t port)
 {
@@ -94,17 +105,13 @@ uint16_t  AdafruitTCPServer::remotePort( void )
     @brief This callback is invoked when there is a new connection request
 */
 /******************************************************************************/
-err_t adafruit_tcpserver_connect_callback(void* socket, void* p_tcp)
+err_t adafruit_tcpserver_connect_callback(void* socket, void* p_tcpserver)
 {
-  AdafruitTCPServer* pTCP = (AdafruitTCPServer*) p_tcp;
+  AdafruitTCPServer* p_server = (AdafruitTCPServer*) p_tcpserver;
 
   DBG_LOCATION();
 
-  // Integrity check
-//  if ( *((uint32_t*) pTCP->_tcp_handle) == ((uint32_t) socket) )
-//  {
-//    if (pTCP->_connect_callback) pTCP->_connect_callback();
-//  }
+  if (p_server->_connect_callback) p_server->_connect_callback();
 
   return ERROR_NONE;
 }
@@ -114,17 +121,13 @@ err_t adafruit_tcpserver_connect_callback(void* socket, void* p_tcp)
     @brief This callback is invoked when there is data received
 */
 /******************************************************************************/
-err_t adafruit_tcpserver_receive_callback(void* socket, void* p_tcp)
+err_t adafruit_tcpserver_receive_callback(void* socket, void* p_tcpserver)
 {
-  AdafruitTCPServer* pTCP = (AdafruitTCPServer*) p_tcp;
+  AdafruitTCPServer* p_server = (AdafruitTCPServer*) p_tcpserver;
 
   DBG_LOCATION();
 
-  // Integrity check
-//  if ( *((uint32_t*) pTCP->_tcp_handle) == ((uint32_t) socket) )
-//  {
-//    if (pTCP->_rx_callback) pTCP->_rx_callback();
-//  }
+  if (p_server->_rx_callback) p_server->_rx_callback();
 
   return ERROR_NONE;
 }
@@ -134,17 +137,13 @@ err_t adafruit_tcpserver_receive_callback(void* socket, void* p_tcp)
     @brief This callback is invoked when tcp is disconnected
 */
 /******************************************************************************/
-err_t adafruit_tcpserver_disconnect_callback(void* socket, void* p_tcp)
+err_t adafruit_tcpserver_disconnect_callback(void* socket, void* p_tcpserver)
 {
-  AdafruitTCPServer* pTCP = (AdafruitTCPServer*) p_tcp;
+  AdafruitTCPServer* p_server = (AdafruitTCPServer*) p_tcpserver;
 
   DBG_LOCATION();
-  // Integrity check
-//  if ( *((uint32_t*) pTCP->_tcp_handle) == ((uint32_t) socket) )
-//  {
-//    // TODO set connected as false ???
-//    if (pTCP->_disconnect_callback) pTCP->_disconnect_callback();
-//  }
+  // TODO set connected as false ???
+  if (p_server->_disconnect_callback) p_server->_disconnect_callback();
 
   return ERROR_NONE;
 }

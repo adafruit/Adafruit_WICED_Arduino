@@ -40,7 +40,7 @@
 #include <Arduino.h>
 #include <Client.h>
 #include <IPAddress.h>
-#include "adafruit_feather.h"
+#include "adafruit_sdep.h"
 
 #define ADAFRUIT_TCP_TIMEOUT  1000
 
@@ -54,6 +54,7 @@ extern "C"
 class AdafruitTCP : public Client, public AdafruitSDEP
 {
 public:
+  enum { TCP_SOCKET_HANDLE_SIZE = 368 }; // need 352 bytes, 16 more is reserved
   typedef void (*tcpcallback_t)(void);
 
   AdafruitTCP ( void );
@@ -95,7 +96,6 @@ public:
   friend err_t adafruit_tcp_disconnect_callback(void* socket, void* p_tcp);
 
 protected:
-  enum { TCP_SOCKET_HANDLE_SIZE = 368 };
   uint32_t  _tcp_handle;
   uint32_t  _bytesRead;
 

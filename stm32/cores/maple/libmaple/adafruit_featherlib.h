@@ -90,9 +90,9 @@ typedef struct ATTR_ALIGNED(512)
   err_t (*tcp_disconnect_callback       )(void* socket, void* p_tcp);
   uint32_t RESERVED_[2];
 
-  err_t (*tcpserver_connect_callback    )(void* socket, void* p_tcp);
-  err_t (*tcpserver_receive_callback    )(void* socket, void* p_tcp);
-  err_t (*tcpserver_disconnect_callback )(void* socket, void* p_tcp);
+  err_t (*tcpserver_connect_callback    )(void* socket, void* p_tcpserver);
+  err_t (*tcpserver_receive_callback    )(void* socket, void* p_tcpserver);
+  err_t (*tcpserver_disconnect_callback )(void* socket, void* p_tcpserver);
   uint32_t RESERVED_;
 
   err_t (*udp_receive_callback          )(void* socket, void* p_udp);

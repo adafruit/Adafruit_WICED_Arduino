@@ -40,30 +40,28 @@
 #include <Arduino.h>
 #include <Client.h>
 #include <IPAddress.h>
-#include "adafruit_feather.h"
+#include "adafruit_sdep.h"
 
 // Callback proxy from Featherlib
 extern "C"
 {
-  err_t adafruit_tcpserver_connect_callback    (void* arg, void* p_tcp);
-  err_t adafruit_tcpserver_receive_callback    (void* arg, void* p_tcp);
-  err_t adafruit_tcpserver_disconnect_callback (void* arg, void* p_tcp);
+  err_t adafruit_tcpserver_connect_callback    (void* arg, void* p_tcpserver);
+  err_t adafruit_tcpserver_receive_callback    (void* arg, void* p_tcpserver);
+  err_t adafruit_tcpserver_disconnect_callback (void* arg, void* p_tcpserver);
 }
 
 class AdafruitTCPServer : public AdafruitSDEP
 {
 public:
+  enum
+  {
+    TCP_SERVER_HANDLE_SIZE = 32, // need 24, 8 more is for reserved
+    TCP_SERVER_SOCKET_SIZE = AdafruitTCP::TCP_SOCKET_HANDLE_SIZE + 12, // 380 in total, 12 byte for overhead
+  };
+
   typedef void (*tcpserver_callback_t)(void);
 
-  AdafruitTCPServer(uint8_t max_clients)
-  {
-    _max_clients = max_clients;
-    memclr(_tcpserver_handle, TCP_SERVER_HANDLE_SIZE);
-
-    _connect_callback    = NULL;
-    _rx_callback         = NULL;
-    _disconnect_callback = NULL;
-  }
+  AdafruitTCPServer(uint8_t max_clients);
 
   void setConnectCallback    (tcpserver_callback_t fp) { _connect_callback    = fp; }
   void setDisconnectCallback (tcpserver_callback_t fp) { _disconnect_callback = fp; }
@@ -77,8 +75,6 @@ public:
   virtual uint16_t  remotePort ( void );
 
 protected:
-  enum { TCP_SERVER_HANDLE_SIZE = 32 };
-
   uint8_t   _tcpserver_handle[TCP_SERVER_HANDLE_SIZE];
   uint8_t   _max_clients;
 
@@ -87,9 +83,9 @@ protected:
   tcpserver_callback_t _disconnect_callback;
 public:
   // Callback
-  friend err_t adafruit_tcpserver_connect_callback(void* socket, void* p_tcp);
-  friend err_t adafruit_tcpserver_receive_callback(void* socket, void* p_tcp);
-  friend err_t adafruit_tcpserver_disconnect_callback(void* socket, void* p_tcp);
+  friend err_t adafruit_tcpserver_connect_callback   (void* socket, void* p_tcpserver);
+  friend err_t adafruit_tcpserver_receive_callback   (void* socket, void* p_tcpserver);
+  friend err_t adafruit_tcpserver_disconnect_callback(void* socket, void* p_tcpserver);
 
 };
 
