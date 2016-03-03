@@ -32,7 +32,7 @@ void connect_request_callback(void)
   uint8_t buffer[256];
   uint16_t len;
   
-  AdafruitTCP client = tcpserver.available();
+  AdafruitTCP client = tcpserver.accept();
 
   if ( client )
   {
