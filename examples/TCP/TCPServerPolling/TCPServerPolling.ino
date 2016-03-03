@@ -21,39 +21,6 @@
 
 AdafruitTCPServer tcpserver(PORT);
 
-/**************************************************************************/
-/*!
-    @brief  This callback is fired when there is an connection request from
-    a client. Use accept() to allow connection establishment and retrieve client
-*/
-/**************************************************************************/
-void connect_request_callback(void)
-{
-  uint8_t buffer[256];
-  uint16_t len;
-  
-  AdafruitTCP client = tcpserver.accept();
-
-  if ( client )
-  {
-    // read data
-    len = client.read(buffer, 256);
-
-    // Print data along with peer's info
-    Serial.print("[RX] from "); 
-    Serial.print(client.remoteIP());
-    Serial.printf(" port %d : ", client.remotePort());
-    Serial.write(buffer, len);
-    Serial.println();
-
-    // Echo back
-    client.write(buffer, len);
-
-    // call stop() to free memory by Client
-    client.stop();
-  }
-  
-}
 
 /**************************************************************************/
 /*!
@@ -83,9 +50,6 @@ void setup()
   // Tell the TCP Server to auto print error codes and halt on errors
   tcpserver.err_actions(true, true);
 
-  // Setup callbacks: must be done before begin()
-  tcpserver.setConnectCallback(connect_request_callback);
-
   // Starting server at defined port
   tcpserver.begin();
 
@@ -99,6 +63,29 @@ void setup()
 /**************************************************************************/
 void loop()
 {
+  uint8_t buffer[256];
+  uint16_t len;
+  
+  AdafruitTCP client = tcpserver.available();
+
+  if ( client )
+  {
+    // read data
+    len = client.read(buffer, 256);
+
+    // Print data along with peer's info
+    Serial.print("[RX] from "); 
+    Serial.print(client.remoteIP());
+    Serial.printf(" port %d : ", client.remotePort());
+    Serial.write(buffer, len);
+    Serial.println();
+
+    // Echo back
+    client.write(buffer, len);
+
+    // call stop() to free memory by Client
+    client.stop();
+  }  
 }
 
 /**************************************************************************/
