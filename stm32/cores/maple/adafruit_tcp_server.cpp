@@ -39,9 +39,8 @@
 
 AdafruitTCPServer::AdafruitTCPServer(void)
 {
+  _tcp_handle = NULL;
   _connect_callback    = NULL;
-//  _rx_callback         = NULL;
-//  _disconnect_callback = NULL;
 
   _tls_private_key = NULL;
   _tls_certificate = NULL;
@@ -60,10 +59,11 @@ bool AdafruitTCPServer::begin(uint16_t port)
   sdep_cmd_para_t para_arr[] =
   {
       { .len = TCP_SOCKET_HANDLE_SIZE , .p_value = _tcp_handle         },
-      { .len = 1                      , .p_value = &interface          },
-      { .len = 2                      , .p_value = &port               },
-      { .len = 4                      , .p_value = &this_value         },
-      { .len = 1                      , .p_value = &connect_enabled    },
+
+      { .len = 1 , .p_value = &interface          },
+      { .len = 2 , .p_value = &port               },
+      { .len = 4 , .p_value = &this_value         },
+      { .len = 1 , .p_value = &connect_enabled    },
   };
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 

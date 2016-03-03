@@ -76,19 +76,17 @@ void AdafruitTCP::reset()
   _timeout          = ADAFRUIT_TCP_TIMEOUT;
 }
 
-void AdafruitTCP::usePacketBuffering(bool enable)
-{
-  _packet_buffering = enable;
-}
-
 bool AdafruitTCP::connect_internal ( uint8_t interface, uint32_t ipv4, uint16_t port, uint8_t is_tls)
 {
   DBG_HEAP();
 
+   _tcp_handle = malloc_named("TCPClient", TCP_SOCKET_HANDLE_SIZE);
   uint8_t  tls_option = (is_tls && _tls_verification) ? TLS_VERIFICATION_REQUIRED : TLS_NO_VERIFICATION;
 
   sdep_cmd_para_t para_arr[] =
   {
+      { .len = TCP_SOCKET_HANDLE_SIZE, .p_value = _tcp_handle },
+
       { .len = 1, .p_value = &interface  },
       { .len = 4, .p_value = &ipv4       },
       { .len = 2, .p_value = &port       },
@@ -98,7 +96,7 @@ bool AdafruitTCP::connect_internal ( uint8_t interface, uint32_t ipv4, uint16_t 
   };
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
-  VERIFY(sdep_n(SDEP_CMD_TCP_CONNECT, para_count, para_arr, NULL, &_tcp_handle));
+  VERIFY(sdep_n(SDEP_CMD_TCP_CONNECT, para_count, para_arr, NULL, NULL));
   this->install_callback();
 
   DBG_HEAP();
@@ -358,11 +356,12 @@ void AdafruitTCP::setDisconnectCallback( tcpcallback_t fp )
 /******************************************************************************/
 void AdafruitTCP::stop()
 {
-  if ( !connected() ) return;
+//  if ( !connected() ) return;
 
   DBG_HEAP();
 
   sdep(SDEP_CMD_TCP_DISCONNECT, 4, &_tcp_handle, NULL, NULL);
+  free(_tcp_handle);
   this->reset();
 
   DBG_HEAP();

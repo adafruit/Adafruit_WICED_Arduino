@@ -61,11 +61,11 @@ public:
   AdafruitTCP ( void );
   virtual ~AdafruitTCP();
 
-  void usePacketBuffering     ( bool enable );
-  uint32_t getHandle          ( void ) { return (uint32_t) _tcp_handle; }
-
-  void             tlsRequireVerification (bool required) { _tls_verification = required; }
   virtual operator bool() { return _tcp_handle != NULL; }
+
+  void     usePacketBuffering     ( bool enable ) { _packet_buffering = enable; }
+  uint32_t getHandle              ( void        ) { return (uint32_t) _tcp_handle; }
+  void     tlsRequireVerification (bool required) { _tls_verification = required; }
 
   // Client API
   virtual int      connect    ( IPAddress ip, uint16_t port );
