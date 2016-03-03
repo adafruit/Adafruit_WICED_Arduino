@@ -62,7 +62,8 @@ public:
   // Server API
 
   virtual bool        begin    ( void );
-  virtual AdafruitTCP available( void );
+  virtual AdafruitTCP accept   ( void );
+  virtual AdafruitTCP available( void ) { return this->accept(); }
   virtual void        stop     ( void );
 
 protected:

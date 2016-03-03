@@ -70,7 +70,7 @@ bool AdafruitTCPServer::listen(bool first_time)
   uint8_t  interface  = WIFI_INTERFACE_STATION;
   uint32_t this_value = (uint32_t) this;
 
-  _tcp_handle = malloc_named("TCPServer", TCP_SOCKET_HANDLE_SIZE);
+  _tcp_handle = malloc_named("TCP Server", TCP_SOCKET_HANDLE_SIZE);
 
   sdep_cmd_para_t para_arr[] =
   {
@@ -94,13 +94,15 @@ bool AdafruitTCPServer::listen(bool first_time)
   return true;
 }
 
-AdafruitTCP AdafruitTCPServer::available (void)
+AdafruitTCP AdafruitTCPServer::accept (void)
 {
   if ( !_has_connect_request ) return AdafruitTCP();
 
   // Accept the client connect request
   if( !sdep(SDEP_CMD_TCP_ACCEPT, 4, &_tcp_handle, NULL, NULL) ) return AdafruitTCP();
   AdafruitTCP accepted_client = AdafruitTCP(_tcp_handle);
+
+  _has_connect_request = false;
 
   // Relisten to continue to serve other clients
   (void) listen(false); // relisten : first_time = false
