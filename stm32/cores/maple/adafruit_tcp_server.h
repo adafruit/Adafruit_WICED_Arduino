@@ -61,9 +61,9 @@ public:
 
   // Server API
 
-  virtual bool        begin      ( void );
-  virtual AdafruitTCP accept     ( void );
-  virtual void        stop       ( void );
+  virtual bool        begin    ( void );
+  virtual AdafruitTCP available( void );
+  virtual void        stop     ( void );
 
 protected:
   tcp_handle_t _tcp_handle;

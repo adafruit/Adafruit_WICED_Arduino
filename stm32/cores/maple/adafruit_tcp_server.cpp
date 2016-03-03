@@ -94,7 +94,7 @@ bool AdafruitTCPServer::listen(bool first_time)
   return true;
 }
 
-AdafruitTCP AdafruitTCPServer::accept (void)
+AdafruitTCP AdafruitTCPServer::available (void)
 {
   if ( !_has_connect_request ) return AdafruitTCP();
 
@@ -110,11 +110,14 @@ AdafruitTCP AdafruitTCPServer::accept (void)
 
 void AdafruitTCPServer::stop ( void )
 {
-//  sdep_cmd_para_t para_arr[] =
-//  {
-//      { .len = 4 , .p_value = &_tcp_handle },
-//  };
-//  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
+  DBG_HEAP();
+
+  if ( _tcp_handle == NULL) return;
+
+  sdep(SDEP_CMD_TCP_DISCONNECT, 4, &_tcp_handle, NULL, NULL);
+  free(_tcp_handle);
+
+  DBG_HEAP();
 }
 
 //--------------------------------------------------------------------+
