@@ -14,8 +14,8 @@
 
 #include <adafruit_feather.h>
 
-#define WLAN_SSID            "thach"
-#define WLAN_PASS            "thach367"
+#define WLAN_SSID            "yourSSID"
+#define WLAN_PASS            "yourPass"
 
 #define PORT                 80                     // The TCP port to use
 
