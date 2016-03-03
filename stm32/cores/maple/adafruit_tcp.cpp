@@ -412,6 +412,11 @@ err_t adafruit_tcp_receive_callback(void* socket, void* p_tcp)
   return ERROR_NONE;
 }
 
+/******************************************************************************/
+/*!
+    @brief This callback is invoked when tcp is disconnected
+*/
+/******************************************************************************/
 err_t adafruit_tcp_disconnect_callback(void* socket, void* p_tcp)
 {
   AdafruitTCP* pTCP = (AdafruitTCP*) p_tcp;
@@ -426,15 +431,3 @@ err_t adafruit_tcp_disconnect_callback(void* socket, void* p_tcp)
   return ERROR_NONE;
 }
 
-err_t adafruit_tcp_connect_callback(void* socket, void* p_tcp)
-{
-  AdafruitTCP* pTCP = (AdafruitTCP*) p_tcp;
-
-  // Integrity check
-  if ( *((uint32_t*) pTCP->_tcp_handle) == ((uint32_t) socket) )
-  {
-    if (pTCP->_connect_callback) pTCP->_connect_callback();
-  }
-
-  return ERROR_NONE;
-}

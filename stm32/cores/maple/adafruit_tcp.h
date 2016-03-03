@@ -47,7 +47,6 @@
 // Callback proxy from Featherlib
 extern "C"
 {
-  err_t adafruit_tcp_connect_callback    (void* arg, void* p_tcp);
   err_t adafruit_tcp_receive_callback    (void* arg, void* p_tcp);
   err_t adafruit_tcp_disconnect_callback (void* arg, void* p_tcp);
 }
@@ -92,11 +91,11 @@ public:
   void setReceivedCallback    ( tcpcallback_t fp );
   void setDisconnectCallback  ( tcpcallback_t fp );
 
-  friend err_t adafruit_tcp_connect_callback(void* socket, void* p_tcp);
   friend err_t adafruit_tcp_receive_callback(void* socket, void* p_tcp);
   friend err_t adafruit_tcp_disconnect_callback(void* socket, void* p_tcp);
 
 protected:
+  enum { TCP_SOCKET_HANDLE_SIZE = 368 };
   uint32_t  _tcp_handle;
   uint32_t  _bytesRead;
 
