@@ -39,23 +39,43 @@
 
 /******************************************************************************/
 /*!
-    @brief Instantiates a new instance of the AdafruitTCP class
+    @brief
+*/
+/******************************************************************************/
+void AdafruitTCP::reset()
+{
+  _tcp_handle          = NULL;
+  _tls_context         = NULL;
+
+  _tls_verification    = true;
+  _bytesRead           = 0;
+  _remote_ip           = 0;
+  _remote_port         = 0;
+  _packet_buffering    = false;
+
+  _timeout             = ADAFRUIT_TCP_TIMEOUT;
+  _rx_callback         = NULL;
+  _disconnect_callback = NULL;
+}
+
+/******************************************************************************/
+/*!
+    @brief Constructor
 */
 /******************************************************************************/
 AdafruitTCP::AdafruitTCP(void)
 {
-  _rx_callback         = NULL;
-  _disconnect_callback = NULL;
-
   this->reset();
 }
 
+/******************************************************************************/
+/*!
+    @brief Constructor from an tcp handle
+*/
+/******************************************************************************/
 AdafruitTCP::AdafruitTCP ( tcp_handle_t handle )
 {
-  _rx_callback         = NULL;
-  _disconnect_callback = NULL;
   this->reset();
-
   _tcp_handle = handle;
 }
 
@@ -69,45 +89,38 @@ AdafruitTCP::~AdafruitTCP()
   // TODO close and free all resource
 }
 
-
 /******************************************************************************/
 /*!
-    @brief
+    @brief Internal function
 */
 /******************************************************************************/
-void AdafruitTCP::reset()
-{
-  _tcp_handle       = NULL;
-  _remote_ip        = 0;
-  _remote_port      = 0;
-
-  _bytesRead        = 0;
-  _packet_buffering = false;
-  _tls_verification = true;
-
-  _timeout          = ADAFRUIT_TCP_TIMEOUT;
-}
-
 bool AdafruitTCP::connect_internal ( uint8_t interface, uint32_t ipv4, uint16_t port, uint8_t is_tls)
 {
   DBG_HEAP();
 
+  uint8_t  tls_option = (is_tls && _tls_verification) ? TLS_VERIFICATION_REQUIRED : TLS_NO_VERIFICATION;
   _remote_ip          = ipv4;
   _remote_port        = port;
-  uint8_t  tls_option = (is_tls && _tls_verification) ? TLS_VERIFICATION_REQUIRED : TLS_NO_VERIFICATION;
 
-  _tcp_handle = malloc_named("TCPClient", TCP_SOCKET_HANDLE_SIZE);
+  _tcp_handle = malloc_named("TCP Client", TCP_SOCKET_HANDLE_SIZE);
+
+  if (is_tls)
+  {
+    _tls_context = malloc_named("TCP TLS", TCP_TLS_CONEXT_SIZE);
+  }
 
   sdep_cmd_para_t para_arr[] =
   {
-      { .len = TCP_SOCKET_HANDLE_SIZE, .p_value = _tcp_handle },
+      { .len = TCP_SOCKET_HANDLE_SIZE , .p_value = _tcp_handle   },
 
-      { .len = 1, .p_value = &interface    },
-      { .len = 4, .p_value = &_remote_ip   },
-      { .len = 2, .p_value = &_remote_port },
-      { .len = 4, .p_value = &_timeout     },
-      { .len = 1, .p_value = &is_tls       },
-      { .len = 1, .p_value = &tls_option   },
+      { .len = 1                      , .p_value = &interface    },
+      { .len = 4                      , .p_value = &_remote_ip   },
+      { .len = 2                      , .p_value = &_remote_port },
+      { .len = 4                      , .p_value = &_timeout     },
+      { .len = 1                      , .p_value = &is_tls       },
+      { .len = 1                      , .p_value = &tls_option   },
+
+      { .len = TCP_TLS_CONEXT_SIZE    , .p_value = _tls_context  },
   };
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
@@ -412,8 +425,7 @@ void AdafruitTCP::stop()
 
   sdep(SDEP_CMD_TCP_DISCONNECT, 4, &_tcp_handle, NULL, NULL);
   free(_tcp_handle);
-
-  this->reset();
+  if (_tls_context) free(_tls_context);
 
   DBG_HEAP();
 }

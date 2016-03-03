@@ -54,7 +54,10 @@ extern "C"
 class AdafruitTCP : public Client, public AdafruitSDEP
 {
 public:
-  enum { TCP_SOCKET_HANDLE_SIZE = 400 }; // need (352+20) bytes, 28 more is reserved
+  enum {
+    TCP_SOCKET_HANDLE_SIZE = 400, // need only (352+20) bytes, extra for reserved
+    TCP_TLS_CONEXT_SIZE    = 2600 // need 2588 bytes, extra for reserved
+  };
   typedef void* tcp_handle_t;
   typedef void (*tcpcallback_t)(void);
 
@@ -101,16 +104,17 @@ public:
 
 protected:
   tcp_handle_t _tcp_handle;
+  void*        _tls_context;
+  bool         _tls_verification;
   uint32_t     _bytesRead;
 
-  bool         _tls_verification;
   uint32_t     _remote_ip;
   uint16_t     _remote_port;
 
   // If enabled, data is written to a buffer until the network packet is full
   // (~1500 bytes) or until .flush() is called
   // Default = false (buffering disabled)
-  bool     _packet_buffering;
+  bool          _packet_buffering;
 
   // Callback prototypes
   tcpcallback_t _rx_callback;
