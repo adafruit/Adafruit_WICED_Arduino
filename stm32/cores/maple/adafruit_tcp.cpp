@@ -191,7 +191,7 @@ uint8_t AdafruitTCP::connected()
   return ( _tcp_handle != NULL ) ? 1 : 0;
 }
 
-void AdafruitTCP::get_peer_info (void)
+void AdafruitTCP::get_peer_info(void)
 {
   struct ATTR_PACKED {
     uint32_t remote_ip;

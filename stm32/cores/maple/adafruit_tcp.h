@@ -119,7 +119,7 @@ protected:
   bool connect_internal ( uint8_t interface, uint32_t ipv4, uint16_t port, uint8_t is_tls);
   void install_callback ( void );
   void reset            ( void );
-  bool get_peer_info    ( void );
+  void get_peer_info    ( void );
 };
 
 #endif

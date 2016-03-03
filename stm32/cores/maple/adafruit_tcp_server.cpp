@@ -100,7 +100,7 @@ AdafruitTCP AdafruitTCPServer::accept (void)
   if ( !_has_connect_request ) return AdafruitTCP();
 
   // Accept the client connect request
-  if( !sdep(SDEP_CMD_TCP_ACCEPT, 4, &_tcp_handle, NULL, &response) ) return AdafruitTCP();
+  if( !sdep(SDEP_CMD_TCP_ACCEPT, 4, &_tcp_handle, NULL, NULL) ) return AdafruitTCP();
   AdafruitTCP accepted_client = AdafruitTCP(_tcp_handle);
 
   // Relisten to continue to serve other clients
