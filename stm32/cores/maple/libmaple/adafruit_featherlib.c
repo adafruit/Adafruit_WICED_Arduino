@@ -61,7 +61,7 @@ extern err_t adafruit_udp_receive_callback(void* socket, void* p_udp);
 ATTR_USED adafruit_arduino_t const adafruit_arduino =
 {
     .arduino_magic       = CFG_ARDUINO_CODE_MAGIC,
-    .version_str         = CFG_ARUDINO_CODE_VERSION,
+    .version_str         = CFG_ARDUINO_CODE_VERSION,
     .startup             = start_c,
 
     .cdc_serial_event_cb = USBSerial_callback,
