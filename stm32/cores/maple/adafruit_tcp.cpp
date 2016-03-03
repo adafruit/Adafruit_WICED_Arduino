@@ -106,7 +106,7 @@ bool AdafruitTCP::connect_internal ( uint8_t interface, uint32_t ipv4, uint16_t 
 
   if (is_tls)
   {
-    _tls_context = malloc_named("TCP TLS", TCP_TLS_CONEXT_SIZE);
+    _tls_context = malloc_named("TCP TLS", TCP_TLS_CONTEXT_SIZE);
   }
 
   sdep_cmd_para_t para_arr[] =
@@ -120,7 +120,7 @@ bool AdafruitTCP::connect_internal ( uint8_t interface, uint32_t ipv4, uint16_t 
       { .len = 1                      , .p_value = &is_tls       },
       { .len = 1                      , .p_value = &tls_option   },
 
-      { .len = TCP_TLS_CONEXT_SIZE    , .p_value = _tls_context  },
+      { .len = TCP_TLS_CONTEXT_SIZE    , .p_value = _tls_context  },
   };
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
