@@ -53,7 +53,7 @@ void setup()
   // Starting server at defined port
   tcpserver.begin();
 
-  Serial.print("Listenning on port "); Serial.println(PORT);
+  Serial.print("Listening on port "); Serial.println(PORT);
 }
 
 /**************************************************************************/
