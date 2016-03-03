@@ -218,6 +218,7 @@ typedef enum {
   SDEP_CMD_TCP_PEEK            = 0x0706,    ///< Peek at byte data from TCP stream socket
   SDEP_CMD_TCP_STATUS          = 0x0707,    ///< Get status of TCP stream socket
   SDEP_CMD_TCP_SET_CALLBACK    = 0x0708,    ///< Set callback function for TCP connection
+  SDEP_CMD_TCP_LISTEN          = 0x0709,
 
   // UDP Commands
   SDEP_CMD_UDP_CREATE          = 0x0800,    ///< Create UDP socket

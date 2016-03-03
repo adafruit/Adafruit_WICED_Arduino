@@ -38,7 +38,36 @@
 
 bool AdafruitTCPServer::begin(uint16_t port)
 {
+  DBG_HEAP();
 
+  uint8_t  interface      = WIFI_INTERFACE_STATION;
+
+  uint32_t this_value     = (uint32_t) this;
+  bool connect_enabled    = true;
+  bool rx_enabled         = true;
+  bool disconnect_enabled = true;
+
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = 4, .p_value = &_tcpserver_handle  },
+      { .len = 1, .p_value = &interface          },
+      { .len = 2, .p_value = &port               },
+      { .len = 1, .p_value = &_max_clients       },
+      { .len = 0, .p_value = NULL                },
+      { .len = 4, .p_value = &this_value         },
+      { .len = 1, .p_value = &connect_enabled    },
+      { .len = 1, .p_value = &rx_enabled         },
+      { .len = 1, .p_value = &disconnect_enabled },
+      { .len = 0, .p_value = NULL                },
+      { .len = 0, .p_value = NULL                },
+  };
+  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
+
+  VERIFY( sdep_n(SDEP_CMD_TCP_LISTEN, para_count, para_arr, NULL, NULL) );
+
+  DBG_HEAP();
+
+  return true;
 }
 
 bool AdafruitTCPServer::accept (uint32_t timeout)
@@ -69,6 +98,8 @@ err_t adafruit_tcpserver_connect_callback(void* socket, void* p_tcp)
 {
   AdafruitTCPServer* pTCP = (AdafruitTCPServer*) p_tcp;
 
+  DBG_LOCATION();
+
   // Integrity check
 //  if ( *((uint32_t*) pTCP->_tcp_handle) == ((uint32_t) socket) )
 //  {
@@ -86,6 +117,8 @@ err_t adafruit_tcpserver_connect_callback(void* socket, void* p_tcp)
 err_t adafruit_tcpserver_receive_callback(void* socket, void* p_tcp)
 {
   AdafruitTCPServer* pTCP = (AdafruitTCPServer*) p_tcp;
+
+  DBG_LOCATION();
 
   // Integrity check
 //  if ( *((uint32_t*) pTCP->_tcp_handle) == ((uint32_t) socket) )
@@ -105,6 +138,7 @@ err_t adafruit_tcpserver_disconnect_callback(void* socket, void* p_tcp)
 {
   AdafruitTCPServer* pTCP = (AdafruitTCPServer*) p_tcp;
 
+  DBG_LOCATION();
   // Integrity check
 //  if ( *((uint32_t*) pTCP->_tcp_handle) == ((uint32_t) socket) )
 //  {

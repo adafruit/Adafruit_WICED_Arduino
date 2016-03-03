@@ -107,7 +107,6 @@ protected:
   bool     _packet_buffering;
 
   // Callback prototypes
-  tcpcallback_t _connect_callback;
   tcpcallback_t _rx_callback;
   tcpcallback_t _disconnect_callback;
 

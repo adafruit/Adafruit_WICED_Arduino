@@ -48,6 +48,7 @@
 #include "adafruit_utf8string.h"
 #include "adafruit_sdep.h"
 #include "adafruit_tcp.h"
+#include "adafruit_tcp_server.h"
 #include "adafruit_udp.h"
 
 #define WIFI_MAX_SSID_LEN         32

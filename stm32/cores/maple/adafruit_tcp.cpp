@@ -43,7 +43,6 @@
 /******************************************************************************/
 AdafruitTCP::AdafruitTCP(void)
 {
-  _connect_callback    = NULL;
   _rx_callback         = NULL;
   _disconnect_callback = NULL;
 

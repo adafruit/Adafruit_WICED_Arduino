@@ -52,21 +52,22 @@ extern "C"
 
 class AdafruitTCPServer : public AdafruitSDEP
 {
-protected:
-  enum { TCP_SERVER_HANDLE_SIZE = 32 };
-
-  uint8_t   _tcpserver_handle[TCP_SERVER_HANDLE_SIZE];
-  uint8_t   _max_clients;
-
 public:
+  typedef void (*tcpserver_callback_t)(void);
+
   AdafruitTCPServer(uint8_t max_clients)
   {
     _max_clients = max_clients;
     memclr(_tcpserver_handle, TCP_SERVER_HANDLE_SIZE);
+
+    _connect_callback    = NULL;
+    _rx_callback         = NULL;
+    _disconnect_callback = NULL;
   }
 
-  void setConnectCallback() {}
-  void setDisconnectCallback() {}
+  void setConnectCallback    (tcpserver_callback_t fp) { _connect_callback    = fp; }
+  void setDisconnectCallback (tcpserver_callback_t fp) { _disconnect_callback = fp; }
+  void setReceivedCallback   (tcpserver_callback_t fp) { _rx_callback         = fp; }
 
   // Server API
 
@@ -75,6 +76,16 @@ public:
   virtual IPAddress remoteIP   ( void );
   virtual uint16_t  remotePort ( void );
 
+protected:
+  enum { TCP_SERVER_HANDLE_SIZE = 32 };
+
+  uint8_t   _tcpserver_handle[TCP_SERVER_HANDLE_SIZE];
+  uint8_t   _max_clients;
+
+  tcpserver_callback_t _connect_callback;
+  tcpserver_callback_t _rx_callback;
+  tcpserver_callback_t _disconnect_callback;
+public:
   // Callback
   friend err_t adafruit_tcpserver_connect_callback(void* socket, void* p_tcp);
   friend err_t adafruit_tcpserver_receive_callback(void* socket, void* p_tcp);
