@@ -221,6 +221,13 @@ extern AdafruitFeather Feather;
   #define DBG_HEX(x)      Serial.printf(#x " = %08lx\r\n", (uint32_t) (x) )
   #define DBG_STR(x)      Serial.printf(#x " = %s\r\n", (char*)(x) )
   #define DBG_HEAP()      Serial.printf("%s: %d: Heap free: %d\r\n", __FUNCTION__, __LINE__, FEATHERLIB->heap_get_free_size())
+  #define DBG_BUFFER(buf, n) \
+    do {\
+      uint8_t* p8 = (uint8_t*) (buf);\
+      Serial.print(#buf ": ");\
+      for(uint32_t i=0; i<(n); i++) Serial.printf("%02x ", p8[i]);\
+      Serial.print("\r\n");\
+    }while(0)
 
   #define calloc_named( name, nelems, elemsize) ({ printf("[calloc] %s : %d\r\n", name, nelems*elemsize); calloc ( nelems, elemsize ); })
   #define malloc_named( name, size )            ({ printf("[malloc] %s : %d\r\n", name, size); malloc(size); })
@@ -228,6 +235,7 @@ extern AdafruitFeather Feather;
   #define DBG_LOCATION()
   #define DBG_INT(x)
   #define DBG_HEX(x)  #define DBG_STR(x)  #define DBG_HEAP()
+  #define DBG_BUFFER(buf, n)
 
   #define calloc_named( name, nelems, elemsize) calloc ( nelems, elemsize )
   #define malloc_named( name, size )            malloc ( size )

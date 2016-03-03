@@ -131,8 +131,6 @@ err_t adafruit_tcpserver_connect_callback(void* socket, void* p_tcpserver)
 {
   AdafruitTCPServer* p_server = (AdafruitTCPServer*) p_tcpserver;
 
-  DBG_LOCATION();
-
   p_server->_has_connect_request = true;
   if (p_server->_connect_callback) p_server->_connect_callback();
 
