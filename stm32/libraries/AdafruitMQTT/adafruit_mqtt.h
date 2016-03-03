@@ -99,6 +99,9 @@ public:
   bool subscribe_copy ( const char* topicFilter, uint8_t qos, messageHandler_t mh);
   bool unsubscribe    ( const char* topicFilter );
 
+  // SDEP
+  virtual void err_actions (bool print, bool halt) { tcp.err_actions(print, halt); _err_print = print; _err_halt = halt; }
+
 protected:
   AdafruitTCP tcp;
   uint32_t  _mqtt_handle;

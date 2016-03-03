@@ -229,8 +229,8 @@ extern AdafruitFeather Feather;
       Serial.print("\r\n");\
     }while(0)
 
-  #define calloc_named( name, nelems, elemsize) ({ printf("[calloc] %s : %d\r\n", name, nelems*elemsize); calloc ( nelems, elemsize ); })
-  #define malloc_named( name, size )            ({ printf("[malloc] %s : %d\r\n", name, size); malloc(size); })
+  #define calloc_named( name, nelems, elemsize) ({ Serial.printf("[calloc] %s : %d\r\n", name, nelems*elemsize); calloc ( nelems, elemsize ); })
+  #define malloc_named( name, size )            ({ Serial.printf("[malloc] %s : %d\r\n", name, size); malloc(size); })
 #else
   #define DBG_LOCATION()
   #define DBG_INT(x)

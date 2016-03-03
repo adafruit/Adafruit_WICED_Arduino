@@ -90,7 +90,7 @@ public:
 
     return p_str ? p_str : "Unknown Error";
   }
-  void        err_actions (bool print, bool halt) { _err_print = print; _err_halt = halt; }
+  virtual void err_actions (bool print, bool halt) { _err_print = print; _err_halt = halt; }
 
 };
 
