@@ -37,40 +37,33 @@
 #include "adafruit_feather.h"
 #include "adafruit_tcp_server.h"
 
-AdafruitTCPServer::AdafruitTCPServer(uint8_t max_clients)
+AdafruitTCPServer::AdafruitTCPServer(void)
 {
-  _max_clients = max_clients;
-  memclr(_tcpserver_handle, TCP_SERVER_HANDLE_SIZE);
-
   _connect_callback    = NULL;
-  _rx_callback         = NULL;
-  _disconnect_callback = NULL;
+//  _rx_callback         = NULL;
+//  _disconnect_callback = NULL;
+
+  _tls_private_key = NULL;
+  _tls_certificate = NULL;
+  _tls_certlen     = 0;
 }
 
 bool AdafruitTCPServer::begin(uint16_t port)
 {
   DBG_HEAP();
 
+  _tcp_handle = malloc_named("TCPServer", TCP_SOCKET_HANDLE_SIZE);
   uint8_t  interface      = WIFI_INTERFACE_STATION;
-
   uint32_t this_value     = (uint32_t) this;
   bool connect_enabled    = true;
-  bool rx_enabled         = true;
-  bool disconnect_enabled = true;
 
   sdep_cmd_para_t para_arr[] =
   {
-      { .len = 4, .p_value = &_tcpserver_handle  },
-      { .len = 1, .p_value = &interface          },
-      { .len = 2, .p_value = &port               },
-      { .len = 1, .p_value = &_max_clients       },
-      { .len = 0, .p_value = NULL                },
-      { .len = 4, .p_value = &this_value         },
-      { .len = 1, .p_value = &connect_enabled    },
-      { .len = 1, .p_value = &rx_enabled         },
-      { .len = 1, .p_value = &disconnect_enabled },
-      { .len = 0, .p_value = NULL                },
-      { .len = 0, .p_value = NULL                },
+      { .len = TCP_SOCKET_HANDLE_SIZE , .p_value = _tcp_handle         },
+      { .len = 1                      , .p_value = &interface          },
+      { .len = 2                      , .p_value = &port               },
+      { .len = 4                      , .p_value = &this_value         },
+      { .len = 1                      , .p_value = &connect_enabled    },
   };
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
@@ -81,7 +74,7 @@ bool AdafruitTCPServer::begin(uint16_t port)
   return true;
 }
 
-bool AdafruitTCPServer::accept (uint32_t timeout)
+bool AdafruitTCPServer::accept (void)
 {
 
 }
@@ -115,36 +108,3 @@ err_t adafruit_tcpserver_connect_callback(void* socket, void* p_tcpserver)
 
   return ERROR_NONE;
 }
-
-/******************************************************************************/
-/*!
-    @brief This callback is invoked when there is data received
-*/
-/******************************************************************************/
-err_t adafruit_tcpserver_receive_callback(void* socket, void* p_tcpserver)
-{
-  AdafruitTCPServer* p_server = (AdafruitTCPServer*) p_tcpserver;
-
-  DBG_LOCATION();
-
-  if (p_server->_rx_callback) p_server->_rx_callback();
-
-  return ERROR_NONE;
-}
-
-/******************************************************************************/
-/*!
-    @brief This callback is invoked when tcp is disconnected
-*/
-/******************************************************************************/
-err_t adafruit_tcpserver_disconnect_callback(void* socket, void* p_tcpserver)
-{
-  AdafruitTCPServer* p_server = (AdafruitTCPServer*) p_tcpserver;
-
-  DBG_LOCATION();
-  // TODO set connected as false ???
-  if (p_server->_disconnect_callback) p_server->_disconnect_callback();
-
-  return ERROR_NONE;
-}
-

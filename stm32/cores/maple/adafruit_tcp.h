@@ -54,7 +54,7 @@ extern "C"
 class AdafruitTCP : public Client, public AdafruitSDEP
 {
 public:
-  enum { TCP_SOCKET_HANDLE_SIZE = 368 }; // need 352 bytes, 16 more is reserved
+  enum { TCP_SOCKET_HANDLE_SIZE = 400 }; // need (352+20) bytes, 28 more is reserved
   typedef void (*tcpcallback_t)(void);
 
   AdafruitTCP ( void );

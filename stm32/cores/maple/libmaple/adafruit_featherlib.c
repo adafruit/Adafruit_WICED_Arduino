@@ -53,8 +53,6 @@ extern err_t adafruit_tcp_receive_callback    (void* socket, void* p_tcp);
 extern err_t adafruit_tcp_disconnect_callback (void* socket, void* p_tcp);
 
 extern err_t adafruit_tcpserver_connect_callback    (void* socket, void* p_tcpserver);
-extern err_t adafruit_tcpserver_receive_callback    (void* socket, void* p_tcpserver);
-extern err_t adafruit_tcpserver_disconnect_callback (void* socket, void* p_tcpserver);
 
 extern err_t adafruit_udp_receive_callback(void* socket, void* p_udp);
 
@@ -79,8 +77,8 @@ ATTR_USED adafruit_arduino_t const adafruit_arduino =
 
     // TCP Server
     .tcpserver_connect_callback    = adafruit_tcpserver_connect_callback,
-    .tcpserver_receive_callback    = adafruit_tcpserver_receive_callback,
-    .tcpserver_disconnect_callback = adafruit_tcpserver_disconnect_callback,
+//    .tcpserver_receive_callback    = adafruit_tcpserver_receive_callback,
+//    .tcpserver_disconnect_callback = adafruit_tcpserver_disconnect_callback,
 
     // UDP
     .udp_receive_callback          = adafruit_udp_receive_callback

@@ -216,19 +216,25 @@ extern AdafruitFeather Feather;
 #endif
 
 #if DBG_ENABLE
+  #define DBG_LOCATION()  Serial.printf("%s: %d: \r\n", __PRETTY_FUNCTION__, __LINE__)
+  #define DBG_INT(x)      Serial.printf(#x " = %ld\r\n", (uint32_t) (x) )
+  #define DBG_HEX(x)      Serial.printf(#x " = %08lx\r\n", (uint32_t) (x) )
+  #define DBG_STR(x)      Serial.printf(#x " = %s\r\n", (char*)(x) )
+  #define DBG_HEAP()      Serial.printf("%s: %d: Heap free: %d\r\n", __FUNCTION__, __LINE__, FEATHERLIB->heap_get_free_size())
 
-#define DBG_LOCATION()  Serial.printf("%s: %d: \r\n", __PRETTY_FUNCTION__, __LINE__)
-#define DBG_INT(x)      Serial.printf(#x " = %ld\r\n", (uint32_t) (x) )
-#define DBG_HEX(x)      Serial.printf(#x " = %08lx\r\n", (uint32_t) (x) )
-#define DBG_STR(x)      Serial.printf(#x " = %s\r\n", (char*)(x) )
-#define DBG_HEAP()      Serial.printf("%s: %d: Heap free: %d\r\n", __FUNCTION__, __LINE__, FEATHERLIB->heap_get_free_size())
-
+  #define calloc_named( name, nelems, elemsize) ({ printf("[calloc] %s : %d\r\n", name, nelems*elemsize); calloc ( nelems, elemsize ); })
+  #define malloc_named( name, size )            ({ printf("[malloc] %s : %d\r\n", name, size); malloc(size); })
 #else
+  #define DBG_LOCATION()
+  #define DBG_INT(x)
+  #define DBG_HEX(x)  #define DBG_STR(x)  #define DBG_HEAP()
 
-#define DBG_LOCATION()
-#define DBG_INT(x)
-#define DBG_HEX(x)#define DBG_STR(x)#define DBG_HEAP()
-
+  #define calloc_named( name, nelems, elemsize) calloc ( nelems, elemsize )
+  #define malloc_named( name, size )            malloc ( size )
 #endif
+
+#define malloc_type(object_type)      ((object_type*)malloc_named(#object_type, sizeof(object_type)))
+#define calloc_type(object_type)      ((object_type*)calloc_named(#object_type, 1, sizeof(object_type)))
+
 
 #endif

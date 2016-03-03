@@ -46,8 +46,6 @@
 extern "C"
 {
   err_t adafruit_tcpserver_connect_callback    (void* arg, void* p_tcpserver);
-  err_t adafruit_tcpserver_receive_callback    (void* arg, void* p_tcpserver);
-  err_t adafruit_tcpserver_disconnect_callback (void* arg, void* p_tcpserver);
 }
 
 class AdafruitTCPServer : public AdafruitSDEP
@@ -55,38 +53,34 @@ class AdafruitTCPServer : public AdafruitSDEP
 public:
   enum
   {
-    TCP_SERVER_HANDLE_SIZE = 32, // need 24, 8 more is for reserved
-    TCP_SERVER_SOCKET_SIZE = AdafruitTCP::TCP_SOCKET_HANDLE_SIZE + 12, // 380 in total, 12 byte for overhead
+    TCP_SOCKET_HANDLE_SIZE = AdafruitTCP::TCP_SOCKET_HANDLE_SIZE
   };
 
   typedef void (*tcpserver_callback_t)(void);
 
-  AdafruitTCPServer(uint8_t max_clients);
+  AdafruitTCPServer(void);
 
   void setConnectCallback    (tcpserver_callback_t fp) { _connect_callback    = fp; }
-  void setDisconnectCallback (tcpserver_callback_t fp) { _disconnect_callback = fp; }
-  void setReceivedCallback   (tcpserver_callback_t fp) { _rx_callback         = fp; }
 
   // Server API
 
   virtual bool      begin      (uint16_t port);
-  virtual bool      accept     (uint32_t timeout);
+  virtual bool      accept     ( void );
   virtual IPAddress remoteIP   ( void );
   virtual uint16_t  remotePort ( void );
 
 protected:
-  uint8_t   _tcpserver_handle[TCP_SERVER_HANDLE_SIZE];
-  uint8_t   _max_clients;
+  void* _tcp_handle;
 
   tcpserver_callback_t _connect_callback;
-  tcpserver_callback_t _rx_callback;
-  tcpserver_callback_t _disconnect_callback;
-public:
-  // Callback
-  friend err_t adafruit_tcpserver_connect_callback   (void* socket, void* p_tcpserver);
-  friend err_t adafruit_tcpserver_receive_callback   (void* socket, void* p_tcpserver);
-  friend err_t adafruit_tcpserver_disconnect_callback(void* socket, void* p_tcpserver);
 
+  // TLS
+  void const * _tls_private_key;
+  void const * _tls_certificate;
+  uint32_t     _tls_certlen;
+
+public:
+  friend err_t adafruit_tcpserver_connect_callback   (void* socket, void* p_tcpserver);
 };
 
 #endif /* _ADAFRUIT_TCP_SERVER_H_ */
