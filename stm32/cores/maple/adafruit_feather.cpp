@@ -36,7 +36,6 @@
 
 #include "adafruit_featherlib.h"
 #include "adafruit_feather.h"
-#include "itoa.h"
 #include <string.h>
 #include <stdlib.h>
 

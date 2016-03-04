@@ -48,11 +48,13 @@
 //#define CLIENTID          "Adafruit Feather"
 
 #define TOPIC             "adafruit/feather"
-#define PUBLISH_MESSAGE   "Hello from Adafruit WICED Feather"
 #define WILL_MESSAGE      "Goodbye!!"
 
 AdafruitMQTT      mqtt;
-AdafruitMQTTTopic mqttTopic(&mqtt, TOPIC, MQTT_QOS_AT_LEAST_ONCE);
+AdafruitMQTTTopic mqttTopic(&mqtt, TOPIC, MQTT_QOS_EXACTLY_ONCE);
+
+char old_value = '0';
+char value = '0';
 
 /**************************************************************************/
 /*!
@@ -90,6 +92,7 @@ void setup()
   // Last will must be set before connecting since it is part of the connection data
   mqtt.will(TOPIC, WILL_MESSAGE, MQTT_QOS_AT_LEAST_ONCE);
 
+  // Connect to broker
   Serial.printf("Connecting to " BROKER_HOST " port %d ... ", BROKER_PORT);
   if (USE_TLS)
   {  
@@ -107,6 +110,16 @@ void setup()
     mqtt.connect(BROKER_HOST, BROKER_PORT);
   }
   Serial.println("OK");
+
+  // Subscribe with callback
+  mqttTopic.subscribe(subscribed_callback);
+
+  Serial.println("Please use desktop client to subcribe to \'" TOPIC "\' to monitor");
+
+  // Inital publish
+  Serial.printf("Publishing \'%d\' ... ", value);
+  mqttTopic.print( value ); // use .write to send in binary format
+  Serial.println("OK");
 }
 
 /**************************************************************************/
@@ -116,11 +129,57 @@ void setup()
 /**************************************************************************/
 void loop()
 {
-  Serial.print("Publishing to " TOPIC " ... ");
-  mqttTopic.print(PUBLISH_MESSAGE);
-  Serial.println("OK");
+  // value changed due to subscribed callback
+  if (old_value != value)
+  {
+    // check if still subscribed
+    if ( mqttTopic.subscribed() )
+    {
+      old_value = value;
+      Serial.println();
+      Serial.printf("Publishing \'%c\' ... \r\n", value);
+      mqttTopic.print( value ); // use .write to send in binary format
+    }
+  }
+}
 
-  delay(5000);
+/**************************************************************************/
+/*!
+    @brief  MQTT subscribe event callback handler
+
+    @param  topic      The topic causing this callback to fire
+    @param  message    The new value associated with 'topic'
+
+    @note   'topic' and 'message' are UTF8Strings (byte array), which means
+            they are not null-terminated like C-style strings. You can
+            access its data and len using .data & .len, although there is
+            also a Serial.print override to handle UTF8String data types.
+*/
+/**************************************************************************/
+void subscribed_callback(UTF8String topic, UTF8String message)
+{
+  // copy received data to value
+  memcpy(&value, message.data, 1);
+  
+  // Print out topic name and message
+  Serial.printf("["); Serial.print(topic); Serial.printf("]");
+  Serial.print(" : value = ") ;
+  Serial.println(value);
+
+  // increase value by 1
+  value++;
+
+  // wrap around
+  if (value > '9') value = '0';
+
+  // Unsubscribe if we received an "stop" message
+  // Won't be able to echo anymore
+  if ( message == "stop" )
+  {
+    Serial.print("Unsubscribing ... ");
+    mqttTopic.unsubscribe(); // Will halt if fails
+    Serial.println("OK");
+  }
 }
 
 /**************************************************************************/

@@ -55,6 +55,7 @@ protected:
   const char*   _topic;
   uint8_t       _qos;
   bool          _retained;
+  bool          _subscribed;
 
   virtual void subscribed_callback(UTF8String topic, UTF8String message, void* callback_func);
 
@@ -67,6 +68,8 @@ public:
 
   bool subscribe  (messageHandler_t mh);
   bool unsubscribe(void);
+
+  bool subscribed (void) { return _subscribed; }
 
   virtual size_t write(const uint8_t *buf, size_t len);
   virtual size_t write(uint8_t ch) { return write(&ch, 1); }

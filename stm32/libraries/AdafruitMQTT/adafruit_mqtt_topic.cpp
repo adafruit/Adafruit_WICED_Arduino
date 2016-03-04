@@ -46,10 +46,12 @@
 /******************************************************************************/
 AdafruitMQTTTopic::AdafruitMQTTTopic(AdafruitMQTT* mqtt, const char* topic, uint8_t qos, bool retain)
 {
-  _mqtt     = mqtt;
-  _topic    = topic;
-  _qos      = qos;
-  _retained = retain;
+  _mqtt       = mqtt;
+  _topic      = topic;
+  _qos        = qos;
+  _retained   = retain;
+
+  _subscribed = false;
 }
 
 /******************************************************************************/
@@ -59,6 +61,7 @@ AdafruitMQTTTopic::AdafruitMQTTTopic(AdafruitMQTT* mqtt, const char* topic, uint
 /******************************************************************************/
 size_t AdafruitMQTTTopic::write(const uint8_t *buf, size_t len)
 {
+  if ( !_subscribed ) return 0;
   return _mqtt->publish(_topic, UTF8String(buf, len), _qos, _retained) ? len : 0;
 }
 
@@ -69,7 +72,8 @@ size_t AdafruitMQTTTopic::write(const uint8_t *buf, size_t len)
 /******************************************************************************/
 bool AdafruitMQTTTopic::subscribe(messageHandler_t mh)
 {
-  return _mqtt->subscribe(_topic, _qos, mh);
+  _subscribed = _mqtt->subscribe(_topic, _qos, mh);
+  return _subscribed;
 }
 
 /******************************************************************************/
@@ -79,7 +83,8 @@ bool AdafruitMQTTTopic::subscribe(messageHandler_t mh)
 /******************************************************************************/
 bool AdafruitMQTTTopic::unsubscribe(void)
 {
-  return _mqtt->unsubscribe(_topic);
+  _subscribed = !_mqtt->unsubscribe(_topic);
+  return !_subscribed;
 }
 
 /******************************************************************************/
@@ -102,7 +107,6 @@ void AdafruitMQTTTopic::subscribed_callback(UTF8String topic, UTF8String message
 //--------------------------------------------------------------------+
 void  adafruit_mqtt_subscribed_callback(char* topic_data, size_t topic_len, uint8_t* mess_data, size_t len, void* callback_func, void* arg)
 {
-  DBG_LOCATION();
   // no AdafruitMQTTTopic's this pointer, use default message handler signature in MQTT
   UTF8String topic(topic_data, topic_len);
   UTF8String message(mess_data, len);
