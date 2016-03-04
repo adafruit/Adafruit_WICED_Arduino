@@ -34,6 +34,7 @@
 #include "gpio.h"
 #include "timer.h"
 #include "adc.h"
+#include "rng.h"
 
 #ifndef _WIRISH_TYPES_H_
 #define _WIRISH_TYPES_H_
