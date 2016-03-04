@@ -177,7 +177,9 @@ void subscribed_callback(UTF8String topic, UTF8String message)
   Serial.println(message);
 
   // Echo back
+  Serial.print("Echo back to " TOPIC_ECHO " ... ");
   mqtt.publish(TOPIC_ECHO, message); // Will halt if an error occurs
+  Serial.println("OK");
 
   // Unsubscribe from SUBSCRIBED_TOPIC2 if we received an "unsubscribe" message
   // Won't be able to echo anymore
