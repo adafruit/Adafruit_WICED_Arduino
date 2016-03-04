@@ -10,7 +10,7 @@ version=0.5.0
 compiler.path={runtime.tools.arm-none-eabi-gcc.path}/bin/
 compiler.c.cmd=arm-none-eabi-gcc
 compiler.c.flags=-c -g -Os -w -MMD -ffunction-sections -fdata-sections -nostdlib --param max-inline-insns-single=500 -DBOARD_{build.variant} -D{build.vect} -D{build.density} -DERROR_LED_PORT={build.error_led_port} -DERROR_LED_PIN={build.error_led_pin} {compiler.extra_includes}
-#compiler.c.flags=-c -g -Os -w -MMD -ffunction-sections -fdata-sections -nostdlib --param max-inline-insns-single=500 -DBOARD_{build.variant} -D{build.vect} -D{build.density} -DERROR_LED_PORT={build.error_led_port} -DERROR_LED_PIN={build.error_led_pin} {compiler.extra_includes} -DDBG_ENABLE=3
+#compiler.c.flags=-c -g -Os -w -MMD -ffunction-sections -fdata-sections -nostdlib --param max-inline-insns-single=500 -DBOARD_{build.variant} -D{build.vect} -D{build.density} -DERROR_LED_PORT={build.error_led_port} -DERROR_LED_PIN={build.error_led_pin} {compiler.extra_includes} -include "{runtime.platform.path}/platform_debug.h"
 
 compiler.c.elf.cmd=arm-none-eabi-g++
 compiler.c.elf.flags=-Os -Wl,--gc-sections -Wl,--defsym,FIRMWARE_MAGIC_OFFSET=512
@@ -20,8 +20,7 @@ compiler.S.flags=-c -g -x assembler-with-cpp -MMD {compiler.extra_includes}
 
 compiler.cpp.cmd=arm-none-eabi-g++
 compiler.cpp.flags=-c -g -Os -w -MMD -ffunction-sections -fdata-sections -nostdlib --param max-inline-insns-single=500 -fno-rtti -fno-exceptions -DBOARD_{build.variant} -D{build.vect} -D{build.density} -DERROR_LED_PORT={build.error_led_port} -DERROR_LED_PIN={build.error_led_pin} {compiler.extra_includes}
-#compiler.cpp.flags=-c -g -Os -w -MMD -ffunction-sections -fdata-sections -nostdlib --param max-inline-insns-single=500 -fno-rtti -fno-exceptions -DBOARD_{build.variant} -D{build.vect} -D{build.density} -DERROR_LED_PORT={build.error_led_port} -DERROR_LED_PIN={build.error_led_pin} {compiler.extra_includes} -DDEBUG_WLAN_SSID="yourSSID" -DDEBUG_WLAN_PASS="yourPASS" -DDEBUG_AIO_USERNAME="yourUsername" -DDEBUG_AIO_KEY="yourKey"
-#compiler.cpp.flags=-c -g -Os -w -MMD -ffunction-sections -fdata-sections -nostdlib --param max-inline-insns-single=500 -fno-rtti -fno-exceptions -DBOARD_{build.variant} -D{build.vect} -D{build.density} -DERROR_LED_PORT={build.error_led_port} -DERROR_LED_PIN={build.error_led_pin} {compiler.extra_includes} -DDEBUG_WLAN_SSID="yourSSID" -DDEBUG_WLAN_PASS="yourPASS" -DDEBUG_AIO_USERNAME="yourUsername" -DDEBUG_AIO_KEY="yourKey" -DDBG_ENABLE=3
+#compiler.cpp.flags=-c -g -Os -w -MMD -ffunction-sections -fdata-sections -nostdlib --param max-inline-insns-single=500 -fno-rtti -fno-exceptions -DBOARD_{build.variant} -D{build.vect} -D{build.density} -DERROR_LED_PORT={build.error_led_port} -DERROR_LED_PIN={build.error_led_pin} {compiler.extra_includes} -include "{runtime.platform.path}/platform_debug.h"
 
 compiler.ar.cmd=arm-none-eabi-ar
 compiler.ar.flags=rcs
