@@ -20,15 +20,15 @@
  * callbacks.
  * 
  * It will connect to a public MQTT server (with/without TLS)
- * and subscribe to defined TOPIC_SUBSCRIBE.
+ * and subscribe to TOPIC_SUBSCRIBE (defined below).
  * 
- * - When a message is received, it will echo back at TOPIC_ECHO
- * - If the received message is "unsubscribe", Feather will
- *   unsubscribe from TOPIC_SUBSCRIBE and won't be able to
- *   echo content back to the broker.
+ * - When a message is received, it will echo back to TOPIC_ECHO
+ * - If the received message is "unsubscribe", we will
+ *   unsubscribe from TOPIC_SUBSCRIBE and you won't be able to
+ *   echo content back to the broker any longer.
  * 
  * Note: TOPIC_SUBSCRIBE and TOPIC_ECHO must not be the same topic!
- * (e.g must not "adafruit/+" and "adafruit/echo"), since this will
+ * Ex. They must not be "adafruit/+" and "adafruit/echo", since this will
  * cause an infinite loop (received -> echo -> received -> ....)
  *
  * For details on the MQTT broker server see http://test.mosquitto.org/
@@ -42,13 +42,14 @@
  * - https://learn.adafruit.com/desktop-mqtt-client-for-adafruit-io/installing-software
  *
  * To run this demo
- * 1. Change the SSID/PASS to match your access point
+ * 1. Change the WLAN_SSID/WLAN_PASS to match your access point
  * 2. Decide whether you want to use TLS/SSL or not (USE_TLS)
- * 3. Change TOPIC, WILL_MESSAGE, enable CLIENTID if needed
+ * 3. Change TOPIC*, WILL*, enable CLIENTID if needed
  * 4. Compile and run
- * 5. Use MQTT desktop client to connect to the same sever and publish to
- *    any topic beginning with "adafruit/feather/" . To be able to recieve
- *    the echo message, please also subcribe to "adafruit/feather_echo".
+ * 5. Use an MQTT desktop client to connect to the same MQTT broker and
+ *    publish to any topic beginning with "adafruit/feather/" (depending
+ *    on TOPIC_SUBSCRIBE). To be able to recieve the echo message, please
+ *    also subcribe to "adafruit/feather_echo" (TOPIC_ECHO).
  */
 
 #define WLAN_SSID         "yourSSID"
@@ -184,7 +185,7 @@ void subscribed_callback(char* topic_data, size_t topic_len, uint8_t* mess_data,
   Serial.println(utf8Message);
 
   // Echo back
-  mqtt.publish(TOPIC_ECHO, utf8Message); // Will halted if an error occurs
+  mqtt.publish(TOPIC_ECHO, utf8Message); // Will halt if an error occurs
 
   // Unsubscribe from SUBSCRIBED_TOPIC2 if we received an "unsubscribe" message
   // Won't be able to echo anymore
