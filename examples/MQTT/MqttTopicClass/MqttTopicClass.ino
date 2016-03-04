@@ -16,24 +16,24 @@
 #include <adafruit_mqtt.h>
 #include "certificate_mosquitto.h"
 
-/* This sketch connect to the public MQTT server (with/without TLS)
- * and publish message to a topic every 5 seconds.
+/* This sketch connects to a public MQTT server (with/without TLS)
+ * and publishes a message to a topic every 5 seconds.
  *
- * For publish server detail see http://test.mosquitto.org/
+ * For server details see http://test.mosquitto.org/
  *  - Port 1883 : MQTT, unencrypted
  *  - Port 8883 : MQTT, encrypted (TLS)
  *
  * Note: may You need an MQTT desktop client such as
  * - The lightweight Java client included in this repo: org.eclipse.paho.mqtt.utility-1.0.0.jar or
- * - Full desktop client MQTT.fx https://learn.adafruit.com/desktop-mqtt-client-for-adafruit-io/installing-software
+ * - A full desktop client like MQTT.fx https://learn.adafruit.com/desktop-mqtt-client-for-adafruit-io/installing-software
  *
  * To run this demo
- * 1. Change SSID/PASS
+ * 1. Change WLAN_SSID/WLAN_PASS
  * 2. Decide whether you want to use TLS/SSL or not (USE_TLS)
  * 3. Change CLIENTID, TOPIC, PUBLISH_MESSAGE, WILL_MESSAGE if you want
  * 4. Compile and run
- * 5. Use MQTT desktop client to connect to same sever and subscribe to the defined topic
- * to monitor the published message.
+ * 5. Use your MQTT desktop client to connect to the same sever and subscribe
+ *    to the defined topic to monitor the published message(s).
  */
 
 #define WLAN_SSID         "yourSSID"
@@ -95,7 +95,7 @@ void setup()
   // Connect to broker
   Serial.printf("Connecting to " BROKER_HOST " port %d ... ", BROKER_PORT);
   if (USE_TLS)
-  {  
+  {
     // Disable default RootCA to save SRAM since we don't need to
     // access any other site except test.mosquitto.org
     Feather.useDefaultRootCA(false);
@@ -158,15 +158,15 @@ void loop()
 /**************************************************************************/
 void subscribed_callback(UTF8String topic, UTF8String message)
 {
-  // copy received data to value
+  // Copy received data to 'value'
   memcpy(&value, message.data, 1);
-  
+
   // Print out topic name and message
   Serial.printf("["); Serial.print(topic); Serial.printf("]");
   Serial.print(" : value = ") ;
   Serial.println(value);
 
-  // increase value by 1
+  // Increase value by 1
   value++;
 
   // wrap around
