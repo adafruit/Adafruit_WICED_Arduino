@@ -155,8 +155,7 @@ void onoff_mess_handler(char* topic_data, size_t topic_len, uint8_t* mess_data, 
 bool connectAP(void)
 {
   // Attempt to connect to an AP
-  Serial.print("Attempting to connect to: ");
-  Serial.println(WLAN_SSID);
+  Serial.print("Attempting to connect to: " WLAN_SSID " ... ");
 
   if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
   {

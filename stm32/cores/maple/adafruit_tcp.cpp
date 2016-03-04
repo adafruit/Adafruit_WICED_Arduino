@@ -127,7 +127,10 @@ bool AdafruitTCP::connect_internal ( uint8_t interface, uint32_t ipv4, uint16_t 
   if ( !sdep_n(SDEP_CMD_TCP_CONNECT, para_count, para_arr, NULL, NULL) )
   {
     free(_tcp_handle);
-    _tcp_handle = NULL;
+    if ( _tls_context ) free(_tls_context);
+
+    _tcp_handle = _tls_context = NULL;
+
     return false;
   }
 

@@ -162,6 +162,7 @@ typedef enum {
   SDEP_CMD_INFO                = 0x0004,    ///< System information
   SDEP_CMD_NVM_RESET           = 0x0005,    ///< Reset DCT
   SDEP_CMD_ERROR_STRING        = 0x0006,    ///< Get descriptive error string
+  SDEP_CMD_COMMAND_STRING      = 0x0007,    ///< Get descriptive SDEP command string
 
   // Hardware Command
   SDEP_CMD_GPIO                = 0x0100,    ///< Set GPIO

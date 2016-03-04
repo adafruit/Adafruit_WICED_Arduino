@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*!
-    @file     adafruit_sdep.h
+    @file     adafruit_sdep.cpp
     @author   hathach
 
     @section LICENSE
@@ -34,39 +34,64 @@
 */
 /**************************************************************************/
 
-#ifndef _ADAFRUIT_SDEP_H_
-#define _ADAFRUIT_SDEP_H_
+#include <stdint.h>
+#include <stdbool.h>
+#include <string.h>
+#include <Arduino.h>
+#include <IPAddress.h>
+#include "adafruit_sdep.h"
 
-#include "adafruit_constants.h"
-#include "adafruit_featherlib.h"
 
-class AdafruitSDEP
+bool AdafruitSDEP::sdep(uint16_t  cmd_id       ,
+          uint16_t  param_len    , void const* p_param,
+          uint16_t* p_result_len , void* p_result)
 {
-protected:
-  err_t _errno;
-  bool  _err_print;
-  bool  _err_halt;
+  _errno = FEATHERLIB->sdep_execute(cmd_id, param_len, p_param, p_result_len, p_result);
+  handle_error(cmd_id);
+  return (ERROR_NONE == _errno);
+}
 
-  void  handle_error(uint16_t cmd_id);
+bool AdafruitSDEP::sdep_n(uint16_t  cmd_id       ,
+            uint8_t   para_count   , sdep_cmd_para_t const* para_arr,
+            uint16_t* p_result_len , void* p_result)
+{
+  _errno = FEATHERLIB->sdep_execute_n(cmd_id, para_count, para_arr, p_result_len, p_result);
+  handle_error(cmd_id);
+  return (ERROR_NONE == _errno);
+}
 
-public:
-  AdafruitSDEP() { _errno = ERROR_NONE; _err_print = _err_halt = false; }
+char const* AdafruitSDEP::errstr (void)
+{
+  char const* p_str = NULL;
+  FEATHERLIB->sdep_execute(SDEP_CMD_ERROR_STRING, sizeof(err_t), &_errno, NULL, &p_str);
+  return p_str ? p_str : "Unknown Error";
+}
 
-  bool sdep  (uint16_t  cmd_id       ,
-              uint16_t  param_len    , void const* p_param,
-              uint16_t* p_result_len , void* p_result);
+char const* AdafruitSDEP::cmdstr (uint16_t cmd_id)
+{
+  char const* p_str = NULL;
+  FEATHERLIB->sdep_execute(SDEP_CMD_COMMAND_STRING, sizeof(uint16_t), &cmd_id, NULL, &p_str);
+  return p_str;
+}
 
-  bool sdep_n(uint16_t  cmd_id       ,
-              uint8_t   para_count   , sdep_cmd_para_t const* para_arr,
-              uint16_t* p_result_len , void* p_result);
+void AdafruitSDEP::handle_error(uint16_t cmd_id)
+{
+  if (_err_print && (ERROR_NONE != _errno))
+  {
+    char const* cmd_str = this->cmdstr(cmd_id);
+    if ( cmd_str )
+    {
+      Serial.printf("\r\n%s failed", cmd_str);
+    }else
+    {
+      Serial.printf("\r\nSDEP Command ID 0x%04X failed", cmd_id);
+    }
+    Serial.printf(", Error: %s (%d)\r\n", errstr(), errno());
+  }
 
-  err_t        errno       (void ) { return _errno; }
-  char const*  errstr      (void );
-  char const*  cmdstr      (uint16_t cmd_id);
-  virtual void err_actions (bool print, bool halt ) { _err_print = print; _err_halt = halt; }
-};
-
-// TODO move to appropriate place
-ASSERT_STATIC( sizeof(err_t) == 2 );
-
-#endif /* _ADAFRUIT_SDEP_H_ */
+  if ( _err_halt && (ERROR_NONE != _errno) )
+  {
+    Serial.println("\r\n--- FEATHER HALTED ---\r\n");
+    while(1) delay(1);
+  }
+}
