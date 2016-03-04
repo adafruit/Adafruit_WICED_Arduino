@@ -53,6 +53,7 @@
 #define STDERR_FILENO         2
 #define FILENO_USB_SERIAL     3
 #define FILENO_USB_ATPARSER   4
+#define FILENO_SWO            5
 
 #define FEATHERLIB_BOOTLOADER_VERSION      (*((uint32_t*) 0x08000200)) // Bootloader version saved in flash
 

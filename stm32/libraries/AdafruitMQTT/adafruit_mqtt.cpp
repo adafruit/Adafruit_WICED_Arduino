@@ -34,6 +34,7 @@
 */
 /**************************************************************************/
 
+#include <adafruit_feather.h>
 #include "adafruit_mqtt.h"
 #include "rng.h"
 

@@ -41,7 +41,7 @@
 #include <Printable.h>
 #include <Client.h>
 #include <IPAddress.h>
-#include <adafruit_feather.h>
+#include <adafruit_sdep.h>
 
 enum
 {
@@ -136,6 +136,6 @@ protected:
   bool subscribe_internal(const char* topicFilter, uint8_t qos, messageHandler_t mh, bool copy_topic);
 };
 
-#include <adafruit_mqtt_publisher.h>
+#include <adafruit_mqtt_topic.h>
 
 #endif /* _ADAFRUIT_MQTT_H__ */

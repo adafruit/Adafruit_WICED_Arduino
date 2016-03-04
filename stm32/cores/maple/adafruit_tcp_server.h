@@ -40,7 +40,7 @@
 #include <Arduino.h>
 #include <Client.h>
 #include <IPAddress.h>
-#include "adafruit_sdep.h"
+#include <adafruit_sdep.h>
 
 // Callback proxy from Featherlib
 extern "C"

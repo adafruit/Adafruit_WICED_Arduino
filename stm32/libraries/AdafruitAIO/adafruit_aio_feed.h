@@ -45,13 +45,13 @@
 #include <adafruit_aio.h>
 #include <adafruit_mqtt.h>
 
-class AdafruitAIOFeed : public AdafruitMQTTPublisher
+class AdafruitAIOFeed : public AdafruitMQTTTopic
 {
 protected:
   AdafruitMQTT::messageHandler_t _mh;
 
 public:
-  AdafruitAIOFeed(AdafruitAIO* aio, const char* feed, uint8_t qos = MQTT_QOS_AT_MOST_ONCE, bool retain = true) : AdafruitMQTTPublisher(aio, feed, qos, retain)
+  AdafruitAIOFeed(AdafruitAIO* aio, const char* feed, uint8_t qos = MQTT_QOS_AT_MOST_ONCE, bool retain = true) : AdafruitMQTTTopic(aio, feed, qos, retain)
   {
     _mh = NULL;
   }

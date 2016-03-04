@@ -51,8 +51,8 @@
 #define PUBLISH_MESSAGE   "Hello from Adafruit WICED Feather"
 #define WILL_MESSAGE      "Goodbye!!"
 
-AdafruitMQTT          mqtt;
-AdafruitMQTTPublisher publisher(&mqtt, TOPIC, MQTT_QOS_AT_LEAST_ONCE);
+AdafruitMQTT      mqtt;
+AdafruitMQTTTopic topic(&mqtt, TOPIC, MQTT_QOS_AT_LEAST_ONCE);
 
 /**************************************************************************/
 /*!
@@ -117,7 +117,7 @@ void setup()
 void loop()
 {
   Serial.print("Publishing to " TOPIC " ... ");
-  publisher.print(PUBLISH_MESSAGE);
+  topic.print(PUBLISH_MESSAGE);
   Serial.println("OK");
 
   delay(5000);

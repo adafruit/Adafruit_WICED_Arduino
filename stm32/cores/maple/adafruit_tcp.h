@@ -40,7 +40,7 @@
 #include <Arduino.h>
 #include <Client.h>
 #include <IPAddress.h>
-#include "adafruit_sdep.h"
+#include <adafruit_sdep.h>
 
 #define ADAFRUIT_TCP_TIMEOUT  1000
 

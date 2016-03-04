@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*!
-    @file     adafruit_mqtt_publisher.h
+    @file     adafruit_mqtt_topic.h
     @author   hathach
 
     @section LICENSE
@@ -34,13 +34,12 @@
 */
 /**************************************************************************/
 
-#ifndef _ADAFRUIT_MQTT_PUBLISHER_H_
-#define _ADAFRUIT_MQTT_PUBLISHER_H_
+#ifndef _ADAFRUIT_MQTT_TOPIC_H_
+#define _ADAFRUIT_MQTT_TOPIC_H_
 
 #include <Arduino.h>
-#include <adafruit_feather.h>
 
-class AdafruitMQTTPublisher : public Print
+class AdafruitMQTTTopic : public Print
 {
 protected:
   AdafruitMQTT* _mqtt;
@@ -49,7 +48,7 @@ protected:
   bool          _retained;
 
 public:
-  AdafruitMQTTPublisher(AdafruitMQTT* mqtt, const char* topic, uint8_t qos = MQTT_QOS_AT_MOST_ONCE, bool retain = false)
+  AdafruitMQTTTopic(AdafruitMQTT* mqtt, const char* topic, uint8_t qos = MQTT_QOS_AT_MOST_ONCE, bool retain = false)
   {
     _mqtt     = mqtt;
     _topic    = topic;
@@ -68,4 +67,4 @@ public:
   using Print::write;
 };
 
-#endif /* _ADAFRUIT_MQTT_PUBLISHER_H_ */
+#endif /* _ADAFRUIT_MQTT_TOPIC_H_ */
