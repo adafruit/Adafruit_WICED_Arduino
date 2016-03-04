@@ -97,7 +97,7 @@ typedef struct ATTR_ALIGNED(512)
   uint32_t RESERVED_[3];
 
   void  (*mqtt_subscribed_callback)(char* topic_data, size_t topic_len, uint8_t* message, size_t len, void* callback_func, void* arg);
-  err_t (*mqtt_disconnect_callback)(void* socket, void* p_mqtt);
+  void  (*mqtt_disconnect_callback)(void* p_mqtt);
   uint32_t RESERVED_[2];
 
   // 256 - 512

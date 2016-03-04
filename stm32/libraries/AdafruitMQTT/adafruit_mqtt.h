@@ -56,7 +56,7 @@ enum
 // Callback proxy from Featherlib
 extern "C"
 {
-  err_t adafruit_mqtt_disconnect_callback(void* socket, void* p_mqtt);
+  void adafruit_mqtt_disconnect_callback(void* p_mqtt);
 }
 
 class AdafruitMQTT : public AdafruitSDEP
@@ -88,7 +88,7 @@ public:
   }
 
   void clientID(const char* client) { _clientID = client; }
-  void setDisconnectCallback  ( void (*fp) (void) );
+  void setDisconnectCallback  ( void (*fp) (void) ) { _disconnect_callback = fp; }
 
   // API
   bool connected      ( void ) { return _connected; }
@@ -108,7 +108,7 @@ public:
   // SDEP
   virtual void err_actions (bool print, bool halt) { tcp.err_actions(print, halt); _err_print = print; _err_halt = halt; }
 
-  friend err_t adafruit_mqtt_disconnect_callback(void* socket, void* p_mqtt);
+  friend void adafruit_mqtt_disconnect_callback(void* p_mqtt);
 
 protected:
   AdafruitTCP tcp;
@@ -126,6 +126,7 @@ protected:
   uint8_t     _will_qos;
   uint8_t     _will_retained;
 
+  void (*_disconnect_callback) (void);
 
   bool connectBroker(bool cleanSession, uint16_t keepalive_sec);
   bool init(void)
@@ -134,8 +135,8 @@ protected:
     _connected     = 0;
     tcp.usePacketBuffering(true);
 
+    _disconnect_callback = NULL;
     _clientID = _username = _password = NULL;
-
     _will_qos = _will_retained = 0;
   }
 

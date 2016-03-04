@@ -64,6 +64,8 @@ bool AdafruitMQTT::connectBroker(bool cleanSession, uint16_t keepalive_sec)
     _clientID = random_id;
   }
 
+  uint32_t this_value = (uint32_t) this;
+
   sdep_cmd_para_t para_arr[] =
   {
       { .len = 4                   , .p_value = &tcp_handle        },
@@ -78,8 +80,15 @@ bool AdafruitMQTT::connectBroker(bool cleanSession, uint16_t keepalive_sec)
       { .len = _will_message.len   , .p_value = _will_message.data },
       { .len = 1                   , .p_value = &_will_qos         },
       { .len = 1                   , .p_value = &_will_retained    },
+      { .len = 0                   , .p_value = NULL               },
   };
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
+
+  if ( _disconnect_callback )
+  {
+    para_arr[10].len     = 4;
+    para_arr[10].p_value = &this_value;
+  }
 
   return sdep_n(SDEP_CMD_MQTTCONNECT, para_count, para_arr, NULL, &_mqtt_handle);
 }
@@ -197,16 +206,12 @@ bool AdafruitMQTT::unsubscribe( const char* topicFilter )
   return sdep_n(SDEP_CMD_MQTTUNSUBSCRIBE, para_count, para_arr, NULL, NULL);
 }
 
-void AdafruitMQTT::setDisconnectCallback  ( void (*fp) (void) )
-{
-
-}
-
 
 //--------------------------------------------------------------------+
 // Callback
 //--------------------------------------------------------------------+
-err_t adafruit_mqtt_disconnect_callback(void* socket, void* p_mqtt)
+void adafruit_mqtt_disconnect_callback(void* p_mqtt)
 {
-  DBG_LOCATION();
+  AdafruitMQTT* pMQTT = (AdafruitMQTT*) p_mqtt;
+  if (pMQTT->_disconnect_callback) pMQTT->_disconnect_callback();
 }
