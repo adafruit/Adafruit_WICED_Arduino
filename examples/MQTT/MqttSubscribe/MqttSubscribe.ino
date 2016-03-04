@@ -23,7 +23,7 @@
  * and subscribe to TOPIC_SUBSCRIBE (defined below).
  * 
  * - When a message is received, it will echo back to TOPIC_ECHO
- * - If the received message is "unsubscribe", we will
+ * - If the received message is "stop", we will
  *   unsubscribe from TOPIC_SUBSCRIBE and you won't be able to
  *   echo content back to the broker any longer.
  * 
@@ -159,13 +159,15 @@ void loop()
 
 /**************************************************************************/
 /*!
-    @brief  Subscribe callback handler
+    @brief  MQTT subscribe event callback handler
 
-    @param  topic      topic name where the message received
-    @param  message    message's contents
+    @param  topic      The topic causing this callback to fire
+    @param  message    The new value associated with 'topic'
 
-    @note   'topic' and 'message' 'topic_data' UTF8String (byte array) without null-terminated
-    like C-style string. You can access its data byte and len using .data & .len
+    @note   'topic' and 'message' are UTF8Strings (byte array), which means
+            they are not null-terminated like C-style strings. You can
+            access its data and len using .data & .len, although there is
+            also a Serial.print override to handle UTF8String data types.
 */
 /**************************************************************************/
 void subscribed_callback(UTF8String topic, UTF8String message)
@@ -181,9 +183,9 @@ void subscribed_callback(UTF8String topic, UTF8String message)
   mqtt.publish(TOPIC_ECHO, message); // Will halt if an error occurs
   Serial.println("OK");
 
-  // Unsubscribe from SUBSCRIBED_TOPIC2 if we received an "unsubscribe" message
+  // Unsubscribe from SUBSCRIBED_TOPIC2 if we received an "stop" message
   // Won't be able to echo anymore
-  if ( message == "unsubscribe" )
+  if ( message == "stop" )
   {
     Serial.print("Unsubscribing from " TOPIC_SUBSCRIBE " ... ");
     mqtt.unsubscribe(TOPIC_SUBSCRIBE); // Will halt if fails
