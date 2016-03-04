@@ -651,16 +651,16 @@ uint32_t AdafruitFeather::getUtcTime(void)
 /******************************************************************************/
 void AdafruitFeather::printVersions(Print& p)
 {
-  p.print("Bootloader version      : ");
+  p.print("Bootloader  : ");
   p.println(Feather.bootloaderVersion());
 
-  p.print("SDK version             : ");
+  p.print("WICED SDK   : ");
   p.println(Feather.sdkVersion());
 
-  p.print("Firmware version        : ");
+  p.print("FeatherLib  : ");
   p.println(Feather.firmwareVersion());
 
-  p.print("Arduino library version : ");
+  p.print("Arduino API : ");
   p.println(Feather.arduinoVersion());
   p.println();
 }
@@ -681,12 +681,12 @@ void AdafruitFeather::printNetwork(Print& p)
   uint8_t mac[6];
   macAddress(mac);
 
-  p.printf("SSID   : %s (%d dBm)\r\n", _ap_info.ssid, RSSI());
-  p.print ("Encrypt: "); this->printEncryption(_ap_info.security, p); p.println();
-  p.print ("MAC    : "); p.printf("%02X:%02X:%02X:%02X:%02X:%02X\r\n", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-  p.print ("LocalIP: "); p.println( IPAddress(localIP())     );
-  p.print ("Gateway: "); p.println( IPAddress(gatewayIP())   );
-  p.print ("Subnet : "); p.println( IPAddress(subnetMask())  );
+  p.printf("SSID        : %s (%d dBm)\r\n", _ap_info.ssid, RSSI());
+  p.print ("Encryption  : "); this->printEncryption(_ap_info.security, p); p.println();
+  p.print ("MAC Address : "); p.printf("%02X:%02X:%02X:%02X:%02X:%02X\r\n", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+  p.print ("Local IP    : "); p.println( IPAddress(localIP())     );
+  p.print ("Gateway     : "); p.println( IPAddress(gatewayIP())   );
+  p.print ("Subnet Mask : "); p.println( IPAddress(subnetMask())  );
   p.println();
 }
 
@@ -776,4 +776,3 @@ void adafruit_wifi_disconnect_callback(void)
     Feather.wlan_disconnect_callback();
   }
 }
-
