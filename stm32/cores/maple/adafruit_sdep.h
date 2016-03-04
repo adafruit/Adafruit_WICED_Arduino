@@ -47,11 +47,11 @@ protected:
   bool  _err_print;
   bool  _err_halt;
 
-  void  handle_error(void)
+  void  handle_error(uint16_t cmd_id)
   {
     if (_err_print && (ERROR_NONE != _errno))
     {
-      Serial.printf("\r\nSDEP Error: %s (%d)\r\n", errstr(), errno());
+      Serial.printf("\r\nSDEP Command 0x%04X Error: %s (%d)\r\n", cmd_id, errstr(), errno());
     }
 
     if ( _err_halt && (ERROR_NONE != _errno) )
@@ -69,7 +69,7 @@ public:
             uint16_t* p_result_len , void* p_result)
   {
     _errno = FEATHERLIB->sdep_execute(cmd_id, param_len, p_param, p_result_len, p_result);
-    handle_error();
+    handle_error(cmd_id);
     return (ERROR_NONE == _errno);
   }
 
@@ -78,7 +78,7 @@ public:
               uint16_t* p_result_len , void* p_result)
   {
     _errno = FEATHERLIB->sdep_execute_n(cmd_id, para_count, para_arr, p_result_len, p_result);
-    handle_error();
+    handle_error(cmd_id);
     return (ERROR_NONE == _errno);
   }
 

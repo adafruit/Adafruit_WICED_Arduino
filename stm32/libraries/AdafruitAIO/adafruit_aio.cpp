@@ -36,6 +36,16 @@
 
 #include "adafruit_aio.h"
 
+// Debugging purpose
+#if defined(DEBUG_AIO_USERNAME) && defined(DEBUG_AIO_KEY)
+AdafruitAIO::AdafruitAIO(const char* username, const char* password) : AdafruitMQTT(DEBUG_AIO_USERNAME, DEBUG_AIO_KEY)
+#else
+AdafruitAIO::AdafruitAIO(const char* username, const char* password) : AdafruitMQTT(username, password)
+#endif
+{
+
+}
+
 bool AdafruitAIO::connect(bool cleanSession, uint16_t keepalive_sec)
 {
   VERIFY(_username != NULL && _password != NULL);

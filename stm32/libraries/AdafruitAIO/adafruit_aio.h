@@ -55,7 +55,7 @@ protected:
   void  removeFeed(char* feedfull);
 
 public:
-  AdafruitAIO(const char* username, const char* password) : AdafruitMQTT(username, password) {}
+  AdafruitAIO(const char* username, const char* password);
 
   bool connect   (bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
   bool connectSSL(bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
