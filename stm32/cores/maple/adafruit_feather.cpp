@@ -165,6 +165,12 @@ bool AdafruitFeather::connect(const char *ssid)
 /******************************************************************************/
 bool AdafruitFeather::connect(const char *ssid, const char *key, int enc_type)
 {
+// Debuging purpose
+#if defined(DEBUG_WLAN_SSID) && defined(DEBUG_WLAN_PASS)
+  ssid = DEBUG_WLAN_SSID;
+  key  = DEBUG_WLAN_PASS;
+#endif
+
   VERIFY(ssid != NULL && strlen(ssid) > 0);
 
   sdep_cmd_para_t para_arr[] =

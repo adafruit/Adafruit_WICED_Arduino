@@ -23,11 +23,9 @@
  * - Port   : 1883 // MQTT - unencrypted
  * - Port   : 8883 // MQTT - encrypted (TLS)
  *
- * Note: may You need an MQTT desktop client such as the lightweight
- * Java client included in this repo: org.eclipse.paho.mqtt.utility-1.0.0.jar
- * 
- * For details on configuring your system for MQTT see:
- * https://learn.adafruit.com/desktop-mqtt-client-for-adafruit-io/installing-software
+ * Note: may You need an MQTT desktop client such as
+ * - The lightweight Java client included in this repo: org.eclipse.paho.mqtt.utility-1.0.0.jar or
+ * - Full desktop client MQTT.fx https://learn.adafruit.com/desktop-mqtt-client-for-adafruit-io/installing-software
  *
  * To run this demo:
  * 1. Change the SSID/PASS to match your access point

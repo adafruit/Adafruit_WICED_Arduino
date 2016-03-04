@@ -23,9 +23,9 @@
  *  - Port 1883 : MQTT, unencrypted
  *  - Port 8883 : MQTT, encrypted (TLS)
  *
- * Note: You need an MQTT desktop client such as
- * - Lightweight Java included in the repo: org.eclipse.paho.mqtt.utility-1.0.0.jar
- * - https://learn.adafruit.com/desktop-mqtt-client-for-adafruit-io/installing-software
+ * Note: may You need an MQTT desktop client such as
+ * - The lightweight Java client included in this repo: org.eclipse.paho.mqtt.utility-1.0.0.jar or
+ * - Full desktop client MQTT.fx https://learn.adafruit.com/desktop-mqtt-client-for-adafruit-io/installing-software
  *
  * To run this demo
  * 1. Change SSID/PASS
@@ -52,7 +52,7 @@
 #define WILL_MESSAGE      "Goodbye!!"
 
 AdafruitMQTT      mqtt;
-AdafruitMQTTTopic topic(&mqtt, TOPIC, MQTT_QOS_AT_LEAST_ONCE);
+AdafruitMQTTTopic mqttTopic(&mqtt, TOPIC, MQTT_QOS_AT_LEAST_ONCE);
 
 /**************************************************************************/
 /*!
@@ -117,7 +117,7 @@ void setup()
 void loop()
 {
   Serial.print("Publishing to " TOPIC " ... ");
-  topic.print(PUBLISH_MESSAGE);
+  mqttTopic.print(PUBLISH_MESSAGE);
   Serial.println("OK");
 
   delay(5000);
