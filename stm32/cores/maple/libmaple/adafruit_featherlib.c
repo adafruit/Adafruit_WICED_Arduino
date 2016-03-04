@@ -55,7 +55,7 @@ extern err_t adafruit_tcp_disconnect_callback (void* socket, void* p_tcp);
 
 extern err_t adafruit_udp_receive_callback(void* socket, void* p_udp);
 
-void  adafruit_mqtt_subscribed_callback(char* topic_data, size_t topic_len, uint8_t* message, size_t len, void* callback_func, void* arg);
+void  adafruit_mqtt_subscribed_callback(char* topic_data, size_t topic_len, uint8_t* mess_data, size_t len, void* callback_func, void* arg);
 err_t adafruit_mqtt_disconnect_callback(void* socket, void* p_mqtt);
 
 //--------------------------------------------------------------------+

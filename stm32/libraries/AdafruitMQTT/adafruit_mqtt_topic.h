@@ -42,9 +42,11 @@
 // Callback proxy from Featherlib
 extern "C"
 {
-  void  adafruit_mqtt_subscribed_callback(char* topic_data, size_t topic_len, uint8_t* message, size_t len, void* callback_func, void* arg);
-  err_t adafruit_mqtt_disconnect_callback(void* socket, void* p_mqtt);
+  void adafruit_mqtt_subscribed_callback(char* topic_data, size_t topic_len, uint8_t* mess_data, size_t len, void* callback_func, void* arg);
 }
+
+// forward declaration
+class AdafruitMQTT;
 
 class AdafruitMQTTTopic : public Print
 {
@@ -54,28 +56,24 @@ protected:
   uint8_t       _qos;
   bool          _retained;
 
+  virtual void subscribed_callback(UTF8String topic, UTF8String message, void* callback_func);
+
 public:
-  AdafruitMQTTTopic(AdafruitMQTT* mqtt, const char* topic, uint8_t qos = MQTT_QOS_AT_MOST_ONCE, bool retain = false)
-  {
-    _mqtt     = mqtt;
-    _topic    = topic;
-    _qos      = qos;
-    _retained = retain;
-  }
+  typedef void (*messageHandler_t)(UTF8String topic, UTF8String message);
+
+  AdafruitMQTTTopic(AdafruitMQTT* mqtt, const char* topic, uint8_t qos = MQTT_QOS_AT_MOST_ONCE, bool retain = false);
 
   void retain(bool on) { _retained = on; }
 
-  virtual size_t write(const uint8_t *buf, size_t len)
-  {
-    _mqtt->publish(_topic, UTF8String(buf, len), _qos, _retained);
-  }
+  bool subscribe  (messageHandler_t mh);
+  bool unsubscribe(void);
 
+  virtual size_t write(const uint8_t *buf, size_t len);
   virtual size_t write(uint8_t ch) { return write(&ch, 1); }
   using Print::write;
 
   // callback
-  friend void  adafruit_mqtt_subscribed_callback(char* topic_data, size_t topic_len, uint8_t* message, size_t len, void* callback_func, void* arg);
-  friend err_t adafruit_mqtt_disconnect_callback(void* socket, void* p_mqtt);
+  friend void  adafruit_mqtt_subscribed_callback(char* topic_data, size_t topic_len, uint8_t* mess_data, size_t len, void* callback_func, void* arg);
 };
 
 #endif /* _ADAFRUIT_MQTT_TOPIC_H_ */

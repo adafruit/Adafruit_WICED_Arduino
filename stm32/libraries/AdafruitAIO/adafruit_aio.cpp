@@ -83,19 +83,19 @@ bool AdafruitAIO::updateFeed(const char* feed, UTF8String message, uint8_t qos, 
   return result;
 }
 
-bool AdafruitAIO::followFeed(const char* feed, uint8_t qos, messageHandler_t mh)
+bool AdafruitAIO::followFeed(const char* feed, uint8_t qos, feedHandler_t mh)
 {
   char * feedfull = createFeed(feed);
-  bool result = this->subscribe_copy(feedfull, qos, mh);
+  bool result = this->subscribe_internal(feedfull, qos, (void*) mh, true, NULL);
   removeFeed(feedfull);
 
   return result;
 }
 
-bool AdafruitAIO::followFeed(const char* feed, uint8_t qos, messageHandler_t mh, AdafruitAIOFeed* aio_feed)
+bool AdafruitAIO::followFeed(const char* feed, uint8_t qos, feedHandler_t mh, AdafruitAIOFeed* aio_feed)
 {
   char * feedfull = createFeed(feed);
-  bool result = this->subscribe_internal(feedfull, qos, mh, true, (void*) aio_feed);
+  bool result = this->subscribe_internal(feedfull, qos, (void*) mh, true, (void*) aio_feed);
   removeFeed(feedfull);
 
   return result;

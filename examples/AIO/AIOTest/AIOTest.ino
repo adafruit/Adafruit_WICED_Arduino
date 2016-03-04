@@ -40,7 +40,7 @@
 #define ONOFF_FEED         "onoff"
 
 // Connect using TLS/SSL or not
-#define USE_TLS           1
+#define USE_TLS             0
 
 // Uncomment to set your own ClientID, otherwise a random ClientID is used
 //#define CLIENTID          "Adafruit Feather"
@@ -95,11 +95,8 @@ void setup()
   }
   Serial.println("OK");
 
-  // Set message handler for onoff feed
-  onoff.setMessageHandler(onoff_mess_handler);
-
   // follow onoff state change
-  onoff.follow();
+  onoff.follow(feed_callback);
 }
 
 /**************************************************************************/
@@ -121,30 +118,22 @@ void loop()
 
 /**************************************************************************/
 /*!
-    @brief  Subscribe callback handler
+    @brief  MQTT subscribe event callback handler
 
-    @param  topic_data  topic name's contents in byte array (not null terminated)
-    @param  topic_len   topic name's length
+    @param  topic      The topic causing this callback to fire
+    @param  message    The new value associated with 'topic'
 
-    @param  mess_data   message's contents in byte array (not null terminated)
-    @param  mess_len    message's length
-
-    @note   'topic_data' and 'mess_data' are byte array without null-terminated
-    like C-style string. Don't try to use Serial.print() directly, use the UTF8String
-    datatype or Serial.write() instead.
+    @note   'topic' and 'message' are UTF8Strings (byte array), which means
+            they are not null-terminated like C-style strings. You can
+            access its data and len using .data & .len, although there is
+            also a Serial.print override to handle UTF8String data types.
 */
 /**************************************************************************/
-void onoff_mess_handler(char* topic_data, size_t topic_len, uint8_t* mess_data, size_t mess_len)
+void feed_callback(UTF8String message)
 {
-  // Use UTF8String class for easy printing of UTF8 data
-  UTF8String utf8Topic(topic_data, topic_len);
-  UTF8String utf8Message(mess_data, mess_len);
-
-  // Print out topic name and message
-  Serial.print("[ONOFF Feed] ");
-  Serial.print(utf8Topic);
-  Serial.print(" : ") ;
-  Serial.println(utf8Message);  
+  // Print message
+  Serial.print("[ONOFF Feed] : ");
+  Serial.println(message);  
 }
 
 /**************************************************************************/

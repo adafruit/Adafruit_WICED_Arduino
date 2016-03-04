@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*!
-    @file     adafruit_aio_feed.h
+    @file     adafruit_aio_feed.cpp
     @author   hathach
 
     @section LICENSE
@@ -34,33 +34,64 @@
 */
 /**************************************************************************/
 
-#ifndef _ADAFRUIT_AIO_FEED_H_
-#define _ADAFRUIT_AIO_FEED_H_
-
-#include <Arduino.h>
-#include <Printable.h>
-#include <Client.h>
-#include <IPAddress.h>
 #include <adafruit_feather.h>
-#include <adafruit_aio.h>
 #include <adafruit_mqtt.h>
+#include "adafruit_aio.h"
+#include "adafruit_aio_feed.h"
 
-class AdafruitAIOFeed : public AdafruitMQTTTopic
+/******************************************************************************/
+/*!
+    @brief Constructor
+*/
+/******************************************************************************/
+AdafruitAIOFeed::AdafruitAIOFeed(AdafruitAIO* aio, const char* feed, uint8_t qos, bool retain)
+: AdafruitMQTTTopic(aio, feed, qos, retain)
 {
-protected:
-  virtual void subscribed_callback(UTF8String topic, UTF8String message, void* callback_func);
-  AdafruitAIO* _aio;
+  _aio = aio;
+}
 
-public:
-  typedef void (*feedHandler_t)(UTF8String message);
-  AdafruitAIOFeed(AdafruitAIO* aio, const char* feed, uint8_t qos = MQTT_QOS_AT_MOST_ONCE, bool retain = true);
+/******************************************************************************/
+/*!
+    @brief
+*/
+/******************************************************************************/
+bool AdafruitAIOFeed::follow(feedHandler_t mh)
+{
+  return _aio->followFeed(_topic, _qos, mh, this);
+}
 
-  bool follow  (feedHandler_t fp);
-  bool unfollow(void);
+/******************************************************************************/
+/*!
+    @brief
+*/
+/******************************************************************************/
+bool AdafruitAIOFeed::unfollow(void)
+{
+  return _aio->unfollowFeed(_topic);
+}
 
-  virtual size_t write(const uint8_t *buf, size_t len);
-  virtual size_t write(uint8_t ch) { return write(&ch, 1); }
-  using Print::write;
-};
+/******************************************************************************/
+/*!
+    @brief Callback fired when messag arrived if this pointer is passed to featherlib
+*/
+/******************************************************************************/
+void AdafruitAIOFeed::subscribed_callback(UTF8String topic, UTF8String message, void* callback_func)
+{
+  if ( callback_func )
+  {
+    feedHandler_t mh = (feedHandler_t) callback_func;
+    mh(message);
+  }
+}
 
-#endif /* _ADAFRUIT_AIO_FEED_H_ */
+/******************************************************************************/
+/*!
+    @brief
+*/
+/******************************************************************************/
+size_t AdafruitAIOFeed::write(const uint8_t *buf, size_t len)
+{
+  bool result = _aio->updateFeed(_topic, UTF8String(buf, len), _qos, _retained);
+  return result ? len : 0;
+}
+

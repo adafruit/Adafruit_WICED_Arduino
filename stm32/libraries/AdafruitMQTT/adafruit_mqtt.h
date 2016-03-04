@@ -43,6 +43,7 @@
 #include <IPAddress.h>
 #include <adafruit_sdep.h>
 
+#define MQTT_KEEPALIVE_DEFAULT    60 // in seconds
 enum
 {
   MQTT_QOS_AT_MOST_ONCE,
@@ -50,22 +51,18 @@ enum
   MQTT_QOS_EXACTLY_ONCE,
 };
 
-#define MQTT_KEEPALIVE_DEFAULT    60 // in seconds
+#include "adafruit_mqtt_topic.h"
 
 // Callback proxy from Featherlib
 extern "C"
 {
-  void  adafruit_mqtt_subscribed_callback(char* topic_data, size_t topic_len, uint8_t* message, size_t len, void* callback_func, void* arg);
   err_t adafruit_mqtt_disconnect_callback(void* socket, void* p_mqtt);
 }
 
 class AdafruitMQTT : public AdafruitSDEP
 {
 public:
-  // messageHandler_t must not be changed since featherlib uses the same signature
-//  typedef void (*messageHandler_t)(char* topic_data, size_t topic_len, uint8_t* mess_data, size_t mess_len);
-  typedef void (*messageHandler_t)(UTF8String topic,UTF8String message);
-
+  typedef void (*messageHandler_t)(UTF8String topic, UTF8String message);
 
   AdafruitMQTT(const char* username, const char* password)
   {
@@ -111,6 +108,8 @@ public:
   // SDEP
   virtual void err_actions (bool print, bool halt) { tcp.err_actions(print, halt); _err_print = print; _err_halt = halt; }
 
+  friend err_t adafruit_mqtt_disconnect_callback(void* socket, void* p_mqtt);
+
 protected:
   AdafruitTCP tcp;
   uint32_t  _mqtt_handle;
@@ -142,9 +141,7 @@ protected:
 
   void randomClientID(char* clientid);
 
-  bool subscribe_internal(const char* topicFilter, uint8_t qos, messageHandler_t mh, bool copy_topic, void* arg=NULL);
+  bool subscribe_internal(const char* topicFilter, uint8_t qos, void* mh, bool copy_topic, void* arg=NULL);
 };
-
-#include <adafruit_mqtt_topic.h>
 
 #endif /* _ADAFRUIT_MQTT_H__ */

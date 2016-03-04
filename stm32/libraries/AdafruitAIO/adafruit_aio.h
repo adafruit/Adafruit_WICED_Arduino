@@ -58,6 +58,7 @@ protected:
   void  removeFeed(char* feedfull);
 
 public:
+  typedef void (*feedHandler_t)(UTF8String message);
   AdafruitAIO(const char* username, const char* password);
 
   bool connect   (bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
@@ -66,11 +67,11 @@ public:
   using AdafruitMQTT::connectSSL;
 
   bool updateFeed(const char* feed, UTF8String message, uint8_t qos=MQTT_QOS_AT_MOST_ONCE, bool retain=true);
-  bool followFeed(const char* feed, uint8_t qos, messageHandler_t mh);
+  bool followFeed(const char* feed, uint8_t qos, feedHandler_t mh);
   bool unfollowFeed(const char* feed);
 
   // for internal use
-  bool followFeed(const char* feed, uint8_t qos, messageHandler_t mh, AdafruitAIOFeed* aio_feed);
+  bool followFeed(const char* feed, uint8_t qos, feedHandler_t mh, AdafruitAIOFeed* aio_feed);
 };
 
 #include "adafruit_aio_feed.h"
