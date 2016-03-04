@@ -92,6 +92,15 @@ bool AdafruitAIO::followFeed(const char* feed, uint8_t qos, messageHandler_t mh)
   return result;
 }
 
+bool AdafruitAIO::followFeed(const char* feed, uint8_t qos, messageHandler_t mh, AdafruitAIOFeed* aio_feed)
+{
+  char * feedfull = createFeed(feed);
+  bool result = this->subscribe_internal(feedfull, qos, mh, true, (void*) aio_feed);
+  removeFeed(feedfull);
+
+  return result;
+}
+
 bool AdafruitAIO::unfollowFeed(const char* feed)
 {
   char * feedfull = createFeed(feed);

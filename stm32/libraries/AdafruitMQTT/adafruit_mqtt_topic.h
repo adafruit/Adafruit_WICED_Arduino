@@ -39,6 +39,13 @@
 
 #include <Arduino.h>
 
+// Callback proxy from Featherlib
+extern "C"
+{
+  void  adafruit_mqtt_subscribed_callback(char* topic_data, size_t topic_len, uint8_t* message, size_t len, void* callback_func, void* arg);
+  err_t adafruit_mqtt_disconnect_callback(void* socket, void* p_mqtt);
+}
+
 class AdafruitMQTTTopic : public Print
 {
 protected:
@@ -65,6 +72,10 @@ public:
 
   virtual size_t write(uint8_t ch) { return write(&ch, 1); }
   using Print::write;
+
+  // callback
+  friend void  adafruit_mqtt_subscribed_callback(char* topic_data, size_t topic_len, uint8_t* message, size_t len, void* callback_func, void* arg);
+  friend err_t adafruit_mqtt_disconnect_callback(void* socket, void* p_mqtt);
 };
 
 #endif /* _ADAFRUIT_MQTT_TOPIC_H_ */

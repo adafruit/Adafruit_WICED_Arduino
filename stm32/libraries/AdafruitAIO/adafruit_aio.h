@@ -48,6 +48,9 @@
 #define AIO_UNSECURED_PORT  1883
 #define AIO_SECURED_PORT    8883
 
+// forward declaration
+class AdafruitAIOFeed;
+
 class AdafruitAIO : public AdafruitMQTT
 {
 protected:
@@ -65,6 +68,9 @@ public:
   bool updateFeed(const char* feed, UTF8String message, uint8_t qos=MQTT_QOS_AT_MOST_ONCE, bool retain=true);
   bool followFeed(const char* feed, uint8_t qos, messageHandler_t mh);
   bool unfollowFeed(const char* feed);
+
+  // for internal use
+  bool followFeed(const char* feed, uint8_t qos, messageHandler_t mh, AdafruitAIOFeed* aio_feed);
 };
 
 #include "adafruit_aio_feed.h"

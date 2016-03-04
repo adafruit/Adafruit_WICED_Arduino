@@ -61,7 +61,7 @@ public:
   bool follow(void)
   {
     VERIFY(_mh != NULL);
-    ((AdafruitAIO*)_mqtt)->followFeed(_topic, _qos, _mh);
+    ((AdafruitAIO*)_mqtt)->followFeed(_topic, _qos, _mh, this);
   }
 
   bool unfollow(void)

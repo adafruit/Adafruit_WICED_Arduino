@@ -155,7 +155,7 @@ bool AdafruitMQTT::publish( UTF8String topic, UTF8String message, uint8_t qos, b
   return sdep_n(SDEP_CMD_MQTTPUBLISH, para_count, para_arr, NULL, NULL);
 }
 
-bool AdafruitMQTT::subscribe_internal(const char* topicFilter, uint8_t qos, messageHandler_t mh, bool copy_topic)
+bool AdafruitMQTT::subscribe_internal(const char* topicFilter, uint8_t qos, messageHandler_t mh, bool copy_topic, void* arg)
 {
   VERIFY( _connected && topicFilter != NULL && mh != NULL );
 
@@ -166,6 +166,7 @@ bool AdafruitMQTT::subscribe_internal(const char* topicFilter, uint8_t qos, mess
       { .len = 1                   , .p_value = &qos          },
       { .len = 4                   , .p_value = &mh           },
       { .len = 1                   , .p_value = &copy_topic   },
+      { .len = 4                   , .p_value = &arg          },
   };
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
@@ -198,5 +199,24 @@ bool AdafruitMQTT::unsubscribe( const char* topicFilter )
 
 void AdafruitMQTT::setDisconnectCallback  ( void (*fp) (void) )
 {
-  tcp.setDisconnectCallback(fp);
+
+}
+
+//--------------------------------------------------------------------+
+// Callback (These should be in adafruit_mqtt_topic.c
+//--------------------------------------------------------------------+
+void  adafruit_mqtt_subscribed_callback(char* topic_data, size_t topic_len, uint8_t* message, size_t len, void* callback_func, void* arg)
+{
+  DBG_LOCATION();
+  // no AdafruitMQTTTopic pointer
+  if ( arg == NULL )
+  {
+    AdafruitMQTT::messageHandler_t mh = (AdafruitMQTT::messageHandler_t) callback_func;
+    mh( UTF8String(topic_data, topic_len), UTF8String(message, len) );
+  }
+}
+
+err_t adafruit_mqtt_disconnect_callback(void* socket, void* p_mqtt)
+{
+  DBG_LOCATION();
 }

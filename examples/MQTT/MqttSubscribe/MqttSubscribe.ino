@@ -161,35 +161,27 @@ void loop()
 /*!
     @brief  Subscribe callback handler
 
-    @param  topic_data  topic name's contents in byte array (not null terminated)
-    @param  topic_len   topic name's length
+    @param  topic      topic name where the message received
+    @param  message    message's contents
 
-    @param  mess_data   message's contents in byte array (not null terminated)
-    @param  mess_len    message's length
-
-    @note   'topic_data' and 'mess_data' are byte array without null-terminated
-    like C-style string. Don't try to use Serial.print() directly, use the UTF8String
-    datatype or Serial.write() instead.
+    @note   'topic' and 'message' 'topic_data' UTF8String (byte array) without null-terminated
+    like C-style string. You can access its data byte and len using .data & .len
 */
 /**************************************************************************/
-void subscribed_callback(char* topic_data, size_t topic_len, uint8_t* mess_data, size_t mess_len)
+void subscribed_callback(UTF8String topic, UTF8String message)
 {
-  // Use UTF8String class for easy printing of UTF8 data
-  UTF8String utf8Topic(topic_data, topic_len);
-  UTF8String utf8Message(mess_data, mess_len);
-
   // Print out topic name and message
   Serial.print("[Subscribed] ");
-  Serial.print(utf8Topic);
+  Serial.print(topic);
   Serial.print(" : ") ;
-  Serial.println(utf8Message);
+  Serial.println(message);
 
   // Echo back
-  mqtt.publish(TOPIC_ECHO, utf8Message); // Will halt if an error occurs
+  mqtt.publish(TOPIC_ECHO, message); // Will halt if an error occurs
 
   // Unsubscribe from SUBSCRIBED_TOPIC2 if we received an "unsubscribe" message
   // Won't be able to echo anymore
-  if ( utf8Message == "unsubscribe" )
+  if ( message == "unsubscribe" )
   {
     Serial.print("Unsubscribing from " TOPIC_SUBSCRIBE " ... ");
     mqtt.unsubscribe(TOPIC_SUBSCRIBE); // Will halt if fails

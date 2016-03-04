@@ -55,6 +55,9 @@ extern err_t adafruit_tcp_disconnect_callback (void* socket, void* p_tcp);
 
 extern err_t adafruit_udp_receive_callback(void* socket, void* p_udp);
 
+void  adafruit_mqtt_subscribed_callback(char* topic_data, size_t topic_len, uint8_t* message, size_t len, void* callback_func, void* arg);
+err_t adafruit_mqtt_disconnect_callback(void* socket, void* p_mqtt);
+
 //--------------------------------------------------------------------+
 // IMPLEMENTATION
 //--------------------------------------------------------------------+
@@ -67,14 +70,18 @@ ATTR_USED adafruit_arduino_t const adafruit_arduino =
     .cdc_serial_event_cb = USBSerial_callback,
 
     // wifi
-//    .wifi_connect_callback       = adafruit_wifi_connect_callback,
-    .wifi_disconnect_callback      = adafruit_wifi_disconnect_callback,
+//    .wifi_connect_callback    = adafruit_wifi_connect_callback,
+    .wifi_disconnect_callback   = adafruit_wifi_disconnect_callback,
 
     // TCP
-    .tcpserver_connect_callback    = adafruit_tcpserver_connect_callback,
-    .tcp_receive_callback          = adafruit_tcp_receive_callback,
-    .tcp_disconnect_callback       = adafruit_tcp_disconnect_callback,
+    .tcpserver_connect_callback = adafruit_tcpserver_connect_callback,
+    .tcp_receive_callback       = adafruit_tcp_receive_callback,
+    .tcp_disconnect_callback    = adafruit_tcp_disconnect_callback,
 
     // UDP
-    .udp_receive_callback          = adafruit_udp_receive_callback
+    .udp_receive_callback       = adafruit_udp_receive_callback,
+
+    // MQTT
+    .mqtt_subscribed_callback   = adafruit_mqtt_subscribed_callback,
+    .mqtt_disconnect_callback   = adafruit_mqtt_disconnect_callback,
 };
