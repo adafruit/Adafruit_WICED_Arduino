@@ -52,7 +52,6 @@ void connect_request_callback(void)
     // call stop() to free memory by Client
     client.stop();
   }
-  
 }
 
 /**************************************************************************/

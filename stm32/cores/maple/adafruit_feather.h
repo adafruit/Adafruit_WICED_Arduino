@@ -218,9 +218,8 @@ extern AdafruitFeather Feather;
 #if DBG_ENABLE
   #define DBG_LOCATION()  Serial.printf("%s: %d: \r\n", __PRETTY_FUNCTION__, __LINE__)
   #define DBG_INT(x)      Serial.printf(#x " = %ld\r\n", (uint32_t) (x) )
-  #define DBG_HEX(x)      Serial.printf(#x " = %08lx\r\n", (uint32_t) (x) )
+  #define DBG_HEX(x)      Serial.printf("%s: " #x " = %08lx\r\n", __FUNCTION__, (uint32_t) (x) )
   #define DBG_STR(x)      Serial.printf(#x " = %s\r\n", (char*)(x) )
-  #define DBG_HEAP()      Serial.printf("%s: %d: Heap free: %d\r\n", __FUNCTION__, __LINE__, FEATHERLIB->heap_get_free_size())
   #define DBG_BUFFER(buf, n) \
     do {\
       uint8_t* p8 = (uint8_t*) (buf);\
@@ -231,6 +230,12 @@ extern AdafruitFeather Feather;
 
   #define calloc_named( name, nelems, elemsize) ({ Serial.printf("[calloc] %s : %d\r\n", name, nelems*elemsize); calloc ( nelems, elemsize ); })
   #define malloc_named( name, size )            ({ Serial.printf("[malloc] %s : %d\r\n", name, size); malloc(size); })
+
+  #if DBG_ENABLE == 3
+  #define DBG_HEAP()      Serial.printf("%s: %d: Heap free: %d\r\n", __FUNCTION__, __LINE__, FEATHERLIB->heap_get_free_size()); delay(5)
+  #else
+  #define DBG_HEAP()
+  #endif
 #else
   #define DBG_LOCATION()
   #define DBG_INT(x)
