@@ -156,7 +156,7 @@ void onoff_callback(bool state)
 bool connectAP(void)
 {
   // Attempt to connect to an AP
-  Serial.print("Attempting to connect to: " WLAN_SSID " ... ");
+  Serial.print("Attempting to connect to: '" WLAN_SSID "' please wait ... ");
 
   if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
   {
@@ -170,22 +170,5 @@ bool connectAP(void)
   Serial.println();
 
   return Feather.connected();
-}
-
-/**************************************************************************/
-/*!
-    @brief  Get user input from Serial
-*/
-/**************************************************************************/
-void getUserInput(char buffer[], uint8_t maxSize)
-{
-  memset(buffer, 0, maxSize);
-  while( Serial.peek() < 0 ) { delay(1); }
-
-  uint8_t count=0;
-  do
-  {
-    count += Serial.readBytes(buffer+count, maxSize);
-  } while( (count < maxSize) && !(Serial.peek() < 0) );
 }
 

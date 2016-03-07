@@ -37,8 +37,6 @@
 #include <adafruit_feather.h>
 #include <adafruit_mqtt.h>
 #include "adafruit_aio.h"
-#include "adafruit_aio_feed.h"
-#include "adafruit_aio_feed_onoff.h"
 
 /******************************************************************************/
 /*!
@@ -48,7 +46,7 @@
 AdafruitAIOFeedOnOff::AdafruitAIOFeedOnOff(AdafruitAIO* aio, const char* feed, uint8_t qos, bool retain):
   AdafruitAIOFeed(aio, feed, qos, retain)
 {
-
+  _state = false;
 }
 
 /******************************************************************************/

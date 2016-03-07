@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*!
-    @file     adafruit_aio.h
+    @file     adafruit_aio_feed_pushbutton.h
     @author   hathach
 
     @section LICENSE
@@ -34,43 +34,20 @@
 */
 /**************************************************************************/
 
-#ifndef _ADAFRUIT_AIO_H_
-#define _ADAFRUIT_AIO_H_
+#ifndef _ADAFRUIT_AIO_FEED_PUSHBUTTON_H_
+#define _ADAFRUIT_AIO_FEED_PUSHBUTTON_H_
 
 #include <Arduino.h>
 
-#define AIO_SERVER          "io.adafruit.com"
-#define AIO_UNSECURED_PORT  1883
-#define AIO_SECURED_PORT    8883
-
-// forward declaration
-class AdafruitAIOFeed;
-
-class AdafruitAIO : public AdafruitMQTT
+class AdafruitAIOFeedPushButton : public AdafruitAIOFeedOnOff
 {
 protected:
-  char* createFeed(const char* feedid);
-  void  removeFeed(char* feedfull);
+  virtual void subscribed_callback(UTF8String topic, UTF8String message, void* callback_func);
 
 public:
-  typedef void (*feedHandler_t)(UTF8String message);
-  AdafruitAIO(const char* username, const char* password);
+  AdafruitAIOFeedPushButton(AdafruitAIO* aio, const char* feed, uint8_t qos = MQTT_QOS_AT_MOST_ONCE, bool retain = true);
 
-  bool connect   (bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
-  bool connectSSL(bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
-  using AdafruitMQTT::connect;
-  using AdafruitMQTT::connectSSL;
-
-  bool updateFeed  (const char* feed, UTF8String message, uint8_t qos=MQTT_QOS_AT_MOST_ONCE, bool retain=true);
-  bool followFeed  (const char* feed, uint8_t qos, feedHandler_t mh);
-  bool unfollowFeed(const char* feed);
-
-  // for internal use
-  bool followFeed(const char* feed, uint8_t qos, feedHandler_t mh, AdafruitAIOFeed* aio_feed);
+  bool operator = (bool value);
 };
 
-#include "adafruit_aio_feed.h"
-#include "adafruit_aio_feed_onoff.h"
-#include "adafruit_aio_feed_pushbutton.h"
-
-#endif /* _ADAFRUIT_AIO_H_ */
+#endif /* _ADAFRUIT_AIO_FEED_PUSHBUTTON_H_ */

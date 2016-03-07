@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*!
-    @file     adafruit_aio.h
+    @file     adafruit_aio_feed_pushbutton.cpp
     @author   hathach
 
     @section LICENSE
@@ -34,43 +34,59 @@
 */
 /**************************************************************************/
 
-#ifndef _ADAFRUIT_AIO_H_
-#define _ADAFRUIT_AIO_H_
+#include <adafruit_feather.h>
+#include <adafruit_mqtt.h>
+#include "adafruit_aio.h"
 
-#include <Arduino.h>
-
-#define AIO_SERVER          "io.adafruit.com"
-#define AIO_UNSECURED_PORT  1883
-#define AIO_SECURED_PORT    8883
-
-// forward declaration
-class AdafruitAIOFeed;
-
-class AdafruitAIO : public AdafruitMQTT
+/******************************************************************************/
+/*!
+    @brief Constructor
+*/
+/******************************************************************************/
+AdafruitAIOFeedPushButton::AdafruitAIOFeedPushButton(AdafruitAIO* aio, const char* feed, uint8_t qos, bool retain):
+  AdafruitAIOFeedOnOff(aio, feed, qos, retain)
 {
-protected:
-  char* createFeed(const char* feedid);
-  void  removeFeed(char* feedfull);
 
-public:
-  typedef void (*feedHandler_t)(UTF8String message);
-  AdafruitAIO(const char* username, const char* password);
+}
 
-  bool connect   (bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
-  bool connectSSL(bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
-  using AdafruitMQTT::connect;
-  using AdafruitMQTT::connectSSL;
+/******************************************************************************/
+/*!
+    @brief Assignment overload
+*/
+/******************************************************************************/
+bool AdafruitAIOFeedPushButton::operator = (bool value)
+{
+  _state = value;
+  this->write( value ? '1' : '0' );
+}
 
-  bool updateFeed  (const char* feed, UTF8String message, uint8_t qos=MQTT_QOS_AT_MOST_ONCE, bool retain=true);
-  bool followFeed  (const char* feed, uint8_t qos, feedHandler_t mh);
-  bool unfollowFeed(const char* feed);
+/******************************************************************************/
+/*!
+    @brief Callback fired when message arrived if this pointer is passed to featherlib
+*/
+/******************************************************************************/
+void AdafruitAIOFeedPushButton::subscribed_callback(UTF8String topic, UTF8String message, void* callback_func)
+{
+  (void) topic;
 
-  // for internal use
-  bool followFeed(const char* feed, uint8_t qos, feedHandler_t mh, AdafruitAIOFeed* aio_feed);
-};
+  DBG_LOCATION();
 
-#include "adafruit_aio_feed.h"
-#include "adafruit_aio_feed_onoff.h"
-#include "adafruit_aio_feed_pushbutton.h"
+  if ( message == "1" )
+  {
+    _state = true;
+  }
+  else if( message == "0" )
+  {
+    _state = false;
+  }else
+  {
+    // do nothing since it is not relevant
+  }
 
-#endif /* _ADAFRUIT_AIO_H_ */
+  if ( callback_func )
+  {
+    feedOnOffHandler_t mh = (feedOnOffHandler_t) callback_func;
+    mh(_state);
+  }
+}
+
