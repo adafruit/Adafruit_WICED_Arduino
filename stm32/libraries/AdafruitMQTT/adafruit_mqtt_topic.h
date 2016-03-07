@@ -69,6 +69,7 @@ public:
   bool subscribe  (messageHandler_t mh);
   bool unsubscribe(void);
 
+  // Check if currently subscribed or not
   bool subscribed (void) { return _subscribed; }
 
   virtual size_t write(const uint8_t *buf, size_t len);

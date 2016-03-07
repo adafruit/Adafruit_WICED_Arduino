@@ -34,6 +34,8 @@
 */
 /**************************************************************************/
 
+#include <adafruit_feather.h>
+#include <adafruit_mqtt.h>
 #include "adafruit_aio.h"
 
 // Debugging purpose

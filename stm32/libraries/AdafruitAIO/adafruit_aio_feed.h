@@ -38,12 +38,6 @@
 #define _ADAFRUIT_AIO_FEED_H_
 
 #include <Arduino.h>
-#include <Printable.h>
-#include <Client.h>
-#include <IPAddress.h>
-#include <adafruit_feather.h>
-#include <adafruit_aio.h>
-#include <adafruit_mqtt.h>
 
 class AdafruitAIOFeed : public AdafruitMQTTTopic
 {
@@ -57,6 +51,9 @@ public:
 
   bool follow  (feedHandler_t fp);
   bool unfollow(void);
+
+  // Check if currently followed or not
+  bool followed(void) { return this->subscribed(); }
 
   virtual size_t write(const uint8_t *buf, size_t len);
   virtual size_t write(uint8_t ch) { return write(&ch, 1); }

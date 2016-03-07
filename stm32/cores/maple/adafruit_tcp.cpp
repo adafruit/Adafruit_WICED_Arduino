@@ -86,7 +86,10 @@ AdafruitTCP::AdafruitTCP ( tcp_handle_t handle )
 /******************************************************************************/
 AdafruitTCP::~AdafruitTCP()
 {
-  // TODO close and free all resource
+  if ( _tcp_handle != NULL)
+  {
+    this->stop();
+  }
 }
 
 /******************************************************************************/
@@ -429,6 +432,8 @@ void AdafruitTCP::stop()
   sdep(SDEP_CMD_TCP_DISCONNECT, 4, &_tcp_handle, NULL, NULL);
   free(_tcp_handle);
   if (_tls_context) free(_tls_context);
+
+  this->reset();
 
   DBG_HEAP();
 }

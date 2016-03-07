@@ -38,11 +38,6 @@
 #define _ADAFRUIT_AIO_H_
 
 #include <Arduino.h>
-#include <Printable.h>
-#include <Client.h>
-#include <IPAddress.h>
-#include <adafruit_feather.h>
-#include <adafruit_mqtt.h>
 
 #define AIO_SERVER          "io.adafruit.com"
 #define AIO_UNSECURED_PORT  1883
@@ -66,8 +61,8 @@ public:
   using AdafruitMQTT::connect;
   using AdafruitMQTT::connectSSL;
 
-  bool updateFeed(const char* feed, UTF8String message, uint8_t qos=MQTT_QOS_AT_MOST_ONCE, bool retain=true);
-  bool followFeed(const char* feed, uint8_t qos, feedHandler_t mh);
+  bool updateFeed  (const char* feed, UTF8String message, uint8_t qos=MQTT_QOS_AT_MOST_ONCE, bool retain=true);
+  bool followFeed  (const char* feed, uint8_t qos, feedHandler_t mh);
   bool unfollowFeed(const char* feed);
 
   // for internal use
