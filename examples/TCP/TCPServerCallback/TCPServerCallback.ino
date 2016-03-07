@@ -23,15 +23,16 @@ AdafruitTCPServer tcpserver(PORT);
 
 /**************************************************************************/
 /*!
-    @brief  This callback is fired when there is an connection request from
-    a client. Use accept() to allow connection establishment and retrieve client
+    @brief  This callback is fired when there is a connection request from
+            a TCP client. Use accept() to establish the connection and
+            retrieve the client 'AdafruitTCP' instance.
 */
 /**************************************************************************/
 void connect_request_callback(void)
 {
   uint8_t buffer[256];
   uint16_t len;
-  
+
   AdafruitTCP client = tcpserver.available();
 
   if ( client )
@@ -40,7 +41,7 @@ void connect_request_callback(void)
     len = client.read(buffer, 256);
 
     // Print data along with peer's info
-    Serial.print("[RX] from "); 
+    Serial.print("[RX] from ");
     Serial.print(client.remoteIP());
     Serial.printf(" port %d : ", client.remotePort());
     Serial.write(buffer, len);
@@ -56,7 +57,7 @@ void connect_request_callback(void)
 
 /**************************************************************************/
 /*!
-    @brief  The setup function runs once when reset the board
+    @brief  The setup function runs once when the board comes out of reset
 */
 /**************************************************************************/
 void setup()
@@ -93,23 +94,24 @@ void setup()
 
 /**************************************************************************/
 /*!
-    @brief  The loop function runs over and over again forever
+    @brief  This loop function runs over and over again
 */
 /**************************************************************************/
 void loop()
 {
+
 }
 
 /**************************************************************************/
 /*!
-    @brief  Connect to defined Access Point
+    @brief  Connect to the pre-defined access point
 */
 /**************************************************************************/
 bool connectAP(void)
 {
   // Attempt to connect to an AP
   Serial.print("Please wait while connecting to: '" WLAN_SSID "' ... ");
-  
+
   if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
   {
     Serial.println("Connected!");
