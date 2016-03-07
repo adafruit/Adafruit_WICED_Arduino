@@ -94,9 +94,8 @@ void loop()
 bool connectAP(void)
 {
   // Attempt to connect to an AP
-  Serial.print("Attempting to connect to: ");
-  Serial.println(WLAN_SSID);
-
+  Serial.print("Please wait while connecting to: '" WLAN_SSID "' ... ");
+  
   if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
   {
     Serial.println("Connected!");

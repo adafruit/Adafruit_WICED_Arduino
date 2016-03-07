@@ -156,7 +156,7 @@ void onoff_callback(bool state)
 bool connectAP(void)
 {
   // Attempt to connect to an AP
-  Serial.print("Attempting to connect to: '" WLAN_SSID "' please wait ... ");
+  Serial.print("Please wait while connecting to: '" WLAN_SSID "' ... ");
 
   if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
   {
