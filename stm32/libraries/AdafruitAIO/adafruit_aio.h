@@ -70,5 +70,6 @@ public:
 };
 
 #include "adafruit_aio_feed.h"
+#include "adafruit_aio_feed_onoff.h"
 
 #endif /* _ADAFRUIT_AIO_H_ */

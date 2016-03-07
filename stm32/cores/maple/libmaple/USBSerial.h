@@ -63,7 +63,7 @@ public:
     virtual int peek(void);
     virtual void flush(void) {} // do nothing
     virtual int read(void);
-    virtual size_t write(unsigned char);
+    virtual size_t write(uint8_t);
     virtual size_t write(const uint8_t *buffer, size_t size);
 
     using Print::write;

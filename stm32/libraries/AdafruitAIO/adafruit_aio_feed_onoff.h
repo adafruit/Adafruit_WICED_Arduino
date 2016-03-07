@@ -1,13 +1,13 @@
 /**************************************************************************/
 /*!
-    @file     USBSerial.cpp
+    @file     adafruit_aio_feed_onoff.h
     @author   hathach
 
     @section LICENSE
 
     Software License Agreement (BSD License)
 
-    Copyright (c) 2015, Adafruit Industries (adafruit.com)
+    Copyright (c) 2016, Adafruit Industries (adafruit.com)
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -34,84 +34,36 @@
 */
 /**************************************************************************/
 
-#include "libmaple.h"
-#include "boards.h"
-#include "adafruit_featherlib.h"
-#include "USBSerial.h"
+#ifndef _ADAFRUIT_AIO_FEED_ONOFF_H_
+#define _ADAFRUIT_AIO_FEED_ONOFF_H_
 
-USBSerial Serial;
+#include <Arduino.h>
 
-int USBSerial::available(void)
+class AdafruitAIOFeedOnOff : public AdafruitAIOFeed
 {
-  return FEATHERLIB->file_peek(FILENO_USB_SERIAL) != (-1);
-}
+protected:
+  bool _state;
+  virtual void subscribed_callback(UTF8String topic, UTF8String message, void* callback_func);
 
-int USBSerial::peek(void)
-{
-  return FEATHERLIB->file_peek(FILENO_USB_SERIAL);
-}
+public:
+  typedef void (*feedOnOffHandler_t)(bool state);
 
-int USBSerial::read(void)
-{
-  char ch;
-  FEATHERLIB->file_read(FILENO_USB_SERIAL, (char*)&ch, 1);
-  return (int) ch;
-}
+  AdafruitAIOFeedOnOff(AdafruitAIO* aio, const char* feed, uint8_t qos = MQTT_QOS_AT_MOST_ONCE, bool retain = true);
 
-// DEBUGGING with SWO
-#if defined(DBG_ENABLE) && DBG_ENABLE == 3
+  bool follow  (feedOnOffHandler_t fp);
+  bool follow  (void);
 
-USBSerial::operator bool()
-{
-  return true;
-}
+  bool operator =  (bool value);
+  bool operator == (bool value);
+  bool operator != (bool value) { return ! ((*this) == value); }
+  //operator bool() {  return ((*this) == true); }
 
-size_t USBSerial::write(uint8_t ch)
-{
-  FEATHERLIB->file_write(STDOUT_FILENO, (char*)&ch, 1);
-}
+  // Inherit from AIOFeed
+  bool unfollow(void);
+  bool followed(void);
 
-size_t USBSerial::write(const uint8_t *buffer, size_t size)
-{
-  FEATHERLIB->file_write(STDOUT_FILENO, (char*)buffer, size);
-}
+  using AdafruitAIOFeed::follow;
+  using AdafruitAIOFeed::write;
+};
 
-#else
-
-USBSerial::operator bool()
-{
-  return this->isConnected;
-}
-
-size_t USBSerial::write(uint8_t ch)
-{
-  return FEATHERLIB->file_write(FILENO_USB_SERIAL, (char*)&ch, 1);
-}
-
-size_t USBSerial::write(const uint8_t *buffer, size_t size)
-{
-  return FEATHERLIB->file_write(FILENO_USB_SERIAL, (char*)buffer, size);
-}
-
-#endif
-
-
-// Callback from featherlib when there is status change
-void USBSerial_callback(uint32_t eid, void* p_data)
-{
-  enum
-  {
-    HARDWARESERIAL_EVENT_DISCONNECT = 0,
-    HARDWARESERIAL_EVENT_CONNECT = 1,
-  };
-
-  switch (eid)
-  {
-    case HARDWARESERIAL_EVENT_DISCONNECT:
-    case HARDWARESERIAL_EVENT_CONNECT:
-      Serial.isConnected = eid;
-    break;
-
-    default: break;
-  }
-}
+#endif /* _ADAFRUIT_AIO_FEED_ONOFF_H_ */

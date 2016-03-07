@@ -166,7 +166,7 @@ bool AdafruitMQTT::publish( UTF8String topic, UTF8String message, uint8_t qos, b
 
 bool AdafruitMQTT::subscribe_internal(const char* topicFilter, uint8_t qos, void* mh, bool copy_topic, void* arg)
 {
-  VERIFY( _connected && topicFilter != NULL && mh != NULL );
+  VERIFY( _connected && topicFilter != NULL);
 
   sdep_cmd_para_t para_arr[] =
   {

@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*!
-    @file     adafruit_aio_feed.cpp
+    @file     adafruit_aio_feed_onoff.cpp
     @author   hathach
 
     @section LICENSE
@@ -38,36 +38,58 @@
 #include <adafruit_mqtt.h>
 #include "adafruit_aio.h"
 #include "adafruit_aio_feed.h"
+#include "adafruit_aio_feed_onoff.h"
 
 /******************************************************************************/
 /*!
     @brief Constructor
 */
 /******************************************************************************/
-AdafruitAIOFeed::AdafruitAIOFeed(AdafruitAIO* aio, const char* feed, uint8_t qos, bool retain)
-: AdafruitMQTTTopic(aio, feed, qos, retain)
+AdafruitAIOFeedOnOff::AdafruitAIOFeedOnOff(AdafruitAIO* aio, const char* feed, uint8_t qos, bool retain):
+  AdafruitAIOFeed(aio, feed, qos, retain)
 {
-  _aio = aio;
+
 }
 
 /******************************************************************************/
 /*!
-    @brief
+    @brief Assignment overload
 */
 /******************************************************************************/
-bool AdafruitAIOFeed::follow(feedHandler_t mh)
+bool AdafruitAIOFeedOnOff::operator = (bool value)
 {
-  return _aio->followFeed(_topic, _qos, mh, this);
+  _state = value;
+  this->write( value ? "ON" : "OFF");
 }
 
 /******************************************************************************/
 /*!
-    @brief
+    @brief Equation overload
 */
 /******************************************************************************/
-bool AdafruitAIOFeed::unfollow(void)
+bool AdafruitAIOFeedOnOff::operator == (bool value)
 {
-  return _aio->unfollowFeed(_topic);
+  return this->_state == value;
+}
+
+/******************************************************************************/
+/*!
+    @brief Follow without callback
+*/
+/******************************************************************************/
+bool AdafruitAIOFeedOnOff::follow(void)
+{
+  this->follow((feedHandler_t)NULL);
+}
+
+/******************************************************************************/
+/*!
+    @brief Follow with callback
+*/
+/******************************************************************************/
+bool AdafruitAIOFeedOnOff::follow(feedOnOffHandler_t fp)
+{
+  this->follow((feedHandler_t) fp);
 }
 
 /******************************************************************************/
@@ -75,23 +97,25 @@ bool AdafruitAIOFeed::unfollow(void)
     @brief Callback fired when message arrived if this pointer is passed to featherlib
 */
 /******************************************************************************/
-void AdafruitAIOFeed::subscribed_callback(UTF8String topic, UTF8String message, void* callback_func)
+void AdafruitAIOFeedOnOff::subscribed_callback(UTF8String topic, UTF8String message, void* callback_func)
 {
+  (void) topic;
+
+  if ( message == "ON" )
+  {
+    _state = true;
+  }
+  else if( message == "OFF" )
+  {
+    _state = false;
+  }else
+  {
+    // do nothing since it is not relevant
+  }
+
   if ( callback_func )
   {
-    feedHandler_t mh = (feedHandler_t) callback_func;
-    mh(message);
+    feedOnOffHandler_t mh = (feedOnOffHandler_t) callback_func;
+    mh(_state);
   }
 }
-
-/******************************************************************************/
-/*!
-    @brief
-*/
-/******************************************************************************/
-size_t AdafruitAIOFeed::write(const uint8_t *buf, size_t len)
-{
-  bool result = _aio->updateFeed(_topic, UTF8String(buf, len), _qos, _retained);
-  return result ? len : 0;
-}
-
