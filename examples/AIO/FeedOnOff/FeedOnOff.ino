@@ -95,7 +95,7 @@ void setup()
   Serial.println("OK");
 
   // follow onoff state change
-  Serial.print("Subcribing to feed " ONOFF_FEED " ... ");
+  Serial.print("Subcribing to feed: '" ONOFF_FEED "' ... ");
   onoff.follow(onoff_callback);
   Serial.println("OK");
 
@@ -115,10 +115,10 @@ void loop()
   // It will auto update feed value with correct format
   if ( Serial.available() )
   {
-    int c = Serial.read();
+    char c = Serial.read();
 
     // echo
-    Serial.println(c, BYTE);
+    Serial.println(c);
     Serial.print("Enter '0' or '1' to update feed: ");
 
     // No need to update LED here, feed update will make AIO server
