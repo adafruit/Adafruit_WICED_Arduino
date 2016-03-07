@@ -57,7 +57,7 @@ AdafruitAIOFeedPushButton::AdafruitAIOFeedPushButton(AdafruitAIO* aio, const cha
 bool AdafruitAIOFeedPushButton::operator = (bool value)
 {
   _state = value;
-  this->write( value ? '1' : '0' );
+  return this->write( value ? '1' : '0' ) > 0;
 }
 
 /******************************************************************************/

@@ -57,7 +57,7 @@ AdafruitAIOFeedOnOff::AdafruitAIOFeedOnOff(AdafruitAIO* aio, const char* feed, u
 bool AdafruitAIOFeedOnOff::operator = (bool value)
 {
   _state = value;
-  this->write( value ? "ON" : "OFF");
+  return this->write( value ? "ON" : "OFF") > 0;
 }
 
 /******************************************************************************/
@@ -77,7 +77,7 @@ bool AdafruitAIOFeedOnOff::operator == (bool value)
 /******************************************************************************/
 bool AdafruitAIOFeedOnOff::follow(void)
 {
-  this->follow((feedHandler_t)NULL);
+  return this->follow((feedHandler_t)NULL);
 }
 
 /******************************************************************************/
@@ -87,7 +87,7 @@ bool AdafruitAIOFeedOnOff::follow(void)
 /******************************************************************************/
 bool AdafruitAIOFeedOnOff::follow(feedOnOffHandler_t fp)
 {
-  this->follow((feedHandler_t) fp);
+  return this->follow((feedHandler_t) fp);
 }
 
 /******************************************************************************/
