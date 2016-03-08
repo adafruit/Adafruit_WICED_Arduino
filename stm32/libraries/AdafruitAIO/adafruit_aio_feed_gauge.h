@@ -37,23 +37,38 @@
 #ifndef _ADAFRUIT_AIO_FEED_GAUGE_H_
 #define _ADAFRUIT_AIO_FEED_GAUGE_H_
 
-template <class Num>
+template <typename Num>
 class AdafruitAIOFeedGauge : public AdafruitAIOFeed
 {
 protected:
   Num _value;
   virtual void subscribed_callback(UTF8String topic, UTF8String message, void* callback_func);
 
+  // Specialization function
+  void mess2num(char* str, float* p_value)
+  {
+    (*p_value) = strtof(str, NULL);
+  }
+
+  void mess2num(char* str, int* p_value)
+  {
+    (*p_value) = strtol(str, NULL, 0);
+  }
+
+  const char* numformat (int value  ) { return "%d"; }
+  const char* numformat (float value) { return "%f"; }
+
 public:
   typedef void (*feedNumberHandler_t)(Num value);
 
-  AdafruitAIOFeedGauge(AdafruitAIO* aio, const char* feed, uint8_t qos = MQTT_QOS_AT_MOST_ONCE, bool retain = true);
+  AdafruitAIOFeedGauge(AdafruitAIO* aio, const char* feed, uint8_t qos = MQTT_QOS_AT_MOST_ONCE, bool retain = true)
+    : AdafruitAIOFeed(aio, feed, qos, retain) {}
 
-  bool follow  (feedNumberHandler_t fp);
-  bool follow  (void);
+  bool follow  (feedNumberHandler_t fp) { this->follow((feedHandler_t) fp); }
+  bool follow  (void) { return this->follow((feedHandler_t)NULL); }
 
   Num  operator =  (Num value);
-  bool operator == (Num value);
+  bool operator == (Num value) { this->_value == value; }
   bool operator != (Num value) { return ! ((*this) == value); }
 
   // Inherit from AIOFeed

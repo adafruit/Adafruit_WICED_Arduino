@@ -37,71 +37,29 @@
 #include <adafruit_feather.h>
 #include <adafruit_mqtt.h>
 #include "adafruit_aio.h"
-#include <typeinfo>
-
-/******************************************************************************/
-/*!
-    @brief Constructor
-*/
-/******************************************************************************/
-template <class Num>
-AdafruitAIOFeedGauge<Num>::AdafruitAIOFeedGauge(AdafruitAIO* aio, const char* feed, uint8_t qos, bool retain)
-  : AdafruitAIOFeed(aio, feed, qos, retain)
-{
-
-}
 
 /******************************************************************************/
 /*!
     @brief Assignment overload
 */
 /******************************************************************************/
-template <class Num>
+template <typename Num>
 Num AdafruitAIOFeedGauge<Num>::operator = (Num value)
 {
   _value = value;
-//  this->write( value ? "ON" : "OFF");
+  this->printf( numformat(_value), _value);
+  return _value;
 }
 
-/******************************************************************************/
-/*!
-    @brief Equation overload
-*/
-/******************************************************************************/
-template <class Num>
-bool AdafruitAIOFeedGauge<Num>::operator == (Num value)
-{
-  return this->_value == value;
-}
-
-/******************************************************************************/
-/*!
-    @brief Follow with callback
-*/
-/******************************************************************************/
-template <class Num>
-bool AdafruitAIOFeedGauge<Num>::follow(feedNumberHandler_t fp)
-{
-  return this->follow((feedHandler_t) fp);
-}
-
-/******************************************************************************/
-/*!
-    @brief Follow without callback
-*/
-/******************************************************************************/
-template <class Num>
-bool AdafruitAIOFeedGauge<Num>::follow(void)
-{
-  return this->follow((feedHandler_t)NULL);
-}
+template int   AdafruitAIOFeedGauge<int>  ::operator = (int value);
+template float AdafruitAIOFeedGauge<float>::operator = (float value);
 
 /******************************************************************************/
 /*!
     @brief Callback fired when message arrived if this pointer is passed to featherlib
 */
 /******************************************************************************/
-template <class Num>
+template <typename Num>
 void AdafruitAIOFeedGauge<Num>::subscribed_callback(UTF8String topic, UTF8String message, void* callback_func)
 {
   (void) topic;
@@ -111,19 +69,8 @@ void AdafruitAIOFeedGauge<Num>::subscribed_callback(UTF8String topic, UTF8String
   memcpy(str, message.data, message.len);
   str[message.len] = 0;
 
-  if ( typeid(float) == typeid(Num) )
-  {
-    _value = strtof(str, NULL);
-  }else if ( typeid(Num) == typeid(int32_t) ||
-             typeid(Num) == typeid(uint32_t) ||
-             typeid(Num) == typeid(int) ||
-             typeid(Num) == typeid(long) )
-  {
-    _value = strtol(str, NULL, 0);
-  }else
-  {
-    // do nothing
-  }
+  mess2num(str, &_value);
+  free(str);
 
   if ( callback_func )
   {
@@ -131,3 +78,7 @@ void AdafruitAIOFeedGauge<Num>::subscribed_callback(UTF8String topic, UTF8String
     mh(_value);
   }
 }
+
+// Explicit Instantiation
+template void AdafruitAIOFeedGauge<int>  ::subscribed_callback(UTF8String topic, UTF8String message, void* callback_func);
+template void AdafruitAIOFeedGauge<float>::subscribed_callback(UTF8String topic, UTF8String message, void* callback_func);

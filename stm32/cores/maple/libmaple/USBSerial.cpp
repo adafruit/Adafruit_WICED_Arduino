@@ -43,6 +43,7 @@ USBSerial Serial;
 
 int USBSerial::available(void)
 {
+  // TODO return actual number of bytes.
   return FEATHERLIB->file_peek(FILENO_USB_SERIAL) != (-1);
 }
 

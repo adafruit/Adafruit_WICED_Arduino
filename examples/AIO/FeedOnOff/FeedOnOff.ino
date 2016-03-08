@@ -110,9 +110,7 @@ void setup()
 /**************************************************************************/
 void loop()
 {
-  // Get input from user '0' to off, '1' to on LED and feed
-  // AIO Feed OnOff can be assigned like normal boolean
-  // It will auto update feed value with correct format
+  // Get input from user '0' to off, '1' to update feed
   if ( Serial.available() )
   {
     char c = Serial.read();
@@ -121,6 +119,7 @@ void loop()
     Serial.println(c);
     Serial.print("Enter '0' or '1' to update feed: ");
 
+    // AIO Feed OnOff can be update with assignment like normal boolean
     // No need to update LED here, feed update will make AIO server
     // send message to our module and LED will be update in the callback
     if ( c == '0' )
