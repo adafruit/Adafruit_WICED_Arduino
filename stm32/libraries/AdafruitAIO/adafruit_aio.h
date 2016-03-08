@@ -72,6 +72,6 @@ public:
 #include "adafruit_aio_feed.h"
 #include "adafruit_aio_feed_onoff.h"
 #include "adafruit_aio_feed_pushbutton.h"
-#include "adafruit_aio_feed_gauge.h"
+#include "adafruit_aio_feed_slider.h"
 
 #endif /* _ADAFRUIT_AIO_H_ */

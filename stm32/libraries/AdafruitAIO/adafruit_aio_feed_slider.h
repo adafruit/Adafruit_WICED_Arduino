@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*!
-    @file     adafruit_aio_feed_gauge.h
+    @file     adafruit_aio_feed_slider.h
     @author   hathach
 
     @section LICENSE
@@ -38,7 +38,7 @@
 #define _ADAFRUIT_AIO_FEED_GAUGE_H_
 
 template <typename Num>
-class AdafruitAIOFeedGauge : public AdafruitAIOFeed
+class AdafruitAIOFeedSlider : public AdafruitAIOFeed
 {
 protected:
   Num _value;
@@ -61,7 +61,7 @@ protected:
 public:
   typedef void (*feedNumberHandler_t)(Num value);
 
-  AdafruitAIOFeedGauge(AdafruitAIO* aio, const char* feed, uint8_t qos = MQTT_QOS_AT_MOST_ONCE, bool retain = true)
+  AdafruitAIOFeedSlider(AdafruitAIO* aio, const char* feed, uint8_t qos = MQTT_QOS_AT_MOST_ONCE, bool retain = true)
     : AdafruitAIOFeed(aio, feed, qos, retain) {}
 
   bool follow  (feedNumberHandler_t fp) { this->follow((feedHandler_t) fp); }

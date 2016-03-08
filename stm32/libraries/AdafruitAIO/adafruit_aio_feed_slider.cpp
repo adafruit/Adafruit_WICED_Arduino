@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*!
-    @file     adafruit_aio_feed_gauge.cpp
+    @file     adafruit_aio_feed_slider.cpp
     @author   hathach
 
     @section LICENSE
@@ -44,15 +44,15 @@
 */
 /******************************************************************************/
 template <typename Num>
-Num AdafruitAIOFeedGauge<Num>::operator = (Num value)
+Num AdafruitAIOFeedSlider<Num>::operator = (Num value)
 {
   _value = value;
   this->printf( numformat(_value), _value);
   return _value;
 }
 
-template int   AdafruitAIOFeedGauge<int>  ::operator = (int value);
-template float AdafruitAIOFeedGauge<float>::operator = (float value);
+template int   AdafruitAIOFeedSlider<int>  ::operator = (int value);
+template float AdafruitAIOFeedSlider<float>::operator = (float value);
 
 /******************************************************************************/
 /*!
@@ -60,7 +60,7 @@ template float AdafruitAIOFeedGauge<float>::operator = (float value);
 */
 /******************************************************************************/
 template <typename Num>
-void AdafruitAIOFeedGauge<Num>::subscribed_callback(UTF8String topic, UTF8String message, void* callback_func)
+void AdafruitAIOFeedSlider<Num>::subscribed_callback(UTF8String topic, UTF8String message, void* callback_func)
 {
   (void) topic;
 
@@ -80,5 +80,5 @@ void AdafruitAIOFeedGauge<Num>::subscribed_callback(UTF8String topic, UTF8String
 }
 
 // Explicit Instantiation
-template void AdafruitAIOFeedGauge<int>  ::subscribed_callback(UTF8String topic, UTF8String message, void* callback_func);
-template void AdafruitAIOFeedGauge<float>::subscribed_callback(UTF8String topic, UTF8String message, void* callback_func);
+template void AdafruitAIOFeedSlider<int>  ::subscribed_callback(UTF8String topic, UTF8String message, void* callback_func);
+template void AdafruitAIOFeedSlider<float>::subscribed_callback(UTF8String topic, UTF8String message, void* callback_func);
