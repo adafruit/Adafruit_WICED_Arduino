@@ -16,17 +16,19 @@
 #include <adafruit_mqtt.h>
 #include <adafruit_aio.h>
 
-/* This sketch connect to the Adafruit IO sever io.adafruit.com
- * and update a defined PHOTOCELL_FEED every 5 second. 
- * It also follow ONOF_FEED to receive update from the AIO website
+/* This sketch connects to the Adafruit IO server at io.adafruit.com
+ * and updates a 'PHOTOCELL_FEED' every 5 seconds.
+ *
+ * It also follow 'ONOFF_FEED' to receive updates from the AIO server via
+ * the built-in follow/subscribe callback handler.
  *
  * To run this demo
- * 1. Change SSID/PASS
+ * 1. Change WLAN_SSID/WLAN_PASS
  * 2. Decide whether you want to use TLS/SSL or not (USE_TLS)
- * 3. Change CLIENTID, TOPIC, PUBLISH_MESSAGE, WILL_MESSAGE if you want
- * 4. Compile and run
- * 5. Use MQTT desktop client to connect to same sever and subscribe to the defined topic
- * to monitor the published message.
+ * 3. Change AIO_USERNAME, AIO_KEY to match your own account details
+ * 4. If you want, change PHOTOCELL_FEED and ONOFF_FEED to use different feeds
+ * 5. Compile and run
+ * 6. Optionally log into the AIO webserver to see any changes in data, etc.
  */
 
 #define WLAN_SSID         "yourSSID"
@@ -35,7 +37,7 @@
 #define AIO_USERNAME      "...your AIO username (see https://accounts.adafruit.com)..."
 #define AIO_KEY           "...your AIO key..."
 
-// AdafruitAIO will auto append "username/feeds/" prefix to your feed
+// AdafruitAIO will auto append the "username/feeds/" prefix to your feed(s)
 #define PHOTOCELL_FEED     "photocell"
 #define ONOFF_FEED         "onoff"
 
@@ -46,9 +48,8 @@
 //#define CLIENTID          "Adafruit Feather"
 
 AdafruitAIO       aio(AIO_USERNAME, AIO_KEY);
-
-AdafruitAIOFeed   photocell(&aio, PHOTOCELL_FEED);
-AdafruitAIOFeed   onoff(&aio, ONOFF_FEED);
+AdafruitAIOFeed   photocell (&aio, PHOTOCELL_FEED);
+AdafruitAIOFeed   onoff     (&aio, ONOFF_FEED);
 
 int value = 0;
 
@@ -95,7 +96,7 @@ void setup()
   }
   Serial.println("OK");
 
-  // follow onoff state change
+  // 'Follow' the onoff feed to capture any state changes
   onoff.follow(feed_callback);
 }
 
@@ -118,13 +119,12 @@ void loop()
 
 /**************************************************************************/
 /*!
-    @brief  MQTT subscribe event callback handler
+    @brief  'follow' event callback handler
 
-    @param  topic      The topic causing this callback to fire
-    @param  message    The new value associated with 'topic'
+    @param  message    The new value associated with this feed
 
-    @note   'topic' and 'message' are UTF8Strings (byte array), which means
-            they are not null-terminated like C-style strings. You can
+    @note   'message' is a UTF8String (byte array), which means
+            it is not null-terminated like C-style strings. You can
             access its data and len using .data & .len, although there is
             also a Serial.print override to handle UTF8String data types.
 */
@@ -133,7 +133,7 @@ void feed_callback(UTF8String message)
 {
   // Print message
   Serial.print("[ONOFF Feed] : ");
-  Serial.println(message);  
+  Serial.println(message);
 }
 
 /**************************************************************************/
