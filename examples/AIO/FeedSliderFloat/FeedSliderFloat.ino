@@ -47,7 +47,10 @@
 AdafruitAIO                  aio(AIO_USERNAME, AIO_KEY);
 
 // Feed Gauge's instance must either be 'int' or 'float'
-AdafruitAIOFeedSlider<int>  slider(&aio, PHOTOCELL_FEED, MQTT_QOS_AT_LEAST_ONCE);
+AdafruitAIOFeedSlider<float>  slider(&aio, PHOTOCELL_FEED, MQTT_QOS_AT_LEAST_ONCE);
+
+// Precsion for float value
+int precision = 2;
 
 int ledPin = PA15;
 
@@ -65,7 +68,7 @@ void setup()
   // Wait for the USB serial port to connect. Needed for native USB port only
   while (!Serial) delay(1);
 
-  Serial.println("AIO Feed Slider Integer Example\r\n");
+  Serial.println("AIO Feed Slider Float Example\r\n");
 
   // Print all software versions
   Feather.printVersions();
@@ -96,6 +99,9 @@ void setup()
   }
   Serial.println("OK");
 
+  // set float precision
+  slider.floatPrecision(2);
+
   // follow onoff state change
   Serial.print("Subcribing to feed: '" PHOTOCELL_FEED "' ... ");
   slider.follow(slider_callback);
@@ -103,7 +109,7 @@ void setup()
 
   // Message to user
   delay(5);
-  Serial.print("Enter an integer to update feed: ");
+  Serial.print("Enter an float to update feed: ");
 }
 
 /**************************************************************************/
@@ -117,10 +123,10 @@ void loop()
   if ( Serial.available() )
   {
     char* input = getUserInput();
-    int value = strtol(input, NULL, 0);
+    float value = strtof(input, NULL);
     
     // echo
-    Serial.println(value);
+    Serial.println(value, precision);
 
     // AIO Feed Gauge can be update with assignment like normal variable
     slider = value;
@@ -135,12 +141,12 @@ void loop()
                        (int or float)
 */
 /**************************************************************************/
-void slider_callback(int value)
+void slider_callback(float value)
 {
   Serial.print("Feed value: ");
   Serial.println(value);
 
-  Serial.print("Enter an integer to update feed: ");
+  Serial.print("Enter an float to update feed: ");
 }
 
 /**************************************************************************/
