@@ -42,6 +42,8 @@ class AdafruitAIOFeedSlider : public AdafruitAIOFeed
 {
 protected:
   Num _value;
+  uint8_t _precision;
+
   virtual void subscribed_callback(UTF8String topic, UTF8String message, void* callback_func);
 
   // Specialization function
@@ -55,14 +57,19 @@ protected:
     (*p_value) = strtol(str, NULL, 0);
   }
 
-  const char* numformat (int value  ) { return "%d"; }
-  const char* numformat (float value) { return "%f"; }
+  void updateValue (int value  ) { print(value); }
+  void updateValue (float value) { print((double) value, _precision); }
 
 public:
   typedef void (*feedNumberHandler_t)(Num value);
 
   AdafruitAIOFeedSlider(AdafruitAIO* aio, const char* feed, uint8_t qos = MQTT_QOS_AT_MOST_ONCE, bool retain = true)
-    : AdafruitAIOFeed(aio, feed, qos, retain) {}
+    : AdafruitAIOFeed(aio, feed, qos, retain)
+  {
+    _precision = 2;
+  }
+
+  void floatPrecision(uint8_t p) { _precision = p; }
 
   bool follow  (feedNumberHandler_t fp) { this->follow((feedHandler_t) fp); }
   bool follow  (void) { return this->follow((feedHandler_t)NULL); }

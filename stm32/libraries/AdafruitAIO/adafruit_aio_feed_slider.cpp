@@ -47,7 +47,7 @@ template <typename Num>
 Num AdafruitAIOFeedSlider<Num>::operator = (Num value)
 {
   _value = value;
-  this->printf( numformat(_value), _value);
+  updateValue(_value);
   return _value;
 }
 
