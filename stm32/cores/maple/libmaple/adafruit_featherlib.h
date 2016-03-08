@@ -151,10 +151,10 @@ typedef struct ATTR_ALIGNED(512)
   uint32_t RESERVED_[14];
 
   // FILE Interface
-  int (*file_write) (int file, char *ptr, int len);
-  int (*file_read)  (int file, char *ptr, int len);
-  int (*file_peek)  (int file);
-  uint32_t RESERVED_;
+  int (*file_write     ) (int file, char *ptr, int len);
+  int (*file_read      ) (int file, char *ptr, int len);
+  int (*file_peek      ) (int file);
+  int (*file_available ) (int file);
 
   // DEBUG
   int32_t  (*heap_get_free_size)(void);

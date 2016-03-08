@@ -173,7 +173,7 @@ char* getUserInput(void)
   memset(inputs, 0, sizeof(inputs));
 
   // wait until data is available
-  while( Serial.available() == 0 ) { delay(1); }
+  while( !Serial.available() ) { delay(1); }
 
   uint8_t count=0;
   do
