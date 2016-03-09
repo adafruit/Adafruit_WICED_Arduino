@@ -83,15 +83,17 @@ public:
   virtual uint16_t  remotePort ( void );
 
   // Stream API
-  virtual int      read       ( void );
-  virtual int      read       ( uint8_t * buf, size_t size );
-  virtual size_t   write      ( uint8_t );
-  virtual size_t   write      ( const uint8_t *content, size_t len );
-  virtual int      available  ( void );
-  virtual int      peek       ( void );
-  virtual void     flush      ( void );
+  virtual int       read       ( void );
+  virtual int       read       ( uint8_t * buf, size_t size );
+  virtual size_t    write      ( uint8_t );
+  virtual size_t    write      ( const uint8_t *content, size_t len );
+  virtual int       available  ( void );
+  virtual int       peek       ( void );
+  virtual void      flush      ( void );
 
-  int read( char* buf, size_t size) { return read((uint8_t*) buf, size); }
+  int               read       ( char* buf, size_t size) { return read((uint8_t*) buf, size); }
+  uint32_t          byteRead   (void) { return _bytesRead; }
+
 
   using Print::write;
 

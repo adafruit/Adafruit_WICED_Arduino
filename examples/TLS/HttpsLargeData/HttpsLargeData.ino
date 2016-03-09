@@ -79,6 +79,9 @@ void disconnect_callback(void)
   Serial.println("---------------------");
   Serial.println();
 
+  Serial.print("Total byte read: ");
+  Serial.println( http.byteRead() );
+
   http.stop();
 }
 
