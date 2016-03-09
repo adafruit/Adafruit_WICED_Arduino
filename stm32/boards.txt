@@ -60,7 +60,7 @@ feather.menu.section.featherlib.upload.maximum_size=851968
 ## -------------------------
 feather.menu.section.featherlib_beta=Feather Lib (Beta)
 feather.menu.section.featherlib_beta.upload.subcommand=featherlib_upgrade
-feather.menu.section.featherlib_beta.upload.binfile={runtime.platform.path}/featherlib/featherlib_beta.bin
+feather.menu.section.featherlib_beta.upload.binfile={runtime.platform.path}/featherlib/beta/featherlib.bin
 feather.menu.section.featherlib_beta.upload.address=0x08010000
 feather.menu.section.featherlib_beta.upload.maximum_size=851968
 #feather.menu.section.featherlib_beta.upload.ram.maximum_size=114688
