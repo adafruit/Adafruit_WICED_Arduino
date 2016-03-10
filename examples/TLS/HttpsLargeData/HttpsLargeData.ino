@@ -25,6 +25,7 @@
 
 #include <adafruit_feather.h>
 #include <adafruit_http.h>
+#include <adafruit_crc32.h>
 
 #define WLAN_SSID             "yourSSID"
 #define WLAN_PASS             "yourPass"
@@ -35,7 +36,7 @@
 int ledPin = PA15;
 
 // Change the SERVER_ID to match the generated certificates.h
-#define FILE_ID    2
+#define FILE_ID    0
 
 // S3 server to test large files,
 const char * file_arr[] =
@@ -50,6 +51,13 @@ const char * url = file_arr[FILE_ID];
 // Use the HTTP class
 AdafruitHTTP http;
 
+// Use CRC32 class to compute checksum
+AdafruitCRC32 crc32;
+
+bool skippedHeader = false;
+uint32_t datacount = 0;
+int time_start;
+
 /**************************************************************************/
 /*!
     @brief  TCP/HTTP received callback
@@ -57,13 +65,39 @@ AdafruitHTTP http;
 /**************************************************************************/
 void receive_callback(void)
 {
-  // if there are incoming bytes available
-  // from the server, read then print them:
-  while ( http.available() )
+  // skip if byte is not available yet
+  if ( !http.available() ) return;
+
+  if (!skippedHeader)
   {
-    int c = http.read();
-    Serial.write( (isprint(c) || iscntrl(c)) ? ((char)c) : '.');
+    size_t count;
+    uint8_t buffer[256];
+
+    // Header end with empty line "\r\n", count should be 1 then
+    do{
+      count = http.readBytesUntil('\n', buffer, 256);
+    }while( count > 1 );
+
+    // read timeout, no bytes available
+    if ( count == 0 ) return;
+    if ( count == 1 )
+    {
+      skippedHeader = true;
+    }
   }
+  
+  if (skippedHeader)
+  {
+    while( http.available() )
+    {
+      int c = http.read();
+      if (isprint(c) || isspace(c))
+      {
+        datacount++;
+        crc32.compute((char)c);
+      }
+    }
+  }  
 }
 
 /**************************************************************************/
@@ -73,14 +107,22 @@ void receive_callback(void)
 /**************************************************************************/
 void disconnect_callback(void)
 {
+  int time_stop = millis() - time_start;
+  
   Serial.println();
   Serial.println("---------------------");
   Serial.println("DISCONNECTED CALLBACK");
   Serial.println("---------------------");
   Serial.println();
 
-  Serial.print("Total byte read: ");
-  Serial.println( http.byteRead() );
+  Serial.printf("Total byte received (including headers): %d in %f seconds", http.byteRead(), time_stop/1000.0F);
+  Serial.println();
+
+  Serial.print("Total data count: ");
+  Serial.println( datacount );
+
+  Serial.print("CRC32 checksum: ");
+  Serial.println( crc32.crc() );
 
   http.stop();
 }
@@ -118,7 +160,7 @@ void setup()
   http.setDisconnectCallback(disconnect_callback);
 
   // Start a secure connection
-  Serial.printf("Connecting to %s port %d ... ", SERVER, HTTPS_PORT );
+  Serial.printf("Connecting to '%s' port %d ... ", SERVER, HTTPS_PORT );
   http.connectSSL(SERVER, HTTPS_PORT); // Will halt if an error occurs
   Serial.println("OK");
 
@@ -129,6 +171,8 @@ void setup()
   Serial.printf("Requesting '%s' ... ", url);
   http.get(SERVER, url); // Will halt if an error occurs
   Serial.println("OK");
+
+  time_start = millis();
 }
 
 /**************************************************************************/

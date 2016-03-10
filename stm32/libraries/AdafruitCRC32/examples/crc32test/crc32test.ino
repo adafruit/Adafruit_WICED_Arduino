@@ -20,6 +20,18 @@ void setup()
 
   Serial.print("CRC32 of '" TEXT_DATA "' : ");
   Serial.println(crc32.compute(TEXT_DATA));
+
+#if 0  
+  crc32.reset();
+  for(int i=0; i<strlen(TEXT_DATA); i++) 
+  {
+    uint8_t c = TEXT_DATA[i];
+    Serial.print(c);
+    crc32.compute(c);
+  }
+
+  Serial.println(crc32.crc());
+#endif
 }
 
 void loop() 
