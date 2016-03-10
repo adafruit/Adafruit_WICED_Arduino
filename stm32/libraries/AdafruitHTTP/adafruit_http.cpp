@@ -104,8 +104,6 @@ bool AdafruitHTTP::get(char const * host, char const *url)
   printf(HTTP_GET " %s " HTTP_VERSION, url); println();
   printf("Host: %s", host); println();
 
-  Serial.printf("Host: %s", host); Serial.println();
-
   sendHeaders(0);
   flush();
 }
