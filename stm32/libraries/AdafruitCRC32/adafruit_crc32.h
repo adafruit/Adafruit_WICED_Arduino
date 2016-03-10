@@ -106,11 +106,15 @@
 
 class AdafruitCRC32
 {
+private:
+  uint32_t _crc;
+
 public:
-  uint32_t crc;
 
   AdafruitCRC32()   { reset(); }
-  void reset(void)  { crc = 0; }
+  void reset(void)  { _crc = 0; }
+
+  uint32_t crc(void) { return _crc ^ 0xffffffffUL; }
 
   uint32_t compute(uint8_t const* data, uint32_t len);
   uint32_t compute(char const* data, uint32_t len)
@@ -122,5 +126,16 @@ public:
   {
     return compute((uint8_t const*) data, strlen(data));
   }
+
+  uint32_t compute(uint8_t byte)
+  {
+    return compute( (uint8_t const*) &byte, 1);
+  }
+
+  uint32_t compute(char byte)
+  {
+    return compute( (uint8_t) byte);
+  }
+
 };
 

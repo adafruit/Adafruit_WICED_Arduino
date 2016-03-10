@@ -157,12 +157,12 @@ const uint32_t crc32_table[256] = {
 
 uint32_t AdafruitCRC32::compute(uint8_t const* data, uint32_t len)
 {
-  crc ^= 0xFFFFFFFFUL;
+  _crc ^= 0xFFFFFFFFUL;
 
   while(len--)
   {
-		crc = crc32_table[(crc ^ *data++) & 0xffUL] ^ (crc >> 8);
+		_crc = crc32_table[(_crc ^ *data++) & 0xffUL] ^ (_crc >> 8);
   }
 
-  return (crc ^ 0xFFFFFFFFUL);
+  return (_crc ^ 0xFFFFFFFFUL);
 }
