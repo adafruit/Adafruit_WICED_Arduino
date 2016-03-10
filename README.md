@@ -26,7 +26,7 @@ detailed below:
 	brew install dfu-util
 	```
 
-	On **Windows** dfu-util.exe already exists in `tools/windows/dfu-util`.
+	On **Windows** dfu-util.exe already exists in `tools/feather_dfu/windows/dfu-util`.
 	
 	On **Linux (Debian or Ubuntu)** you can install dfu-util from the apt package manager with `sudo apt-get install dfu-util`.
 
