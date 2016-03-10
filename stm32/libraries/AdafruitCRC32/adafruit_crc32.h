@@ -97,6 +97,11 @@
      using byte-swap instructions.
 ********************************************************************/
 
+/* Using the same implementation with python binascii crc32.
+ * You can check by run python with
+ * - binascii.crc32(data) & 0xFFFFFFFF
+ */
+ 
 #include <Arduino.h>
 
 class AdafruitCRC32

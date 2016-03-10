@@ -1,6 +1,10 @@
 #include <Arduino.h>
 #include <adafruit_crc32.h>
 
+/* Run the crc32.py script to check the result. Change the TEXT_DATA
+ * in the script to the same here
+ */
+
 AdafruitCRC32 crc32;
 
 #define TEXT_DATA   "wwww.adafruit.com"
