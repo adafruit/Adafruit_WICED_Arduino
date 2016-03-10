@@ -14,7 +14,7 @@ void setup()
 
   Serial.println("CRC32 Example\r\n");
 
-  Serial.print("CRC32 of " TEXT_DATA " : ");
+  Serial.print("CRC32 of '" TEXT_DATA "' : ");
   Serial.println(crc32.compute(TEXT_DATA));
 }
 
