@@ -12,15 +12,17 @@
  any redistribution
 *********************************************************************/
 
-/* This example connect to Adafruit's large text file (10KB, 100KB, 1MB)
- * to test the large data handling. In addition to print the contents,
- * the sketch also compute checksum of the content to compare with one
- * calculated by other mean.
+/* This example connects to a large text file (10KB, 100KB, 1MB)
+ * to test the large data handling. The sketch also computes the
+ * checksum of the content to compare with one calculated via
+ * another python tool provided in the same folder as this code.
  *
- * To run the sketch
+ * To run this sketch:
+ * 
  * 1. Change SSID/Pass
- * 2. Choose the file to download by change FILE_ID
- * 3. Combine and run the sketch
+ * 2. Choose the file to download by changing FILE_ID
+ * 3. Compile and run the sketch
+ * 
  * */
 
 #include <adafruit_feather.h>
@@ -28,17 +30,18 @@
 #include <adafruit_crc32.h>
 
 #define WLAN_SSID             "yourSSID"
-#define WLAN_PASS             "yourPass"
+#define WLAN_PASS             "yourPassword"
 
 #define SERVER                "adafruit-download.s3.amazonaws.com"
 #define HTTPS_PORT            443
 
 int ledPin = PA15;
 
-// Change the SERVER_ID to match the generated certificates.h
-#define FILE_ID    0
+// Change the FILE_ID to indicate the file to
+// load from the Amazon S3 Server
+#define FILE_ID    1
 
-// S3 server to test large files,
+// S3 server files
 const char * file_arr[] =
 {
     [0] = "/text_10KB.txt"  ,
@@ -57,10 +60,10 @@ AdafruitHTTP http;
 // Use CRC32 class to compute checksum
 AdafruitCRC32 crc32;
 
-bool skippedHeader = false;
+bool     skippedHeader = false;
 uint32_t datacount = 0;
-int time_start;
-int time_duration;
+int      time_start;
+int      time_duration;
 
 /**************************************************************************/
 /*!
@@ -77,7 +80,7 @@ void receive_callback(void)
     size_t count;
     uint8_t buffer[256];
 
-    // Header end with empty line "\r\n", count should be 1 then
+    // Header ends with empty line "\r\n", count should be 1 at that point
     do{
       count = http.readBytesUntil('\n', buffer, 256);
     }while( count > 1 );
@@ -118,9 +121,9 @@ void receive_callback(void)
 /**************************************************************************/
 void disconnect_server(void)
 {
-  Serial.println("Total byte received (including headers):"); 
+  Serial.println("Total bytes received (including headers):"); 
   Serial.printf(" - %d bytes in %.02f seconds\r\n", http.byteRead(), time_duration/1000.0F);
-  Serial.printf(" - Speed ~ %.02f kbps", ((float) 8*http.byteRead()) / time_duration );
+  Serial.printf(" - Speed ~ %.02f KB/s", ((float) http.byteRead()) / time_duration );
   Serial.println();
 
   Serial.print("Total data count: ");
