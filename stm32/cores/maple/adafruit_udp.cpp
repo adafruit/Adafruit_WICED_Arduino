@@ -126,6 +126,9 @@ int AdafruitUDP::parsePacket()
   };
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
+  // This function can be used for polling, TIMEOUT is a 'valid' error
+  // It should not trigger error verbose and/or halted
+  this->skip_next_error(ERROR_TIMEOUT);
   VERIFY_RETURN(sdep_n(SDEP_CMD_UDP_PACKET_INFO, para_count, para_arr, NULL, &response), 0);
 
   _rcvIP   = response.remote_ip;
@@ -250,7 +253,7 @@ int AdafruitUDP::beginPacket(const char *host, uint16_t port)
 /******************************************************************************/
 int AdafruitUDP::beginPacket(IPAddress ip, uint16_t port)
 {
-	_sndIP = (uint32_t) ip;
+	_sndIP   = (uint32_t) ip;
 	_sndPort = port;
 
 	return 1;
@@ -263,7 +266,7 @@ int AdafruitUDP::beginPacket(IPAddress ip, uint16_t port)
 /******************************************************************************/
 int AdafruitUDP::endPacket()
 {
-  _sndIP = 0;
+  _sndIP   = 0;
   _sndPort = 0;
 
 	return 1;

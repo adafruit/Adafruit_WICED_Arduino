@@ -41,7 +41,11 @@
 #include <IPAddress.h>
 #include "adafruit_sdep.h"
 
-
+/******************************************************************************/
+/*!
+    @brief Execute SDEP with single input parameter
+*/
+/******************************************************************************/
 bool AdafruitSDEP::sdep(uint16_t  cmd_id       ,
           uint16_t  param_len    , void const* p_param,
           uint16_t* p_result_len , void* p_result)
@@ -51,6 +55,11 @@ bool AdafruitSDEP::sdep(uint16_t  cmd_id       ,
   return (ERROR_NONE == _errno);
 }
 
+/******************************************************************************/
+/*!
+    @brief Execute SDEP with multiple input parameters
+*/
+/******************************************************************************/
 bool AdafruitSDEP::sdep_n(uint16_t  cmd_id       ,
             uint8_t   para_count   , sdep_cmd_para_t const* para_arr,
             uint16_t* p_result_len , void* p_result)
@@ -60,6 +69,11 @@ bool AdafruitSDEP::sdep_n(uint16_t  cmd_id       ,
   return (ERROR_NONE == _errno);
 }
 
+/******************************************************************************/
+/*!
+    @brief Get Descriptive Error String (e.g TIMEOUT)
+*/
+/******************************************************************************/
 char const* AdafruitSDEP::errstr (void)
 {
   char const* p_str = NULL;
@@ -67,6 +81,11 @@ char const* AdafruitSDEP::errstr (void)
   return p_str ? p_str : "Unknown Error";
 }
 
+/******************************************************************************/
+/*!
+    @brief Get Descriptive Command String (e.g SDEP_CMD_UDP_PACKET_INFO)
+*/
+/******************************************************************************/
 char const* AdafruitSDEP::cmdstr (uint16_t cmd_id)
 {
   char const* p_str = NULL;
@@ -74,9 +93,14 @@ char const* AdafruitSDEP::cmdstr (uint16_t cmd_id)
   return p_str;
 }
 
+/******************************************************************************/
+/*!
+    @brief Handle error according to set actions
+*/
+/******************************************************************************/
 void AdafruitSDEP::handle_error(uint16_t cmd_id)
 {
-  if (_err_print && (ERROR_NONE != _errno))
+  if (_err_print && (ERROR_NONE != _errno) && (_skip_err != _errno) )
   {
     char const* cmd_str = this->cmdstr(cmd_id);
     if ( cmd_str )
@@ -89,9 +113,24 @@ void AdafruitSDEP::handle_error(uint16_t cmd_id)
     Serial.printf(", Error: %s (%d)\r\n", errstr(), errno());
   }
 
-  if ( _err_halt && (ERROR_NONE != _errno) )
+  if ( _err_halt && (ERROR_NONE != _errno) && (_skip_err != _errno) )
   {
     Serial.println("\r\n--- FEATHER HALTED ---\r\n");
     while(1) delay(1);
   }
+
+  // reset skipped error
+  _skip_err = ERROR_NONE;
+}
+
+/******************************************************************************/
+/*!
+    @brief Several Errors are 'valid' in certain situation e.g Timeout when polling
+    which should not trigger fatal/panic action. This function allow to skip the
+    defined error in the next SDEP command
+*/
+/******************************************************************************/
+void AdafruitSDEP::skip_next_error(err_t skip_err)
+{
+  _skip_err = skip_err;
 }

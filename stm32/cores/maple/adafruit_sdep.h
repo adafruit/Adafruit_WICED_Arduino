@@ -47,7 +47,11 @@ protected:
   bool  _err_print;
   bool  _err_halt;
 
+  // some
+  err_t _skip_err;
+
   void  handle_error(uint16_t cmd_id);
+  void  skip_next_error(err_t skip_err);
 
 public:
   AdafruitSDEP() { _errno = ERROR_NONE; _err_print = _err_halt = false; }
