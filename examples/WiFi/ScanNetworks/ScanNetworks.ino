@@ -29,7 +29,7 @@ void setup()
   // wait for serial port to connect. Needed for native USB port only
   while (!Serial) delay(1);
 
-  Serial.println("Scan Network Example\r\n");
+  Serial.println("Network Scan Example\r\n");
 }
 
 /**************************************************************************/
@@ -44,7 +44,7 @@ void loop()
   listNetworks();
 
   Serial.println();
-  Serial.println("Try again in 10 seconds");
+  Serial.println("Waiting 10 seconds before trying again");
   delay(10000);
 }
 
@@ -64,10 +64,10 @@ void listNetworks()
   if (numSsid == 0) return;
 
   // print the network number and name for each network found:
-  Serial.printf("ID SSID                 Enc  Ch Signal\n");
+  Serial.printf("ID SSID                 Enc   Ch Signal\n");
   for (int i = 0; i < numSsid; i++)
   {
-    Serial.printf("%02d %-20s %-04s %02d %02d (dBm)", 
+    Serial.printf("%02d %-20s %-05s %02d %02d (dBm)", 
                   i,
                   (scan_result[i].ssid[i] == 0) ? "*" : scan_result[i].ssid, // hidden SSID display as "*"
                   getEncryptionStr( scan_result[i].security ),
@@ -89,7 +89,6 @@ char const* getEncryptionStr(int32_t encType)
   switch (encType)
   {
     case ENC_TYPE_WEP:
-    case ENC_TYPE_WEP_SHARED:
       return "WEP";
     break;
       
