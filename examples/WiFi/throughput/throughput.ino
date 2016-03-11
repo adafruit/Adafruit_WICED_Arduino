@@ -15,14 +15,13 @@
 #include <adafruit_feather.h>
 #include <adafruit_tcp.h>
 
-#define WLAN_SSID            "yourSSID"
-#define WLAN_PASS            "yourPassword"
+#define WLAN_SSID             "YOURSSID"
+#define WLAN_PASS             "YOURPASS"
 
-
-// your local PC's IP to test the throughput
+// Your local PC's IP to test the throughput
 // Run this command to create a server on your PC
 // > nc -l 8888
-IPAddress server_ip(192, 168, 0, 20);
+IPAddress server_ip(192, 168, 1, 100);
 const uint16_t port = 8888;
 
 AdafruitTCP tcp;
@@ -84,13 +83,13 @@ void setup()
 /**************************************************************************/
 void loop()
 {
-  // if the server's disconnected, stop the tcp:
+  // If the server isn't connected, stop the tcp:
   if (!tcp.connected())
   {
-    Serial.println("not connected or disconncted.");
+    Serial.println("The TCP server is unavailable or disconnected.");
     tcp.stop();
 
-    // do nothing forevermore:
+    // do nothing forever
     while (true) {
       delay(1);
     }
@@ -100,7 +99,7 @@ void loop()
   uint32_t remaining_loop = 20000; // number of loop to send, each loop is testStepLen
   start = stop = sent_loop = 0;
 
-  Serial.println("Enter any key to start Sending test");
+  Serial.println("Enter any key to start sending data");
   char inputs[64];
   getUserInput(inputs, sizeof(inputs));
 
@@ -120,6 +119,7 @@ void loop()
   // print result
   stop = millis() - start;
   Serial.printf("Sent %d bytes in %.02f seconds.\r\n", sent_loop*testStepLen, stop/1000.0F);
+  Serial.printf("Throughput = %f KB/s.\r\n", (float)(sent_loop*testStepLen) / stop);
 
   // if there are incoming bytes available
   // from the server, read them and print them:
