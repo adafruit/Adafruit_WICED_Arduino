@@ -23,10 +23,50 @@ char packetBuffer[255];
 
 /**************************************************************************/
 /*!
-    @brief  Received something from the UDP port
+    @brief  The setup function runs once when reset the board
 */
 /**************************************************************************/
-void received_callback(void)
+void setup()
+{
+  Serial.begin(115200);
+
+  // wait for the serial port to connect. Needed for native USB port only.
+  while (!Serial) delay(1);
+
+  Serial.println("UDP Echo Server Polling Example\r\n");
+
+  // Print all software versions
+  Feather.printVersions();
+
+  while ( !connectAP() )
+  {
+    delay(500); // delay between each attempt
+  }
+
+  // Connected: Print network info
+  Feather.printNetwork();
+
+
+  // Tell the UDP client to auto print error codes and halt on errors
+  udp.err_actions(true, true);
+
+  // Start the UDP server
+  Serial.printf("Openning UDP at port %d ... ", LOCAL_PORT);
+  udp.begin(LOCAL_PORT);
+  Serial.println("OK");
+
+  Serial.println("Please use your PC/mobile and send any text to ");
+  Serial.print( IPAddress(Feather.localIP()) );
+  Serial.print(" UDP port ");
+  Serial.println(LOCAL_PORT);
+}
+
+/**************************************************************************/
+/*!
+    @brief  The loop function runs over and over again forever
+*/
+/**************************************************************************/
+void loop()
 {
   int packetSize = udp.parsePacket();
 
@@ -48,58 +88,6 @@ void received_callback(void)
     udp.write(packetBuffer, packetSize);
     udp.endPacket();
   }
-}
-
-/**************************************************************************/
-/*!
-    @brief  The setup function runs once when reset the board
-*/
-/**************************************************************************/
-void setup()
-{
-  Serial.begin(115200);
-
-  // wait for the serial port to connect. Needed for native USB port only.
-  while (!Serial) delay(1);
-
-  Serial.println("UDP Echo Server Callback Example\r\n");
-
-  // Print all software versions
-  Feather.printVersions();
-
-  while ( !connectAP() )
-  {
-    delay(500); // delay between each attempt
-  }
-
-  // Connected: Print network info
-  Feather.printNetwork();
-
-
-  // Tell the UDP client to auto print error codes and halt on errors
-  udp.err_actions(true, true);
-
-  // Set the RX callback handler
-  udp.setReceivedCallback(received_callback);
-
-  // Start the UDP server
-  Serial.printf("Openning UDP at port %d ... ", LOCAL_PORT);
-  udp.begin(LOCAL_PORT);
-  Serial.println("OK");
-
-  Serial.println("Please use your PC/mobile and send any text to ");
-  Serial.print( IPAddress(Feather.localIP()) );
-  Serial.print(" UDP port ");
-  Serial.println(LOCAL_PORT);
-}
-
-/**************************************************************************/
-/*!
-    @brief  The loop function runs over and over again forever
-*/
-/**************************************************************************/
-void loop()
-{
 }
 
 /**************************************************************************/
