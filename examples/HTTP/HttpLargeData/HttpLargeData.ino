@@ -36,7 +36,7 @@
 int ledPin = PA15;
 
 // Change the SERVER_ID to match the generated certificates.h
-#define FILE_ID    1
+#define FILE_ID    0
 
 // S3 server to test large files,
 const char * file_arr[] =
@@ -46,7 +46,10 @@ const char * file_arr[] =
     [2] = "/text_1MB.txt"   ,
 };
 
+const int filelen_arr[]= { 10000, 100000, 1000000 };
+
 const char * url = file_arr[FILE_ID];
+const int filelen = filelen_arr[FILE_ID];
 
 // Use the HTTP class
 AdafruitHTTP http;
@@ -57,6 +60,7 @@ AdafruitCRC32 crc32;
 bool skippedHeader = false;
 uint32_t datacount = 0;
 int time_start;
+int time_duration;
 
 /**************************************************************************/
 /*!
@@ -87,7 +91,7 @@ void receive_callback(void)
   }
   
   if (skippedHeader)
-  {
+  {   
     while( http.available() )
     {
       int c = http.read();
@@ -97,6 +101,13 @@ void receive_callback(void)
         crc32.compute((char)c);
       }
     }
+
+    // received all data, disconnect
+    if (datacount >= filelen)
+    {   
+      time_duration = millis() - time_start;
+      disconnect_server();
+    }
   }  
 }
 
@@ -105,19 +116,11 @@ void receive_callback(void)
     @brief  TCP/HTTP disconnect callback
 */
 /**************************************************************************/
-void disconnect_callback(void)
+void disconnect_server(void)
 {
-  int time_stop = millis() - time_start;
-  
-  Serial.println();
-  Serial.println("---------------------");
-  Serial.println("DISCONNECTED CALLBACK");
-  Serial.println("---------------------");
-  Serial.println();
-
   Serial.println("Total byte received (including headers):"); 
-  Serial.printf(" - %d bytes in %.02f seconds\r\n", http.byteRead(), time_stop/1000.0F);
-  Serial.printf(" - Speed ~ %.02f kbps", ((float) 8*http.byteRead()) / time_stop );
+  Serial.printf(" - %d bytes in %.02f seconds\r\n", http.byteRead(), time_duration/1000.0F);
+  Serial.printf(" - Speed ~ %.02f kbps", ((float) 8*http.byteRead()) / time_duration );
   Serial.println();
 
   Serial.print("Total data count: ");
@@ -126,6 +129,13 @@ void disconnect_callback(void)
   Serial.println( crc32.crc );
 
   http.stop();
+  
+  Serial.println();
+  Serial.println("------------");
+  Serial.println("DISCONNECTED");
+  Serial.println("------------");
+  Serial.println();
+
 }
 
 /**************************************************************************/
@@ -158,7 +168,6 @@ void setup()
 
   // Set up callbacks
   http.setReceivedCallback(receive_callback);
-  http.setDisconnectCallback(disconnect_callback);
 
   // Start a secure connection
   Serial.printf("Connecting to '%s' port %d ... ", SERVER, HTTPS_PORT );
