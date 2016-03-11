@@ -38,7 +38,7 @@ void setup()
   // wait for serial port to connect. Needed for native USB port only
   while (!Serial) delay(1);
 
-  Serial.println("UDP client Example\r\n");
+  Serial.println("UDP Client Example\r\n");
 
   // Print all software versions
   Feather.printVersions();
@@ -53,7 +53,7 @@ void setup()
 
   udp.begin(local_port);
 
-  Serial.println("Please run following command in your PC");
+  Serial.println("Please run the following command on your PC");
   Serial.printf("> nc -lu %d", port);
   Serial.println();
   Serial.println();
@@ -69,7 +69,7 @@ void loop()
   char* input;
 
   // Prompt and get input from user
-  Serial.print("Enter characters to send: ");
+  Serial.print("Enter character(s) to send: ");
   input = getUserInput();
   Serial.println();
 
@@ -94,7 +94,7 @@ bool connectAP(void)
 {
   // Attempt to connect to an AP
   Serial.print("Please wait while connecting to: '" WLAN_SSID "' ... ");
-  
+
   if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
   {
     Serial.println("Connected!");
