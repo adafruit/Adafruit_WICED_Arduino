@@ -115,14 +115,15 @@ void disconnect_callback(void)
   Serial.println("---------------------");
   Serial.println();
 
-  Serial.printf("Total byte received (including headers): %d in %f seconds", http.byteRead(), time_stop/1000.0F);
+  Serial.println("Total byte received (including headers):"); 
+  Serial.printf(" - %d bytes in %.02f seconds\r\n", http.byteRead(), time_stop/1000.0F);
+  Serial.printf(" - Speed ~ %.02f kbps", ((float) 8*http.byteRead()) / time_stop );
   Serial.println();
 
   Serial.print("Total data count: ");
-  Serial.println( datacount );
-
-  Serial.print("CRC32 checksum: ");
-  Serial.println( crc32.crc() );
+  Serial.print( datacount );
+  Serial.print(" CRC32: ");
+  Serial.println( crc32.crc );
 
   http.stop();
 }
