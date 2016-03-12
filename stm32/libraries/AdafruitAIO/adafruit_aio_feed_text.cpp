@@ -50,14 +50,78 @@ AdafruitAIOFeedText::AdafruitAIOFeedText(AdafruitAIO* aio, const char* feed, uin
   _str = NULL;
 }
 
-///******************************************************************************/
-///*!
-//    @brief Assignment overload
-//*/
-///******************************************************************************/
-//bool AdafruitAIOFeedText::operator = (char const* value)
-//{
-//  _state = value;
-//  return this->write( value ? "ON" : "OFF") > 0;
-//}
+/******************************************************************************/
+/*!
+    @brief Helper to update internal value
+*/
+/******************************************************************************/
+bool AdafruitAIOFeedText::updateValue(UTF8String message)
+{
+  // If value is different than the current non-null one
+  if ( _str && (message == _str) )
+  {
+    free(_str); // free old value if any
+  }
 
+  // malloc to hold a copy of value, skip if equal
+  if ( _str == NULL )
+  {
+    _str = (char*) malloc( message.len + 1);
+    VERIFY(_str != NULL);
+
+    // copy contents and add null terminator
+    memcpy(_str, message.data, message.len);
+    _str[message.len] = 0;
+  }
+
+  return true;
+}
+
+/******************************************************************************/
+/*!
+    @brief Follow with callback
+*/
+/******************************************************************************/
+bool AdafruitAIOFeedText::follow(feedTextHandler_t fp)
+{
+  return this->follow((feedHandler_t) fp);
+}
+
+/******************************************************************************/
+/*!
+    @brief Assignment overload
+*/
+/******************************************************************************/
+bool AdafruitAIOFeedText::operator = (char const* value)
+{
+  this->updateValue(value);
+  return this->write(value) > 0;
+}
+
+/******************************************************************************/
+/*!
+    @brief Equality overload
+*/
+/******************************************************************************/
+bool AdafruitAIOFeedText::operator == (char const* value)
+{
+  return (strcmp(_str, value) == 0);
+}
+
+/******************************************************************************/
+/*!
+    @brief Subcribed callback
+*/
+/******************************************************************************/
+void AdafruitAIOFeedText::subscribed_callback(UTF8String topic, UTF8String message, void* callback_func)
+{
+  (void) topic;
+
+  this->updateValue(message);
+
+  if ( callback_func )
+  {
+    feedTextHandler_t mh = (feedTextHandler_t) callback_func;
+    mh(_str);
+  }
+}

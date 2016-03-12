@@ -36,7 +36,7 @@
 #define AIO_KEY           "...your AIO key..."
 
 // AdafruitAIO will auto append "username/feeds/" prefix to your feed"
-#define PHOTOCELL_FEED    "photocell"
+#define TEXT_FEED         "text"
 
 // Connect using TLS/SSL or not
 #define USE_TLS             0
@@ -44,15 +44,8 @@
 // Uncomment to set your own ClientID, otherwise a random ClientID is used
 //#define CLIENTID          "Adafruit Feather"
 
-AdafruitAIO                  aio(AIO_USERNAME, AIO_KEY);
-
-// Feed Gauge's instance must either be 'int' or 'float'
-AdafruitAIOFeedSlider<float>  slider(&aio, PHOTOCELL_FEED, MQTT_QOS_AT_LEAST_ONCE);
-
-// Precsion for float value
-int precision = 2;
-
-int ledPin = PA15;
+AdafruitAIO           aio(AIO_USERNAME, AIO_KEY);
+AdafruitAIOFeedText   text(&aio, TEXT_FEED, MQTT_QOS_AT_LEAST_ONCE);
 
 /**************************************************************************/
 /*!
@@ -61,14 +54,12 @@ int ledPin = PA15;
 /**************************************************************************/
 void setup()
 {
-  pinMode(ledPin, OUTPUT);
-  
   Serial.begin(115200);
 
   // Wait for the USB serial port to connect. Needed for native USB port only
   while (!Serial) delay(1);
 
-  Serial.println("AIO Feed Slider Float Example\r\n");
+  Serial.println("AIO Feed Text Example\r\n");
 
   // Print all software versions
   Feather.printVersions();
@@ -99,17 +90,13 @@ void setup()
   }
   Serial.println("OK");
 
-  // set float precision
-  slider.floatPrecision(2);
-
-  // follow onoff state change
-  Serial.print("Subcribing to feed: '" PHOTOCELL_FEED "' ... ");
-  slider.follow(slider_callback);
+  // follow text feed
+  Serial.print("Subcribing to feed: '" TEXT_FEED "' ... ");
+  text.follow(text_callback);
   Serial.println("OK");
 
   // Message to user
-  delay(5);
-  Serial.print("Enter an float to update feed: ");
+  Serial.print("Enter text to update feed: ");
 }
 
 /**************************************************************************/
@@ -119,34 +106,32 @@ void setup()
 /**************************************************************************/
 void loop()
 {
-  // Get input from user to update feed
+  // Get input from user '0' to off, '1' to update feed
   if ( Serial.available() )
   {
+    // Get input and echo
     char* input = getUserInput();
-    float value = strtof(input, NULL);
-    
-    // echo
-    Serial.println(value, precision);
+    Serial.println(input);
 
-    // AIO Feed Gauge can be update with assignment like normal variable
-    slider = value;
+    // AIO Feed OnOff can be update with assignment like normal string variable
+    text = input;
+
+    // print prompt
+    Serial.print("Enter text to update feed: ");
   }
 }
 
 /**************************************************************************/
 /*!
-    @brief  Feed OnOff callback event
+    @brief  Feed Text callback event
 
-    @param  value      value of the feed, must be the same as class template
-                       (int or float)
+    @param  str      current text of the feed (true or false)
 */
 /**************************************************************************/
-void slider_callback(float value)
+void text_callback(const char* str)
 {
   Serial.print("Feed value: ");
-  Serial.println(value);
-
-  Serial.print("Enter an float to update feed: ");
+  Serial.println(str);
 }
 
 /**************************************************************************/
@@ -194,5 +179,4 @@ char* getUserInput(void)
 
   return inputs;
 }
-
 

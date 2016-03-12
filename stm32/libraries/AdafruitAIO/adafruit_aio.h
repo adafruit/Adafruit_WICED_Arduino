@@ -73,5 +73,6 @@ public:
 #include "adafruit_aio_feed_onoff.h"
 #include "adafruit_aio_feed_pushbutton.h"
 #include "adafruit_aio_feed_slider.h"
+#include "adafruit_aio_feed_text.h"
 
 #endif /* _ADAFRUIT_AIO_H_ */

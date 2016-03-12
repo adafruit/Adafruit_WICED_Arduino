@@ -45,17 +45,21 @@ protected:
   char* _str;
   virtual void subscribed_callback(UTF8String topic, UTF8String message, void* callback_func);
 
+  bool updateValue(UTF8String message);
+
 public:
-  typedef void (*feedTextHandler_t)(char* str);
+  typedef void (*feedTextHandler_t)(const char* str);
 
   AdafruitAIOFeedText(AdafruitAIO* aio, const char* feed, uint8_t qos = MQTT_QOS_AT_MOST_ONCE, bool retain = true);
 
-//  bool follow  (feedTextHandler_t fp);
-//  bool follow  (void);
-//
-//  bool operator =  (char const* value);
-//  bool operator == (char const* value);
-//  bool operator != (char const* value) { return ! ((*this) == value); }
+  bool follow  (feedTextHandler_t fp);
+
+  // Follow without callback, only internal value is updated
+  bool follow  (void) { return this->follow((feedHandler_t)NULL); }
+
+  bool operator =  (char const* value);
+  bool operator == (char const* value);
+  bool operator != (char const* value) { return ! ((*this) == value); }
 
   // Inherit from AIOFeed
   bool unfollow(void);
