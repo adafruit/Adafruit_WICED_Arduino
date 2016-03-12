@@ -100,8 +100,7 @@ void loop()
   start = stop = sent_loop = 0;
 
   Serial.println("Enter any key to start sending data");
-  char inputs[64];
-  getUserInput(inputs, sizeof(inputs));
+  (void) getUserInput();
 
   start = millis();
   while (remaining_loop > 0)
@@ -159,14 +158,19 @@ bool connectAP(void)
     @brief  Get user input from Serial
 */
 /**************************************************************************/
-void getUserInput(char buffer[], uint8_t maxSize)
+char* getUserInput(void)
 {
-  memset(buffer, 0, maxSize);
-  while( Serial.peek() < 0 ) { delay(1); }
+  static char inputs[64+1];
+  memset(inputs, 0, sizeof(inputs));
+
+  // wait until data is available
+  while( Serial.available() == 0 ) { delay(1); }
 
   uint8_t count=0;
   do
   {
-    count += Serial.readBytes(buffer+count, maxSize);
-  } while( (count < maxSize) && !(Serial.peek() < 0) );
+    count += Serial.readBytes(inputs+count, 64);
+  } while( (count < 64) && Serial.available() );
+
+  return inputs;
 }
