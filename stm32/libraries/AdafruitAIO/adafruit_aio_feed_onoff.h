@@ -51,7 +51,9 @@ public:
   AdafruitAIOFeedOnOff(AdafruitAIO* aio, const char* feed, uint8_t qos = MQTT_QOS_AT_MOST_ONCE, bool retain = true);
 
   bool follow  (feedOnOffHandler_t fp);
-  bool follow  (void);
+
+  // Follow without callback, only internal value get updated
+  bool follow  (void) { return this->follow((feedHandler_t)NULL); }
 
   bool operator =  (bool value);
   bool operator == (bool value);

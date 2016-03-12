@@ -69,8 +69,6 @@ void AdafruitAIOFeedPushButton::subscribed_callback(UTF8String topic, UTF8String
 {
   (void) topic;
 
-  DBG_LOCATION();
-
   if ( message == "1" )
   {
     _state = true;
