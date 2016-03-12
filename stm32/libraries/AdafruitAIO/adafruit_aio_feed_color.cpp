@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*!
-    @file     adafruit_aio.h
+    @file     adafruit_aio_feed_color.cpp
     @author   hathach
 
     @section LICENSE
@@ -34,46 +34,53 @@
 */
 /**************************************************************************/
 
-#ifndef _ADAFRUIT_AIO_H_
-#define _ADAFRUIT_AIO_H_
+#include <adafruit_feather.h>
+#include <adafruit_mqtt.h>
+#include "adafruit_aio.h"
 
-#include <Arduino.h>
-
-#define AIO_SERVER          "io.adafruit.com"
-#define AIO_UNSECURED_PORT  1883
-#define AIO_SECURED_PORT    8883
-
-// forward declaration
-class AdafruitAIOFeed;
-
-class AdafruitAIO : public AdafruitMQTT
+/******************************************************************************/
+/*!
+    @brief Constructor
+*/
+/******************************************************************************/
+AdafruitAIOFeedColor::AdafruitAIOFeedColor(AdafruitAIO* aio, const char* feed, uint8_t qos, bool retain):
+  AdafruitAIOFeed(aio, feed, qos, retain)
 {
-protected:
-  char* createFeed(const char* feedid);
-  void  removeFeed(char* feedfull);
+  memclr(_rgb, 3);
+}
 
-public:
-  typedef void (*feedHandler_t)(UTF8String message);
-  AdafruitAIO(const char* username, const char* password);
+/******************************************************************************/
+/*!
+    @brief Follow with callback
+*/
+/******************************************************************************/
+bool AdafruitAIOFeedColor::follow(feedColorHandler_t fp)
+{
+  return this->follow((feedHandler_t) fp);
+}
 
-  bool connect   (bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
-  bool connectSSL(bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
-  using AdafruitMQTT::connect;
-  using AdafruitMQTT::connectSSL;
+/******************************************************************************/
+/*!
+    @brief Subcribed callback
+*/
+/******************************************************************************/
+void AdafruitAIOFeedColor::subscribed_callback(UTF8String topic, UTF8String message, void* callback_func)
+{
+  (void) topic;
 
-  bool updateFeed  (const char* feed, UTF8String message, uint8_t qos=MQTT_QOS_AT_MOST_ONCE, bool retain=true);
-  bool followFeed  (const char* feed, uint8_t qos, feedHandler_t mh);
-  bool unfollowFeed(const char* feed);
+  // First byte is #
+  if(message.data[0] != '#') return;
 
-  // for internal use
-  bool followFeed(const char* feed, uint8_t qos, feedHandler_t mh, AdafruitAIOFeed* aio_feed);
-};
+  char c[3] = { 0 };
+  for(uint8_t i=0; i<3; i++)
+  {
+    memcpy(c, &message.data[i*2+1], 2); // 1, 3, 5
+    _rgb[i] = (uint8_t) strtol(c, NULL, 16);
+  }
 
-#include "adafruit_aio_feed.h"
-#include "adafruit_aio_feed_onoff.h"
-#include "adafruit_aio_feed_pushbutton.h"
-#include "adafruit_aio_feed_slider.h"
-#include "adafruit_aio_feed_text.h"
-#include "adafruit_aio_feed_color.h"
-
-#endif /* _ADAFRUIT_AIO_H_ */
+  if ( callback_func )
+  {
+    feedColorHandler_t mh = (feedColorHandler_t) callback_func;
+    mh(_rgb);
+  }
+}

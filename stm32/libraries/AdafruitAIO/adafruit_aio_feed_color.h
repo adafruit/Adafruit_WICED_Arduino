@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*!
-    @file     adafruit_aio.h
+    @file     adafruit_aio_feed_color.h
     @author   hathach
 
     @section LICENSE
@@ -34,46 +34,37 @@
 */
 /**************************************************************************/
 
-#ifndef _ADAFRUIT_AIO_H_
-#define _ADAFRUIT_AIO_H_
+#ifndef _ADAFRUIT_AIO_FEED_COLOR_H_
+#define _ADAFRUIT_AIO_FEED_COLOR_H_
 
 #include <Arduino.h>
 
-#define AIO_SERVER          "io.adafruit.com"
-#define AIO_UNSECURED_PORT  1883
-#define AIO_SECURED_PORT    8883
-
-// forward declaration
-class AdafruitAIOFeed;
-
-class AdafruitAIO : public AdafruitMQTT
+class AdafruitAIOFeedColor : public AdafruitAIOFeed
 {
 protected:
-  char* createFeed(const char* feedid);
-  void  removeFeed(char* feedfull);
+  uint8_t _rgb[3];
+  virtual void subscribed_callback(UTF8String topic, UTF8String message, void* callback_func);
 
 public:
-  typedef void (*feedHandler_t)(UTF8String message);
-  AdafruitAIO(const char* username, const char* password);
+  typedef void (*feedColorHandler_t)(uint8_t rgb[3]);
 
-  bool connect   (bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
-  bool connectSSL(bool cleanSession = true, uint16_t keepalive_sec = MQTT_KEEPALIVE_DEFAULT);
-  using AdafruitMQTT::connect;
-  using AdafruitMQTT::connectSSL;
+  AdafruitAIOFeedColor(AdafruitAIO* aio, const char* feed, uint8_t qos = MQTT_QOS_AT_MOST_ONCE, bool retain = true);
 
-  bool updateFeed  (const char* feed, UTF8String message, uint8_t qos=MQTT_QOS_AT_MOST_ONCE, bool retain=true);
-  bool followFeed  (const char* feed, uint8_t qos, feedHandler_t mh);
-  bool unfollowFeed(const char* feed);
+  bool follow  (feedColorHandler_t fp);
 
-  // for internal use
-  bool followFeed(const char* feed, uint8_t qos, feedHandler_t mh, AdafruitAIOFeed* aio_feed);
+  // Follow without callback, only internal value is updated
+  bool follow  (void) { return this->follow((feedHandler_t)NULL); }
+
+//  bool operator =  (char const* value);
+//  bool operator == (char const* value);
+//  bool operator != (char const* value) { return ! ((*this) == value); }
+
+  // Inherit from AIOFeed
+  bool unfollow(void);
+  bool followed(void);
+
+  using AdafruitAIOFeed::follow;
+  using AdafruitAIOFeed::write;
 };
 
-#include "adafruit_aio_feed.h"
-#include "adafruit_aio_feed_onoff.h"
-#include "adafruit_aio_feed_pushbutton.h"
-#include "adafruit_aio_feed_slider.h"
-#include "adafruit_aio_feed_text.h"
-#include "adafruit_aio_feed_color.h"
-
-#endif /* _ADAFRUIT_AIO_H_ */
+#endif /* _ADAFRUIT_AIO_FEED_COLOR_H_ */
