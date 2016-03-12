@@ -100,10 +100,6 @@ void setup()
   Serial.print("Subcribing to feed: '" PHOTOCELL_FEED "' ... ");
   slider.follow(slider_callback);
   Serial.println("OK");
-
-  // Message to user
-  delay(5);
-  Serial.print("Enter an integer to update feed: ");
 }
 
 /**************************************************************************/
@@ -140,6 +136,7 @@ void slider_callback(int value)
   Serial.print("Feed value: ");
   Serial.println(value);
 
+  // Print prompt
   Serial.print("Enter an integer to update feed: ");
 }
 
@@ -167,6 +164,11 @@ bool connectAP(void)
   return Feather.connected();
 }
 
+/**************************************************************************/
+/*!
+    @brief  Get user input from Serial
+*/
+/**************************************************************************/
 char* getUserInput(void)
 {
   static char inputs[64+1];

@@ -63,6 +63,7 @@ public:
   }
 
   bool operator == (const char *cstr) const { return (strlen(cstr) == len) && !memcmp(data, cstr, len); }
+  bool operator != (const char *cstr) const { return !((*this) == cstr); }
 
   virtual size_t printTo(Print& p) const
   {

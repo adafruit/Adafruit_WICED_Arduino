@@ -52,15 +52,26 @@ AdafruitAIOFeedText::AdafruitAIOFeedText(AdafruitAIO* aio, const char* feed, uin
 
 /******************************************************************************/
 /*!
+    @brief Destructor
+*/
+/******************************************************************************/
+AdafruitAIOFeedText::~AdafruitAIOFeedText()
+{
+  if (_str) free (_str);
+}
+
+/******************************************************************************/
+/*!
     @brief Helper to update internal value
 */
 /******************************************************************************/
 bool AdafruitAIOFeedText::updateValue(UTF8String message)
 {
   // If value is different than the current non-null one
-  if ( _str && (message == _str) )
+  if ( _str && (message != _str) )
   {
     free(_str); // free old value if any
+    _str = NULL;
   }
 
   // malloc to hold a copy of value, skip if equal

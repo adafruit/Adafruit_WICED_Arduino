@@ -51,6 +51,7 @@ public:
   typedef void (*feedTextHandler_t)(const char* str);
 
   AdafruitAIOFeedText(AdafruitAIO* aio, const char* feed, uint8_t qos = MQTT_QOS_AT_MOST_ONCE, bool retain = true);
+  virtual ~AdafruitAIOFeedText();
 
   bool follow  (feedTextHandler_t fp);
 

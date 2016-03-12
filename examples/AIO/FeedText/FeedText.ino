@@ -94,9 +94,6 @@ void setup()
   Serial.print("Subcribing to feed: '" TEXT_FEED "' ... ");
   text.follow(text_callback);
   Serial.println("OK");
-
-  // Message to user
-  Serial.print("Enter text to update feed: ");
 }
 
 /**************************************************************************/
@@ -115,9 +112,6 @@ void loop()
 
     // AIO Feed OnOff can be update with assignment like normal string variable
     text = input;
-
-    // print prompt
-    Serial.print("Enter text to update feed: ");
   }
 }
 
@@ -132,6 +126,9 @@ void text_callback(const char* str)
 {
   Serial.print("Feed value: ");
   Serial.println(str);
+
+  // print prompt
+  Serial.print("Enter text to update feed: ");
 }
 
 /**************************************************************************/
