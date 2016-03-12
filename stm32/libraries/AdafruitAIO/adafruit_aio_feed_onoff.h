@@ -58,7 +58,9 @@ public:
   bool operator =  (bool value);
   bool operator == (bool value);
   bool operator != (bool value) { return ! ((*this) == value); }
-  operator bool() {  return this->_state; }
+
+  operator bool()  {  return this->_state; }
+  bool value(void) {  return this->_state; }
 
   // Inherit from AIOFeed
   bool unfollow(void);

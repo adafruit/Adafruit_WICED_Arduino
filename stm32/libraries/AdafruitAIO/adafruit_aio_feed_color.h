@@ -55,9 +55,10 @@ public:
   // Follow without callback, only internal value is updated
   bool follow  (void) { return this->follow((feedHandler_t)NULL); }
 
-//  bool operator =  (char const* value);
-//  bool operator == (char const* value);
-//  bool operator != (char const* value) { return ! ((*this) == value); }
+  bool update  (const uint8_t rgb[3]);
+  bool operator =  (const uint8_t rgb[3]) { return this->update(rgb); }
+
+  const uint8_t* value(void) { return this->_rgb; }
 
   // Inherit from AIOFeed
   bool unfollow(void);

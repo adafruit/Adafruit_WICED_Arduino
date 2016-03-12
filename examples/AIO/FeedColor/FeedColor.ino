@@ -104,15 +104,29 @@ void setup()
 void loop()
 {
   // Get input from user '0' to off, '1' to update feed
-//  if ( Serial.available() )
-//  {
-//    // Get input and echo
-//    char* input = getUserInput();
-//    Serial.println(input);
-//
-//    // AIO Feed OnOff can be update with assignment like normal string variable
-//    color = input;
-//  }
+  if ( Serial.available() )
+  {
+    // Get input and echo
+    char* input = getUserInput();
+    Serial.println(input);
+
+    // Parse the input
+    uint8_t rgb[3];
+    int count = sscanf(input, "%x, %x, %x", &rgb[0], &rgb[1], &rgb[2]);
+
+    if ( count != 3 ) 
+    {
+      Serial.println("Invalid input, please enter comma separated HEX for RGB (wihtout 0x prefix)");
+      Serial.println("Example: 'ff, 00, aa'");
+
+      Serial.println();
+      Serial.print("Enter RGB (hex) with comma separated (e.g ff,00,bb) : ");
+      return;
+    }
+    
+    // AIO Feed OnOff can be update with assignment like normal string variable
+    color = rgb;
+  }
 }
 
 /**************************************************************************/
@@ -128,7 +142,7 @@ void color_callback(uint8_t rgb[3])
   Serial.println();
 
   // print prompt
-  //Serial.print("Enter text to update feed: ");
+  Serial.print("Enter RGB (hex) with comma separated (e.g ff, 00, bb) : ");
 }
 
 /**************************************************************************/

@@ -62,6 +62,8 @@ public:
   bool operator == (char const* value);
   bool operator != (char const* value) { return ! ((*this) == value); }
 
+  const char* value(void) { return this->_str; }
+
   // Inherit from AIOFeed
   bool unfollow(void);
   bool followed(void);

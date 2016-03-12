@@ -51,6 +51,21 @@ AdafruitAIOFeedColor::AdafruitAIOFeedColor(AdafruitAIO* aio, const char* feed, u
 
 /******************************************************************************/
 /*!
+    @brief Assignment overload
+*/
+/******************************************************************************/
+bool AdafruitAIOFeedColor::update(const uint8_t rgb[3])
+{
+  memcpy(_rgb, rgb, 3);
+
+  char message[8];
+  sprintf(message, "#%02X%02X%02X", _rgb[0], _rgb[1], _rgb[2]);
+
+  return this->write(message) > 0;
+}
+
+/******************************************************************************/
+/*!
     @brief Follow with callback
 */
 /******************************************************************************/

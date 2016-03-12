@@ -78,7 +78,8 @@ public:
   bool operator == (Num value) { this->_value == value; }
   bool operator != (Num value) { return ! ((*this) == value); }
 
-  operator Num() { return this->_value; }
+  operator Num()  { return this->_value; }
+  Num value(void) { return this->_value; }
 
   // Inherit from AIOFeed
   bool unfollow(void);
