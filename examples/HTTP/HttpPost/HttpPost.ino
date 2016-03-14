@@ -12,6 +12,8 @@
  any redistribution
 *********************************************************************/
 
+/* This example post data to a defined URL */
+
 #include <adafruit_feather.h>
 #include <adafruit_http.h>
 

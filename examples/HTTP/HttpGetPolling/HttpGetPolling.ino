@@ -12,6 +12,10 @@
  any redistribution
 *********************************************************************/
 
+/* This example use HTTP class to send request and get response
+ * using polling
+ */
+
 #include <adafruit_feather.h>
 #include <adafruit_http.h>
 
