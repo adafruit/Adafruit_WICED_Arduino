@@ -12,6 +12,18 @@
  any redistribution
 *********************************************************************/
 
+/* This example will start an UDP server on Feather, register
+ * receive callback and echo back any incoming message.
+ * To run this demo:
+ * - Change SSID/Pass
+ * - Compile and run
+ * - Use an UDP client on your PC such as netcast as follows
+ * 'nc -u IP port', e.g your Feather's IP is 192.168.1.100
+ * and LOCAL_PORT is 8888 then
+ *    > nc -u 192.168.100 8888
+ *    > <Type your message>
+ */
+
 #include <adafruit_feather.h>
 
 #define WLAN_SSID            "yourSSID"
@@ -39,9 +51,9 @@ void received_callback(void)
     Serial.println( udp.remotePort() );
 
     udp.read(packetBuffer, sizeof(packetBuffer));
-    Serial.print("Contents: '");
+    Serial.print("Contents: ");
     Serial.write(packetBuffer, packetSize);
-    Serial.println("'");
+    Serial.println();
 
     // Echo back contents
     udp.beginPacket(udp.remoteIP(), udp.remotePort());

@@ -12,6 +12,15 @@
  any redistribution
 *********************************************************************/
 
+/* This example will get input from Serial terminal and
+ * send it to an defined UDP server. To run this demo
+ * - Change SSID/Pass
+ * - Change server_ip to your PC's IP
+ * - Run 'nc -lu 8888' to start UDP server on your PC
+ * - Compile and run the sketch
+ * - Enter message in the terminal and check if it arrived on your PC
+ */
+
 #include <adafruit_feather.h>
 
 #define WLAN_SSID             "yourSSID"

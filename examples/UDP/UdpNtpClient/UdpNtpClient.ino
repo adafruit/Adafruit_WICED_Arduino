@@ -16,6 +16,10 @@
 
  */
 
+/* This example proves that Feather AdafruitTCP is compatible
+ * with Arudino standard Client
+ */
+
 #include <adafruit_feather.h>
 
 #define WLAN_SSID            "yourSSID"
