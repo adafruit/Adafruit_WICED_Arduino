@@ -131,7 +131,7 @@ void updateVbat()
 void setup()
 {
   // Wait for Serial Monitor
-  while(!Serial) delay(1);
+//  while(!Serial) delay(1);
    
   // Setup the LED pin
   pinMode(BOARD_LED_PIN, OUTPUT);
@@ -269,9 +269,8 @@ void loop()
 /**************************************************************************/
 void aio_vbat_callback(float value)
 {
-  oled.println("AIO VBAT: ");
-
-  oled.display();
+//  oled.println("AIO VBAT: ");
+//  oled.display();
 }
 
 /**************************************************************************/
@@ -281,8 +280,7 @@ void aio_vbat_callback(float value)
 /**************************************************************************/
 void aio_lux_callback(float value)
 {
-  oled.println("AIO LUX:");
-
-  oled.display();
+//  oled.println("AIO LUX:");
+//  oled.display();
 }
 
