@@ -48,8 +48,8 @@
  * 4. Compile and run
  * 5. Use an MQTT desktop client to connect to the same MQTT broker and
  *    publish to any topic beginning with "adafruit/feather/" (depending
- *    on TOPIC_SUBSCRIBE). To be able to recieve the echo message, please
- *    also subcribe to "adafruit/feather_echo" (TOPIC_ECHO).
+ *    on TOPIC_SUBSCRIBE). To be able to receive the echo message, please
+ *    also subscribe to "adafruit/feather_echo" (TOPIC_ECHO).
  */
 
 #define WLAN_SSID         "yourSSID"

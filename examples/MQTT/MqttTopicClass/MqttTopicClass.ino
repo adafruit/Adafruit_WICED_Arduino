@@ -17,7 +17,9 @@
 #include "certificate_mosquitto.h"
 
 /* This sketch connects to a public MQTT server (with/without TLS)
- * and publishes a message to a topic every 5 seconds.
+ * and using AdafruitMQTTTopic to publish and subscribe to the same
+ * topic (loopback). For each loop, it will increase the count and
+ * delay for a few seconds.
  *
  * For server details see http://test.mosquitto.org/
  *  - Port 1883 : MQTT, unencrypted
@@ -51,7 +53,7 @@
 #define WILL_MESSAGE      "Goodbye!!"
 
 AdafruitMQTT      mqtt;
-AdafruitMQTTTopic mqttTopic(&mqtt, TOPIC, MQTT_QOS_EXACTLY_ONCE);
+AdafruitMQTTTopic mqttTopic(&mqtt, TOPIC);
 
 char old_value = '0';
 char value = '0';
@@ -117,8 +119,8 @@ void setup()
   Serial.println("Please use desktop client to subcribe to \'" TOPIC "\' to monitor");
 
   // Inital publish
-  Serial.printf("Publishing \'%d\' ... ", value);
-  mqttTopic.print( value ); // use .write to send in binary format
+  Serial.printf("Publishing \'%c\' ... ", value);
+  mqttTopic.print( value );
   Serial.println("OK");
 }
 
@@ -138,9 +140,11 @@ void loop()
       old_value = value;
       Serial.println();
       Serial.printf("Publishing \'%c\' ... \r\n", value);
-      mqttTopic.print( value ); // use .write to send in binary format
+      mqttTopic.print( value );
     }
   }
+
+  delay(2000);
 }
 
 /**************************************************************************/
@@ -159,12 +163,13 @@ void loop()
 void subscribed_callback(UTF8String topic, UTF8String message)
 {
   // Copy received data to 'value'
-  memcpy(&value, message.data, 1);
+  value = message.data[0];
 
   // Print out topic name and message
   Serial.printf("["); Serial.print(topic); Serial.printf("]");
-  Serial.print(" : value = ") ;
-  Serial.println(value);
+  Serial.print(" : value = '") ;
+  Serial.print(value);
+  Serial.println("'") ;
 
   // Increase value by 1
   value++;
