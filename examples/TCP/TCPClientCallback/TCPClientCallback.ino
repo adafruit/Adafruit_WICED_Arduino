@@ -12,8 +12,9 @@
  any redistribution
 *********************************************************************/
 
-/* This example will send the HTTP request to the defined
- * Server's page. Response will be printed via received callback
+/* This example will send an HTTP request to the indicated HTTP
+ * server and page. The response will be printed via the 'data received'
+ * callback handler.
  */
 
 #include <adafruit_feather.h>
@@ -125,7 +126,7 @@ bool connectAP(void)
 {
   // Attempt to connect to an AP
   Serial.print("Please wait while connecting to: '" WLAN_SSID "' ... ");
-  
+
   if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
   {
     Serial.println("Connected!");

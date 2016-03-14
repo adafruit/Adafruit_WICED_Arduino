@@ -12,17 +12,17 @@
  any redistribution
 *********************************************************************/
 
-/* This example connects to a large text file (10KB, 100KB, 1MB)
- * to test the large data handling. The sketch also computes the
- * checksum of the content to compare with one calculated via
+/* This example connects to a secure HTTP server and requests a large
+ * text file (10KB, 100KB, 1MB). The sketch also computes the
+ * checksum of the content to optionally compare with one calculated via
  * another python tool provided in the same folder as this code.
  *
  * To run this sketch:
- * 
+ *
  * 1. Change SSID/Pass
  * 2. Choose the file to download by changing FILE_ID
  * 3. Compile and run the sketch
- * 
+ *
  * */
 
 #include <adafruit_feather.h>
@@ -92,9 +92,9 @@ void receive_callback(void)
       skippedHeader = true;
     }
   }
-  
+
   if (skippedHeader)
-  {   
+  {
     while( http.available() )
     {
       int c = http.read();
@@ -107,11 +107,11 @@ void receive_callback(void)
 
     // received all data, disconnect
     if (datacount >= filelen)
-    {   
+    {
       time_duration = millis() - time_start;
       disconnect_server();
     }
-  }  
+  }
 }
 
 /**************************************************************************/
@@ -121,7 +121,7 @@ void receive_callback(void)
 /**************************************************************************/
 void disconnect_server(void)
 {
-  Serial.println("Total bytes received (including headers):"); 
+  Serial.println("Total bytes received (including headers):");
   Serial.printf(" - %d bytes in %.02f seconds\r\n", http.byteRead(), time_duration/1000.0F);
   Serial.printf(" - Speed ~ %.02f KB/s", ((float) http.byteRead()) / time_duration );
   Serial.println();
@@ -132,7 +132,7 @@ void disconnect_server(void)
   Serial.println( crc32.crc );
 
   http.stop();
-  
+
   Serial.println();
   Serial.println("------------");
   Serial.println("DISCONNECTED");
@@ -208,7 +208,7 @@ bool connectAP(void)
 {
   // Attempt to connect to an AP
   Serial.print("Please wait while connecting to: '" WLAN_SSID "' ... ");
-  
+
   if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
   {
     Serial.println("Connected!");

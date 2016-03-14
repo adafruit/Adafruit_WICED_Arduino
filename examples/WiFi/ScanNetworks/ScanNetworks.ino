@@ -12,8 +12,8 @@
  any redistribution
 *********************************************************************/
 
-/* This example scan nearby network and print out SSID information every
- * 10 seconds. Hidden SSID is printed as '*'
+/* This example scans for nearby networks and prints out the SSID
+ * details every 10 seconds. Hidden SSIDs are printed as '*'.
  */
 
 #include <adafruit_feather.h>
@@ -71,7 +71,7 @@ void listNetworks()
   Serial.printf("ID SSID                 Enc   Ch Signal\n");
   for (int i = 0; i < numSsid; i++)
   {
-    Serial.printf("%02d %-20s %-05s %02d %02d (dBm)", 
+    Serial.printf("%02d %-20s %-05s %02d %02d (dBm)",
                   i,
                   (scan_result[i].ssid[i] == 0) ? "*" : scan_result[i].ssid, // hidden SSID display as "*"
                   getEncryptionStr( scan_result[i].security ),
@@ -95,23 +95,23 @@ char const* getEncryptionStr(int32_t encType)
     case ENC_TYPE_WEP:
       return "WEP";
     break;
-      
+
     case ENC_TYPE_WPA_TKIP:
     case ENC_TYPE_WPA_AES:
     case ENC_TYPE_WPA_MIXED:
       return "WPA";
     break;
-    
+
     case ENC_TYPE_WPA2_AES:
     case ENC_TYPE_WPA2_TKIP:
     case ENC_TYPE_WPA2_MIXED:
       return "WPA2";
     break;
-      
+
     case ENC_TYPE_OPEN:
       return "OPEN";
     break;
-      
+
     default:
       return "OTHER";
     break;

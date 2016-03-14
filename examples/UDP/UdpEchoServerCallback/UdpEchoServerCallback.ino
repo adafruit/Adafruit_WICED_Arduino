@@ -12,16 +12,16 @@
  any redistribution
 *********************************************************************/
 
-/* This example will start an UDP server on Feather, register
- * receive callback and echo back any incoming messages.
+/* This example will start a UDP server on the feather, registers
+ * a receive callback, and echoes back any incoming messages.
  * To run this demo:
  * - Change SSID/Pass
  * - Compile and run
- * - Use an UDP client on your PC such as netcast as follows
- * 'nc -u IP port', e.g your Feather's IP is 192.168.1.100
- * and LOCAL_PORT is 8888 then
- *    > nc -u 192.168.100 8888
- *    > <Type your message>
+ * - Use a UDP client on your PC such as netcast as follows:
+ *   'nc -u IP port', e.g your Feather's IP is 192.168.1.100
+ *   and LOCAL_PORT is 8888 then
+ *     > nc -u 192.168.100 8888
+ *     > <Type your message>
  */
 
 #include <adafruit_feather.h>
@@ -123,7 +123,7 @@ bool connectAP(void)
 {
   // Attempt to connect to an AP
   Serial.print("Please wait while connecting to: '" WLAN_SSID "' ... ");
-  
+
   if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
   {
     Serial.println("Connected!");

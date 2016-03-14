@@ -12,9 +12,9 @@
  any redistribution
 *********************************************************************/
 
-/* This example display the current SSID profile in NVM, save the defined
- * above SSID if it is not already in the list. Then attempt to connect using
- * the profile list connect(void)
+/* This example displays the current SSID profile(s) in NVM, saving
+ * WLAN_SSID if it is not already in the list. It then attempts to
+ * connect using the data stored in the profile list ('connect(void)').
  */
 
 #include <adafruit_feather.h>
@@ -36,7 +36,7 @@ void setup()
   while (!Serial) delay(1);
 
   Serial.println(F("Profile Manage Example\r\n"));
-  
+
   // Print all software versions
   Feather.printVersions();
 
@@ -47,7 +47,7 @@ void setup()
   {
     char * profile_ssid = Feather.profileSSID(i);
     int32_t profile_enc = Feather.profileEncryptionType(i);
-    
+
     Serial.printf("%02d ", i);
     if ( profile_ssid != NULL )
     {
@@ -71,15 +71,15 @@ void setup()
     Serial.print("Adding ");
     Serial.print(WLAN_SSID);
     Serial.println(" to profile list");
-    
+
     Feather.addProfile(WLAN_SSID, WLAN_PASS, ENC_TYPE);
   }
-  
+
   // Connect to Wifi network using saved profile list
   do {
     Serial.println("Attempting to connect with saved profile");
   } while( !Feather.connect() );
-  
+
   // Connected: Print network info
   Feather.printNetwork();
 }

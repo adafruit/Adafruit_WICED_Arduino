@@ -12,7 +12,7 @@
  any redistribution
 *********************************************************************/
 
-/* This example post data to a defined URL */
+/* This example posts data to the defined URL */
 
 #include <adafruit_feather.h>
 #include <adafruit_http.h>
@@ -135,7 +135,7 @@ bool connectAP(void)
 {
   // Attempt to connect to an AP
   Serial.print("Please wait while connecting to: '" WLAN_SSID "' ... ");
-  
+
   if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
   {
     Serial.println("Connected!");

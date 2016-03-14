@@ -14,9 +14,9 @@
 
 #include "adafruit_feather.h"
 
-/* This example demonstrates how to use getHostByName function
- * to lookup an IP for a hostname. Also an string representation
- * of IP can also be used directly.
+/* This example demonstrates how to use the getHostByName function
+ * to lookup an IP for a hostname. A string representation
+ * of an IP can also be used directly.
  */
 
 #define WLAN_SSID            "yourSSID"
@@ -41,7 +41,7 @@ void disconnect_callback(void)
 void setup()
 {
   Serial.begin(115200);
-  
+
   // wait for serial port to connect. Needed for native USB port only
   while (!Serial) delay(1);
 
@@ -68,17 +68,17 @@ void setup()
 */
 /**************************************************************************/
 void loop()
-{ 
+{
   if ( Feather.connected() )
   {
     // Resolve and ping hostname
     IPAddress ipaddr;
-   
+
     ipaddr = Feather.hostByName(target_hostname);
     Serial.print(target_hostname);
     Serial.print(" -> ");
     Serial.println(ipaddr);
-    
+
     ipaddr = Feather.hostByName(target_ip_str);
     Serial.print(target_ip_str);
     Serial.print("      -> ");
@@ -100,7 +100,7 @@ bool connectAP(void)
 {
   // Attempt to connect to an AP
   Serial.print("Please wait while connecting to: '" WLAN_SSID "' ... ");
-  
+
   if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
   {
     Serial.println("Connected!");

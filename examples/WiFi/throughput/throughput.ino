@@ -12,11 +12,11 @@
  any redistribution
 *********************************************************************/
 
-/* This example test the speed of TCP transfer from Feather to
- * your PC machine. To run this example
- * - Change SSID/Pass
- * - Change server_ip to your PC's IP
- * - Run 'nc -l 8888' to start tcp server on your PC
+/* This example tests the speed of TCP transfers from the feather to
+ * your local PC. To run this example:
+ * - Change the SSID/Password
+ * - Change server_ip to your PC's IPv4 address
+ * - Run 'nc -l 8888' to start a TCP server on your PC
  * - Compile and run the sketch
  */
 
@@ -78,7 +78,7 @@ void setup()
   Serial.print("\nStarting connection to ");
   Serial.print(server_ip);
   Serial.printf(":%d\r\n", port);
-  
+
   tcp.usePacketBuffering(true); // use packet buffering for maximum performance
   tcp.connect(server_ip, port);
 }
@@ -101,7 +101,7 @@ void loop()
       delay(1);
     }
   }
-  
+
   uint32_t start, stop, sent_loop;
   uint32_t remaining_loop = 20000; // number of loop to send, each loop is testStepLen
   start = stop = sent_loop = 0;
@@ -145,7 +145,7 @@ bool connectAP(void)
 {
   // Attempt to connect to an AP
   Serial.print("Please wait while connecting to: '" WLAN_SSID "' ... ");
-  
+
   if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
   {
     Serial.println("Connected!");

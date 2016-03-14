@@ -12,8 +12,8 @@
  any redistribution
 *********************************************************************/
 
-/* This example demonstrates how to use ping() function
- * to send PING to a remote host
+/* This example demonstrates how to use  the ping() function
+ * to send a PING requesr to a remote host
  */
 
 #include "adafruit_feather.h"
@@ -57,7 +57,7 @@ void setup()
 
   // Set disconnection callback
   Feather.setDisconnectCallback(disconnect_callback);
-  
+
   while ( !connectAP() )
   {
     delay(500); // delay between each attempt
@@ -73,7 +73,7 @@ void setup()
 */
 /**************************************************************************/
 void loop()
-{ 
+{
   if ( Feather.connected() )
   {
     uint8_t resp_ms;
@@ -130,7 +130,7 @@ bool connectAP(void)
 {
   // Attempt to connect to an AP
   Serial.print("Please wait while connecting to: '" WLAN_SSID "' ... ");
-  
+
   if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
   {
     Serial.println("Connected!");

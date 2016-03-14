@@ -12,8 +12,7 @@
  any redistribution
 *********************************************************************/
 
-/*  This example use the default RootCA list to access secured sites
- *  that can be verified by default list. 
+/*  This example use the default RootCA list to access secured sites:
  *  1. Change ssid/pass to match your network
  *  2. Choose the SERVER_ID or use your own server e.g www.adafruit.com
  *  3. Compile and run the sketch
@@ -31,7 +30,7 @@
 
 // Some servers such as Facebook check the user_agent header to
 // return data accordingly. Setting 'curl' mimics a command line browser.
-// For a list of popular user agents see: 
+// For a list of popular user agents see:
 //  http://www.useragentstring.com/pages/useragentstring.php
 #define USER_AGENT_HEADER    "curl/7.45.0"
 
@@ -64,7 +63,7 @@ AdafruitHTTP http;
 */
 /**************************************************************************/
 void receive_callback(void)
-{ 
+{
   // if there are incoming bytes available
   // from the server, read then print them:
   while ( http.available() )
@@ -80,7 +79,7 @@ void receive_callback(void)
 */
 /**************************************************************************/
 void disconnect_callback(void)
-{ 
+{
   Serial.println();
   Serial.println("---------------------");
   Serial.println("DISCONNECTED CALLBACK");
@@ -101,7 +100,7 @@ void setup()
 
   // Wait for the USB serial port to connect. Needed for native USB port only
   while (!Serial) delay(1);
-  
+
   Serial.println("HTTPS Default Root CA Example\r\n");
 
   // Print all software versions
@@ -114,13 +113,13 @@ void setup()
 
   // Connected: Print network info
   Feather.printNetwork();
- 
+
   // Tell the HTTP client to auto print error codes and halt on errors
   http.err_actions(true, true);
 
-  // Set the HTTP client timeout (in ms)  
+  // Set the HTTP client timeout (in ms)
   http.setTimeout(1000);
-  
+
   // Set the callback handlers
   http.setReceivedCallback(receive_callback);
   http.setDisconnectCallback(disconnect_callback);
@@ -128,7 +127,7 @@ void setup()
   Serial.printf("Connecting to %s port %d ... ", server, HTTPS_PORT );
   http.connectSSL(server, HTTPS_PORT); // Will halt if an error occurs
   Serial.println("OK");
-    
+
   // Make a HTTP request:
   http.addHeader("User-Agent", USER_AGENT_HEADER);
   http.addHeader("Accept", "text/html");
@@ -159,7 +158,7 @@ bool connectAP(void)
 {
   // Attempt to connect to an AP
   Serial.print("Please wait while connecting to: '" WLAN_SSID "' ... ");
-  
+
   if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
   {
     Serial.println("Connected!");

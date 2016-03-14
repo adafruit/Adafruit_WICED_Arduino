@@ -12,10 +12,10 @@
  any redistribution
 *********************************************************************/
 
-/* This example attempt to
+/* This example attempts to:
  * - Connect to your SSID
- * - Save SSID info to NVM profile list if connected successfully
- * - Disconnect and re-connect using saved profile
+ * - Save the SSID info to NVM profile list if connected successfully
+ * - Disconnects then re-connects using the saved profile
  */
 
 #include <adafruit_feather.h>
@@ -40,15 +40,15 @@ void setup()
   Serial.print("\r\nClear all AP profiles ... ");
   Feather.clearProfiles();
   Serial.println("OK");
-  
+
   while ( !connectAP() )
   {
     delay(500); // delay between each attempt
   }
-  
+
   // Connected: Print network info
   Feather.printNetwork();
-  
+
   // Save the current AP Profile
   Serial.print("Saving current connected network to profile list ... ");
   if ( Feather.saveConnectedProfile() )
@@ -58,7 +58,7 @@ void setup()
   {
     Serial.println("Failed");
   }
-  
+
   // Print AP profile list
   Serial.println("Saved AP profile");
   Serial.println("ID SSID                 Sec");
@@ -79,12 +79,12 @@ void setup()
     }
   }
   Serial.println();
-  
+
   // Disconnect to test connecting with saved profile
   Serial.println("Disconnecting from AP ... ");
   Feather.disconnect();
   Serial.println("OK");
-  
+
   Serial.println("Reconnecting with the saved profile (should be quicker)");
   Feather.connect(); // no parameters --> using saved profiles
 }
@@ -112,7 +112,7 @@ bool connectAP(void)
 {
   // Attempt to connect to an AP
   Serial.print("Please wait while connecting to: '" WLAN_SSID "' ... ");
-  
+
   if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
   {
     Serial.println("Connected!");

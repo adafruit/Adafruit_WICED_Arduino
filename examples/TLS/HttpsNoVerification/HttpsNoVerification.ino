@@ -14,7 +14,10 @@
 
 /* This example attempts to access a secure site whose RootCA is not
  * covered by the default RootCA list by disabling the server's
- * certificate verification.
+ * certificate verification. This effectively causes any certificates
+ * provided by the remote server to be considered valid, which is an
+ * obvious security risk but may be useful in certain controlled
+ * situations.
  *
  * NOTE: Default RootCA is not activated if verification is disabled
  *
@@ -53,7 +56,7 @@ AdafruitHTTP http;
 */
 /**************************************************************************/
 void receive_callback(void)
-{ 
+{
   // If there are incoming bytes available
   // from the server, read then print them:
   while ( http.available() )
@@ -69,7 +72,7 @@ void receive_callback(void)
 */
 /**************************************************************************/
 void disconnect_callback(void)
-{ 
+{
   Serial.println();
   Serial.println("---------------------");
   Serial.println("DISCONNECTED CALLBACK");
@@ -88,7 +91,7 @@ void setup()
 
   // Wait for the serial port to connect. Only needed for native USB CDC.
   while (!Serial) delay(1);
-  
+
   Serial.println("HTTPS No Certification Verification Example");
 
   // Print all software versions
@@ -101,7 +104,7 @@ void setup()
 
   // Connected: Print network info
   Feather.printNetwork();
- 
+
   // Tell the HTTP client to auto print error codes and halt on errors
   http.err_actions(true, true);
 
@@ -117,7 +120,7 @@ void setup()
   Serial.printf("Connecting to %s port %d ... ", SERVER, HTTPS_PORT );
   http.connectSSL(SERVER, HTTPS_PORT); // Will halt if an error occurs
   Serial.println("OK");
-    
+
   // Make a HTTP request
   http.addHeader("User-Agent", USER_AGENT_HEADER);
   http.addHeader("Accept", "text/html");
@@ -148,7 +151,7 @@ bool connectAP(void)
 {
   // Attempt to connect to an AP
   Serial.print("Please wait while connecting to: '" WLAN_SSID "' ... ");
-  
+
   if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
   {
     Serial.println("Connected!");

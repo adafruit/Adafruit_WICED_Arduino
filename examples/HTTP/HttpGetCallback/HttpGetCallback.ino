@@ -12,8 +12,8 @@
  any redistribution
 *********************************************************************/
 
-/* This example use HTTP class to send request and get response
- * via callback */
+/* This example use the AdafruitHTTP class to send requests and get
+ * the response via a callback */
 
 #include <adafruit_feather.h>
 #include <adafruit_http.h>
@@ -136,7 +136,7 @@ bool connectAP(void)
 {
   // Attempt to connect to an AP
   Serial.print("Please wait while connecting to: '" WLAN_SSID "' ... ");
-  
+
   if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
   {
     Serial.println("Connected!");

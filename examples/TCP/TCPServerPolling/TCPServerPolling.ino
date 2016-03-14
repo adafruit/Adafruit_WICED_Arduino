@@ -12,14 +12,14 @@
  any redistribution
 *********************************************************************/
 
-/* This example will start an TCP server on Feather, polling
- * for any incoming message and echo back. To run this demo:
+/* This example will start a TCP server on the feather, polling
+ * for any incoming messages and echoing them back. To run this demo:
  * - Change SSID/Pass
  * - Compile and run
- * - Use an TCP client on your PC such as netcast as follows
- * 'echo "your message" | nc IP port'. e.g your Feather's IP is 192.168.1.100
- * and PORT is 8888 then
- *    > echo "Hello Feather" | nc 192.168.100 8888
+ * - Use a  TCP client on your PC such as netcast as follows
+ *   'echo "your message" | nc IP port'. e.g your Feather's IP is 192.168.1.100
+ *   and PORT is 8888 then
+ *     > echo "Hello Feather" | nc 192.168.100 8888
  */
 
 #include <adafruit_feather.h>
@@ -75,7 +75,7 @@ void loop()
 {
   uint8_t buffer[256];
   uint16_t len;
-  
+
   AdafruitTCP client = tcpserver.available();
 
   if ( client )
@@ -84,7 +84,7 @@ void loop()
     len = client.read(buffer, 256);
 
     // Print data along with peer's info
-    Serial.print("[RX] from "); 
+    Serial.print("[RX] from ");
     Serial.print(client.remoteIP());
     Serial.printf(" port %d : ", client.remotePort());
     Serial.write(buffer, len);
@@ -95,7 +95,7 @@ void loop()
 
     // call stop() to free memory by Client
     client.stop();
-  }  
+  }
 }
 
 /**************************************************************************/
@@ -107,7 +107,7 @@ bool connectAP(void)
 {
   // Attempt to connect to an AP
   Serial.print("Please wait while connecting to: '" WLAN_SSID "' ... ");
-  
+
   if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
   {
     Serial.println("Connected!");
