@@ -16,11 +16,9 @@
 #include <adafruit_mqtt.h>
 #include <adafruit_aio.h>
 
-/* This sketch connects to the Adafruit IO server at io.adafruit.com
- * and updates a 'PHOTOCELL_FEED' every 5 seconds.
- *
- * It also follow 'ONOFF_FEED' to receive updates from the AIO server via
- * the built-in follow/subscribe callback handler.
+/* This sketch connects to the Adafruit IO server at io.adafruit.com.
+ * It updates a 'PHOTOCELL_FEED' every 5 seconds and follows state change
+ * from 'ONOFF_FEED' using callback
  *
  * To run this demo
  * 1. Change WLAN_SSID/WLAN_PASS

@@ -17,16 +17,15 @@
 #include <adafruit_aio.h>
 
 /* This sketch connect to the Adafruit IO sever io.adafruit.com
- * and update a defined PHOTOCELL_FEED every 5 second. 
- * It also follow ONOF_FEED to receive update from the AIO website
+ * and follow `COLOR_FEED' changes. User can also enter new RGB
+ * value via Serial to update the feed
  *
  * To run this demo
  * 1. Change SSID/PASS
  * 2. Decide whether you want to use TLS/SSL or not (USE_TLS)
  * 3. Enable CLIENTID if you want
  * 4. Compile and run
- * 5. Use MQTT desktop client to connect to same sever and subscribe to the defined topic
- * to monitor the published message.
+ * 5. Log into the AIO webserver to make/see any changes in data, etc.
  */
 
 #define WLAN_SSID         "yourSSID"
