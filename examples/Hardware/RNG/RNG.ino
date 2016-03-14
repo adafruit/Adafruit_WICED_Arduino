@@ -12,6 +12,10 @@
  any redistribution
 *********************************************************************/
 
+/* This sketch shows how to use hardware random generator to get a random
+ * number.
+ */
+
 #include "adafruit_feather.h"
 
 /**************************************************************************/
