@@ -5,11 +5,11 @@
 #include <Adafruit_FeatherOLED_WiFi.h>
 #include <Adafruit_Sensor.h>
 #include <adafruit_feather.h>
-#include <itoa.h>
+#include <adafruit_mqtt.h>
+#include <adafruit_aio.h>
 
 #define WLAN_SSID                 "SSID"
 #define WLAN_PASS                 "PASSWORD"
-#define WLAN_SECURITY             ENC_TYPE_AUTO
 
 #define VBAT_ENABLED              1
 #define VBAT_PIN                  PA1
@@ -21,19 +21,18 @@
   Adafruit_TSL2561_Unified tsl = Adafruit_TSL2561_Unified(TSL2561_ADDR_FLOAT, 12345);
 #endif
 
-#define MQTT_ENABLED              0
-#define MQTT_HOST                 "io.adafruit.com"
-#define MQTT_PORT                 1883
-#define MQTT_AIOUSERNAME          "AIOUSERNAME"
-#define MQTT_AIOKEY               "AIOKEY"
-#define MQTT_QOS                  1
-#define MQTT_RETAIN               0
-#define MQTT_TOPIC_VBAT           MQTT_AIOUSERNAME "/feeds/vbat"
-#define MQTT_TOPIC_TSL2561_LUX    MQTT_AIOUSERNAME "/feeds/lux"
+#define AIO_ENABLED               0
+#define AIO_USERNAME              "...your AIO username (see https://accounts.adafruit.com)..."
+#define AIO_KEY                   "...your AIO key..."
 
-Adafruit_FeatherOLED_WiFi oled = Adafruit_FeatherOLED_WiFi();
+#define FEED_VBAT                 "photocell"
+#define FEED_TSL2561_LUX          "lux"
 
-bool mqtt_connected = false;
+AdafruitAIO                        aio(AIO_USERNAME, AIO_KEY);
+AdafruitAIOFeedGauge<float>        feedVBAT(&aio, FEED_VBAT);
+AdafruitAIOFeedGauge<float>        feedLUX (&aio, FEED_TSL2561_LUX);
+
+Adafruit_FeatherOLED_WiFi  oled = Adafruit_FeatherOLED_WiFi();
 
 /**************************************************************************/
 /*!
@@ -50,7 +49,7 @@ bool connectAP()
   oled.display();
 
   // Attempt to connect to the AP
-  if ( Feather.connect(WLAN_SSID, WLAN_PASS, WLAN_SECURITY ) )
+  if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
   {
     int8_t rssi = Feather.RSSI();
     uint32_t ipAddress = Feather.localIP();
@@ -95,78 +94,6 @@ bool connectAP()
   return true;
 }
 
-#if MQTT_ENABLED
-/**************************************************************************/
-/*!
-    @brief  Connect to pre-specified Broker
-
-    @return Error code
-*/
-/**************************************************************************/
-int connectBroker()
-{
-  // Generate a random 23-character client ID
-  char _clientID[24];
-  memset(_clientID, 0, 24);
-  Feather.mqttGenerateRandomID(_clientID, 23);
-
-  // Attempt to connect to a Broker
-  oled.clearMsgArea();
-  oled.println(MQTT_HOST);
-  oled.display();
-
-  int error = Feather.mqttConnect(MQTT_HOST, MQTT_PORT, (char *)_clientID, MQTT_AIOUSERNAME, MQTT_AIOKEY);
-  if (error == 0)
-  {
-    oled.println("Connected!");
-    oled.display();
-    mqtt_connected = true;
-  }
-  else
-  {
-    oled.print("Failed! Error: ");
-    oled.println(error, HEX);
-    oled.display();
-    delay(3000);
-  }
-
-  return error;
-}
-
-/**************************************************************************/
-/*!
-    @brief This function is called whenever a new event occurs
-*/
-/**************************************************************************/
-void mqttCallback(mqtt_evt_opcode_t event, uint16_t len, uint8_t* data)
-{
-  oled.clearMsgArea();
-
-  switch (event)
-  {
-    case MQTT_EVT_DISCONNECTED:
-      oled.println("MQTT Disconnected");
-      oled.display();
-      mqtt_connected = false;
-      break;
-    case MQTT_EVT_TOPIC_CHANGED:
-      oled.println("MQTT Update");
-      // Print the message
-      // [0:7]: UTC time & date (64-bit integer)
-      // [8: ]: "topic=value"
-      for (int i = 8; i < len; i++)
-      {
-        oled.write(data[i]);
-      }
-      oled.display();
-      break;
-    default:
-      break;
-  }
-}
-#endif
-
-#if VBAT_ENABLED
 /**************************************************************************/
 /*!
     @brief
@@ -188,29 +115,24 @@ void updateVbat()
   vbatFloat = ((float)vbatADC * vbatLSB) * 2.0F;
 
   oled.setBattery(vbatFloat/1000);
-
+  
   // Push VBAT out to MQTT if possible
-  #if MQTT_ENABLED
-  if (mqtt_connected)
+  if (AIO_ENABLED && aio.connected())
   {
-    char buffer[7];
-    itoa((int)vbatFloat, buffer, 10);
-    Feather.mqttPublish(MQTT_TOPIC_VBAT, buffer, MQTT_QOS, MQTT_RETAIN);
+    feedVBAT = vbatFloat/1000;
   }
-  #endif
 }
-#endif
 
 /**************************************************************************/
 /*!
-    @brief
+    @brief  The setup function runs once when the board comes out of reset
 */
 /**************************************************************************/
 void setup()
 {
   // Wait for Serial Monitor
-  // while(!Serial);
-  
+  while(!Serial) delay(1);
+   
   // Setup the LED pin
   pinMode(BOARD_LED_PIN, OUTPUT);
 
@@ -218,6 +140,18 @@ void setup()
   oled.init();
   oled.clearDisplay();
 
+  // Initialize tsl sensor if enabled
+  #if SENSOR_TSL2561_ENABLED
+  if (tsl.begin())
+  {
+    _tslFound = true;
+    tsl.enableAutoRange(true);
+    tsl.setIntegrationTime(TSL2561_INTEGRATIONTIME_13MS);      /* fast but low resolution */
+    // tsl.setIntegrationTime(TSL2561_INTEGRATIONTIME_101MS);  /* medium resolution and speed   */
+    // tsl.setIntegrationTime(TSL2561_INTEGRATIONTIME_402MS);  /* 16-bit data but slowest conversions */
+  }
+  #endif
+  
   // Get a VBAT reading before refreshing if VBAT is available
   #if VBAT_ENABLED
   pinMode(VBAT_PIN, INPUT_ANALOG);
@@ -237,42 +171,47 @@ void setup()
     while(1);
   }
 
-  #if MQTT_ENABLED
-  // Register the mqtt callback handler
-  Feather.addMqttCallBack(mqttCallback);
+  #if AIO_ENABLED
+  // Attempt to connect to a Broker
+  oled.clearMsgArea();
+  oled.println("io.adafruit.com");
+  oled.display();
 
-  // Connect to broker
-  int mqtt_error = connectBroker();
-  if (mqtt_error == 0)
+  // Connect to AIO server
+  if ( aio.connect() )
   {
-    mqtt_connected = true;
-  }
-  #endif
-
-  #if SENSOR_TSL2561_ENABLED
-  if (tsl.begin()) 
+    oled.println("Connected!");
+    oled.display();
+  }else
   {
-    _tslFound = true;
-    tsl.enableAutoRange(true);
-    tsl.setIntegrationTime(TSL2561_INTEGRATIONTIME_13MS);      /* fast but low resolution */
-    // tsl.setIntegrationTime(TSL2561_INTEGRATIONTIME_101MS);  /* medium resolution and speed   */
-    // tsl.setIntegrationTime(TSL2561_INTEGRATIONTIME_402MS);  /* 16-bit data but slowest conversions */
+    oled.print("Failed! Error: ");
+    oled.println(aio.errno(), HEX);
+    oled.display();
+    delay(3000);
   }
+  
+  // Follow feed if enabled
+  if ( VBAT_ENABLED )
+    feedVBAT.follow(aio_vbat_callback);
+  
+  // Follow feed if enabled
+  if ( SENSOR_TSL2561_ENABLED )
+    feedLUX.follow(aio_vbat_callback);
+    
   #endif
 }
 
 /**************************************************************************/
 /*!
-    @brief
+    @brief  This loop function runs over and over again
 */
 /**************************************************************************/
 void loop()
 {
   // Update the battery level
-  #if VBAT_ENABLED
-  updateVbat();
-  #endif
-  
+  if ( VBAT_ENABLED )
+    updateVbat();
+    
   if ( Feather.connected() )
   {
     // Update the RSSI value
@@ -281,44 +220,32 @@ void loop()
 
     // Get a light sample and publish to MQTT if available
     #if SENSOR_TSL2561_ENABLED
-      if (_tslFound)
+    if (_tslFound)
+    {
+      oled.clearMsgArea();
+      sensors_event_t event;
+      // Get a new data sample
+      bool sensor_data = tsl.getEvent(&event);
+      if (sensor_data)
       {
-        oled.clearMsgArea();
-        sensors_event_t event;
-        // Get a new data sample
-        bool sensor_data = tsl.getEvent(&event);
-        if (sensor_data)
+        if (AIO_ENABLED && aio.connected())
         {
-          // Push data out to MQTT Broker if requested
-          #if MQTT_ENABLED
-            if (mqtt_connected)
-            {
-              char buffer[7];
-              itoa(event.light, buffer, 10);
-              if (Feather.mqttPublish(MQTT_TOPIC_TSL2561_LUX, buffer, MQTT_QOS, MQTT_RETAIN) == 0)
-              {
-                oled.clearMsgArea();
-                oled.print("Lux -> MQTT: ");
-                oled.println(event.light);
-                oled.display();
-              }
-              else
-              {
-               oled.clearMsgArea();
-               oled.println("Publish failed");
-               oled.display();
-              }
-            }
-          #endif
-        }
-        else
-        {
-           oled.clearMsgArea();
-           oled.println("Sensor failed");
-           oled.display();
-           Serial.println("Sensor failed");
+          feedLUX = event.light;
+
+          oled.clearMsgArea();
+          oled.print("Lux -> AIO: ");
+          oled.println(event.light);
+          oled.display();
         }
       }
+      else
+      {
+         oled.clearMsgArea();
+         oled.println("Sensor failed");
+         oled.display();
+         Serial.println("Sensor failed");
+      }
+    }
     #endif
   }
   else
@@ -333,5 +260,29 @@ void loop()
   oled.refreshIcons();
   togglePin(BOARD_LED_PIN);
   delay(10000);
+}
+
+/**************************************************************************/
+/*!
+    @brief AIO callback when there is new value with Feed VBAT
+*/
+/**************************************************************************/
+void aio_vbat_callback(float value)
+{
+  oled.println("AIO VBAT: ");
+
+  oled.display();
+}
+
+/**************************************************************************/
+/*!
+    @brief AIO callback when there is new value with Feed LUX
+*/
+/**************************************************************************/
+void aio_lux_callback(float value)
+{
+  oled.println("AIO LUX:");
+
+  oled.display();
 }
 

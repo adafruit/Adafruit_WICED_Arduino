@@ -37,6 +37,9 @@
 #ifndef _ADAFRUIT_AIO_FEED_GAUGE_H_
 #define _ADAFRUIT_AIO_FEED_GAUGE_H_
 
+// Feed Guage is exactly
+#define AdafruitAIOFeedGauge AdafruitAIOFeedSlider
+
 template <typename Num>
 class AdafruitAIOFeedSlider : public AdafruitAIOFeed
 {
