@@ -12,12 +12,22 @@
  any redistribution
 *********************************************************************/
 
+/* This example will start an TCP server on Feather, register
+ * receive callback and echo back any incoming messages. To run this demo:
+ * - Change SSID/Pass
+ * - Compile and run
+ * - Use an TCP client on your PC such as netcast as follows
+ * 'echo "your message" | nc IP port'. e.g your Feather's IP is 192.168.1.100
+ * and PORT is 8888 then
+ *    > echo "Hello Feather" | nc 192.168.100 8888
+ */
+
 #include <adafruit_feather.h>
 
 #define WLAN_SSID            "yourSSID"
 #define WLAN_PASS            "yourPass"
 
-#define PORT                 80                     // The TCP port to use
+#define PORT                 8888                     // The TCP port to use
 
 AdafruitTCPServer tcpserver(PORT);
 

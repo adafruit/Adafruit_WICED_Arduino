@@ -13,7 +13,7 @@
 *********************************************************************/
 
 /* This example will start an UDP server on Feather, register
- * receive callback and echo back any incoming message.
+ * receive callback and echo back any incoming messages.
  * To run this demo:
  * - Change SSID/Pass
  * - Compile and run

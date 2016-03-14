@@ -12,6 +12,10 @@
  any redistribution
 *********************************************************************/
 
+/* This example will send the HTTP request to the defined
+ * Server's page and poll for the response
+ */
+
 #include <adafruit_feather.h>
 
 #define WLAN_SSID            "yourSSID"
