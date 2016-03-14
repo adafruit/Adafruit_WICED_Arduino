@@ -12,6 +12,12 @@
  any redistribution
 *********************************************************************/
 
+/* This example attempt to
+ * - Connect to your SSID
+ * - Save SSID info to NVM profile list if connected successfully
+ * - Disconnect and re-connect using saved profile
+ */
+
 #include <adafruit_feather.h>
 
 #define WLAN_SSID     "yourSSID"
@@ -74,6 +80,7 @@ void setup()
   }
   Serial.println();
   
+  // Disconnect to test connecting with saved profile
   Serial.println("Disconnecting from AP ... ");
   Feather.disconnect();
   Serial.println("OK");

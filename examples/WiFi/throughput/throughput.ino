@@ -12,13 +12,20 @@
  any redistribution
 *********************************************************************/
 
+/* This example test the speed of TCP transfer from Feather to
+ * your PC machine. To run this example
+ * - Change SSID/Pass
+ * - Change server_ip to your PC's IP
+ * - Run 'nc -l 8888' to start tcp server on your PC
+ * - Compile and run the sketch
+ */
+
 #include <adafruit_feather.h>
 #include <adafruit_tcp.h>
 
 #define WLAN_SSID             "YOURSSID"
 #define WLAN_PASS             "YOURPASS"
 
-// Your local PC's IP to test the throughput
 // Run this command to create a server on your PC
 // > nc -l 8888
 IPAddress server_ip(192, 168, 1, 100);

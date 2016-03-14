@@ -12,6 +12,10 @@
  any redistribution
 *********************************************************************/
 
+/* This example demonstrates how to use ping() function
+ * to send PING to a remote host
+ */
+
 #include "adafruit_feather.h"
 
 #define WLAN_SSID            "yourSSID"

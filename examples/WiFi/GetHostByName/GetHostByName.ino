@@ -14,6 +14,11 @@
 
 #include "adafruit_feather.h"
 
+/* This example demonstrates how to use getHostByName function
+ * to lookup an IP for a hostname. Also an string representation
+ * of IP can also be used directly.
+ */
+
 #define WLAN_SSID            "yourSSID"
 #define WLAN_PASS            "yourPassword"
 

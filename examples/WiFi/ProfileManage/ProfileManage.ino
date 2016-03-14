@@ -12,12 +12,16 @@
  any redistribution
 *********************************************************************/
 
+/* This example display the current SSID profile in NVM, save the defined
+ * above SSID if it is not already in the list. Then attempt to connect using
+ * the profile list connect(void)
+ */
+
 #include <adafruit_feather.h>
 
 #define WLAN_SSID     "yourSSID"
 #define WLAN_PASS     "yourPassword"
 #define ENC_TYPE      ENC_TYPE_WPA2_AES
-
 
 /**************************************************************************/
 /*!
@@ -57,6 +61,7 @@ void setup()
   }
   Serial.println();
 
+  // Add defined SSID to profile if not already
   if ( Feather.checkProfile(WLAN_SSID) )
   {
     Serial.printf("\"%s\" : is already in profile list\r\n", WLAN_SSID);

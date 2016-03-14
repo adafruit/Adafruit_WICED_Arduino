@@ -13,7 +13,11 @@
 *********************************************************************/
 #include <adafruit_feather.h>
 
-// the setup function runs once when you press reset or power the board
+/**************************************************************************/
+/*!
+    @brief  The setup function runs once when reset the board
+*/
+/**************************************************************************/
 void setup() 
 {
   //Initialize serial and wait for port to open:
@@ -23,7 +27,11 @@ void setup()
   while (!Serial) delay(1);
 }
 
-// the loop function runs over and over again forever
+/**************************************************************************/
+/*!
+    @brief  The loop function runs over and over again forever
+*/
+/**************************************************************************/
 void loop() 
 {
   Serial.print("Bootloader version      : ");

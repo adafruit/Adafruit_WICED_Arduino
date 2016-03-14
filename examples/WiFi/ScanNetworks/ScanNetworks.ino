@@ -12,6 +12,10 @@
  any redistribution
 *********************************************************************/
 
+/* This example scan nearby network and print out SSID information every
+ * 10 seconds. Hidden SSID is printed as '*'
+ */
+
 #include <adafruit_feather.h>
 
 #define MAX_SCAN_NUM   20
@@ -113,6 +117,3 @@ char const* getEncryptionStr(int32_t encType)
     break;
   }
 }
-
-
-
