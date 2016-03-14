@@ -25,7 +25,7 @@
 #define AIO_USERNAME              "...your AIO username (see https://accounts.adafruit.com)..."
 #define AIO_KEY                   "...your AIO key..."
 
-#define FEED_VBAT                 "photocell"
+#define FEED_VBAT                 "vbat"
 #define FEED_TSL2561_LUX          "lux"
 
 AdafruitAIO                        aio(AIO_USERNAME, AIO_KEY);
