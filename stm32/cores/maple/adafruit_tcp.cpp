@@ -86,10 +86,8 @@ AdafruitTCP::AdafruitTCP ( tcp_handle_t handle )
 /******************************************************************************/
 AdafruitTCP::~AdafruitTCP()
 {
-  if ( _tcp_handle != NULL)
-  {
-    this->stop();
-  }
+  // cannot call stop() since AdafruitTCPServer accept() won't be able to
+  // return AdafruitTCP instance
 }
 
 /******************************************************************************/

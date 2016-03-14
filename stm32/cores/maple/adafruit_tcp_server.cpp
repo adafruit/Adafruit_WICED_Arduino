@@ -100,7 +100,10 @@ AdafruitTCP AdafruitTCPServer::accept (void)
 
   // Accept the client connect request
   if( !sdep(SDEP_CMD_TCP_ACCEPT, 4, &_tcp_handle, NULL, NULL) ) return AdafruitTCP();
+
+  // Create Client and get its IP/Port info
   AdafruitTCP accepted_client = AdafruitTCP(_tcp_handle);
+  (void) accepted_client.remotePort();
 
   _has_connect_request = false;
 
