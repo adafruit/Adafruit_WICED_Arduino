@@ -13,7 +13,7 @@
 *********************************************************************/
 
 /* This example attempts tp access a secure site whose RootCA is not
- * covered by the default RootCA list. It demostrates the ability to
+ * covered by the default RootCA list. It demonstrates the ability to
  * add user RootCAs.
  *
  * The default RootCA list can be included (linked with custom
@@ -32,7 +32,7 @@
         format and convert it:
  *      $ python pycert.py convert DigiCertGlobalRootCA.pem
  *        Note: Root CA of www.reddit.com is DigiCertGlobalRootCA
- * 4. The script will genearate certificates.h, which contains the
+ * 4. The script will generate certificates.h, which contains the
  *    certificate chain of the server. Copy the generated header to
  *    this sketch's folder.
  * 5. Open and run this sketch

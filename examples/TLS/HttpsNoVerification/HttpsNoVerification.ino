@@ -12,7 +12,7 @@
  any redistribution
 *********************************************************************/
 
-/* This example attempts tp access a secure site whose RootCA is not
+/* This example attempts to access a secure site whose RootCA is not
  * covered by the default RootCA list by disabling the server's
  * certificate verification.
  *
