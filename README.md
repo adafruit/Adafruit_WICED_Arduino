@@ -1,4 +1,4 @@
-# Adafruit WICED Arduino
+# Adafruit WICED Feather Arduino BSP
 
 This repository contains files used for the Adafruit WICED Feather WiFi board,
 and allows the WICED Feather to be used within the Arduino IDE.
