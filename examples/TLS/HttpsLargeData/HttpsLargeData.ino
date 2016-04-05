@@ -29,6 +29,20 @@
 #include <adafruit_http.h>
 #include <adafruit_crc32.h>
 
+// AWS recently changed from Digicert to Baltimore
+// Manually use Baltimore until the internal root CA
+// list is updated to switch these entries
+#include "certificate_baltimore.h"
+
+// RootCAs require a lot of SRAM to manage (~900 bytes for each certificate
+// in the chain). The default RootCA has 5 certificates, so ~4.5 KB of
+// FeatherLib's SRAM is used to manage them.
+// A lack of memory could cause FeatherLib to malfunction in some cases.
+// It is advised to disable the default RootCA list if you only need to
+// connect to one specific website (or sites where the RootCA is not
+// included in the default root certificate chain).
+#define INCLUDE_DEFAULT_ROOTCA  0
+
 #define WLAN_SSID             "yourSSID"
 #define WLAN_PASS             "yourPassword"
 
@@ -165,6 +179,12 @@ void setup()
 
   // Connected: Print network info
   Feather.printNetwork();
+
+  // Include default RootCA if necessary
+  Feather.useDefaultRootCA(INCLUDE_DEFAULT_ROOTCA);
+
+  // Add custom RootCA since target server is not covered by default list
+  Feather.addRootCA(rootca_certs, ROOTCA_CERTS_LEN);
 
   // Tell the HTTP client to auto print error codes and halt on errors
   http.err_actions(true, true);
