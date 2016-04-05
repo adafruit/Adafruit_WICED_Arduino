@@ -20,7 +20,7 @@ Class=Ports
 ClassGuid={4D36E978-E325-11CE-BFC1-08002BE10318}
 Provider=%MFGNAME%
 LayoutFile=layout.inf
-CatalogFile=%MFGFILENAME%.cat
+CatalogFile=Feather_CDC.cat
 DriverVer=04/25/2010,1.3.1
 
 [Manufacturer]
@@ -96,7 +96,7 @@ ServiceBinary=%12%\usbser.sys
 ;------------------------------------------------------------------------------
 [SourceDisksFiles]
 [SourceDisksNames]
-[DeviceList]
+[DeviceList.NT]
 %DESCRIPTION1%=DriverInstall, %DeviceID1%&MI_00, %DeviceID2%&MI_00
 %DESCRIPTION2%=DriverInstall, %DeviceID1%&MI_02, %DeviceID2%&MI_02
 
