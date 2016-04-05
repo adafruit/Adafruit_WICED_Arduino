@@ -93,6 +93,12 @@ public:
     uint8_t endTransmission(void);
 
     /*
+     * Call the process function to process the message if the TX
+     * buffer has not overflowed.
+     */
+    uint8_t endTransmission(bool sendStop);
+
+    /*
      * Request bytes from a slave device and process the request,
      * storing into the receiving buffer.
      */

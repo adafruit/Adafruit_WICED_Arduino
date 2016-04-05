@@ -70,6 +70,13 @@ uint8_t WireBase::endTransmission(void) {
     return retVal;//SUCCESS;
 }
 
+// TODO currently always send Stop bit
+uint8_t WireBase::endTransmission(bool sendStop)
+{
+  (void) sendStop;
+  this->endTransmission();
+}
+
 //TODO: Add the ability to queue messages (adding a boolean to end of function
 // call, allows for the Arduino style to stay while also giving the flexibility
 // to bulk send
