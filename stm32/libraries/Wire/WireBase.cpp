@@ -74,7 +74,7 @@ uint8_t WireBase::endTransmission(void) {
 uint8_t WireBase::endTransmission(bool sendStop)
 {
   (void) sendStop;
-  this->endTransmission();
+  return this->endTransmission();
 }
 
 //TODO: Add the ability to queue messages (adding a boolean to end of function
