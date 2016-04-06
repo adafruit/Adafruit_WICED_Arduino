@@ -1,0 +1,91 @@
+# For more info:
+#   http://code.google.com/p/arduino/wiki/Platforms
+#   https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5-3rd-party-Hardware-specification
+#   http://www.adafruit.com/????????
+
+menu.section=Section
+
+##############################################################
+
+feather.name=Adafruit WICED Feather
+feather.vid.0=0x239A
+feather.pid.0=0x0010
+
+feather.vid.1=0x239A
+feather.pid.1=0x8010
+
+## Building
+## -------------------------
+feather.build.board=STM32_FEATHER
+feather.build.mcu=cortex-m3
+feather.build.f_cpu=120000000L
+feather.build.core=maple
+feather.build.extra_flags=-DMCU_STM32F205RG -mthumb -DSTM32F2
+feather.build.ldscript=ld/flash.ld
+feather.build.variant=feather
+feather.build.variant_system_lib=lib_feather.a
+feather.build.vect=VECT_TAB_BASE
+feather.build.density=STM32_HIGH_DENSITY
+feather.build.error_led_port=GPIOA
+feather.build.error_led_pin=15
+
+## Uploader
+## -------------------------
+feather.upload.tool=adafruit_upload
+feather.upload.protocol=adafruit_dfu
+feather.upload.use_1200bps_touch=false
+feather.upload.file_type=bin
+
+## User Code section
+## -------------------------
+feather.menu.section.usercode=User Code
+feather.menu.section.usercode.upload.subcommand=arduino_upgrade
+feather.menu.section.usercode.upload.binfile={build.path}/{build.project_name}.bin
+feather.menu.section.usercode.upload.address=0x080E0000
+feather.menu.section.usercode.upload.maximum_size=131072
+#feather.menu.section.usercode.upload.ram.maximum_size=16384
+#feather.menu.section.usercode.upload.flash.maximum_size=1048576
+
+## Feather Lib (Release) section
+## -------------------------
+feather.menu.section.featherlib=Feather Lib (Release)
+feather.menu.section.featherlib.upload.subcommand=featherlib_upgrade
+feather.menu.section.featherlib.upload.binfile={runtime.platform.path}/featherlib/featherlib.bin
+feather.menu.section.featherlib.upload.address=0x08010000
+feather.menu.section.featherlib.upload.maximum_size=851968
+#feather.menu.section.featherlib.upload.ram.maximum_size=114688
+#feather.menu.section.featherlib.upload.flash.maximum_size=1048576
+
+## Feather Lib (Beta) section
+## -------------------------
+feather.menu.section.featherlib_beta=Feather Lib (Beta)
+feather.menu.section.featherlib_beta.upload.subcommand=featherlib_upgrade
+feather.menu.section.featherlib_beta.upload.binfile={runtime.platform.path}/featherlib/beta/featherlib.bin
+feather.menu.section.featherlib_beta.upload.address=0x08010000
+feather.menu.section.featherlib_beta.upload.maximum_size=851968
+#feather.menu.section.featherlib_beta.upload.ram.maximum_size=114688
+#feather.menu.section.featherlib_beta.upload.flash.maximum_size=1048576
+
+## Factory reset section
+## -------------------------
+feather.menu.section.factoryreset=Factory Reset
+feather.menu.section.factoryreset.upload.subcommand=factory_reset
+feather.menu.section.factoryreset.upload.binfile=
+feather.menu.section.factoryreset.upload.address=
+feather.menu.section.factoryreset.upload.maximum_size=851968
+
+## NVM reset section
+## -------------------------
+feather.menu.section.nvmreset=NVM Reset
+feather.menu.section.nvmreset.upload.subcommand=nvm_reset
+feather.menu.section.nvmreset.upload.binfile=
+feather.menu.section.nvmreset.upload.address=
+feather.menu.section.nvmreset.upload.maximum_size=851968
+
+
+## Bootloader
+## -------------------------
+feather.bootloader.tool=adalink
+feather.bootloader.file=bootloader/bootloader.hex
+
+##############################################################

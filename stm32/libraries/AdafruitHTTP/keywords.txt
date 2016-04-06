@@ -1,0 +1,24 @@
+#######################################
+# Syntax Coloring Map For Adafruit Feather WiFi
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+AdafruitHTTP	KEYWORD1
+
+#######################################
+# AdafruitHTTP Methods and Functions (KEYWORD2)
+#######################################
+
+addHeader	KEYWORD2
+clearHeaders	KEYWORD2
+get	KEYWORD2
+post	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+ADAFRUIT_HTTP_MAX_HEADER	LITERAL1

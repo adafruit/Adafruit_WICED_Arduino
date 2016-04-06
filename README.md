@@ -1,38 +1,39 @@
-# Adafruit WICED Arduino
+# Adafruit WICED Feather Arduino BSP
 
-This private repo contains files used for the WICED/STM32F205 and Arduino IDE integration work.  
+This repository contains files used for the Adafruit WICED Feather WiFi board,
+and allows the WICED Feather to be used within the Arduino IDE.
 
-These files will eventually end up in the /hardware folder of the Arduino IDE.
-
-## Preparing the Hardware
-
-This library will require that the WICED firmware and USB DFU bootloader has already been flashed to the device via the [Adafruit_BroadcomWiFi_Core](https://github.com/adafruit/Adafruit_BroadcomWiFi_Core) repo.
-
-From the **development** branch, run `make clean all flash-all` in the `projects/adafruittest` folder with a Segger J-Link connected.  Be sure to connect VTRef to 3.3V on the WICED development board in addition to the SWDIO, SWCLK and Reset pins.
+These files should be placed in the `hardware` folder of the Arduino IDE, as
+detailed below:
 
 ## Arduino Setup
 
-- Create a **hardware** folder in `~/Documents/Arduino` (OS X) or `My Documents\Arduino` (Windows) if it doesn't already exist
-- Clone this repo to the root of the hardware folder, or download as a .zip and unzip it in `hardware/Adafruit_WICED_Arduino`
+- Create a **hardware** folder in `~/Documents/Arduino` (OS X) or
+  `My Documents\Arduino` (Windows) if it doesn't already exist
+- Clone this repo to the root of the hardware folder, or download as a .zip and
+  unzip it in `hardware/Adafruit_WICED_Arduino`
 
 	```
-	git clone git@github.com:adafruit/Adafruit_WICED_Arduino.git
+	git clone https://github.com/adafruit/Adafruit_WICED_Arduino.git
 	```
 
 - Install the necessary GCC toolchain for ARM: Tools->Board->Board Manager --> Download **Arduino SAM Boards (32-bits ARM Cortex-M3)**
 - Restart the Arduino IDE
 - OSX or Linux only: Install [dfu-util](http://dfu-util.sourceforge.net/)
 
-	On OS X you can install dfu-util via:
+	On **OS X** you can install dfu-util via:
 	```
 	brew install dfu-util
 	```
-	On Windows dfu-util.exe is included and will be used automatically.
+	On **Windows** dfu-util.exe is included and will be used automatically.
 
-- Windows only: To install driver for bootloader, you can use [Zadig](http://zadig.akeo.ie/) to map the DFU device to libusb or choose windows driver in `drivers/windows`
+	On **Linux (Debian or Ubuntu)** you can install dfu-util from the apt package manager with `sudo apt-get install dfu-util`.
 
-- OSX or Linux only: Install Python 2.7, python-pip, pyusb, click (we use a python script to flash the boards for now)
+  To install the drivers for the bootloader on Windows, you can use the .inf
+  files in in `drivers/windows`.
 
+- On **OSX or Linux** install Python 2.7, python-pip, pyusb, click (we use `tools/feather_dfu.py`
+  to flash the device over USB DFU from the Arduino IDE):
 	```
 	pip install --pre pyusb
 	pip install click
@@ -41,30 +42,68 @@ From the **development** branch, run `make clean all flash-all` in the `projects
 	On Windows the programming script is bundled with Python and includes all
 	dependencies automatically.
 
-- Optional: Install [AdaLink](https://github.com/adafruit/Adafruit_Adalink), which is used to flash the bootloader
+- Install [AdaLink](https://github.com/adafruit/Adafruit_Adalink), which is
+  used to flash the bootloader (optional)
 
-## Burnning bootloader
+- On Linux you will need to add a small udev rule to make the WICED board available to non-root users.  If you don't have
+  this rule then you'll see permission errors from the Arduino IDE when it attempts to program the board.  Create or edit a   file called /etc/udev/rules.d/99-adafruit-boards.rules and add the following two lines:
 
-This requires either jlink or stlink v2 as programmer.
+        SUBSYSTEM=="usb", ATTR{idProduct}=="0010", ATTRS{idVendor}=="239a", MODE="0660", GROUP="dialout"
+        SUBSYSTEM=="usb", ATTR{idProduct}=="0008", ATTRS{idVendor}=="239a", MODE="0660", GROUP="dialout"
 
-- In the "Tools > Board" menu select **Adafruit Feather** as the hardware target
-- In "Tools > Programmer", select either **Jlink with Adalink** or **Stlink v2 with Adalink**
+  Depending on your distribution you might need to change `GROUP="dialout"` to a different value like `"users"`.  The
+  dialout group should work for Ubuntu.
 
-then select "Tools > Burn bootloader", this will also perform a whole chip erased (which does take some time).
+  Then restart udev with:
+
+        sudo restart udev
+
+  Or on systemd-based systems like the latest Debian or Ubuntu 15.04+ restart udev with:
+
+        sudo systemctl restart udev
+
+## Flashing the Bootloader (Optional)
+
+This library requires the USB DFU bootloader to have previously been flashed
+to the device.
+
+All devices ship from Adafruit with the bootloader in place and you should
+almost never have to worry about flashing this yourself, but if necessary you
+can reflash the bootloader using a Segger J-Link or an ST ST-Link/V2:
+
+- In the **Tools > Board** menu select **Adafruit WICED Feather**
+- Select the appropriate debugger in **Tools > Programmer** (ex.: `JLink with AdaLink`)
+- Connect the debug probe to the SWD pins on the modules (including setting
+  the VTRef pin to 3.3V if you are using a Segger J-Link)
+- Select **Burn Bootloader**
+
+Note that this will also perform a full flash erase, which may take some time.
+
+For internal development (if you have access to the NDA restricted [Adafruit_BroadcomWiFi_Core](https://github.com/adafruit/Adafruit_BroadcomWiFi_Core)
+repo), go to the **development** branch, and run `make clean all flash-all` in
+the `projects/adafruittest` folder with a Segger J-Link connected.  Be sure to
+connect VTRef to 3.3V on the WICED development board in addition to the SWDIO,
+SWCLK and Reset pins
 
 ## Flashing featherlib
 
-After burning bootloader, you need to flash featherlib which contain all Adafruit wifi library. It resides on a different flash bank than Arduino sketch and only need to be flashed once.
+Once the bootloader is in place, you need to flash featherlib which contains
+the Adafruit WiFi library. It resides on a different flash bank than the Arduino
+sketch and only needs to be flashed once, unless an update is available at
+which point it should be flashed again.
 
-- Choose "Tools > Section > Featherlib"
-- Click on upload icon to start uploading featherlib/featherlib.bin (Arduino will try to compile the current sketch, but it is really irrelevant)
+- Choose **Tools > Section > Featherlib**
+- Click the upload icon to start uploading `featherlib/featherlib.bin`
+  (Arduino will try to compile the current sketch, but it is irrelevant)
 
-It will take awhile to upload featherlib due to its massive size.
+It will take a moment to upload featherlib due to the file size.
 
 ## Building a Project
 
-- Click the "File > Open ..." menu item and load the **blink.ino** sketch in the hardware folder created above (`Adafruit_WICED_Arduino/examples/Digital/Blink/Blink.ino`)
-- Build then flash the sketch as normal. You don't need to select a specific debugger since USB-DFU should run via a Python script:
+- Click the **File > Open ...** menu item and load your sketch
+- Make sure the Section is set to `User Code` in **Tools > Section**
+- Build then flash the sketch as normal. You don't need to select a specific
+  debugger since USB-DFU should run via a Python script:
 
 ```
 Sketch uses 15,148 bytes (1%) of program storage space. Maximum is 1,048,576 bytes.
@@ -199,3 +238,23 @@ from your home directory run in a command terminal:
 Now Python, pip, etc. should all be using the 32-bit Python virtual environment.
 You can build software with cx_Freeze etc and it will use this 32-bit version
 of Python.
+
+## Frequently Asked Questions
+
+### Q1
+
+**Q:** When I try to build I'm getting `Cannot run program "{runtime.tools.arm-none-eabi-gcc.path}\bin\arm-none-eabi-g++" (in directory "."): CreateProcess error=2, The system cannot find the file specified`?
+
+**A:** This is probably because you don't have the ARM Cortex M3 toolchain installed.  Install the necessary GCC toolchain for ARM from the Arduino Board Manager via: **Tools->Board->Board Manager** then download **Arduino SAM Boards (32-bits ARM Cortex-M3)**
+
+### Q2
+
+**Q:** When I try to flash using USB DFU I get the following error from feather_dfu.py: `Traceback (most recent call last): File "...\hardware\Adafruit_WICED_Arduino/tools/feather_dfu.py", line 1, in <module> import usb.backend.libusb1`?
+
+**A:** This is probably caused by an old version of pysub.  Update your pyusb version to 1.0b or higher via the following command:
+
+```
+pip install --upgrade pyusb
+```
+
+Also make sure that you have installed the proper Windows driver .inf files so that libusb can access the device via the correct USB VID and PID combinations.

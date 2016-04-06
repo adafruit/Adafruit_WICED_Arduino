@@ -1,0 +1,29 @@
+#######################################
+# Syntax Coloring Map For Adafruit Feather WiFi
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+AdafruitMQTT	KEYWORD1
+
+#######################################
+# AdafruitSDEP Methods and Functions (KEYWORD2)
+#######################################
+
+will	KEYWORD2
+connect	KEYWORD2
+connectSSL	KEYWORD2
+connected	KEYWORD2
+publish	KEYWORD2
+subscribe	KEYWORD2
+unsubscribe	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+MQTT_QOS_AT_MOST_ONCE	LITERAL1
+MQTT_QOS_AT_LEAST_ONCE	LITERAL1
+MQTT_QOS_EXACTLY_ONCE	LITERAL1
