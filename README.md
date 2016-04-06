@@ -46,9 +46,10 @@ detailed below:
   used to flash the bootloader (optional)
 
 - On Linux you will need to add a small udev rule to make the WICED board available to non-root users.  If you don't have
-  this rule then you'll see permission errors from the Arduino IDE when it attempts to program the board.  Create or edit a   file called /etc/udev/rules.d/99-adafruit-boards.rules and add the following two lines:
+  this rule then you'll see permission errors from the Arduino IDE when it attempts to program the board.  Create or edit a   file called /etc/udev/rules.d/99-adafruit-boards.rules and add the following lines:
 
         SUBSYSTEM=="usb", ATTR{idProduct}=="0010", ATTRS{idVendor}=="239a", MODE="0660", GROUP="dialout"
+	SUBSYSTEM=="usb", ATTR{idProduct}=="8010", ATTRS{idVendor}=="239a", MODE="0660", GROUP="dialout"
         SUBSYSTEM=="usb", ATTR{idProduct}=="0008", ATTRS{idVendor}=="239a", MODE="0660", GROUP="dialout"
 
   Depending on your distribution you might need to change `GROUP="dialout"` to a different value like `"users"`.  The
