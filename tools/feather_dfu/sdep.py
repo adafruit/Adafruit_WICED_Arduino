@@ -116,7 +116,7 @@ if platform.system() == 'Windows':
     # On Windows give a path to the included libusb-1.0.dll so users don't
     # need to have it installed.
     libusb_dll = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                              'windows', 'dfu-util', 'libusb-1.0.dll')
+                              'dfu-util', 'windows', 'libusb-1.0.dll')
     usb.backend.libusb1.get_backend(find_library=lambda x: libusb_dll)
 else:
     # On other platforms libusb-1.0 needs to be installed.
