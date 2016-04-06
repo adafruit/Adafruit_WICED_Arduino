@@ -18,6 +18,9 @@ if platform.system() == 'Darwin':
 arduino_addr = 0x080E0000
 featherlib_addr = 0x08010000
 
+# Global state:
+dfu_util_path = None
+
 
 # Use dfu_util to download a .bin file to the hardware.
 # Must specify the path to dfu_util, the path to a .bin file to upload, and the
@@ -35,8 +38,12 @@ def dfu_download_bin(dfu_util, binfile, address):
 
 
 @click.group()
-def cli():
-    pass
+@click.option('--dfu-util', '-u',
+              default='dfu-util',
+              help='Path to dfu-util binary.  If not specified dfu-util must be in the path.')
+def cli(dfu_util):
+    global dfu_util_path
+    dfu_util_path = dfu_util
 
 @cli.command()
 def reboot():
@@ -65,24 +72,18 @@ def info():
     click.echo(resp.tostring())
 
 @cli.command()
-@click.option('--dfu-util', '-u',
-              default='dfu-util',
-              help='Path to dfu-util binary.  If not specified dfu-util must be in the path.')
 @click.argument('binfile',
                 type=click.Path(exists=True))
-def featherlib_upgrade(dfu_util, binfile):
+def featherlib_upgrade(binfile):
     """Program a .bin file to the Featherlib firmware location."""
-    dfu_download_bin(dfu_util, binfile, featherlib_addr)
+    dfu_download_bin(dfu_util_path, binfile, featherlib_addr)
 
 @cli.command()
-@click.option('--dfu-util', '-u',
-              default='dfu-util',
-              help='Path to dfu-util binary.  If not specified dfu-util must be in the path.')
 @click.argument('binfile',
                 type=click.Path(exists=True))
-def arduino_upgrade(dfu_util, binfile):
+def arduino_upgrade(binfile):
     """Program a .bin file to the Arduino firmware location."""
-    dfu_download_bin(dfu_util, binfile, arduino_addr)
+    dfu_download_bin(dfu_util_path, binfile, arduino_addr)
 
 if __name__ == '__main__':
     cli()

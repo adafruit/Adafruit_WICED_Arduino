@@ -106,7 +106,7 @@ tools.adafruit_upload.path={runtime.hardware.path}/tools/source
 tools.adafruit_upload.dfu_util=
 tools.adafruit_upload.upload.params.verbose=-d
 tools.adafruit_upload.upload.params.quiet=
-tools.adafruit_upload.upload.pattern={python} "{path}/{cmd}" {upload.region} {dfu_util} "{upload.binfile}"
+tools.adafruit_upload.upload.pattern={python} "{path}/{cmd}" {dfu_util} {upload.subcommand} "{upload.binfile}"
 # Windows overrides to use a pre-built feather_dfu.exe & dfu-util.exe that
 # bundle in python and all dependencies.
 tools.adafruit_upload.python.windows=
