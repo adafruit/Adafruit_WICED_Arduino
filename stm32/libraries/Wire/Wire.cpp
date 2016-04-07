@@ -39,7 +39,7 @@
 #include "Wire.h"
 
 uint8_t HardWire::process() {
-    int8 res = i2c_master_xfer(sel_hard, &itc_msg, 1, 0);
+    int8 res = i2c_master_xfer(sel_hard, itc_msg, itc_msg_count, 0);
     if (res == I2C_ERROR_PROTOCOL) {
         if (sel_hard->error_flags & I2C_SR1_AF) { /* NACK */
             res = (sel_hard->error_flags & I2C_SR1_ADDR ? ENACKADDR : 
