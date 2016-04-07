@@ -10,6 +10,7 @@ SUBSYSTEM!="usb|tty|hidraw", GOTO="adafruit_rules_end"
 ATTRS{idVendor}=="239a", ATTRS{idProduct}=="0008", MODE="664", GROUP="plugdev"
 
 # ADAFIDEV in Application mode
-ATTRS{idVendor}=="239a", ATTRS{idProduct}=="0009", MODE="664", GROUP="plugdev"
+ATTRS{idVendor}=="239a", ATTRS{idProduct}=="0010", MODE="664", GROUP="plugdev"
+ATTRS{idVendor}=="239a", ATTRS{idProduct}=="8010", MODE="664", GROUP="plugdev"
 
 LABEL="adafruit_rules_end"
