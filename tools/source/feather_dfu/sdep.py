@@ -108,6 +108,7 @@ USB_PID_MSC = 0x8010
 USB_DFU_PID = 0x0008
 
 SDEP_DEBUG = 0
+reset_sec = 2
 
 # Explicitly configure the libusb backend for PyUSB to use libusb-1.0.
 # On windows this will look for a libusb-1.0.dll in the same directory as the
