@@ -1,6 +1,7 @@
 import usb.core
 import usb.util
 import usb.control
+import usb.backend.libusb0
 import usb.backend.libusb1
 import time
 import os
@@ -115,7 +116,7 @@ reset_sec = 2
 # script/executable.
 backend = None
 if platform.system() == 'Windows':
-    backend = usb.backend.libusb1.get_backend(find_library=lambda x: "libusb-1.0.dll")
+    backend = usb.backend.libusb0.get_backend(find_library=lambda x: "libusb0_x86.dll")
 else:
     backend = usb.backend.libusb1.get_backend()
 

@@ -1,7 +1,3 @@
-import usb.backend.libusb1
-import usb.core
-import usb.util
-import usb.control
 import click
 import platform
 import os
