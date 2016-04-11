@@ -463,7 +463,8 @@ err_t adafruit_tcp_disconnect_callback(void* socket, void* p_tcp)
 {
   AdafruitTCP* pTCP = (AdafruitTCP*) p_tcp;
 
-  // TODO set connected as false ???
+  // TODO set connected as false or call TCP::Stop() ???
+
   if (pTCP->_disconnect_callback) pTCP->_disconnect_callback();
 
   return ERROR_NONE;
