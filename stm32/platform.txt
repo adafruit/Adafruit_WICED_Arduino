@@ -113,12 +113,6 @@ tools.adafruit_upload.python.windows=
 tools.adafruit_upload.cmd.windows=feather_dfu/feather_dfu.exe
 tools.adafruit_upload.path.windows={runtime.hardware.path}/tools/win32-x86
 tools.adafruit_upload.dfu_util.windows=-u "{path}/dfu-util/dfu-util-static.exe"
-# Mac OSX overrides to use a pre-built feather_dfu.exe that bundles in python and
-# all the dependencies (except libusb-1.0, which must still be installed!)
-# Note that dfu-util will still need to be installed too!
-tools.adafruit_upload.python.macosx=
-tools.adafruit_upload.cmd.macosx=feather_dfu/feather_dfu
-tools.adafruit_upload.path.macosx={runtime.hardware.path}/tools/darwin-x64
 
 # Adalink Programmer/Uploader tools
 # -------------------

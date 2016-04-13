@@ -27,27 +27,30 @@ detailed below:
 	```
 	On **Windows** dfu-util.exe is included and will be used automatically.
 
-  To install the drivers for the bootloader on Windows, you can use the .inf
-  files in in `drivers/windows`.  No other dependencies are necessary to program
-  the board on Windows--the necessary tools are pre-compiled and included.
-
 	On **Linux (Debian or Ubuntu)** you can install dfu-util from the apt package manager with `sudo apt-get install dfu-util`.
 
-  In addition on Linux install Python 2.7, python-pip, pyusb, click (we use `tools/source/feather_dfu.py` to flash the device over USB DFU from the Arduino IDE):
-  ```
-  pip install --pre pyusb
-  pip install click
-  ```
+  To install the drivers for the bootloader on Windows, you can use the .inf
+  files in in `drivers/windows`.
+
+- On **OSX or Linux** install Python 2.7, python-pip, pyusb, click (we use `tools/feather_dfu.py`
+  to flash the device over USB DFU from the Arduino IDE):
+	```
+	pip install --pre pyusb
+	pip install click
+	```
+
+	On Windows the programming script is bundled with Python and includes all
+	dependencies automatically.
 
 - Install [AdaLink](https://github.com/adafruit/Adafruit_Adalink), which is
   used to flash the bootloader (optional)
 
-- On Linux you will need to add a small udev rule to make the WICED board   available to non-root users.  If you don't have this rule then you'll see permission errors from the Arduino IDE when it attempts to program the board.  Create or edit a   file called /etc/udev/rules.d/99-adafruit-boards.rules and add the following lines:
-  ```
-  SUBSYSTEM=="usb", ATTR{idProduct}=="0010", ATTRS{idVendor}=="239a", MODE="0660", GROUP="dialout"
-  SUBSYSTEM=="usb", ATTR{idProduct}=="8010", ATTRS{idVendor}=="239a", MODE="0660", GROUP="dialout"
-  SUBSYSTEM=="usb", ATTR{idProduct}=="0008", ATTRS{idVendor}=="239a", MODE="0660", GROUP="dialout"
-  ```
+- On Linux you will need to add a small udev rule to make the WICED board available to non-root users.  If you don't have
+  this rule then you'll see permission errors from the Arduino IDE when it attempts to program the board.  Create or edit a   file called /etc/udev/rules.d/99-adafruit-boards.rules and add the following lines:
+
+        SUBSYSTEM=="usb", ATTR{idProduct}=="0010", ATTRS{idVendor}=="239a", MODE="0660", GROUP="dialout"
+	SUBSYSTEM=="usb", ATTR{idProduct}=="8010", ATTRS{idVendor}=="239a", MODE="0660", GROUP="dialout"
+        SUBSYSTEM=="usb", ATTR{idProduct}=="0008", ATTRS{idVendor}=="239a", MODE="0660", GROUP="dialout"
 
   Depending on your distribution you might need to change `GROUP="dialout"` to a different value like `"users"`.  The
   dialout group should work for Ubuntu.
@@ -158,21 +161,15 @@ dfu-util: Error during download get_status
 
 Note: The error at the end can be ignored, and is related to a problem with the dfu utility.
 
-## Updating feather_dfu Binaries
+## Updating Windows Binaries
 
 The script to upload to the board is written in Python and located in the
-`tools/source/feather_dfu` folder.  For Windows & OSX users a pre-built binary version
+`tools/source/feather_dfu` folder.  For Windows users a pre-built binary version
 is included and used by the Arduino IDE so that Python and other dependencies
 do not need to be installed.  However this means any time the feather_dfu script
-is modified a new Windows & OSX binary will need to be generated.  
-
-### Updating Windows feather_dfu Binary
-
-To rebuild the **Windows** feather_dfu binary follow the steps below
+is modified a new Windows binary will need to be generated.  Follow the steps below
 on a Windows machine with the **32-bit version** of Python (for maximum compatibility
 with all Windows versions, since 32-bit executables can run on 64-bit Windows too).
-See the section below on running 32-bit Python side-by-side 64-bit Python if you
-are on a 64-bit version of Windows.
 
 First you need to install the dependencies of the script.  This is only done
 once (unless the dependencies change).  From inside the `tools/source/feather_dfu`
@@ -195,11 +192,11 @@ of these files over the files in the `tools/win32-x86/feather_dfu` folder to
 update the binaries.
 
 Note that inside `tools/win32-x86/feather_dfu` there will be one extra file that
-is not included in the build steps above, libusb0_x86.dll.  This is the 32-bit
-version of libusb 0.1 dll which can be downloaded from https://sourceforge.net/p/libusb-win32/wiki/Home/
-The DLL **must** be located inside the feather_dfu directory next to the executable.
+is not included in the build steps above, libusb-1.0.dll.  This is the 32-bit
+version of libusb-1.0.dll which can be downloaded from http://libusb.info.  The
+DLL **must** be located inside the feather_dfu directory next to the executable.
 
-### Windows 32-bit Python side-by-side 64-bit Python
+## Windows 32-bit Python side-by-side 64-bit Python
 
 Typically on Windows you will install the 64-bit version of Python, however
 this presents a challenge when building binaries with cx_Freeze since it will
@@ -242,55 +239,6 @@ from your home directory run in a command terminal:
 Now Python, pip, etc. should all be using the 32-bit Python virtual environment.
 You can build software with cx_Freeze etc and it will use this 32-bit version
 of Python.
-
-### Updating Mac OSX feather_dfu Binary
-
-To rebuild the **Mac OSX** feather_dfu binary follow the steps below.  You must
-have homebrew installed.
-
-First you must install the homebrew version of Python 2.7.  Trying to use cx_Freeze
-with the OSX system Python will fail on El Capitan because of SIP issues (see:
-https://bitbucket.org/anthony_tuininga/cx_freeze/issues/161/cant-freeze-tcl-tk-code-on-os-x-1011).
-To work around this issue the homebrew version of Python will be installed and
-used in place of Apple's system Python.  Install homebrew python with:
-```
-brew install python
-```
-
-Next uninstall any previously installed dependencies.  This will prevent issues
-with those libraries living in the old Apple system Python and being incompatible
-with the homebrew Python.  Run these commands (ignore any failures for libraries
-that don't exist, you just want to make sure all these libraries are uninstalled):
-```
-sudo pip uninstall cx-Freeze
-sudo pip uninstall click
-sudo pip uninstall pyusb
-```
-
-Now reinstall the dependencies into homebrew Python.  From inside the `tools/source/feather_dfu`
-folder run:
-```
-pip install -r requirements.txt --pre
-```
-
-Finally to generate a new executable and its related files use the setup.py script
-and its `build_exe` action.  Internally this is using the cx_Freeze module to
-embed the script with a Python interpretor and all its depenedencies.
-```
-python setup.py build_exe
-```
-
-The output of this command will be in the `build` subdirectory.  Inside will be
-a subdirectory for the current platform (like `exe.macosx-10.11-x86_64-2.7`), and inside of that
-folder will be all of the necessary files for the feather_dfu binary.  Copy **all**
-of these files over the files in the `tools/darwin-x64/feather_dfu` folder to
-update the binaries.
-
-Note that inside `tools/darwin-x64/feather_dfu` there will be one extra file that
-is not included in the build steps above, libusb-1.0.dylib.  This is the 64-bit
-version of libusb 1.0 which can be compiled from the source downloaded from
-http://libusb.info.  The .dylib **must** be located inside the feather_dfu directory
-next to the executable.
 
 ## Frequently Asked Questions
 
