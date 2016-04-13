@@ -28,7 +28,3 @@ includes the following entries:
 ### Starfield Services Root Certificate Authority - G2
 
 - aws.amazon.com
-
-### VeriSign Class 3 Public Primary Certification Authority - G5 (Removed)
-
-- yahoo.com
