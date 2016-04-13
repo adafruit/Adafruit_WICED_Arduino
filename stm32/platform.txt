@@ -1,4 +1,4 @@
-# 
+#
 # For more info:
 # https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5-3rd-party-Hardware-specification
 
@@ -30,12 +30,12 @@ compiler.elf2hex.flags=-O binary
 compiler.elf2hex.cmd=arm-none-eabi-objcopy
 compiler.ldflags=
 compiler.size.cmd=arm-none-eabi-size
-compiler.define=-DARDUINO=                            
+compiler.define=-DARDUINO=
 
 # Extra option
 compiler.c.extra_flags=
 compiler.c.elf.extra_flags="-L{build.variant.path}/ld"
-compiler.cpp.extra_flags= 
+compiler.cpp.extra_flags=
 compiler.S.extra_flags=
 compiler.ar.extra_flags=
 compiler.elf2hex.extra_flags=
@@ -54,7 +54,7 @@ build.extra_flags= {build.cpu_flags} {build.hs_flag} {build.common_flags}
 ## build.usb_flags=-DUSB_VID={build.vid} -DUSB_PID={build.pid} -DUSBCON '-DUSB_MANUFACTURER={build.usb_manufacturer}' '-DUSB_PRODUCT={build.usb_product}'
 
 # Default usb manufacturer will be replaced at compile time using
-# numeric vendor ID if available or by board's specific value. 
+# numeric vendor ID if available or by board's specific value.
 ## build.usb_manufacturer="Unknown"
 
 
@@ -97,16 +97,25 @@ recipe.size.regex.data=^(?:\.data|\.bss|\.noinit)\s+([0-9]+).*
 # Uploader tools
 # -------------------
 
-# Upload using Adafruit bootloader over DFU
-tools.adafruit_upload.cmd=feather_dfu.py
-tools.adafruit_upload.path={runtime.hardware.path}/tools/feather_dfu
+# Upload using Adafruit bootloader over DFU.
+# Default values require python, dfu-util, and all script dependencies to be
+# installed and in the path.
+tools.adafruit_upload.python=python
+tools.adafruit_upload.cmd=feather_dfu/feather_dfu.py
+tools.adafruit_upload.path={runtime.hardware.path}/tools/source
+tools.adafruit_upload.dfu_util=
 tools.adafruit_upload.upload.params.verbose=-d
 tools.adafruit_upload.upload.params.quiet=
-tools.adafruit_upload.upload.pattern=python "{path}/{cmd}" {upload.subcommand} "{upload.binfile}"
-#tools.adafruit_upload.upload.pattern=adalink stm32f2 --programmer jlink --program-bin "{upload.binfile}" {upload.address}
+tools.adafruit_upload.upload.pattern={python} "{path}/{cmd}" {dfu_util} {upload.subcommand} "{upload.binfile}"
+# Windows overrides to use a pre-built feather_dfu.exe & dfu-util.exe that
+# bundle in python and all dependencies.
+tools.adafruit_upload.python.windows=
+tools.adafruit_upload.cmd.windows=feather_dfu/feather_dfu.exe
+tools.adafruit_upload.path.windows={runtime.hardware.path}/tools/win32-x86
+tools.adafruit_upload.dfu_util.windows=-u "{path}/dfu-util/dfu-util-static.exe"
 
 # Adalink Programmer/Uploader tools
-# ------------------- 
+# -------------------
 tools.adalink.cmd=adalink
 tools.adalink.cmd.windows=adalink
 tools.adalink.path.linux=adalink
