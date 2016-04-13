@@ -10,7 +10,7 @@ from subprocess import check_output
 # Configuration
 #******************************************************************************
 # Path to bundle file in relative to pycert.py
-BUNDLE_FILE = os.path.dirname(sys.argv[0]) + '/certificates/featherdefaults.pem'
+BUNDLE_FILE = './certificates/featherdefaults.pem'
 
 CFILE_FILENAME = "certificates.h"
 CFILE_VARIABLE = "rootca_certs"
@@ -52,7 +52,7 @@ class AdafruitCert(object):
         self.writeCFlile(cdata, count)
 
     def create_bundle(self):
-        '''Creating RootCA Bundle using ''' + '/certificates/cacert.pem'
+        '''Creating RootCA Bundle using ''' + '/certificates/featherdefaults.pem'
         (cdata, count) = "", 0
         for cert in self.opencert(BUNDLE_FILE):
             (cdata, count) = tuple( map(operator.add, (cdata,count), self.pem2c(cert) ) )
