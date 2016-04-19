@@ -7,8 +7,24 @@
 This file contains the default root CAs that are pre-flashed in FeatherLib. It
 includes the following entries:
 
-- DigiCert High Assurance EV Root CA
-- GeoTrust Global CA
-- GeoTrust Primary Certification Authority - G3
-- VeriSign Class 3 Public Primary Certification Authority - G5
-- Starfield Services Root Certificate Authority - G2
+### Baltimore CyberTrust Root
+
+- adafruit-download.s3.amazonaws.com (may include other Amazon S3's server)
+
+### DigiCert High Assurance EV Root CA
+
+- twitter.com
+- facebook.com
+- github.com
+
+### GeoTrust Global CA
+
+- google.com
+
+### GeoTrust Primary Certification Authority - G3
+
+- adafruit.com
+
+### Starfield Services Root Certificate Authority - G2
+
+- aws.amazon.com

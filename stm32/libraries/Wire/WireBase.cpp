@@ -42,17 +42,55 @@
 #include "wirish.h"
 
 void WireBase::begin(uint8_t self_addr) {
-    tx_buf_idx = 0;
     tx_buf_overflow = false;
     rx_buf_idx = 0;
     rx_buf_len = 0;
+
+    itc_msg_count = 0;
+}
+
+uint8_t WireBase::process_xfer(void)
+{
+  uint8_t retVal = this->process();
+
+  // Check if the xfer chain has READ message, if yes reset the rx_buf
+  for(uint8_t i=0; i<itc_msg_count; i++)
+  {
+    if (itc_msg[i].flags & I2C_MSG_READ)
+    {
+      rx_buf_idx = rx_buf_len = 0;
+    }
+  }
+
+  for(uint8_t i=0; i<itc_msg_count; i++)
+  {
+    i2c_msg* p_msg = &itc_msg[i];
+
+    // Gather Read bytes to rx_buf
+    if (p_msg->flags & I2C_MSG_READ)
+    {
+      memcpy(rx_buf + rx_buf_len, p_msg->data, p_msg->xferred);
+      rx_buf_len += p_msg->xferred;
+    }
+
+    free(p_msg->data);
+    p_msg->data  = 0;
+    p_msg->flags = 0;
+  }
+
+  tx_buf_overflow = false;
+  itc_msg_count = 0;
+
+  return retVal;
 }
 
 void WireBase::beginTransmission(uint8_t slave_address) {
-    itc_msg.addr = slave_address;
-    itc_msg.data = &tx_buf[tx_buf_idx];
-    itc_msg.length = 0;
-    itc_msg.flags = 0;
+    i2c_msg* p_msg = &itc_msg[itc_msg_count];
+
+    p_msg->addr   = slave_address;
+    p_msg->data   = (uint8_t*) malloc(WIRE_BUFSIZ);
+    p_msg->length = 0;
+    p_msg->flags  = 0;
 }
 
 void WireBase::beginTransmission(int slave_address) {
@@ -60,45 +98,72 @@ void WireBase::beginTransmission(int slave_address) {
 }
 
 uint8_t WireBase::endTransmission(void) {
-    uint8_t retVal;
-    if (tx_buf_overflow) {
-        return EDATA;
-    }
-    retVal = process();// Changed so that the return value from process is returned by this function see also the return line below
-    tx_buf_idx = 0;
-    tx_buf_overflow = false;
-    return retVal;//SUCCESS;
+  return this->endTransmission(true);
+}
+
+uint8_t WireBase::endTransmission(bool stopBit)
+{
+  itc_msg_count++;
+
+  if (stopBit)
+  {
+    if (tx_buf_overflow) return EDATA;
+
+    return process_xfer();// Changed so that the return value from process is returned by this function see also the return line below
+  }else
+  {
+    if ( itc_msg_count >= WIRE_MESS_NUM ) return EDATA;
+    return SUCCESS;
+  }
+}
+
+uint8_t WireBase::requestFrom(int address, int num_bytes, bool stopBit)
+{
+  if (num_bytes > WIRE_BUFSIZ) {
+    num_bytes = WIRE_BUFSIZ;
+  }
+  i2c_msg* p_msg = &itc_msg[itc_msg_count];
+
+  p_msg->addr   = address;
+  p_msg->flags  = I2C_MSG_READ;
+  p_msg->length = num_bytes;
+  p_msg->data   = (uint8_t*) malloc(num_bytes);
+
+  itc_msg_count++;
+
+  if (stopBit)
+  {
+    process_xfer();
+    return rx_buf_len;
+  }else
+  {
+    if ( itc_msg_count >= WIRE_MESS_NUM ) return EDATA;
+    return SUCCESS;
+  }
 }
 
 //TODO: Add the ability to queue messages (adding a boolean to end of function
 // call, allows for the Arduino style to stay while also giving the flexibility
 // to bulk send
 uint8_t WireBase::requestFrom(uint8_t address, int num_bytes) {
-    if (num_bytes > WIRE_BUFSIZ) {
-        num_bytes = WIRE_BUFSIZ;
-    }
-    itc_msg.addr = address;
-    itc_msg.flags = I2C_MSG_READ;
-    itc_msg.length = num_bytes;
-    itc_msg.data = &rx_buf[rx_buf_idx];
-    process();
-    rx_buf_len += itc_msg.xferred;
-    itc_msg.flags = 0;
-    return rx_buf_len;
+  return this->requestFrom((int)address, num_bytes, true);
 }
 
 uint8_t WireBase::requestFrom(int address, int numBytes) {
-    return WireBase::requestFrom((uint8_t)address, numBytes);
+    return this->requestFrom(address, numBytes, true);
 }
 
 size_t WireBase::write(uint8_t value) {
-    if (tx_buf_idx == WIRE_BUFSIZ) {
-        tx_buf_overflow = true;
-        return 0;
-    }
-    tx_buf[tx_buf_idx++] = value;
-    itc_msg.length++;
-    return 1;
+  i2c_msg* p_msg = &itc_msg[itc_msg_count];
+
+  if (p_msg->length == WIRE_BUFSIZ) {
+    tx_buf_overflow = true;
+    return 0;
+  }
+
+  p_msg->data[p_msg->length++] = value;
+
+  return 1;
 }
 
 size_t WireBase::write(uint8_t const * buf, size_t len) {

@@ -52,6 +52,11 @@ void AdafruitMQTT::randomClientID(char* clientid)
   clientid[length] = 0;
 }
 
+/******************************************************************************/
+/*!
+    @brief
+*/
+/******************************************************************************/
 bool AdafruitMQTT::connectBroker(bool cleanSession, uint16_t keepalive_sec)
 {
   uint32_t tcp_handle = tcp.getHandle();
@@ -93,6 +98,11 @@ bool AdafruitMQTT::connectBroker(bool cleanSession, uint16_t keepalive_sec)
   return sdep_n(SDEP_CMD_MQTTCONNECT, para_count, para_arr, NULL, &_mqtt_handle);
 }
 
+/******************************************************************************/
+/*!
+    @brief
+*/
+/******************************************************************************/
 bool AdafruitMQTT::connect ( IPAddress ip, uint16_t port, bool cleanSession, uint16_t keepalive_sec)
 {
   VERIFY ( tcp.connect(ip, port) );
@@ -104,6 +114,11 @@ bool AdafruitMQTT::connect ( IPAddress ip, uint16_t port, bool cleanSession, uin
   return _connected;
 }
 
+/******************************************************************************/
+/*!
+    @brief
+*/
+/******************************************************************************/
 bool AdafruitMQTT::connect ( const char * host, uint16_t port, bool cleanSession, uint16_t keepalive_sec)
 {
   IPAddress ip;
@@ -111,7 +126,11 @@ bool AdafruitMQTT::connect ( const char * host, uint16_t port, bool cleanSession
   return this->connect(ip, port, cleanSession, keepalive_sec);
 }
 
-
+/******************************************************************************/
+/*!
+    @brief
+*/
+/******************************************************************************/
 bool AdafruitMQTT::connectSSL(IPAddress ip, uint16_t port, bool cleanSession, uint16_t keepalive_sec)
 {
   // Call AdafruitTCP connect
@@ -124,6 +143,11 @@ bool AdafruitMQTT::connectSSL(IPAddress ip, uint16_t port, bool cleanSession, ui
   return _connected;
 }
 
+/******************************************************************************/
+/*!
+    @brief
+*/
+/******************************************************************************/
 bool AdafruitMQTT::connectSSL ( const char* host, uint16_t port, bool cleanSession, uint16_t keepalive_sec )
 {
   IPAddress ip;
@@ -131,6 +155,23 @@ bool AdafruitMQTT::connectSSL ( const char* host, uint16_t port, bool cleanSessi
   return this->connectSSL(ip, port, cleanSession, keepalive_sec);
 }
 
+/******************************************************************************/
+/*!
+    @brief Part of disconnect() that clean up previously allocated resource
+*/
+/******************************************************************************/
+void AdafruitMQTT::disconnect_cleanup(void)
+{
+  _mqtt_handle = 0;   // clean handle
+  tcp.stop();         // Disconnect TCP
+  _connected = false;
+}
+
+/******************************************************************************/
+/*!
+    @brief
+*/
+/******************************************************************************/
 bool AdafruitMQTT::disconnect ( void )
 {
   // skip if not connected
@@ -138,15 +179,16 @@ bool AdafruitMQTT::disconnect ( void )
 
   // Send Disconnect Packet to Broker
   VERIFY( sdep(SDEP_CMD_MQTTDISCONNECT, 4, &_mqtt_handle, NULL, NULL) );
-  _mqtt_handle = 0;
 
-  // Disconnect TCP
-  tcp.stop();
-
-  _connected = false;
+  this->disconnect_cleanup();
   return true;
 }
 
+/******************************************************************************/
+/*!
+    @brief
+*/
+/******************************************************************************/
 bool AdafruitMQTT::publish( UTF8String topic, UTF8String message, uint8_t qos, bool retained )
 {
   VERIFY( _connected );
@@ -164,6 +206,11 @@ bool AdafruitMQTT::publish( UTF8String topic, UTF8String message, uint8_t qos, b
   return sdep_n(SDEP_CMD_MQTTPUBLISH, para_count, para_arr, NULL, NULL);
 }
 
+/******************************************************************************/
+/*!
+    @brief
+*/
+/******************************************************************************/
 bool AdafruitMQTT::subscribe_internal(const char* topicFilter, uint8_t qos, void* mh, bool copy_topic, void* arg)
 {
   VERIFY( _connected && topicFilter != NULL);
@@ -182,16 +229,31 @@ bool AdafruitMQTT::subscribe_internal(const char* topicFilter, uint8_t qos, void
   return sdep_n(SDEP_CMD_MQTTSUBSCRIBE, para_count, para_arr, NULL, NULL);
 }
 
+/******************************************************************************/
+/*!
+    @brief
+*/
+/******************************************************************************/
 bool AdafruitMQTT::subscribe( const char* topicFilter, uint8_t qos, messageHandler_t mh)
 {
   return subscribe_internal(topicFilter, qos, (void*) mh, false);
 }
 
+/******************************************************************************/
+/*!
+    @brief
+*/
+/******************************************************************************/
 bool AdafruitMQTT::subscribe_copy( const char* topicFilter, uint8_t qos, messageHandler_t mh)
 {
   return subscribe_internal(topicFilter, qos, (void*) mh, true);
 }
 
+/******************************************************************************/
+/*!
+    @brief
+*/
+/******************************************************************************/
 bool AdafruitMQTT::unsubscribe( const char* topicFilter )
 {
   VERIFY( _connected && topicFilter != NULL );
@@ -210,8 +272,17 @@ bool AdafruitMQTT::unsubscribe( const char* topicFilter )
 //--------------------------------------------------------------------+
 // Callback
 //--------------------------------------------------------------------+
+/******************************************************************************/
+/*!
+    @brief
+*/
+/******************************************************************************/
 void adafruit_mqtt_disconnect_callback(void* p_mqtt)
 {
   AdafruitMQTT* pMQTT = (AdafruitMQTT*) p_mqtt;
+
+  // Clean up resource
+  pMQTT->disconnect_cleanup();
+
   if (pMQTT->_disconnect_callback) pMQTT->_disconnect_callback();
 }

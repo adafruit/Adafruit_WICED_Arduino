@@ -1,6 +1,7 @@
 import usb.core
 import usb.util
 import usb.control
+import usb.backend.libusb0
 import usb.backend.libusb1
 import time
 import os
@@ -110,17 +111,15 @@ USB_DFU_PID = 0x0008
 SDEP_DEBUG = 0
 reset_sec = 2
 
-# Explicitly configure the libusb backend for PyUSB.
+# Explicitly configure the libusb backend for PyUSB to use libusb-1.0.
+# On windows this will look for a libusb-1.0.dll in the same directory as the
+# script/executable.
 backend = None
 if platform.system() == 'Windows':
-    # On Windows give a path to the included libusb-1.0.dll so users don't
-    # need to have it installed.
-    libusb_dll = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                              'dfu-util', 'windows', 'libusb-1.0.dll')
-    usb.backend.libusb1.get_backend(find_library=lambda x: libusb_dll)
+    backend = usb.backend.libusb0.get_backend(find_library=lambda x: "libusb0_x86.dll")
 else:
-    # On other platforms libusb-1.0 needs to be installed.
     backend = usb.backend.libusb1.get_backend()
+
 
 class Sdep(object):
     def enter_dfu(self):
@@ -165,14 +164,26 @@ class Sdep(object):
                 sys.exit(1)
 
         # Send command phase
-        # Uncomment to print out command bytes
-        if SDEP_DEBUG == 1:
-            print ':'.join('{:02x}'.format(x) for x in data)
-
         if data is None:
+            # no data payload
             usbdev.ctrl_transfer( 0x40, SDEP_MSGTYPE_COMMAND, cmd_id)
         else:
-            usbdev.ctrl_transfer( 0x40, SDEP_MSGTYPE_COMMAND, cmd_id , 0, data)
+            if SDEP_DEBUG == 1:
+                print ':'.join('{:02x}'.format(x) for x in data)
+
+            if not isinstance(data[0], list):
+                # single parameter
+                usbdev.ctrl_transfer( 0x40, SDEP_MSGTYPE_COMMAND, cmd_id , 0, data)
+            else:
+                # multiple parameters
+                combined_data = []
+                for x in data:
+                    # Len first then parameter
+                    combined_data += [ ord(c) for c in struct.pack('<H', len(x)) ]
+                    combined_data += x
+                #print combined_data
+                usbdev.ctrl_transfer( 0x40, SDEP_MSGTYPE_COMMAND, cmd_id , 0, combined_data)
+
         time.sleep(0.1)
 
         return self.get_response(cmd_id, usbdev)
@@ -194,3 +205,4 @@ class Sdep(object):
         return resp_content[4:]
 
 sdep = Sdep()
+

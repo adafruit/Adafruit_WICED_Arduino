@@ -44,7 +44,8 @@
 #include "wirish.h"
 #include <libmaple/i2c.h>
 
-#define WIRE_BUFSIZ 32
+#define WIRE_BUFSIZ     32
+#define WIRE_MESS_NUM   6
 
 /* return codes from endTransmission() */
 #define SUCCESS   0        /* transmission was successful */
@@ -55,17 +56,21 @@
 
 class WireBase : public Stream { // Abstraction is awesome!
 protected:
-    i2c_msg itc_msg;
+    i2c_msg itc_msg[WIRE_MESS_NUM];
+    uint8_t itc_msg_count;
+
     uint8_t rx_buf[WIRE_BUFSIZ];      /* receive buffer */
     uint8_t rx_buf_idx;               /* first unread idx in rx_buf */
     uint8_t rx_buf_len;               /* number of bytes read */
 
-    uint8_t tx_buf[WIRE_BUFSIZ];      /* transmit buffer */
-    uint8_t tx_buf_idx;  // next idx available in tx_buf, -1 overflow
+//    uint8_t tx_buf[WIRE_BUFSIZ];      /* transmit buffer */
+//    uint8_t tx_buf_idx;  // next idx available in tx_buf, -1 overflow
     boolean tx_buf_overflow;
 
     // Force derived classes to define process function
     virtual uint8_t process() = 0;
+
+    uint8_t process_xfer(void);
 public:
     WireBase() {}
     ~WireBase() {}
@@ -93,6 +98,12 @@ public:
     uint8_t endTransmission(void);
 
     /*
+     * Call the process function to process the message if the TX
+     * buffer has not overflowed.
+     */
+    uint8_t endTransmission(bool stopBit);
+
+    /*
      * Request bytes from a slave device and process the request,
      * storing into the receiving buffer.
      */
@@ -102,6 +113,8 @@ public:
      * Allow only 8 bit addresses to be used when requesting bytes
      */
     uint8_t requestFrom(int, int);
+
+    uint8_t requestFrom(int address, int num_bytes, bool stopBit);
 
     /*
      * Stack up bytes to be sent when transmitting

@@ -43,9 +43,8 @@ const char * server_arr[][2] =
     [1] = { "twitter.com"            , "/" },
     [2] = { "www.google.com"         , "/" },
     [3] = { "www.facebook.com"       , "/" },
-    [4] = { "us.yahoo.com"           , "/" },
-    [5] = { "aws.amazon.com"         , "/" },
-    [6] = { "github.com"             , "/" },
+    [4] = { "aws.amazon.com"         , "/" },
+    [5] = { "github.com"             , "/" },
 };
 
 // You can set your own server & url here

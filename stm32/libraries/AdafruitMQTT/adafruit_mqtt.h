@@ -143,6 +143,7 @@ protected:
   void randomClientID(char* clientid);
 
   bool subscribe_internal(const char* topicFilter, uint8_t qos, void* mh, bool copy_topic, void* arg=NULL);
+  void disconnect_cleanup(void);
 };
 
 #endif /* _ADAFRUIT_MQTT_H__ */
