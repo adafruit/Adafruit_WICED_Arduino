@@ -1,4 +1,10 @@
-# Version 0.5.x (In Progress)
+# 0.5.5 (Work In Progress)
+
+## Featherlib
+
+- fix issue where 0xff is misinterpreted as EOF with USBSerial
+- fix EXT GPIO interrupt conflict between Featherlib & Arduino
+- fix #32 PWM only work after 3-5 minutes
 
 # 0.5.1
 
