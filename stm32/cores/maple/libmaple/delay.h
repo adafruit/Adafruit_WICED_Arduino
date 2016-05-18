@@ -9,6 +9,10 @@
 #ifndef _DELAY_H_
 #define _DELAY_H_
 
+// To stay compatible with AVR
+#define _delay_us delay_us
+#define _delay_ms delay
+
 /**
  * @brief Delay the given number of microseconds.
  *
@@ -40,5 +44,6 @@ static inline void delay_ns100(uint32 us) {
                  : [us] "r" (us)
                  : "r0");
 }
+
 #endif
 
