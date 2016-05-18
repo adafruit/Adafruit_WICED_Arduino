@@ -1,6 +1,6 @@
 # 0.5.5 (Work In Progress)
 
-## Featherlib
+# 0.5.2
 
 - fix issue where 0xff is misinterpreted as EOF with USBSerial
 - fix EXT GPIO interrupt conflict between Featherlib & Arduino

@@ -46,6 +46,15 @@
 #define SPI_MODE2 SPI_MODE_2
 #define SPI_MODE3 SPI_MODE_3
 
+#define SPI_CLOCK_DIV2    SPI_BAUD_PCLK_DIV_2
+#define SPI_CLOCK_DIV4    SPI_BAUD_PCLK_DIV_4
+#define SPI_CLOCK_DIV8    SPI_BAUD_PCLK_DIV_8
+#define SPI_CLOCK_DIV16   SPI_BAUD_PCLK_DIV_16
+#define SPI_CLOCK_DIV32   SPI_BAUD_PCLK_DIV_32
+#define SPI_CLOCK_DIV64   SPI_BAUD_PCLK_DIV_64
+#define SPI_CLOCK_DIV128  SPI_BAUD_PCLK_DIV_128
+#define SPI_CLOCK_DIV256  SPI_BAUD_PCLK_DIV_256
+
 #define SPI_HAS_TRANSACTION 1
 
 class SPISettings {
@@ -93,6 +102,9 @@ class HardwareSPI {
 private:
     spi_dev *spi_d;
     int8_t _ss_pin;
+    SPISettings _setting;
+
+    void reconfigure(void);
 
 public:
     /**
@@ -119,11 +131,9 @@ public:
     void attachInterrupt(void) { }
     void detachInterrupt(void) { }
 
-#if 0
-    void setClockDivider(uint8_t clockDivider) { _clockDivider = clockDivider; }
-    void setBitOrder(BitOrder bitOrder) { _bitOrder = bitOrder; }
-    void setDataMode(uint8_t dataMode) { _dataMode = dataMode; }
-#endif
+    void setClockDivider(uint8_t clockDivider);
+    void setBitOrder(uint8_t bitOrder);
+    void setDataMode(uint8_t dataMode);
 
 #if 0
     void beginSlave(uint32_t bitOrder, uint32_t mode);
@@ -133,6 +143,9 @@ public:
 
 
 extern HardwareSPI SPI;
+
+// Fix Compiler issue with sensor library
+extern uint8_t SPCR;
 
 #endif
 
