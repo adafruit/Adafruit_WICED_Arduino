@@ -2,11 +2,11 @@
 
 # 0.5.2
 
+- Add Servo library suport
 - Fix issue where 0xff is misinterpreted as EOF with USBSerial
 - Fix EXT GPIO interrupt conflict between Featherlib & Arduino
 - Fix #32 PWM only work after 3-5 minutes
-- Fix SPI compiling with existing library
-- Add Servo library suport 
+- Fix compiling issues with existing library
 
 # 0.5.1
 
