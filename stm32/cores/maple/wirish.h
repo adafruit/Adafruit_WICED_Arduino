@@ -72,6 +72,7 @@
 #define bitWrite(value, bit, bitvalue) (bitvalue ? bitSet(value, bit) : \
                                                    bitClear(value, bit))
 #define bit(b)                         (1UL << (b))
+#define _BV(b)                         bit(b)
 
 typedef uint8 boolean;
 typedef uint8 byte;
