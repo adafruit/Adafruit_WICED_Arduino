@@ -53,8 +53,8 @@ extern const stm32_pin_info PIN_MAP[BOARD_NR_GPIO_PINS] =
   /* PA4  */  {GPIOA,   NULL, ADC1,  4, 0,    4},
   /* PA5  */  {GPIOA,   NULL, ADC1,  5, 0,    5},
 
-  /* PA6  */  {GPIOA,   NULL, ADC1,  6, 1,    6},  // ala check TIMER3
-  /* PA7  */  {GPIOA,   NULL, ADC1,  7, 0,    7},
+  /* PA6  */  {GPIOA,   NULL, ADC1,  6, 1,    6},  // TIMER13 CH1
+  /* PA7  */  {GPIOA,   NULL, ADC1,  7, 0,    7},  // TIMER14 CH1
                                                     {GPIOA,   NULL, NULL,  8, 0, ADCx}, /* PA8 (n/a) */
   /* PA9  */  {GPIOA, TIMER1, NULL,  9, 2, ADCx},  // UART1_TXD
   /* PA10 */  {GPIOA, TIMER1, NULL, 10, 3, ADCx},  // UART1_RXD

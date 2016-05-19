@@ -39,11 +39,11 @@
  * @brief DAC peripheral routines.
  */
 
-dac_dev dac = {
+dac_dev _dac = {
     .regs = DAC_BASE,
 };
 /** DAC device. */
-const dac_dev *DAC = &dac;
+const dac_dev *DAC = &_dac;
 
 /**
  * @brief Initialize the digital to analog converter

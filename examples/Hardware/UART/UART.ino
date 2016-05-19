@@ -18,6 +18,8 @@
 
 #include <Arduino.h>
 
+const int baudrate = 115200;
+
 /**************************************************************************/
 /*!
     @brief  The setup function runs once when reset the board
@@ -25,16 +27,21 @@
 /**************************************************************************/
 void setup()
 {
-  Serial.begin (115200);  // USB monitor
-  Serial1.begin(115200);  // HW UART1
-  Serial2.begin(115200);  // HW UART2
+  Serial.begin (baudrate);  // USB monitor
+  Serial1.begin(baudrate);  // HW UART1
+  Serial2.begin(baudrate);  // HW UART2
   
   // wait for the serial port to connect. Needed for native USB port only.
   while (!Serial) delay(1);
 
   Serial.println ("UART demo: Serial Monitor");
+  Serial.printf  ("Badurate : %d\r\n", baudrate);
+  
   Serial1.println("UART demo: HWUART1");
+  Serial1.printf ("Badurate : %d\r\n", baudrate);
+  
   Serial2.println("UART demo: HWUART2");
+  Serial2.printf ("Badurate : %d\r\n", baudrate);
 }
 
 void printAll(char ch)

@@ -3,7 +3,7 @@
 # https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5-3rd-party-Hardware-specification
 
 name=Adafruit Feather boards
-version=0.5.1
+version=0.5.2
 
 # compiler variables
 # ----------------------

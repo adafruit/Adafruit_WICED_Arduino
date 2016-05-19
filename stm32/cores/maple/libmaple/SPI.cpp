@@ -37,6 +37,8 @@
 #include "wirish.h"
 #include "boards.h"
 
+ATTR_UNUSED uint8_t SPCR;
+
 struct spi_pins {
     int8_t nss;
     int8_t sck;
@@ -96,9 +98,9 @@ void HardwareSPI::begin(void)
   enable_device(this->spi_d, true, SPI_BAUD_PCLK_DIV_8, SPI_FRAME_MSB, (spi_mode) SPI_MODE0);
 }
 
-void HardwareSPI::beginTransaction(SPISettings settings)
+void HardwareSPI::reconfigure(void)
 {
-  uint32_t baud = settings.baud_control;
+  uint32_t baud = _setting.baud_control;
 
   // SPI3 has slower speed than SPI1
   if (this->spi_d == SPI3_F2 && baud > 0)
@@ -107,7 +109,44 @@ void HardwareSPI::beginTransaction(SPISettings settings)
   }
 
   spi_reconfigure(this->spi_d, SPI_DFF_8_BIT | SPI_SW_SLAVE | SPI_SOFT_SS |
-                               settings.bitOrder | baud | SPI_CR1_MSTR | settings.dataMode);
+                               _setting.bitOrder | baud | SPI_CR1_MSTR | _setting.dataMode);
+}
+
+void HardwareSPI::beginTransaction(SPISettings settings)
+{
+  _setting.baud_control = settings.baud_control;
+  _setting.bitOrder     = settings.bitOrder;
+  _setting.dataMode     = settings.dataMode;
+
+  reconfigure();
+}
+
+void HardwareSPI::setClockDivider(uint8_t clockDivider)
+{
+  if (_setting.baud_control != clockDivider)
+  {
+    _setting.baud_control = clockDivider;
+    reconfigure();
+  }
+}
+
+void HardwareSPI::setBitOrder(uint8_t bitOrder)
+{
+  bitOrder = ((bitOrder == MSBFIRST) ? SPI_FRAME_MSB : SPI_FRAME_LSB);
+  if (_setting.bitOrder != bitOrder)
+  {
+    _setting.bitOrder = bitOrder;
+    reconfigure();
+  }
+}
+
+void HardwareSPI::setDataMode(uint8_t dataMode)
+{
+  if (_setting.dataMode != dataMode)
+  {
+    _setting.dataMode = dataMode;
+    reconfigure();
+  }
 }
 
 void HardwareSPI::endTransaction(void)

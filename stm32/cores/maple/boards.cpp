@@ -99,7 +99,7 @@ static void timerDefaultConfig(timer_dev *dev) {
     regs->PSC = 1;
     regs->SR = 0;
     regs->DIER = 0;
-    regs->EGR = TIMER_EGR_UG;
+//    regs->EGR = TIMER_EGR_UG;
 
     switch (dev->type) {
     case TIMER_ADVANCED:
@@ -107,15 +107,18 @@ static void timerDefaultConfig(timer_dev *dev) {
         // fall-through
     case TIMER_GENERAL:
         timer_set_reload(dev, full_overflow);
-
+        #if 0  // disable default mode is PWM !!!
         for (int channel = 1; channel <= 4; channel++) {
             timer_set_compare(dev, channel, half_duty);
             timer_oc_set_mode(dev, channel, TIMER_OC_MODE_PWM_1, TIMER_OC_PE);
         }
+        #endif
         // fall-through
     case TIMER_BASIC:
         break;
     }
 
+    // UG must be placed after reload to take affect
+    regs->EGR = TIMER_EGR_UG;
     timer_resume(dev);
 }
