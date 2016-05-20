@@ -43,7 +43,7 @@
 #include "wirish.h"
 #include <libmaple/i2c.h>
 
-class HardWire : public WireBase {
+class TwoWire : public WireBase {
 private:
     i2c_dev* sel_hard;
     uint8_t    dev_flags;
@@ -58,17 +58,17 @@ public:
      * Check if devsel is within range and enable selected I2C interface with
      * passed flags
      */
-    HardWire(uint8_t, uint8_t = 0);
+    TwoWire(uint8_t, uint8_t = 0);
 
     /*
      * Disables the I2C device and remove the device address.
      */
-    ~HardWire();
+    ~TwoWire();
 
     void begin(uint8_t = 0x00);
 
  private:
     boolean _init;
 };
-extern HardWire Wire;
+extern TwoWire Wire;
 #endif // _HARDWIRE_H_
