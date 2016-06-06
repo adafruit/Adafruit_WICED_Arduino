@@ -54,16 +54,18 @@ AdafruitUDP::AdafruitUDP()
 /******************************************************************************/
 void AdafruitUDP::reset(void)
 {
-  _udp_handle = 0;
-  _bytesRead  = 0;
+  _udp_handle       = 0;
+  _bytesRead        = 0;
 
-  _rcvPort    = 0;
-  _rcvIP      = 0;
-  _sndIP      = 0;
-  _sndPort    = 0;
+  _rcvPort          = 0;
+  _rcvIP            = 0;
+  _sndIP            = 0;
+  _sndPort          = 0;
 
-  rx_callback = NULL;
-  _timeout    = ADAFRUIT_UDP_TIMEOUT;
+  _packet_buffering = true;
+
+  rx_callback       = NULL;
+  _timeout          = ADAFRUIT_UDP_TIMEOUT;
 }
 
 /******************************************************************************/
@@ -266,6 +268,8 @@ int AdafruitUDP::beginPacket(IPAddress ip, uint16_t port)
 /******************************************************************************/
 int AdafruitUDP::endPacket()
 {
+  this->flush();
+
   _sndIP   = 0;
   _sndPort = 0;
 
@@ -302,6 +306,10 @@ size_t AdafruitUDP::write(const uint8_t* buffer, size_t size)
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
   VERIFY_RETURN(sdep_n(SDEP_CMD_UDP_WRITE, para_count, para_arr, NULL, NULL), 0);
+
+  // if packet is not buffered --> send out immediately
+  if (!_packet_buffering) this->flush();
+
   return size;
 }
 
@@ -313,7 +321,16 @@ size_t AdafruitUDP::write(const uint8_t* buffer, size_t size)
 void AdafruitUDP::flush()
 {
   if (_udp_handle == 0) return;
-  sdep(SDEP_CMD_UDP_FLUSH, 4, &_udp_handle, NULL, NULL);
+
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = 4   , .p_value = &_udp_handle },
+      { .len = 4   , .p_value = &_sndIP      },
+      { .len = 2   , .p_value = &_sndPort    },
+  };
+  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
+
+  sdep_n(SDEP_CMD_UDP_FLUSH, para_count, para_arr, NULL, NULL);
 }
 
 /******************************************************************************/

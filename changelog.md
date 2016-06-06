@@ -1,5 +1,8 @@
 # 0.5.5 (Work In Progress)
 
+- rename HardWire to TwoWire to stay compatible with Arduino
+- fix #43 : Implement UDP as buffered stream (enabled by default), can be changed using usePacketBuffering()
+
 # 0.5.2
 
 - Add Servo library suport
