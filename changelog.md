@@ -2,6 +2,7 @@
 
 - rename HardWire to TwoWire to stay compatible with Arduino
 - fix #43 : Implement UDP as buffered stream (enabled by default), can be changed using usePacketBuffering()
+- Add .config() to manual set static IP
 
 # 0.5.2
 
