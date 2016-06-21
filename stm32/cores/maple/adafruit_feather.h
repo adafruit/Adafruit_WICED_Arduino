@@ -112,6 +112,12 @@ private:
   bool          _rootca_init;
   bool          _rootca_default_en;
 
+  struct {
+    uint32_t ip;
+    uint32_t gateway;
+    uint32_t subnet;
+  } _static_config;
+
 //  void (*wlan_connect_callback)(void);
   void (*wlan_disconnect_callback)(void);
 
@@ -134,6 +140,10 @@ public:
   bool begin     (void) { return this->connect(); }
   bool begin     (const char *ssid ) { return this->connect(ssid); }
   bool begin     ( const char *ssid, const char *key, int enc_type = ENC_TYPE_AUTO ) { return this->connect(ssid, key, enc_type); }
+
+  // Manual config static IP, no parameter will reset the IP to default (DHCP)
+  bool config (IPAddress ip, IPAddress gateway, IPAddress subnet);
+  bool config (void) { return this->config(INADDR_NONE, INADDR_NONE, INADDR_NONE); }
 
   bool connected (void) { return _connected; }
   void disconnect(void);
