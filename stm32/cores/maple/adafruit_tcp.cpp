@@ -45,9 +45,15 @@
 void AdafruitTCP::reset()
 {
   _tcp_handle          = NULL;
-  _tls_context         = NULL;
 
   _tls_verification    = true;
+  _tls_context         = NULL;
+
+  _tls_identity        = NULL;
+  _tls_private_key     = NULL;
+  _tls_local_cert      = NULL;
+  _tls_local_certlen   = 0;
+
   _bytesRead           = 0;
   _remote_ip           = 0;
   _remote_port         = 0;
@@ -104,24 +110,36 @@ bool AdafruitTCP::connect_internal ( uint8_t interface, uint32_t ipv4, uint16_t 
   _remote_port        = port;
 
   _tcp_handle = malloc_named("TCP Client", TCP_SOCKET_HANDLE_SIZE);
+  VERIFY( _tcp_handle != NULL );
 
   if (is_tls)
   {
-    _tls_context = malloc_named("TCP TLS", TCP_TLS_CONTEXT_SIZE);
+    _tls_context = malloc_named("TCP TLS Context", TCP_TLS_CONTEXT_SIZE);
+    VERIFY(_tls_context != NULL);
+
+    if (_tls_private_key && _tls_local_cert )
+    {
+      _tls_identity = malloc_named("TCP TLS Identity", TCP_TLS_IDENTITY_SIZE);
+      VERIFY(_tls_identity != NULL);
+    }
   }
 
   sdep_cmd_para_t para_arr[] =
   {
-      { .len = TCP_SOCKET_HANDLE_SIZE , .p_value = _tcp_handle   },
+      { .len = TCP_SOCKET_HANDLE_SIZE , .p_value = _tcp_handle       },
 
-      { .len = 1                      , .p_value = &interface    },
-      { .len = 4                      , .p_value = &_remote_ip   },
-      { .len = 2                      , .p_value = &_remote_port },
-      { .len = 4                      , .p_value = &_timeout     },
-      { .len = 1                      , .p_value = &is_tls       },
-      { .len = 1                      , .p_value = &tls_option   },
+      { .len = 1                       , .p_value = &interface       },
+      { .len = 4                       , .p_value = &_remote_ip      },
+      { .len = 2                       , .p_value = &_remote_port    },
+      { .len = 4                       , .p_value = &_timeout        },
+      { .len = 1                       , .p_value = &is_tls          },
+      { .len = 1                       , .p_value = &tls_option      },
 
-      { .len = TCP_TLS_CONTEXT_SIZE    , .p_value = _tls_context  },
+      { .len = TCP_TLS_CONTEXT_SIZE    , .p_value = _tls_context     },
+      { .len = TCP_TLS_IDENTITY_SIZE   , .p_value = _tls_identity    },
+      { .len = _tls_private_key ?
+           strlen(_tls_private_key) : 0, .p_value = _tls_private_key },
+      { .len = _tls_local_certlen      , .p_value = _tls_local_cert  },
   };
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
@@ -129,8 +147,9 @@ bool AdafruitTCP::connect_internal ( uint8_t interface, uint32_t ipv4, uint16_t 
   {
     free(_tcp_handle);
     if ( _tls_context ) free(_tls_context);
+    if ( _tls_identity) free(_tls_identity);
 
-    _tcp_handle = _tls_context = NULL;
+    _tcp_handle = _tls_context = _tls_identity = NULL;
 
     return false;
   }
@@ -194,6 +213,15 @@ int AdafruitTCP::connectSSL(const char* host, uint16_t port)
   IPAddress ip;
   VERIFY( Feather.hostByName(host, ip) );
   return this->connectSSL(ip, port);
+}
+
+bool AdafruitTCP::tlsSetIdentity(char const* private_key, uint8_t const* local_cert, uint16_t local_certlen)
+{
+  _tls_private_key    = private_key;
+  _tls_local_cert     = local_cert;
+  _tls_local_certlen  = local_certlen;
+
+  return true;
 }
 
 /******************************************************************************/
@@ -429,7 +457,8 @@ void AdafruitTCP::stop()
 
   sdep(SDEP_CMD_TCP_DISCONNECT, 4, &_tcp_handle, NULL, NULL);
   free(_tcp_handle);
-  if (_tls_context) free(_tls_context);
+  if (_tls_context)  free(_tls_context);
+  if (_tls_identity) free(_tls_identity);
 
   this->reset();
 

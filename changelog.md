@@ -3,6 +3,12 @@
 - rename HardWire to TwoWire to stay compatible with Arduino
 - fix #43 : Implement UDP as buffered stream (enabled by default), can be changed using usePacketBuffering()
 - Add .config() to manual set static IP
+- Add TLS Mutual Verification support (Client Identity verification) with .tlsSetIdentity()
+- "VeriSign Class 3 Public Primary Certification Authority - G5" replace "Starfield Services Root Certificate Authority - G2" for AWS IOT 
+
+## Known Issues
+
+- When connecting with TLS Mutual Verification (client verification) such as AWS IOT, if Identity is not set, it will cause an hardfault due to Broadcom SSL library ssl_write_certificate() when handshaking.
 
 # 0.5.2
 

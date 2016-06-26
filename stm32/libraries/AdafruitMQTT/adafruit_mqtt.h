@@ -89,6 +89,10 @@ public:
 
   void clientID(const char* client) { _clientID = client; }
   void setDisconnectCallback  ( void (*fp) (void) ) { _disconnect_callback = fp; }
+  bool tlsSetIdentity         (char const* private_key, uint8_t const* local_cert, uint16_t local_certlen)
+  {
+    return tcp.tlsSetIdentity(private_key, local_cert, local_certlen);
+  }
 
   // API
   bool connected      ( void ) { return _connected; }

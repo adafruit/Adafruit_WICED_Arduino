@@ -25,6 +25,6 @@ includes the following entries:
 
 - adafruit.com
 
-### Starfield Services Root Certificate Authority - G2
+### VeriSign Class 3 Public Primary Certification Authority - G5
 
 - aws.amazon.com
