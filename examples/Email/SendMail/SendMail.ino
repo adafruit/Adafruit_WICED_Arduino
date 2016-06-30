@@ -49,7 +49,7 @@
 // Mail
 #define MAIL_SUBJECT           "Adafruit Wiced Feather"
 #define MAIL_CONTENT           "Hello,\r\nMy name is WICED"
-#define MAIL_SIGNATURE         "Sent from WICED Feather"
+#define MAIL_SIGNATURE         "\r\nSent from WICED Feather"
 
 
 AdafruitEmail Email(EMAIL_ADDRESS, EMAIL_USERNAME, EMAIL_PASSWORD);
