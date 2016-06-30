@@ -25,6 +25,8 @@
  * an application password if you have enabled 2-step verification.
  * 3. Configure your SMTP Server
  * 4. Change Recipients (To, CC, BCC). Notes each list is comma separated.
+ *
+ * NOTE: Only tested with gmail server.
  */
 
 // Network
