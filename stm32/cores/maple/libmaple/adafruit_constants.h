@@ -239,6 +239,9 @@ typedef enum {
   SDEP_CMD_MQTTPUBLISH         = 0x0902,    ///< Publish a message to a topic
   SDEP_CMD_MQTTSUBSCRIBE       = 0x0903,    ///< Subscribe to a topic
   SDEP_CMD_MQTTUNSUBSCRIBE     = 0x0904,    ///< Unsubscribe from a topic
+
+  // Email
+  SDEP_CMD_EMAIL_SEND          = 0x0A00,    ///< Send an email
 } sdep_command_t;
 
 enum

@@ -1,0 +1,22 @@
+#######################################
+# Syntax Coloring Map For Adafruit Feather WiFi
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+AdafruitEmail	KEYWORD1
+
+#######################################
+# AdafruitHTTP Methods and Functions (KEYWORD2)
+#######################################
+
+outgoingServer	KEYWORD2
+recipients	KEYWORD2
+signature	KEYWORD2
+send	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
