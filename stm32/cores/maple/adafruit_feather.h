@@ -211,6 +211,9 @@ public:
   void      printNetwork    (Print& p = Serial);
   void      printEncryption (int32_t enc, Print& p = Serial);
 
+  // Debug functions
+  void      dbgThreadlist   (void) { sdep(SDEP_CMD_THREADLIST, 0, NULL, NULL, NULL); }
+
 
   /* callback from featherlib */
   friend void adafruit_wifi_disconnect_callback(void);

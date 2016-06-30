@@ -51,6 +51,7 @@ extern "C"
 class AdafruitUDP : public UDP, public AdafruitSDEP
 {
 public:
+  typedef void* udp_handle_t;
   typedef void (*udpcallback_t)(void);
 
   AdafruitUDP();

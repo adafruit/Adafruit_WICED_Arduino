@@ -437,7 +437,7 @@ bool AdafruitFeather::hostByName( const char* hostname, IPAddress& result)
   VERIFY(_connected);
 
   uint32_t ip_addr = 0;
-  VERIFY( sdep(SDEP_CMD_DNSLOOKUP, strlen(hostname), hostname, NULL, &ip_addr) );
+  VERIFY( sdep(SDEP_CMD_DNSLOOKUP, strlen(hostname)+1, hostname, NULL, &ip_addr) );
 
   result = ip_addr;
   return true;
@@ -556,7 +556,7 @@ bool AdafruitFeather::clearRootCA(void)
 
 /******************************************************************************/
 /*!
-    @brief  Set Root CA certificates in DER format. DER format is binary format,
+    @brief  Add Root CA certificates in DER format. DER format is binary format,
             and is the native format that Feather works with.
 
     @note   Feather works natively with DER (binary) format, therefore it will work
