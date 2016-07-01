@@ -38,17 +38,48 @@
 
 /******************************************************************************/
 /**
- * @brief Constructor
+ * Constructor
+ */
+/******************************************************************************/
+AdafruitEmail::AdafruitEmail(void)
+{
+  this->reset();
+}
+
+/******************************************************************************/
+/**
+ * @brief Initialize Email account
  * @param email_address   Email e.g support@adafruit.com
  * @param username        normally is the same as email address
  * @param password        Email password
  */
 /******************************************************************************/
-AdafruitEmail::AdafruitEmail(const char* email_address, const char* username, const char* password)
+bool AdafruitEmail::begin(const char* email_address, const char* username, const char* password)
 {
   _email_address = email_address;
   _username      = username;
   _password      = password;
+
+// Debuging purpose
+#if defined(DEBUG_EMAIL_ADDRESS) && defined(DEBUG_EMAIL_USERNAME) && defined (DEBUG_EMAIL_PASSWORD)
+  _email_address = DEBUG_EMAIL_ADDRESS;
+  _username      = DEBUG_EMAIL_USERNAME;
+  _password      = DEBUG_EMAIL_PASSWORD;
+#endif
+
+}
+
+bool AdafruitEmail::stop(void)
+{
+  this->reset();
+  return true;
+}
+
+void AdafruitEmail::reset(void)
+{
+  _email_address = NULL;
+  _username      = NULL;
+  _password      = NULL;
 
   _smtp_server   = NULL;
   _smtp_port     = 0;
@@ -59,14 +90,6 @@ AdafruitEmail::AdafruitEmail(const char* email_address, const char* username, co
   _bcc_addrs     = NULL;
 
   _signature     = NULL;
-
-// Debuging purpose
-#if defined(DEBUG_EMAIL_ADDRESS) && defined(DEBUG_EMAIL_USERNAME) && defined (DEBUG_EMAIL_PASSWORD)
-  _email_address = DEBUG_EMAIL_ADDRESS;
-  _username      = DEBUG_EMAIL_USERNAME;
-  _password      = DEBUG_EMAIL_PASSWORD;
-#endif
-
 }
 
 /******************************************************************************/

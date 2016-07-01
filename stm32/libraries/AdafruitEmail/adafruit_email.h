@@ -64,13 +64,20 @@ protected:
 
   const char* _signature;
 
+  void reset(void);
+
 public:
-  AdafruitEmail(const char* email_address, const char* username, const char* password);
+  AdafruitEmail(void);
+
+  bool begin(const char* email_address, const char* username, const char* password);
+  bool stop(void);
 
   bool outgoingServer(const char * smtp_server, uint16_t port, bool tls_enabled);
   bool recipients(const char* to_addrs, const char* cc_addrs = NULL , const char* bcc_addrs = NULL);
   bool signature(const char* sign);
   bool send(const char* subject, const char* content);
+
+
 };
 
 #endif /* _ADAFRUIT_EMAIL_H_ */
