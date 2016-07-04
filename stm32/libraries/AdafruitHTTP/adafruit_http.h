@@ -74,7 +74,16 @@ public:
   virtual int connect    ( const char * host, uint16_t port );
   virtual int connectSSL ( const char* host, uint16_t port );
 
-  static uint32_t urlEncode(const char* input, char* output, uint32_t size);
+  static uint16_t urlEncode(const char* input, char* output, uint16_t size);
+//  static uint16_t urlDecode(const char* input, char* output, uint16_t size);
+
+  static uint16_t base64Encode(const uint8_t* input, uint16_t inputlen, char*    output, uint16_t size);
+  static uint16_t base64Encode(const char* input   , uint16_t inputlen, char*    output, uint16_t size)
+  {
+    return base64Encode( (const uint8_t*) input, inputlen, output, size);
+  }
+
+  static uint16_t base64Decode(const char   * input, uint16_t inputlen, uint8_t* output, uint16_t size);
 };
 
 

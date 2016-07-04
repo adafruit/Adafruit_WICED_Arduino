@@ -247,6 +247,8 @@ typedef enum {
   SDEP_CMD_HMAC_SHA1_START     = 0x0B00,    ///< HMAC SHA1 Start
   SDEP_CMD_HMAC_SHA1_UPDATE    = 0x0B01,    ///< HMAC SHA1 Update
   SDEP_CMD_HMAC_SHA1_FINISH    = 0x0B02,    ///< HMAC SHA1 Finish
+  SDEP_CMD_BASE64_ENCODE       = 0x0B03,    ///< Base64 encode
+  SDEP_CMD_BASE64_DECODE       = 0x0B04,    ///< Base64 decode
 } sdep_command_t;
 
 enum

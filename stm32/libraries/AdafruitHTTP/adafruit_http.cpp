@@ -40,77 +40,6 @@
 #define HTTP_POST     "POST"
 #define HTTP_VERSION  "HTTP/1.1"
 
-/* Converts a hex character to its integer value */
-static char from_hex(char ch)
-{
-  return isdigit(ch) ? ch - '0' : tolower(ch) - 'a' + 10;
-}
-
-/* Converts an integer value to its hex character*/
-static char to_hex(char code)
-{
-  static char const hex[] = "0123456789abcdef";
-  return hex[code & 15];
-}
-
-/**
- *
- * @param input   Input string
- * @param output  Output string
- * @param size    Maximum size of output string
- * @return  number of bytes in output string
- */
-uint32_t AdafruitHTTP::urlEncode(const char* input, char* output, uint32_t size)
-{
-  uint32_t len=0;
-  char ch;
-  while( (ch = *input++) && (len < size-1)  )
-  {
-    if ( isalnum(ch) || strchr("-_.~", ch) )
-    {
-      *output++ = ch;
-      len++;
-    }else if ( ch == ' ')
-    {
-      *output++ = '+';
-      len++;
-    }else
-    {
-      *output++ = '%';
-      *output++ = to_hex( ch >> 4  );
-      *output++ = to_hex( ch & 0x0f);
-
-      len += 3;
-    }
-  }
-
-  *output = 0;
-  return len;
-}
-
-#if 0
-/* Returns a url-decoded version of str */
-/* IMPORTANT: be sure to free() the returned string after use */
-char *url_decode(char *str) {
-  char *pstr = str, *buf = malloc(strlen(str) + 1), *pbuf = buf;
-  while (*pstr) {
-    if (*pstr == '%') {
-      if (pstr[1] && pstr[2]) {
-        *pbuf++ = from_hex(pstr[1]) << 4 | from_hex(pstr[2]);
-        pstr += 2;
-      }
-    } else if (*pstr == '+') {
-      *pbuf++ = ' ';
-    } else {
-      *pbuf++ = *pstr;
-    }
-    pstr++;
-  }
-  *pbuf = '\0';
-  return buf;
-}
-#endif
-
 /**
  *
  */
@@ -256,4 +185,106 @@ bool AdafruitHTTP::post(char const *url, char const* data)
   if(_server == NULL) return false;
 
   this->post(_server, url, data);
+}
+
+//--------------------------------------------------------------------+
+// STATIC FUNCTIONS (UTILITIES)
+//--------------------------------------------------------------------+
+/* Converts a hex character to its integer value */
+static char from_hex(char ch)
+{
+  return isdigit(ch) ? ch - '0' : tolower(ch) - 'a' + 10;
+}
+
+/* Converts an integer value to its hex character*/
+static char to_hex(char code)
+{
+  static char const hex[] = "0123456789ABCDEF";
+  return hex[code & 15];
+}
+
+/**
+ *
+ * @param input   Input string
+ * @param output  Output string
+ * @param size    Maximum size of output string
+ * @return  number of bytes in output string
+ */
+uint16_t AdafruitHTTP::urlEncode(const char* input, char* output, uint16_t size)
+{
+  uint16_t len=0;
+  char ch;
+  while( (ch = *input++) && (len < size-1)  )
+  {
+    if ( isalnum(ch) || strchr("-_.~", ch) )
+    {
+      *output++ = ch;
+      len++;
+    }
+//    else if ( ch == ' ')
+//    {
+//      *output++ = '+';
+//      len++;
+//    }
+    else
+    {
+      *output++ = '%';
+      *output++ = to_hex( ch >> 4  );
+      *output++ = to_hex( ch & 0x0f);
+
+      len += 3;
+    }
+  }
+
+  *output = 0;
+  return len;
+}
+
+#if 0
+/* Returns a url-decoded version of str */
+/* IMPORTANT: be sure to free() the returned string after use */
+char *url_decode(char *str) {
+  char *pstr = str, *buf = malloc(strlen(str) + 1), *pbuf = buf;
+  while (*pstr) {
+    if (*pstr == '%') {
+      if (pstr[1] && pstr[2]) {
+        *pbuf++ = from_hex(pstr[1]) << 4 | from_hex(pstr[2]);
+        pstr += 2;
+      }
+    } else if (*pstr == '+') {
+      *pbuf++ = ' ';
+    } else {
+      *pbuf++ = *pstr;
+    }
+    pstr++;
+  }
+  *pbuf = '\0';
+  return buf;
+}
+#endif
+
+/**
+ * Encode data to base64
+ * @param input     Input data
+ * @param inputlen  Input length
+ * @param output    Output buffer
+ * @param size      Output buffer size
+ * @return  Number of bytes converted, 0 if failed
+ */
+uint16_t AdafruitHTTP::base64Encode(const uint8_t* input, uint16_t inputlen, char* output, uint16_t size)
+{
+  return Feather.sdep(SDEP_CMD_BASE64_ENCODE, inputlen, input, &size, output) ? size : 0;
+}
+
+/**
+ * Decode data from base64
+ * @param input     Input data
+ * @param inputlen  Input length
+ * @param output    Output buffer
+ * @param size      Output buffer size
+ * @return  Number of bytes converted, 0 if failed
+ */
+uint16_t AdafruitHTTP::base64Decode(const char* input, uint16_t inputlen, uint8_t* output, uint16_t size)
+{
+  return Feather.sdep(SDEP_CMD_BASE64_DECODE, inputlen, input, &size, output) ? size : 0;
 }

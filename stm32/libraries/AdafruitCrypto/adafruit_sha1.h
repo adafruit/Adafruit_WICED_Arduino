@@ -57,6 +57,10 @@ public:
     return this->update(input, strlen(input));
   }
   bool stop(uint8_t output[20]);
+  bool stop(char output[20])
+  {
+    stop((uint8_t*) output);
+  }
 #endif
 
   // HMAC SHA1 functions
@@ -69,8 +73,13 @@ public:
   bool updateHMAC(char const* input)
   {
     return this->updateHMAC( (uint8_t const*) input, strlen(input));
+    Serial.print(input);
   }
   bool stopHMAC(uint8_t output[20]);
+  bool stopHMAC(char output[20])
+  {
+    stopHMAC( (uint8_t*) output);
+  }
 
   // One-shot generate
   bool generateHMAC(uint8_t const * key, uint32_t keylen, uint8_t const* input, uint32_t len, uint8_t output[20]);
