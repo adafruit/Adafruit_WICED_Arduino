@@ -79,6 +79,8 @@ public:
 
   size_t printf(const char * format, ...);
 
+  size_t printBuffer(uint8_t const[], int, char='-');
+
   Print() : write_error(0) {}
 
   int getWriteError() { return write_error; }

@@ -1,3 +1,4 @@
+
 /*********************************************************************
  This is an example for our Feather WIFI modules
 
@@ -96,6 +97,8 @@ void setup()
   Serial.print("Sending email ...");
   Email.send(MAIL_SUBJECT, MAIL_CONTENT);
   Serial.println("Done");
+
+  Email.stop();
 }
 
 /**************************************************************************/

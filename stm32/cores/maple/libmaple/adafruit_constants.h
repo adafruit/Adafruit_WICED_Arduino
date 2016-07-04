@@ -242,6 +242,11 @@ typedef enum {
 
   // Email
   SDEP_CMD_EMAIL_SEND          = 0x0A00,    ///< Send an email
+
+  // Cryptography
+  SDEP_CMD_HMAC_SHA1_START     = 0x0B00,    ///< HMAC SHA1 Start
+  SDEP_CMD_HMAC_SHA1_UPDATE    = 0x0B01,    ///< HMAC SHA1 Update
+  SDEP_CMD_HMAC_SHA1_FINISH    = 0x0B02,    ///< HMAC SHA1 Finish
 } sdep_command_t;
 
 enum
