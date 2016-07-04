@@ -110,7 +110,12 @@ public:
   bool unsubscribe    ( const char* topicFilter );
 
   // SDEP
-  virtual void err_actions (bool print, bool halt) { tcp.err_actions(print, halt); _err_print = print; _err_halt = halt; }
+  virtual void err_actions (bool print, bool halt)
+  {
+    tcp.err_actions(print, halt);
+    _err_print = print;
+    _err_halt  = halt;
+  }
 
   friend void adafruit_mqtt_disconnect_callback(void* p_mqtt);
 

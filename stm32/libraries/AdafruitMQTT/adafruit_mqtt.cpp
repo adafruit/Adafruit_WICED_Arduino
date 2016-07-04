@@ -38,17 +38,11 @@
 #include "adafruit_mqtt.h"
 #include "rng.h"
 
-static const char alphanum[] = "0123456789" "ABCDEFGHIJKLMNOPQRSTUVWXYZ" "abcdefghijklmnopqrstuvwxyz";
-
 void AdafruitMQTT::randomClientID(char* clientid)
 {
   // length is from 10 to 23
-  uint8_t length = 10+(rng_random()%13);
-
-  for (uint8_t i = 0; i < length; i++)
-  {
-    clientid[i] = alphanum[rng_random() % (sizeof(alphanum) -  1)];
-  }
+  uint8_t length = 10+(rng_u32()%13);
+  rng_base64(clientid, length);
   clientid[length] = 0;
 }
 

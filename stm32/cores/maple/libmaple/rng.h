@@ -44,17 +44,10 @@
 #include "libmaple_types.h"
 #include "libmaple.h"
 
-/******************************************************************************/
-/*!
-    @brief  Return a 32-bit random number using hardware generator
-*/
-/******************************************************************************/
-static inline uint32_t rng_random(void)
-{
-  uint32_t result;
-  FEATHERLIB->sdep_execute(SDEP_CMD_RANDOMNUMBER, 0, NULL, NULL, &result);
-  return result;
-}
+uint32_t rng_u32(void);
+void     rng_base64(char buffer[], uint32_t size);
+
+
 
 #ifdef __cplusplus
  }

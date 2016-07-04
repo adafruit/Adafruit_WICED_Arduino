@@ -40,6 +40,80 @@
 #define HTTP_POST     "POST"
 #define HTTP_VERSION  "HTTP/1.1"
 
+/* Converts a hex character to its integer value */
+static char from_hex(char ch)
+{
+  return isdigit(ch) ? ch - '0' : tolower(ch) - 'a' + 10;
+}
+
+/* Converts an integer value to its hex character*/
+static char to_hex(char code)
+{
+  static char const hex[] = "0123456789abcdef";
+  return hex[code & 15];
+}
+
+/**
+ *
+ * @param input   Input string
+ * @param output  Output string
+ * @param size    Maximum size of output string
+ * @return  number of bytes in output string
+ */
+uint32_t AdafruitHTTP::urlEncode(const char* input, char* output, uint32_t size)
+{
+  uint32_t len=0;
+  char ch;
+  while( (ch = *input++) && (len < size-1)  )
+  {
+    if ( isalnum(ch) || strchr("-_.~", ch) )
+    {
+      *output++ = ch;
+      len++;
+    }else if ( ch == ' ')
+    {
+      *output++ = '+';
+      len++;
+    }else
+    {
+      *output++ = '%';
+      *output++ = to_hex( ch >> 4  );
+      *output++ = to_hex( ch & 0x0f);
+
+      len += 3;
+    }
+  }
+
+  *output = 0;
+  return len;
+}
+
+#if 0
+/* Returns a url-decoded version of str */
+/* IMPORTANT: be sure to free() the returned string after use */
+char *url_decode(char *str) {
+  char *pstr = str, *buf = malloc(strlen(str) + 1), *pbuf = buf;
+  while (*pstr) {
+    if (*pstr == '%') {
+      if (pstr[1] && pstr[2]) {
+        *pbuf++ = from_hex(pstr[1]) << 4 | from_hex(pstr[2]);
+        pstr += 2;
+      }
+    } else if (*pstr == '+') {
+      *pbuf++ = ' ';
+    } else {
+      *pbuf++ = *pstr;
+    }
+    pstr++;
+  }
+  *pbuf = '\0';
+  return buf;
+}
+#endif
+
+/**
+ *
+ */
 AdafruitHTTP::AdafruitHTTP()
 {
   _packet_buffering = true;
@@ -48,19 +122,36 @@ AdafruitHTTP::AdafruitHTTP()
   this->clearHeaders();
 }
 
+/**
+ *
+ * @param host
+ * @param port
+ * @return
+ */
 int AdafruitHTTP::connect( const char * host, uint16_t port )
 {
   _server = host;
   return AdafruitTCP::connect(host, port);
 }
 
+/**
+ *
+ * @param host
+ * @param port
+ * @return
+ */
 int AdafruitHTTP::connectSSL( const char* host, uint16_t port )
 {
   _server = host;
   return AdafruitTCP::connectSSL(host, port);
 }
 
-
+/**
+ *
+ * @param name
+ * @param value
+ * @return
+ */
 bool AdafruitHTTP::addHeader(const char* name, const char* value)
 {
   if (_header_count >= ADAFRUIT_HTTP_MAX_HEADER) return false;
@@ -72,6 +163,10 @@ bool AdafruitHTTP::addHeader(const char* name, const char* value)
   return true;
 }
 
+/**
+ *
+ * @return
+ */
 bool AdafruitHTTP::clearHeaders(void)
 {
   _header_count     = 0;
@@ -81,6 +176,10 @@ bool AdafruitHTTP::clearHeaders(void)
   }
 }
 
+/**
+ *
+ * @param content_len
+ */
 void AdafruitHTTP::sendHeaders(size_t content_len)
 {
   for(uint8_t i=0; i<_header_count; i++)
@@ -99,6 +198,12 @@ void AdafruitHTTP::sendHeaders(size_t content_len)
   println(); // End of header
 }
 
+/**
+ *
+ * @param host
+ * @param url
+ * @return
+ */
 bool AdafruitHTTP::get(char const * host, char const *url)
 {
   printf(HTTP_GET " %s " HTTP_VERSION, url); println();
@@ -108,6 +213,11 @@ bool AdafruitHTTP::get(char const * host, char const *url)
   flush();
 }
 
+/**
+ *
+ * @param url
+ * @return
+ */
 bool AdafruitHTTP::get(char const *url)
 {
   if(_server == NULL) return false;
@@ -115,6 +225,13 @@ bool AdafruitHTTP::get(char const *url)
   this->get(_server, url);
 }
 
+/**
+ *
+ * @param host
+ * @param url
+ * @param data
+ * @return
+ */
 bool AdafruitHTTP::post(char const * host, char const *url, char const* data)
 {
   printf(HTTP_POST " %s " HTTP_VERSION, url); println();
@@ -128,9 +245,15 @@ bool AdafruitHTTP::post(char const * host, char const *url, char const* data)
   flush();
 }
 
+/**
+ * POST and use connected server as HOST
+ * @param url
+ * @param data
+ * @return
+ */
 bool AdafruitHTTP::post(char const *url, char const* data)
 {
   if(_server == NULL) return false;
 
-  this->get(url, data);
+  this->post(_server, url, data);
 }

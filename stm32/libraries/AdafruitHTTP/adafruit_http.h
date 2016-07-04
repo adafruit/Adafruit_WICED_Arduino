@@ -73,6 +73,8 @@ public:
   // TCP API
   virtual int connect    ( const char * host, uint16_t port );
   virtual int connectSSL ( const char* host, uint16_t port );
+
+  static uint32_t urlEncode(const char* input, char* output, uint32_t size);
 };
 
 

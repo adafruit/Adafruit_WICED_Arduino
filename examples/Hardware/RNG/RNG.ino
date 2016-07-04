@@ -41,7 +41,7 @@ void setup()
 void loop()
 {
   Serial.print("Random number: ");
-  Serial.println(rng_random());
+  Serial.println(rng_u32());
 
   delay(2000);
 }
