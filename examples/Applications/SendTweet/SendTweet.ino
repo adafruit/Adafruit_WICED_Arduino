@@ -14,6 +14,7 @@
 
 #include "adafruit_feather.h"
 #include "adafruit_http.h"
+#include "adafruit_sha1.h"
 #include "adafruit_twitter.h"
 
 /* This example demonstrates how to use AdafrtuiTwitter class
