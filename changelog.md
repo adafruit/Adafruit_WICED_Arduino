@@ -5,6 +5,13 @@
 - Add .config() to manual set static IP
 - Add TLS Mutual Verification support (Client Identity verification) with .tlsSetIdentity()
 - "VeriSign Class 3 Public Primary Certification Authority - G5" replace "Starfield Services Root Certificate Authority - G2" for AWS IOT 
+- Add AdafruitTwitter to send Tweet
+- Add AdafruitSHA1 to perform SHA1, and HMAC-SHA1 computation
+- AdafruitHTTP
+	- Change post() API: will perform URLEncode for Post Values
+	- add postWithoutURLencoded(): skip URLEncode for values
+	- add postRaw(): post data as binary, useful for binary data.
+	- add urlEncode(), urlEncodeLength(), base64Encode() as static method
 
 ## Known Issues
 
