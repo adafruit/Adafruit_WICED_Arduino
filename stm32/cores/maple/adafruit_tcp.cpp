@@ -58,6 +58,7 @@ void AdafruitTCP::reset()
   _remote_ip           = 0;
   _remote_port         = 0;
   _packet_buffering    = false;
+  _verbose             = false;
 
   _timeout             = ADAFRUIT_TCP_TIMEOUT;
   _rx_callback         = NULL;
@@ -145,9 +146,9 @@ bool AdafruitTCP::connect_internal ( uint8_t interface, uint32_t ipv4, uint16_t 
 
   if ( !sdep_n(SDEP_CMD_TCP_CONNECT, para_count, para_arr, NULL, NULL) )
   {
-    free(_tcp_handle);
-    if ( _tls_context ) free(_tls_context);
-    if ( _tls_identity) free(_tls_identity);
+    free_named("TCP Client", _tcp_handle);
+    if ( _tls_context ) free_named("TCP TLS Context" , _tls_context);
+    if ( _tls_identity) free_named("TCP TLS Identity", _tls_identity);
 
     _tcp_handle = _tls_context = _tls_identity = NULL;
 
@@ -328,7 +329,7 @@ size_t AdafruitTCP::write(const uint8_t* content, size_t len)
   sdep_cmd_para_t para_arr[] =
   {
       { .len = 4  , .p_value = &_tcp_handle},
-      { .len = len, .p_value = content    }
+      { .len = len, .p_value = content     }
   };
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
   
@@ -456,9 +457,10 @@ void AdafruitTCP::stop()
   if ( _tcp_handle == NULL) return;
 
   sdep(SDEP_CMD_TCP_DISCONNECT, 4, &_tcp_handle, NULL, NULL);
-  free(_tcp_handle);
-  if (_tls_context)  free(_tls_context);
-  if (_tls_identity) free(_tls_identity);
+
+  free_named("TCP Client", _tcp_handle);
+  if ( _tls_context ) free_named("TCP TLS Context" , _tls_context);
+  if ( _tls_identity) free_named("TCP TLS Identity", _tls_identity);
 
   this->reset();
 

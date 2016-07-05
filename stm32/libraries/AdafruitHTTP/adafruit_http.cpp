@@ -41,38 +41,15 @@
 #define HTTP_VERSION  "HTTP/1.1"
 
 /**
- *
+ * Constructor
  */
 AdafruitHTTP::AdafruitHTTP()
 {
   _packet_buffering = true;
-  _server = NULL;
+  _server           = NULL;
+  _verbose          = false;
 
   this->clearHeaders();
-}
-
-/**
- *
- * @param host
- * @param port
- * @return
- */
-int AdafruitHTTP::connect( const char * host, uint16_t port )
-{
-  _server = host;
-  return AdafruitTCP::connect(host, port);
-}
-
-/**
- *
- * @param host
- * @param port
- * @return
- */
-int AdafruitHTTP::connectSSL( const char* host, uint16_t port )
-{
-  _server = host;
-  return AdafruitTCP::connectSSL(host, port);
 }
 
 /**
@@ -113,7 +90,11 @@ void AdafruitHTTP::sendHeaders(size_t content_len)
 {
   for(uint8_t i=0; i<_header_count; i++)
   {
-    printf("%s: %s", _headers[i].name, _headers[i].value);
+    // Avoid uisng printf since header value can be > 256 bytes
+    // printf("%s: %s", _headers[i].name, _headers[i].value);
+    print(_headers[i].name);
+    print(": ");
+    print(_headers[i].value);
     println();
   }
 
@@ -159,32 +140,38 @@ bool AdafruitHTTP::get(char const *url)
  * @param host
  * @param url
  * @param data
+ * @param url_encode  Perfom URL Encode on Data before POST
  * @return
  */
-bool AdafruitHTTP::post(char const * host, char const *url, char const* data)
+bool AdafruitHTTP::post_internal(char const * host, char const *url, char const* data, bool url_encode)
 {
   printf(HTTP_POST " %s " HTTP_VERSION, url); println();
   printf("Host: %s", host); println();
 
-  sendHeaders( strlen(data) );
+  uint16_t post_datalen = strlen(data);
+  char *encoded_data = NULL;
+
+  // Perform URL encoding if required
+  if (url_encode)
+  {
+    uint16_t bufsize = 3*strlen(data);
+    encoded_data = (char*) malloc_named("HTTP URLEncode", bufsize);
+    post_datalen = urlEncode(data, encoded_data, bufsize);
+  }
+
+  sendHeaders( post_datalen );
 
   // send data
-  println(data);
+  if (url_encode)
+  {
+    println(encoded_data);
+    free_named("HTTP URLEncode", encoded_data);
+  }else
+  {
+    println(data);
+  }
 
   flush();
-}
-
-/**
- * POST and use connected server as HOST
- * @param url
- * @param data
- * @return
- */
-bool AdafruitHTTP::post(char const *url, char const* data)
-{
-  if(_server == NULL) return false;
-
-  this->post(_server, url, data);
 }
 
 //--------------------------------------------------------------------+
@@ -208,7 +195,7 @@ static char to_hex(char code)
  * @param input   Input string
  * @param output  Output string
  * @param size    Maximum size of output string
- * @return  number of bytes in output string
+ * @return  number of bytes in output string, 0 if failed (possibly not enough memory in output)
  */
 uint16_t AdafruitHTTP::urlEncode(const char* input, char* output, uint16_t size)
 {
@@ -235,6 +222,9 @@ uint16_t AdafruitHTTP::urlEncode(const char* input, char* output, uint16_t size)
       len += 3;
     }
   }
+
+  // not enough memory to hold the encoded --> return 0
+  if ( (len == size-1) && *input ) return 0;
 
   *output = 0;
   return len;

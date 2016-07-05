@@ -243,6 +243,7 @@ extern AdafruitFeather Feather;
 
   #define calloc_named( name, nelems, elemsize) ({ Serial.printf("[calloc] %s : %d\r\n", name, nelems*elemsize); calloc ( nelems, elemsize ); })
   #define malloc_named( name, size )            ({ Serial.printf("[malloc] %s : %d\r\n", name, size); malloc(size); })
+  #define free_named( name, ptr )               ({ Serial.printf("[free  ] %s\r\n"     , name      ); free  (ptr ); })
 
   #if DBG_ENABLE == 3
   #define DBG_HEAP()      Serial.printf("%s: %d: Heap free: %d\r\n", __FUNCTION__, __LINE__, FEATHERLIB->heap_get_free_size()); delay(5)
@@ -257,6 +258,7 @@ extern AdafruitFeather Feather;
 
   #define calloc_named( name, nelems, elemsize) calloc ( nelems, elemsize )
   #define malloc_named( name, size )            malloc ( size )
+  #define free_named( name, ptr )               free   ( ptr )
 #endif
 
 #define malloc_type(object_type)      ((object_type*)malloc_named(#object_type, sizeof(object_type)))

@@ -58,21 +58,65 @@ protected:
 
   void sendHeaders(size_t content_len);
 
+  bool post_internal(char const * host, char const *url, char const* data, bool url_encode);
+
+private:
+  bool _verbose;
+
 public:
   AdafruitHTTP();
+
+  void verbose(bool enable) { _verbose = enable; }
 
   bool addHeader(const char* name, const char* value);
   bool clearHeaders(void);
 
+  // GET
   bool get(char const * host, char const *url);
   bool get(char const *url);
 
-  bool post(char const * host, char const *url, char const* data);
-  bool post(char const *url, char const* data);
+  // POST without urlencoding data
+  bool post(char const * host, char const *url, char const* data)
+  {
+    return post_internal(host, url, data, false);
+  }
+  bool post(char const *url, char const* data)
+  {
+    return post_internal(_server, url, data, false);
+  }
+
+  // POST with urlencoded
+  bool postWithURLencoded(char const * host, char const *url, char const* data)
+  {
+    return post_internal(host, url, data, true);
+  }
+  bool postWithURLencoded(char const *url, char const* data)
+  {
+    return post_internal(_server, url, data, true);
+  }
 
   // TCP API
-  virtual int connect    ( const char * host, uint16_t port );
-  virtual int connectSSL ( const char* host, uint16_t port );
+  virtual int connect    ( const char * host, uint16_t port )
+  {
+    _server = host;
+    return AdafruitTCP::connect(host, port);
+  }
+  virtual int connectSSL ( const char* host, uint16_t port )
+  {
+    _server = host;
+    return AdafruitTCP::connectSSL(host, port);
+  }
+
+  virtual size_t    write      ( uint8_t b)
+  {
+    if (_verbose) Serial.write(b);
+    return AdafruitTCP::write(b);
+  }
+  virtual size_t    write      ( const uint8_t *content, size_t len )
+  {
+    if (_verbose) Serial.write(content, len);
+    return AdafruitTCP::write(content, len);
+  }
 
   static uint16_t urlEncode(const char* input, char* output, uint16_t size);
 //  static uint16_t urlDecode(const char* input, char* output, uint16_t size);

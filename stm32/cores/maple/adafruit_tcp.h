@@ -68,6 +68,7 @@ public:
 
   virtual operator bool() { return _tcp_handle != NULL; }
 
+  void     verbose                ( bool enable ) { _verbose = enable; }
   void     usePacketBuffering     ( bool enable ) { _packet_buffering = enable; }
   uint32_t getHandle              ( void        ) { return (uint32_t) _tcp_handle; }
 
@@ -89,7 +90,7 @@ public:
   // Stream API
   virtual int       read       ( void );
   virtual int       read       ( uint8_t * buf, size_t size );
-  virtual size_t    write      ( uint8_t );
+  virtual size_t    write      ( uint8_t b );
   virtual size_t    write      ( const uint8_t *content, size_t len );
   virtual int       available  ( void );
   virtual int       peek       ( void );
@@ -138,6 +139,9 @@ protected:
   void install_callback ( void );
   void reset            ( void );
   void get_peer_info    ( void );
+
+private:
+  bool          _verbose;
 };
 
 #endif

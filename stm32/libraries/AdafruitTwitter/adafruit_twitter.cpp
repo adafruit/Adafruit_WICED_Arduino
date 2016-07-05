@@ -162,12 +162,14 @@ bool AdafruitTwitter::tweet(char const* status)
     }
 
     p_auth += sprintf(p_auth, "%s=\"%s\"", oauth_para[i].key, oauth_para[i].value);
-
   }
+
+  Serial.println(buffer);
 
   //------------- Send HTTP request -------------//
   AdafruitHTTP _http;
   _http.err_actions(_err_print, _err_halt);
+//  _http.verbose(true);
 
   _http.connectSSL(TWITTER_API_HOST, TWITTER_API_PORT);
 
@@ -181,7 +183,7 @@ bool AdafruitTwitter::tweet(char const* status)
 
   char request_data[256];
   strcpy(request_data, "status=");
-  strcat(request_data, status);
+  AdafruitHTTP::urlEncode(status, request_data+7, sizeof(request_data)-7);
 
   _http.post(TWITTER_UPDATE_JSON, request_data);
 

@@ -70,7 +70,9 @@ void setup()
   Twitter.begin(CONSUMER_KEY, CONSUMER_SECRET, TOKEN_ACCESS, TOKEN_SECRET);
   Twitter.err_actions(true, true);
 
+  Serial.print("Sending tweet: " TWEET " ... ");
   Twitter.tweet(TWEET);
+  Serial.println("OK");
 
   Twitter.stop();
 }
