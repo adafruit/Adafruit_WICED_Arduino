@@ -16,8 +16,8 @@
 #include "adafruit_http.h"
 #include "adafruit_twitter.h"
 
-/* This example demonstrates how to use AdafrtuiEmail class
- * to send out an email
+/* This example demonstrates how to use AdafrtuiTwitter class
+ * to send out a tweet
  *
  * To run this demo:
  * 1. Goto https://apps.twitter.com/ and login
