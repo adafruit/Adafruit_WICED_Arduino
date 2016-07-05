@@ -22,9 +22,15 @@
  * To run this demo:
  * 1. Goto https://apps.twitter.com/ and login
  * 2. Create an application to use with this WICED Feather
- * 3. In the app management click "manage keys and access tokens"
+ * 3. (Optional) You could change the access level to give the applicaion
+ * permission to send DM. It is advised to do so, do that you could use WICED
+ * to send DM in other example
+ * 4. In the app management click "manage keys and access tokens"
  * and then click "Create my access token"
- * 4.
+ * 5. Change CONSUMER_KEY, CONSUMER_SECRET, TOKEN_ACCESS, TOKEN_SECRET accordingly
+ * 6. Change your TWEET status
+ * 7. Compile and run, if you run this sketch too often, Twitter server may reject
+ * your connection request, just wait a few minutes and try again.
  */
 
 // Network
@@ -54,7 +60,7 @@ void setup()
   // wait for serial port to connect. Needed for native USB port only
   while (!Serial) delay(1);
 
-  Serial.println("Send Mail Example\r\n");
+  Serial.println("Twitter Send Tweet Example\r\n");
 
   // Print all software versions
   Feather.printVersions();
