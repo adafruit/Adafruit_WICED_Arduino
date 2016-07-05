@@ -85,26 +85,54 @@ public:
     return post_internal(host, url, &key, &value, 1, true);
   }
 
+  bool post(char const *url, char const* data_keys[], char const* data_values[], uint16_t data_count)
+  {
+    return post_internal(_server, url, data_keys, data_values, data_count, true);
+  }
+
   bool post(char const *url, char const* key, char const* value)
   {
     return post(_server, url, key, value);
   }
 
-//  bool post(char const * host, char const *url, char const* data)
-//  {
-//    return post_internal(host, url, data, false);
-//  }
-//
-//
-//  // POST with urlencoded
-//  bool postWithURLencoded(char const * host, char const *url, char const* data)
-//  {
-//    return post_internal(host, url, data, true);
-//  }
-//  bool postWithURLencoded(char const *url, char const* data)
-//  {
-//    return post_internal(_server, url, data, true);
-//  }
+  // POST without urlencoded
+  bool postWithoutURLencoded(char const * host, char const *url, char const* data_keys[], char const* data_values[], uint16_t data_count)
+  {
+    return post_internal(host, url, data_keys, data_values, data_count, false);
+  }
+
+  bool postWithoutURLencoded(char const * host, char const *url, char const* key, char const* value)
+  {
+    return post_internal(host, url, &key, &value, 1, false);
+  }
+
+  bool postWithoutURLencoded(char const *url, char const* data_keys[], char const* data_values[], uint16_t data_count)
+  {
+    return post_internal(_server, url, data_keys, data_values, data_count, false);
+  }
+
+  bool postWithoutURLencoded(char const *url, char const* key, char const* value)
+  {
+    return postWithoutURLencoded(_server, url, key, value);
+  }
+
+  // POST with Raw data, useful with binary
+  bool postRaw(char const * host, char const *url, uint8_t const* raw_data, uint16_t len );
+
+  bool postRaw(char const * host, char const *url, char const* raw_data)
+  {
+    return postRaw(host, url, (uint8_t const*) raw_data, strlen(raw_data));
+  }
+
+  bool postRaw(char const *url, uint8_t const* raw_data, uint16_t len )
+  {
+    return postRaw(_server, url, raw_data, len);
+  }
+
+  bool postRaw(char const *url, char const* raw_data)
+  {
+    return postRaw(url, (uint8_t const*) raw_data, strlen(raw_data));
+  }
 
   // TCP API
   virtual int connect    ( const char * host, uint16_t port )

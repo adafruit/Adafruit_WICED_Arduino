@@ -177,10 +177,10 @@ bool AdafruitHTTP::post_internal(char const * host, char const *url, char const*
     if (url_encode)
     {
       uint16_t bufsize = urlEncodeLength(value)+1;
-      char* encoded_value = (char*) malloc_named("HTTP URLEncode", bufsize);
+      char* encoded_value = (char*) malloc(bufsize);
       urlEncode(value, encoded_value, bufsize);
       print(encoded_value);
-      free_named("HTTP URLEncode", encoded_value);
+      free(encoded_value);
     }else
     {
       print(value);
@@ -191,18 +191,26 @@ bool AdafruitHTTP::post_internal(char const * host, char const *url, char const*
   flush();
 }
 
-//bool AdafruitHTTP::post(char const * host, char const *url, char const* data)
-//{
-//  printf(HTTP_POST " %s " HTTP_VERSION, url); println();
-//  printf("Host: %s", host); println();
-//
-//  sendHeaders( strlen(data) );
-//
-//  // send data
-//  println(data);
-//
-//  flush();
-//}
+/**
+ * POST with raw data useful for binary POST
+ * @param host
+ * @param url
+ * @param raw_data
+ * @param len
+ * @return
+ */
+bool AdafruitHTTP::postRaw(char const * host, char const *url, uint8_t const* raw_data, uint16_t len )
+{
+  printf(HTTP_POST " %s " HTTP_VERSION, url); println();
+  printf("Host: %s", host); println();
+
+  sendHeaders( len  );
+
+  // send data
+  write(raw_data, len);
+
+  flush();
+}
 
 //--------------------------------------------------------------------+
 // STATIC FUNCTIONS (UTILITIES)
