@@ -169,7 +169,7 @@ bool AdafruitTwitter::tweet(char const* status)
   //------------- Send HTTP request -------------//
   AdafruitHTTP _http;
   _http.err_actions(_err_print, _err_halt);
-//  _http.verbose(true);
+  _http.verbose(true);
 
   _http.connectSSL(TWITTER_API_HOST, TWITTER_API_PORT);
 
@@ -180,12 +180,7 @@ bool AdafruitTwitter::tweet(char const* status)
   _http.addHeader("Content-Type", "application/x-www-form-urlencoded");
 
   _http.addHeader("Authorization", buffer);
-
-  char request_data[256];
-  strcpy(request_data, "status=");
-  AdafruitHTTP::urlEncode(status, request_data+7, sizeof(request_data)-7);
-
-  _http.post(TWITTER_UPDATE_JSON, request_data);
+  _http.post(TWITTER_UPDATE_JSON, "status", status);
 
   _http.disconnect();
   _http.clearHeaders();

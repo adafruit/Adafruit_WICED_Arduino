@@ -50,7 +50,6 @@ protected:
   const char* _server;
 
   uint8_t _header_count;
-
   struct {
     const char* name;
     const char* value;
@@ -58,7 +57,7 @@ protected:
 
   void sendHeaders(size_t content_len);
 
-  bool post_internal(char const * host, char const *url, char const* data, bool url_encode);
+  bool post_internal(char const * host, char const *url, char const* data_keys[], char const* data_values[], uint16_t data_count, bool url_encode);
 
 private:
   bool _verbose;
@@ -75,25 +74,37 @@ public:
   bool get(char const * host, char const *url);
   bool get(char const *url);
 
-  // POST without urlencoding data
-  bool post(char const * host, char const *url, char const* data)
+  // POST with urlencoding data
+  bool post(char const * host, char const *url, char const* data_keys[], char const* data_values[], uint16_t data_count)
   {
-    return post_internal(host, url, data, false);
-  }
-  bool post(char const *url, char const* data)
-  {
-    return post_internal(_server, url, data, false);
+    return post_internal(host, url, data_keys, data_values, data_count, true);
   }
 
-  // POST with urlencoded
-  bool postWithURLencoded(char const * host, char const *url, char const* data)
+  bool post(char const * host, char const *url, char const* key, char const* value)
   {
-    return post_internal(host, url, data, true);
+    return post_internal(host, url, &key, &value, 1, true);
   }
-  bool postWithURLencoded(char const *url, char const* data)
+
+  bool post(char const *url, char const* key, char const* value)
   {
-    return post_internal(_server, url, data, true);
+    return post(_server, url, key, value);
   }
+
+//  bool post(char const * host, char const *url, char const* data)
+//  {
+//    return post_internal(host, url, data, false);
+//  }
+//
+//
+//  // POST with urlencoded
+//  bool postWithURLencoded(char const * host, char const *url, char const* data)
+//  {
+//    return post_internal(host, url, data, true);
+//  }
+//  bool postWithURLencoded(char const *url, char const* data)
+//  {
+//    return post_internal(_server, url, data, true);
+//  }
 
   // TCP API
   virtual int connect    ( const char * host, uint16_t port )
@@ -118,6 +129,7 @@ public:
     return AdafruitTCP::write(content, len);
   }
 
+  static uint16_t urlEncodeLength(const char* input);
   static uint16_t urlEncode(const char* input, char* output, uint16_t size);
 //  static uint16_t urlDecode(const char* input, char* output, uint16_t size);
 

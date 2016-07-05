@@ -36,9 +36,11 @@
 
 #include "adafruit_http.h"
 
-#define HTTP_GET      "GET"
-#define HTTP_POST     "POST"
-#define HTTP_VERSION  "HTTP/1.1"
+#define HTTP_GET                "GET"
+#define HTTP_POST               "POST"
+#define HTTP_VERSION            "HTTP/1.1"
+
+#define HTTP_HEADER_URLENCODING "application/x-www-form-urlencoded"
 
 /**
  * Constructor
@@ -141,38 +143,66 @@ bool AdafruitHTTP::get(char const *url)
  * @param url
  * @param data
  * @param url_encode  Perfom URL Encode on Data before POST
+ * @note
+ *      POST Data is in form key1=value1&key2=value2
+ *      where value[] could be url_encoded or not
  * @return
  */
-bool AdafruitHTTP::post_internal(char const * host, char const *url, char const* data, bool url_encode)
+bool AdafruitHTTP::post_internal(char const * host, char const *url, char const* data_keys[], char const* data_values[], uint16_t data_count, bool url_encode)
 {
   printf(HTTP_POST " %s " HTTP_VERSION, url); println();
   printf("Host: %s", host); println();
 
-  uint16_t post_datalen = strlen(data);
-  char *encoded_data = NULL;
-
-  // Perform URL encoding if required
-  if (url_encode)
+  // Determine the total data length
+  uint16_t total_len = 0;
+  for(uint16_t i = 0; i<data_count; i++)
   {
-    uint16_t bufsize = 3*strlen(data);
-    encoded_data = (char*) malloc_named("HTTP URLEncode", bufsize);
-    post_datalen = urlEncode(data, encoded_data, bufsize);
+    total_len += (strlen(data_keys[i]) + 1) + (url_encode ? urlEncodeLength(data_values[i]) : strlen(data_values[i]));
   }
+  total_len += data_count-1; // number of "&" between each key=value
 
-  sendHeaders( post_datalen );
+  // Send all headers
+  sendHeaders( total_len );
 
   // send data
-  if (url_encode)
+  for(uint16_t i = 0; i<data_count; i++)
   {
-    println(encoded_data);
-    free_named("HTTP URLEncode", encoded_data);
-  }else
-  {
-    println(data);
+    if (i != 0) print("&");
+
+    char const* key   = data_keys[i];
+    char const* value = data_values[i];
+
+    print(key); print("=");
+
+    if (url_encode)
+    {
+      uint16_t bufsize = urlEncodeLength(value)+1;
+      char* encoded_value = (char*) malloc_named("HTTP URLEncode", bufsize);
+      urlEncode(value, encoded_value, bufsize);
+      print(encoded_value);
+      free_named("HTTP URLEncode", encoded_value);
+    }else
+    {
+      print(value);
+    }
   }
 
+  println();
   flush();
 }
+
+//bool AdafruitHTTP::post(char const * host, char const *url, char const* data)
+//{
+//  printf(HTTP_POST " %s " HTTP_VERSION, url); println();
+//  printf("Host: %s", host); println();
+//
+//  sendHeaders( strlen(data) );
+//
+//  // send data
+//  println(data);
+//
+//  flush();
+//}
 
 //--------------------------------------------------------------------+
 // STATIC FUNCTIONS (UTILITIES)
@@ -223,10 +253,33 @@ uint16_t AdafruitHTTP::urlEncode(const char* input, char* output, uint16_t size)
     }
   }
 
-  // not enough memory to hold the encoded --> return 0
-  if ( (len == size-1) && *input ) return 0;
-
   *output = 0;
+
+  // not enough memory to hold the encoded --> return 0
+  if ( ch && (len == size-1) ) return 0;
+
+  return len;
+}
+
+/**
+ * Get length of url encoded without perform the encoding
+ * @param input Input string
+ * @return
+ */
+uint16_t AdafruitHTTP::urlEncodeLength(const char* input)
+{
+  uint16_t len=0;
+  char ch;
+  while( (ch = *input++) )
+  {
+    if ( isalnum(ch) || strchr("-_.~", ch) /*|| ch == ' '*/ )
+    {
+      len++;
+    } else
+    {
+      len += 3;
+    }
+  }
   return len;
 }
 
