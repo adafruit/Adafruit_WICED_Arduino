@@ -112,6 +112,12 @@ private:
   bool          _rootca_init;
   bool          _rootca_default_en;
 
+  struct {
+    uint32_t ip;
+    uint32_t gateway;
+    uint32_t subnet;
+  } _static_config;
+
 //  void (*wlan_connect_callback)(void);
   void (*wlan_disconnect_callback)(void);
 
@@ -134,6 +140,10 @@ public:
   bool begin     (void) { return this->connect(); }
   bool begin     (const char *ssid ) { return this->connect(ssid); }
   bool begin     ( const char *ssid, const char *key, int enc_type = ENC_TYPE_AUTO ) { return this->connect(ssid, key, enc_type); }
+
+  // Manual config static IP, no parameter will reset the IP to default (DHCP)
+  bool config (IPAddress ip, IPAddress gateway, IPAddress subnet);
+  bool config (void) { return this->config(INADDR_NONE, INADDR_NONE, INADDR_NONE); }
 
   bool connected (void) { return _connected; }
   void disconnect(void);
@@ -201,6 +211,9 @@ public:
   void      printNetwork    (Print& p = Serial);
   void      printEncryption (int32_t enc, Print& p = Serial);
 
+  // Debug functions
+  void      dbgThreadlist   (void) { sdep(SDEP_CMD_THREADLIST, 0, NULL, NULL, NULL); }
+
 
   /* callback from featherlib */
   friend void adafruit_wifi_disconnect_callback(void);
@@ -230,6 +243,7 @@ extern AdafruitFeather Feather;
 
   #define calloc_named( name, nelems, elemsize) ({ Serial.printf("[calloc] %s : %d\r\n", name, nelems*elemsize); calloc ( nelems, elemsize ); })
   #define malloc_named( name, size )            ({ Serial.printf("[malloc] %s : %d\r\n", name, size); malloc(size); })
+  #define free_named( name, ptr )               ({ Serial.printf("[free  ] %s\r\n"     , name      ); free  (ptr ); })
 
   #if DBG_ENABLE == 3
   #define DBG_HEAP()      Serial.printf("%s: %d: Heap free: %d\r\n", __FUNCTION__, __LINE__, FEATHERLIB->heap_get_free_size()); delay(5)
@@ -244,6 +258,7 @@ extern AdafruitFeather Feather;
 
   #define calloc_named( name, nelems, elemsize) calloc ( nelems, elemsize )
   #define malloc_named( name, size )            malloc ( size )
+  #define free_named( name, ptr )               free   ( ptr )
 #endif
 
 #define malloc_type(object_type)      ((object_type*)malloc_named(#object_type, sizeof(object_type)))

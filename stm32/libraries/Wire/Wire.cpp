@@ -38,7 +38,7 @@
 
 #include "Wire.h"
 
-uint8_t HardWire::process() {
+uint8_t TwoWire::process() {
     int8 res = i2c_master_xfer(sel_hard, itc_msg, itc_msg_count, 0);
     if (res == I2C_ERROR_PROTOCOL) {
         if (sel_hard->error_flags & I2C_SR1_AF) { /* NACK */
@@ -56,7 +56,7 @@ uint8_t HardWire::process() {
 }
 
 // TODO: Add in Error Handling if devsel is out of range for other Maples
-HardWire::HardWire(uint8_t dev_sel, uint8_t flags) {
+TwoWire::TwoWire(uint8_t dev_sel, uint8_t flags) {
     if (dev_sel == 1) {
         sel_hard = I2C1;
     } else if (dev_sel == 2) {
@@ -69,16 +69,16 @@ HardWire::HardWire(uint8_t dev_sel, uint8_t flags) {
     _init = false;
 }
 
-HardWire::~HardWire() {
+TwoWire::~TwoWire() {
     i2c_disable(sel_hard);
     sel_hard = 0;
 }
 
-void HardWire::begin(uint8_t self_addr) {
+void TwoWire::begin(uint8_t self_addr) {
   if (!_init) {
     i2c_master_enable(sel_hard, dev_flags);
     _init = true;
   }
 }
 
-HardWire Wire(1, 0); // I2c1
+TwoWire Wire(1, 0); // I2c1

@@ -239,6 +239,16 @@ typedef enum {
   SDEP_CMD_MQTTPUBLISH         = 0x0902,    ///< Publish a message to a topic
   SDEP_CMD_MQTTSUBSCRIBE       = 0x0903,    ///< Subscribe to a topic
   SDEP_CMD_MQTTUNSUBSCRIBE     = 0x0904,    ///< Unsubscribe from a topic
+
+  // Email
+  SDEP_CMD_EMAIL_SEND          = 0x0A00,    ///< Send an email
+
+  // Cryptography
+  SDEP_CMD_HMAC_SHA1_START     = 0x0B00,    ///< HMAC SHA1 Start
+  SDEP_CMD_HMAC_SHA1_UPDATE    = 0x0B01,    ///< HMAC SHA1 Update
+  SDEP_CMD_HMAC_SHA1_FINISH    = 0x0B02,    ///< HMAC SHA1 Finish
+  SDEP_CMD_BASE64_ENCODE       = 0x0B03,    ///< Base64 encode
+  SDEP_CMD_BASE64_DECODE       = 0x0B04,    ///< Base64 decode
 } sdep_command_t;
 
 enum

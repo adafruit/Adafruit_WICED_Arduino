@@ -62,8 +62,10 @@ scanNetworks	KEYWORD2
 hostByName	KEYWORD2
 ping	KEYWORD2
 
-tlsRequireVerification	KEYWORD2
-setRootCertificates	KEYWORD2
+useDefaultRootCA	KEYWORD2
+initRootCA	KEYWORD2
+addRootCA	KEYWORD2
+clearRootCA	KEYWORD2
 
 #######################################
 # AdafruitTCP Methods and Functions (KEYWORD2)
@@ -71,6 +73,7 @@ setRootCertificates	KEYWORD2
 
 usePacketBuffering	KEYWORD2
 getHandle	KEYWORD2
+byteRead	KEYWORD2
 
 connect	KEYWORD2
 connectSSL	KEYWORD2
@@ -79,6 +82,9 @@ stop	KEYWORD2
 
 setReceivedCallback	KEYWORD2
 setDisconnectCallback	KEYWORD2
+
+tlsRequireVerification	KEYWORD2
+tlsSetIdentity	KEYWORD2
 
 #######################################
 # AdafruitUDP Methods and Functions (KEYWORD2)

@@ -51,9 +51,12 @@ extern "C"
 class AdafruitUDP : public UDP, public AdafruitSDEP
 {
 public:
+  typedef void* udp_handle_t;
   typedef void (*udpcallback_t)(void);
 
   AdafruitUDP();
+
+  void              usePacketBuffering ( bool enable ) { _packet_buffering = enable; }
 
   // UDP API
   virtual uint8_t   begin       ( uint16_t port );
@@ -94,6 +97,11 @@ protected:
   uint16_t  _sndPort;
   uint32_t  _sndIP;
   uint32_t  _bytesRead;
+
+  // If enabled, data is written to a buffer until the network packet is full
+  // (~1500 bytes) or until .flush() is called
+  // Default = true (buffering enabled)
+  bool      _packet_buffering;
 
   udpcallback_t rx_callback;
 

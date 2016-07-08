@@ -25,7 +25,11 @@
 #define PORT                 80                       // The TCP port to use
 
 // TODO help user to encoded post data
-#define POST_DATA            "name=feather&email=feather%40adafruit.com"
+const char* post_data[][2] =
+{
+    {"name"    , "email"},
+    {"feather" , "feather@adafruit.com"}
+};
 
 // Some servers such as Facebook check the user_agent header to
 // return data accordingly. Setting 'curl' mimics a command line browser.
@@ -80,6 +84,9 @@ void setup()
   // Tell the HTTP client to auto print error codes and halt on errors
   http.err_actions(true, true);
 
+  // Set HTTP client verbose
+  http.verbose(true);
+
   // Set the callback handlers
   http.setReceivedCallback(receive_callback);
 
@@ -95,7 +102,7 @@ void setup()
 
   // Send the HTTP POST
   Serial.printf("Posting to '%s' ... ", PAGE);
-  http.post(SERVER, PAGE, POST_DATA); // Will halt if an error occurs
+  http.post(PAGE, post_data, 2); // Will halt if an error occurs
   Serial.println("OK");
 }
 

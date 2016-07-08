@@ -85,7 +85,7 @@ bool AdafruitTCPServer::listen(bool first_time)
 
   if( !sdep_n(SDEP_CMD_TCP_LISTEN, para_count, para_arr, NULL, NULL) )
   {
-    free(_tcp_handle);
+    free_named("TCP Server", _tcp_handle);
     _tcp_handle = NULL;
     return false;
   }
@@ -120,7 +120,7 @@ void AdafruitTCPServer::stop ( void )
   if ( _tcp_handle == NULL) return;
 
   sdep(SDEP_CMD_TCP_DISCONNECT, 4, &_tcp_handle, NULL, NULL);
-  free(_tcp_handle);
+  free_named("TCP Server", _tcp_handle);
 
   DBG_HEAP();
 }

@@ -19,7 +19,10 @@ connected	KEYWORD2
 disconnect	KEYWORD2
 publish	KEYWORD2
 subscribe	KEYWORD2
+subscribe_copy	KEYWORD2
 unsubscribe	KEYWORD2
+
+adafruit_mqtt_disconnect_callback	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

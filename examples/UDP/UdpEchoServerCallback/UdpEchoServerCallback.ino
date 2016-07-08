@@ -20,7 +20,7 @@
  * - Use a UDP client on your PC such as netcast as follows:
  *   'nc -u IP port', e.g your Feather's IP is 192.168.1.100
  *   and LOCAL_PORT is 8888 then
- *     > nc -u 192.168.100 8888
+ *     > nc -u 192.168.1.100 8888
  *     > <Type your message>
  */
 

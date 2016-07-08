@@ -60,6 +60,10 @@ AdafruitFeather::AdafruitFeather(void)
 
   wlan_disconnect_callback = NULL;
 
+  _static_config.ip      = 0;
+  _static_config.gateway = 0;
+  _static_config.subnet  = 0;
+
   uint8_t boot_version[4] = { U32_TO_U8S_BE(FEATHERLIB_BOOTLOADER_VERSION) };
 	sprintf(_boot_version, "%d.%d.%d", boot_version[0], boot_version[1], boot_version[2]);
 
@@ -177,13 +181,36 @@ bool AdafruitFeather::connect(const char *ssid, const char *key, int enc_type)
       { .len = strlen(ssid), .p_value = ssid      },
       { .len = strlen(key) , .p_value = key       },
       { .len = 4           , .p_value = &enc_type },
+      // static IP
+      { .len = 4           , .p_value = &_static_config.ip      },
+      { .len = 4           , .p_value = &_static_config.gateway },
+      { .len = 4           , .p_value = &_static_config.subnet  },
   };
-  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
+  uint8_t para_count = 3;
+
+  if ( _static_config.ip && _static_config.gateway )
+  {
+    para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
+  }
 
   uint16_t resp_len = sizeof(wl_ap_info_t);
   _connected = sdep_n(SDEP_CMD_CONNECT, para_count, para_arr, &resp_len, &_ap_info);
 
 	return _connected;
+}
+
+/******************************************************************************/
+/*!
+    @brief Configure Static IP
+*/
+/******************************************************************************/
+bool AdafruitFeather::config (IPAddress ip, IPAddress gateway, IPAddress subnet)
+{
+  _static_config.ip      = (uint32_t) ip;
+  _static_config.gateway = (uint32_t) gateway;
+  _static_config.subnet  = (uint32_t) subnet;
+
+  return true;
 }
 
 /******************************************************************************/
@@ -410,7 +437,7 @@ bool AdafruitFeather::hostByName( const char* hostname, IPAddress& result)
   VERIFY(_connected);
 
   uint32_t ip_addr = 0;
-  VERIFY( sdep(SDEP_CMD_DNSLOOKUP, strlen(hostname), hostname, NULL, &ip_addr) );
+  VERIFY( sdep(SDEP_CMD_DNSLOOKUP, strlen(hostname)+1, hostname, NULL, &ip_addr) );
 
   result = ip_addr;
   return true;
@@ -529,7 +556,7 @@ bool AdafruitFeather::clearRootCA(void)
 
 /******************************************************************************/
 /*!
-    @brief  Set Root CA certificates in DER format. DER format is binary format,
+    @brief  Add Root CA certificates in DER format. DER format is binary format,
             and is the native format that Feather works with.
 
     @note   Feather works natively with DER (binary) format, therefore it will work

@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*!
-    @file     rng.h
+    @file     adafruit_twitter.h
     @author   hathach
 
     @section LICENSE
@@ -34,23 +34,48 @@
 */
 /**************************************************************************/
 
-#ifndef _RNG_H_
-#define _RNG_H_
+#ifndef _ADAFRUIT_TWITTER_H_
+#define _ADAFRUIT_TWITTER_H_
 
-#ifdef __cplusplus
- extern "C" {
-#endif
+#include <Arduino.h>
+#include <Client.h>
+#include <IPAddress.h>
+#include <adafruit_feather.h>
+#include <adafruit_http.h>
 
-#include "libmaple_types.h"
-#include "libmaple.h"
+class AdafruitTwitter :  public AdafruitSDEP
+{
+protected:
+  char const * _consumer_key;
+  char const * _consumer_secret;
+  char const * _token_access;
+  char const * _token_secret;
 
-uint32_t rng_u32(void);
-void     rng_base64(char buffer[], uint32_t size);
+  void reset(void);
 
+  void create_oauth_signature(char signature[], const char* http_method, const char* base_url,
+                              char const* oauth_para[][2]   , uint8_t oauth_count,
+                              char const* contents_para[][2], uint8_t contents_count);
+  void generate_oauth_authorization(char authorization[], const char* http_method, const char* base_url,
+                                    char const* contents_para[][2], uint8_t contents_count);
 
+  bool send_request(const char* http_method, const char* json_api, const char* authorization, char const* contents_para[][2], uint8_t contents_count);
 
-#ifdef __cplusplus
- }
-#endif
+public:
+  AdafruitTwitter(void);
 
-#endif /* _RNG_H_ */
+  bool begin(char const* consumer_key, char const* consumer_secret, char const* token_access, char const * token_secret);
+  bool stop(void);
+
+  bool tweet(char const* status);
+  bool directMessage(char const* screen_name, char const* text);
+
+  virtual void err_actions (bool print, bool halt)
+  {
+//    _http.err_actions(print, halt);
+    _err_print = print;
+    _err_halt  = halt;
+  }
+};
+
+#endif /* _ADAFRUIT_TWITTER_H_ */

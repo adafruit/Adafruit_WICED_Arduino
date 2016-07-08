@@ -55,8 +55,9 @@ class AdafruitTCP : public Client, public AdafruitSDEP
 {
 public:
   enum {
-    TCP_SOCKET_HANDLE_SIZE = 400, // need only (352+20) bytes, extra for reserved
-    TCP_TLS_CONTEXT_SIZE   = 2600 // need 2588 bytes, extra for reserved
+    TCP_SOCKET_HANDLE_SIZE = 400 , // need only 372 (352+20) bytes, extra for reserved
+    TCP_TLS_CONTEXT_SIZE   = 2600, // need 2588 bytes, extra for reserved
+    TCP_TLS_IDENTITY_SIZE  = 200 , // need 184 bytes, extra for reserved
   };
   typedef void* tcp_handle_t;
   typedef void (*tcpcallback_t)(void);
@@ -67,15 +68,19 @@ public:
 
   virtual operator bool() { return _tcp_handle != NULL; }
 
+  void     verbose                ( bool enable ) { _verbose = enable; }
   void     usePacketBuffering     ( bool enable ) { _packet_buffering = enable; }
   uint32_t getHandle              ( void        ) { return (uint32_t) _tcp_handle; }
+
   void     tlsRequireVerification (bool required) { _tls_verification = required; }
+  bool     tlsSetIdentity         (char const* private_key, uint8_t const* local_cert, uint16_t local_certlen);
 
   // Client API
   virtual int       connect    ( IPAddress ip, uint16_t port );
   virtual int       connect    ( const char * host, uint16_t port );
   virtual int       connectSSL ( IPAddress ip, uint16_t port );
   virtual int       connectSSL ( const char* host, uint16_t port );
+
   virtual uint8_t   connected  ( void );
   virtual void      stop       ( void );
   void              disconnect ( void ) { stop(); }
@@ -85,7 +90,7 @@ public:
   // Stream API
   virtual int       read       ( void );
   virtual int       read       ( uint8_t * buf, size_t size );
-  virtual size_t    write      ( uint8_t );
+  virtual size_t    write      ( uint8_t b );
   virtual size_t    write      ( const uint8_t *content, size_t len );
   virtual int       available  ( void );
   virtual int       peek       ( void );
@@ -105,9 +110,17 @@ public:
   friend err_t adafruit_tcp_disconnect_callback(void* socket, void* p_tcp);
 
 protected:
-  tcp_handle_t _tcp_handle;
-  void*        _tls_context;
-  bool         _tls_verification;
+  tcp_handle_t   _tcp_handle;
+
+  bool           _tls_verification;
+
+  void*          _tls_context;
+  void*          _tls_identity;
+
+  char const*    _tls_private_key;
+  const uint8_t* _tls_local_cert;
+  uint16_t       _tls_local_certlen;
+
   uint32_t     _bytesRead;
 
   uint32_t     _remote_ip;
@@ -126,6 +139,9 @@ protected:
   void install_callback ( void );
   void reset            ( void );
   void get_peer_info    ( void );
+
+private:
+  bool          _verbose;
 };
 
 #endif
