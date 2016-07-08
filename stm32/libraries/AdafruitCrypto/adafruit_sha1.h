@@ -72,6 +72,7 @@ public:
   bool updateHMAC(uint8_t const* input, uint32_t len);
   bool updateHMAC(char const* input)
   {
+//    Serial.print(input);
     return this->updateHMAC( (uint8_t const*) input, strlen(input));
   }
   bool stopHMAC(uint8_t output[20]);

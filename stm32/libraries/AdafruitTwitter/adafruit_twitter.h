@@ -53,6 +53,12 @@ protected:
 
   void reset(void);
 
+  void create_oauth_signature(char signature[], const char* http_method, const char* base_url,
+                              char const* oauth_para[][2]   , uint8_t oauth_count,
+                              char const* contents_para[][2], uint8_t contents_count);
+  void generate_oauth_authorization(char authorization[], const char* http_method, const char* base_url,
+                                    char const* contents_para[][2], uint8_t contents_count);
+
 public:
   AdafruitTwitter(void);
 
@@ -60,6 +66,7 @@ public:
   bool stop(void);
 
   bool tweet(char const* status);
+  bool directMessage(char const* screen_name, char const* text);
 
   virtual void err_actions (bool print, bool halt)
   {
