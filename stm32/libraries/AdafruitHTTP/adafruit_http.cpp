@@ -112,7 +112,7 @@ void AdafruitHTTP::sendHeaders(size_t content_len)
  */
 bool AdafruitHTTP::get(char const * host, char const *url)
 {
-  printf(HTTP_GET " %s " HTTP_VERSION, url); println();
+  printf(HTTP_METHOD_GET " %s " HTTP_VERSION, url); println();
   printf("Host: %s", host); println();
 
   sendHeaders(0);
@@ -145,7 +145,7 @@ bool AdafruitHTTP::get(char const *url)
  */
 bool AdafruitHTTP::post_internal(char const * host, char const *url, const char* keyvalues[][2], uint16_t count, bool url_encode)
 {
-  printf(HTTP_POST " %s " HTTP_VERSION, url); println();
+  printf(HTTP_METHOD_POST " %s " HTTP_VERSION, url); println();
   printf("Host: %s", host); println();
 
   // Determine the total data length
@@ -196,7 +196,7 @@ bool AdafruitHTTP::post_internal(char const * host, char const *url, const char*
  */
 bool AdafruitHTTP::postRaw(char const * host, char const *url, uint8_t const* raw_data, uint16_t len )
 {
-  printf(HTTP_POST " %s " HTTP_VERSION, url); println();
+  printf(HTTP_METHOD_POST " %s " HTTP_VERSION, url); println();
   printf("Host: %s", host); println();
 
   sendHeaders( len  );

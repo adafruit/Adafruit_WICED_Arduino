@@ -59,6 +59,8 @@ protected:
   void generate_oauth_authorization(char authorization[], const char* http_method, const char* base_url,
                                     char const* contents_para[][2], uint8_t contents_count);
 
+  bool send_request(const char* http_method, const char* json_api, const char* authorization, char const* contents_para[][2], uint8_t contents_count);
+
 public:
   AdafruitTwitter(void);
 

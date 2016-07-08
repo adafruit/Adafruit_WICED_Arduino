@@ -44,8 +44,8 @@
 
 #define ADAFRUIT_HTTP_MAX_HEADER  10
 
-#define HTTP_GET                "GET"
-#define HTTP_POST               "POST"
+#define HTTP_METHOD_GET         "GET"
+#define HTTP_METHOD_POST        "POST"
 #define HTTP_VERSION            "HTTP/1.1"
 
 #define HTTP_HEADER_URLENCODING "application/x-www-form-urlencoded"
@@ -154,6 +154,16 @@ public:
   {
     _server = host;
     return AdafruitTCP::connectSSL(host, port);
+  }
+
+  virtual void stop       ( void )
+  {
+    _packet_buffering = true;
+    _server           = NULL;
+    _verbose          = false;
+    this->clearHeaders();
+
+    return AdafruitTCP::stop();
   }
 
   virtual size_t    write      ( uint8_t b)

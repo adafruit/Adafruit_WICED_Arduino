@@ -87,6 +87,7 @@ bool AdafruitTwitter::stop(void)
   this->reset();
 }
 
+
 void AdafruitTwitter::create_oauth_signature(char signature[], const char* http_method, const char* base_url,
                                              char const* oauth_para[][2]   , uint8_t oauth_count,
                                              char const* contents_para[][2], uint8_t contents_count)
@@ -153,6 +154,7 @@ void AdafruitTwitter::create_oauth_signature(char signature[], const char* http_
   AdafruitHTTP::urlEncode(buffer2, signature, TWITTER_OAUTH_SIGNATURE_MAXLEN);
 }
 
+
 void AdafruitTwitter::generate_oauth_authorization(char authorization[], const char* http_method, const char* base_url,
                                                    char const* contents_para[][2], uint8_t contents_count)
 {
@@ -211,6 +213,38 @@ void AdafruitTwitter::generate_oauth_authorization(char authorization[], const c
   }
 }
 
+
+bool AdafruitTwitter::send_request(const char* http_method, const char* json_api, const char* authorization, char const* contents_para[][2], uint8_t contents_count)
+{
+  //------------- Send HTTP request -------------//
+  AdafruitHTTP _http;
+  _http.err_actions(_err_print, _err_halt);
+//  _http.verbose(true);
+
+  _http.connectSSL(TWITTER_API_HOST, TWITTER_API_PORT);
+
+  // Setup the HTTP request with any required header entries
+  _http.addHeader("Accept", "*/*");
+  _http.addHeader("Connection", "close");
+  _http.addHeader("User-Agent", TWITTER_AGENT);
+  _http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+
+  _http.addHeader("Authorization", authorization);
+
+  if ( strcmp(HTTP_METHOD_POST, http_method) == 0 )
+  {
+    _http.post(json_api, contents_para, contents_count);
+  }else
+  {
+
+  }
+
+  _http.stop();
+
+  return true;
+}
+
+
 bool AdafruitTwitter::directMessage(char const* screen_name, char const* text)
 {
   // Data contents: ASSUME key are already in urlencoded
@@ -226,31 +260,15 @@ bool AdafruitTwitter::directMessage(char const* screen_name, char const* text)
 #endif
 
   char authorization[512];
-  generate_oauth_authorization(authorization, HTTP_POST, "https://" TWITTER_API_HOST TWITTER_JSON_DIRECTMESSAGE_NEW,
+  generate_oauth_authorization(authorization, HTTP_METHOD_POST, "https://" TWITTER_API_HOST TWITTER_JSON_DIRECTMESSAGE_NEW,
                                contents_para, contents_count);
 
 #if TWITTER_DEBUG
   Serial.println();
   Serial.println(authorization);
 #else
-  //------------- Send HTTP request -------------//
-  AdafruitHTTP _http;
-  _http.err_actions(_err_print, _err_halt);
-  _http.verbose(true);
-
-  _http.connectSSL(TWITTER_API_HOST, TWITTER_API_PORT);
-
-  // Setup the HTTP request with any required header entries
-  _http.addHeader("Accept", "*/*");
-  _http.addHeader("Connection", "close");
-  _http.addHeader("User-Agent", TWITTER_AGENT);
-  _http.addHeader("Content-Type", "application/x-www-form-urlencoded");
-
-  _http.addHeader("Authorization", authorization);
-//  _http.post(TWITTER_JSON_DIRECTMESSAGE_NEW, "status", status);
-
-  _http.disconnect();
-  _http.clearHeaders();
+  // Send HTTP request
+  send_request(HTTP_METHOD_POST, TWITTER_JSON_DIRECTMESSAGE_NEW, authorization, contents_para, contents_count);
 #endif
 
   return true;
@@ -266,30 +284,14 @@ bool AdafruitTwitter::tweet(char const* status)
   uint8_t contents_count = sizeof(contents_para) / sizeof(contents_para[0]);
 
   char authorization[512];
-  generate_oauth_authorization(authorization, HTTP_POST, "https://" TWITTER_API_HOST TWITTER_JSON_UPDATE,
+  generate_oauth_authorization(authorization, HTTP_METHOD_POST, "https://" TWITTER_API_HOST TWITTER_JSON_UPDATE,
                                contents_para, contents_count);
 #if TWITTER_DEBUG
   Serial.println();
   Serial.println(authorization);
 #else
-  //------------- Send HTTP request -------------//
-  AdafruitHTTP _http;
-  _http.err_actions(_err_print, _err_halt);
-  _http.verbose(true);
-
-  _http.connectSSL(TWITTER_API_HOST, TWITTER_API_PORT);
-
-  // Setup the HTTP request with any required header entries
-  _http.addHeader("Accept", "*/*");
-  _http.addHeader("Connection", "close");
-  _http.addHeader("User-Agent", TWITTER_AGENT);
-  _http.addHeader("Content-Type", "application/x-www-form-urlencoded");
-
-  _http.addHeader("Authorization", authorization);
-  _http.post(TWITTER_JSON_UPDATE, "status", status);
-
-  _http.disconnect();
-  _http.clearHeaders();
+  // Send HTTP request
+  send_request(HTTP_METHOD_POST, TWITTER_JSON_UPDATE, authorization, contents_para, contents_count);
 #endif
 
   return true;
