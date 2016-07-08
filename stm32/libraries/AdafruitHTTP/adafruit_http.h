@@ -44,6 +44,13 @@
 
 #define ADAFRUIT_HTTP_MAX_HEADER  10
 
+#define HTTP_GET                "GET"
+#define HTTP_POST               "POST"
+#define HTTP_VERSION            "HTTP/1.1"
+
+#define HTTP_HEADER_URLENCODING "application/x-www-form-urlencoded"
+
+
 class AdafruitHTTP : public AdafruitTCP
 {
 protected:
@@ -57,7 +64,7 @@ protected:
 
   void sendHeaders(size_t content_len);
 
-  bool post_internal(char const * host, char const *url, char const* data_keys[], char const* data_values[], uint16_t data_count, bool url_encode);
+  bool post_internal(char const * host, char const *url, const char* keyvalues[][2], uint16_t count, bool url_encode);
 
 private:
   bool _verbose;
@@ -75,19 +82,20 @@ public:
   bool get(char const *url);
 
   // POST with urlencoding data
-  bool post(char const * host, char const *url, char const* data_keys[], char const* data_values[], uint16_t data_count)
+  bool post(char const *host, char const *url, const char* keyvalues[][2], uint16_t count)
   {
-    return post_internal(host, url, data_keys, data_values, data_count, true);
+    return post_internal(host, url, keyvalues, count, true);
   }
 
   bool post(char const * host, char const *url, char const* key, char const* value)
   {
-    return post_internal(host, url, &key, &value, 1, true);
+    const char* keyvalues[][2] = { key, value };
+    return post_internal(host, url, keyvalues, 1, true);
   }
 
-  bool post(char const *url, char const* data_keys[], char const* data_values[], uint16_t data_count)
+  bool post(char const *url, const char* keyvalues[][2], uint16_t count)
   {
-    return post_internal(_server, url, data_keys, data_values, data_count, true);
+    return post(_server, url, keyvalues, count);
   }
 
   bool post(char const *url, char const* key, char const* value)
@@ -95,20 +103,22 @@ public:
     return post(_server, url, key, value);
   }
 
+
   // POST without urlencoded
-  bool postWithoutURLencoded(char const * host, char const *url, char const* data_keys[], char const* data_values[], uint16_t data_count)
+  bool postWithoutURLencoded(char const * host, char const *url, const char* keyvalues[][2], uint16_t count)
   {
-    return post_internal(host, url, data_keys, data_values, data_count, false);
+    return post_internal(host, url, keyvalues, count, false);
   }
 
   bool postWithoutURLencoded(char const * host, char const *url, char const* key, char const* value)
   {
-    return post_internal(host, url, &key, &value, 1, false);
+    const char* keyvalues[][2] = { key, value };
+    return post_internal(host, url, keyvalues, 1, false);
   }
 
-  bool postWithoutURLencoded(char const *url, char const* data_keys[], char const* data_values[], uint16_t data_count)
+  bool postWithoutURLencoded(char const *url, const char* keyvalues[][2], uint16_t count)
   {
-    return post_internal(_server, url, data_keys, data_values, data_count, false);
+    return postWithoutURLencoded(_server, url, keyvalues, count);
   }
 
   bool postWithoutURLencoded(char const *url, char const* key, char const* value)
@@ -158,13 +168,17 @@ public:
   }
 
   static uint16_t urlEncodeLength(const char* input);
-  static uint16_t urlEncode(const char* input, char* output, uint16_t size);
-//  static uint16_t urlDecode(const char* input, char* output, uint16_t size);
+  static uint16_t urlEncode(const char* input, char* output, uint16_t bufsize);
+#if 0
+  static uint16_t urlEncode(const char* keys[], const char* values[], uint16_t count, char* output, uint16_t bufsize);
+  static uint16_t urlEncode(const char* keys_values[][2], uint16_t count, char* output, uint16_t bufsize);
+#endif
+//  static uint16_t urlDecode(const char* input, char* output, uint16_t bufsize);
 
-  static uint16_t base64Encode(const uint8_t* input, uint16_t inputlen, char*    output, uint16_t size);
-  static uint16_t base64Encode(const char* input   , uint16_t inputlen, char*    output, uint16_t size)
+  static uint16_t base64Encode(const uint8_t* input, uint16_t inputlen, char* output, uint16_t bufsize);
+  static uint16_t base64Encode(const char* input   , uint16_t inputlen, char* output, uint16_t bufsize)
   {
-    return base64Encode( (const uint8_t*) input, inputlen, output, size);
+    return base64Encode( (const uint8_t*) input, inputlen, output, bufsize);
   }
 
 //  static uint16_t base64Decode(const char   * input, uint16_t inputlen, uint8_t* output, uint16_t size);
