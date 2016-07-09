@@ -79,7 +79,7 @@ void setup()
   Twitter.err_actions(true, true);
 
   Serial.print("Sending Direct Messsage: " DM_MESSAGE "to \"" DM_SCREENNAME "\" ... ");
-  Twitter.directMessage(DM_SCREENNAME, DM_MESSAGE);
+  Twitter.sendDirectMessage(DM_SCREENNAME, DM_MESSAGE);
   Serial.println("OK");
 
   Twitter.stop();

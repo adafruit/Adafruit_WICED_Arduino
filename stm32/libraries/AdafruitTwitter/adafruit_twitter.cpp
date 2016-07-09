@@ -245,7 +245,7 @@ bool AdafruitTwitter::send_request(const char* http_method, const char* json_api
 }
 
 
-bool AdafruitTwitter::directMessage(char const* screen_name, char const* text)
+bool AdafruitTwitter::sendDirectMessage(char const* screen_name, char const* text)
 {
   // Data contents: ASSUME key are already in urlencoded
   char const* contents_para[][2] =
