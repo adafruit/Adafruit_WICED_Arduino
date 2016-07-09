@@ -68,7 +68,7 @@ public:
   bool stop(void);
 
   bool tweet(char const* status);
-  bool directMessage(char const* screen_name, char const* text);
+  bool sendDirectMessage(char const* screen_name, char const* text);
 
   virtual void err_actions (bool print, bool halt)
   {
