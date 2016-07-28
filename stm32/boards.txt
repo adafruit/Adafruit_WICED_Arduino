@@ -56,11 +56,11 @@ feather.menu.section.featherlib.upload.maximum_size=851968
 #feather.menu.section.featherlib.upload.ram.maximum_size=114688
 #feather.menu.section.featherlib.upload.flash.maximum_size=1048576
 
-## Feather Lib (Beta) section
+## Feather Lib (Debug) section
 ## -------------------------
-feather.menu.section.featherlib_beta=Feather Lib (Beta)
+feather.menu.section.featherlib_beta=Feather Lib (Debug)
 feather.menu.section.featherlib_beta.upload.subcommand=featherlib_upgrade
-feather.menu.section.featherlib_beta.upload.binfile={runtime.platform.path}/featherlib/beta/featherlib.bin
+feather.menu.section.featherlib_beta.upload.binfile={runtime.platform.path}/featherlib/debug/featherlib.bin
 feather.menu.section.featherlib_beta.upload.address=0x08010000
 feather.menu.section.featherlib_beta.upload.maximum_size=851968
 #feather.menu.section.featherlib_beta.upload.ram.maximum_size=114688
