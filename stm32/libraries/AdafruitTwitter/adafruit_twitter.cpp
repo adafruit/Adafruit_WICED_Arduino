@@ -258,25 +258,29 @@ void AdafruitTwitter::create_oauth_signature(char signature[], const char* http_
   sha1.updateHMAC("&");
 
   // HMAC Oauth parameters (ASSUME key and values are already in urlencoded)
-  for(uint8_t i=0; i<oauth_count; i++)
-  {
-    // skip oauth_signature
-    if ( oauth_para[i][1] )
-    {
-      sha1KeyValue(sha1, oauth_para[i], false);
-      sha1.updateHMAC(URLENCODE_AMPERSAND);
-    }
-  }
-
   // HMAC data contents (ASSUME key are already in urlencoded)
   // main data's value are double urlencoded (since it is urlencoded when passing to HTTP Request)
-  for(uint8_t i=0; i<contents_count; i++)
+  uint8_t oauth_idx = 0;
+  uint8_t content_idx = 0;
+  for(uint8_t i=0; i<oauth_count + contents_count; i++)
   {
-    // skip oauth_signature
-    if ( contents_para[i][1] )
+    // Sort by keys
+    if ( (oauth_idx < oauth_count) && strcmp(oauth_para[oauth_idx][0], contents_para[content_idx][0]) < 0 )
     {
-      sha1KeyValue(sha1, contents_para[i], true);
-      if (i != contents_count-1) sha1.updateHMAC(URLENCODE_AMPERSAND);
+      // Hashing Oauth
+      // skip oauth_signature
+      if ( oauth_para[oauth_idx][1] )
+      {
+        if (i != 0) sha1.updateHMAC(URLENCODE_AMPERSAND);
+        sha1KeyValue(sha1, oauth_para[oauth_idx], false);
+      }
+      oauth_idx++;
+    }else
+    {
+      // Hashing HTTP contents data
+      if (i != 0) sha1.updateHMAC(URLENCODE_AMPERSAND);
+      sha1KeyValue(sha1, contents_para[content_idx], true);
+      content_idx++;
     }
   }
 
