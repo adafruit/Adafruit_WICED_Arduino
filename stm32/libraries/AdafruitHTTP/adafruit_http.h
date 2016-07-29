@@ -63,6 +63,7 @@ protected:
   }_headers[ADAFRUIT_HTTP_MAX_HEADER];
 
   void sendHeaders(size_t content_len);
+  void send_keyvalues_data(const char* keyvalues[][2], uint16_t count, bool url_encode);
 
   bool post_internal(char const * host, char const *url, const char* keyvalues[][2], uint16_t count, bool url_encode);
 
@@ -78,9 +79,9 @@ public:
   bool clearHeaders(void);
 
   // GET
-//  bool get(char const *host, char const *url, const char* keyvalues[][2], uint16_t count);
+  bool get(char const *host, char const *url, const char* keyvalues[][2], uint16_t count);
   bool get(char const *host, char const *url);
-//  bool get(char const *url, const char* keyvalues[][2], uint16_t count);
+  bool get(char const *url, const char* keyvalues[][2], uint16_t count);
   bool get(char const *url);
 
   //------------- POST with urlencoding data -------------//

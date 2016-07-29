@@ -76,6 +76,8 @@ bool AdafruitHTTP::clearHeaders(void)
   {
     _headers[i].name = _headers[i].value = NULL;
   }
+
+  return true;
 }
 
 /**
@@ -144,30 +146,36 @@ size_t AdafruitHTTP::write( const uint8_t *content, size_t len )
 //--------------------------------------------------------------------+
 // GET
 //--------------------------------------------------------------------+
-/**
- *
- * @param host
- * @param url
- * @return
- */
-bool AdafruitHTTP::get(char const * host, char const *url)
+bool AdafruitHTTP::get(char const *host, char const *url, const char* keyvalues[][2], uint16_t count)
 {
-  printf(HTTP_METHOD_GET " %s " HTTP_VERSION, url); println();
+  printf(HTTP_METHOD_GET " %s", url);
+  if ( count )
+  {
+    print('?');
+    send_keyvalues_data(keyvalues, count, true);
+  }
+  println(" " HTTP_VERSION);
   printf("Host: %s", host); println();
 
   sendHeaders(0);
   flush();
+
+  return true;
 }
 
-/**
- *
- * @param url
- * @return
- */
+bool AdafruitHTTP::get(char const *url, const char* keyvalues[][2], uint16_t count)
+{
+  return get(_server, url, keyvalues, count);
+}
+
+bool AdafruitHTTP::get(char const * host, char const *url)
+{
+  return this->get(host, url, NULL, 0);
+}
+
 bool AdafruitHTTP::get(char const *url)
 {
-  if(_server == NULL) return false;
-  this->get(_server, url);
+  return this->get(_server, url, NULL, 0);
 }
 
 //--------------------------------------------------------------------+
@@ -255,6 +263,8 @@ bool AdafruitHTTP::postRaw(char const * host, char const *url, uint8_t const* ra
   write(raw_data, len);
 
   flush();
+
+  return true;
 }
 
 //--------------------------------------------------------------------+
@@ -289,6 +299,16 @@ bool AdafruitHTTP::post_internal(char const * host, char const *url, const char*
   sendHeaders( total_len );
 
   // send data
+  send_keyvalues_data(keyvalues, count, url_encode);
+
+  println();
+  flush();
+
+  return true;
+}
+
+void AdafruitHTTP::send_keyvalues_data(const char* keyvalues[][2], uint16_t count, bool url_encode)
+{
   for(uint16_t i = 0; i<count; i++)
   {
     if (i != 0) print("&");
@@ -302,6 +322,7 @@ bool AdafruitHTTP::post_internal(char const * host, char const *url, const char*
     {
       uint16_t bufsize = urlEncodeLength(value)+1;
       char* encoded_value = (char*) malloc(bufsize);
+
       urlEncode(value, encoded_value, bufsize);
       print(encoded_value);
       free(encoded_value);
@@ -310,9 +331,6 @@ bool AdafruitHTTP::post_internal(char const * host, char const *url, const char*
       print(value);
     }
   }
-
-  println();
-  flush();
 }
 
 //--------------------------------------------------------------------+
@@ -349,12 +367,6 @@ uint16_t AdafruitHTTP::urlEncode(const char* input, char* output, uint16_t bufsi
       *output++ = ch;
       len++;
     }
-//    Encode space to '+' does not work with Twitter signature
-//    else if ( ch == ' ')
-//    {
-//      *output++ = '+';
-//      len++;
-//    }
     else
     {
       *output++ = '%';
