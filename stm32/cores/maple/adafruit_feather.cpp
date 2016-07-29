@@ -64,13 +64,13 @@ AdafruitFeather::AdafruitFeather(void)
   _static_config.gateway = 0;
   _static_config.subnet  = 0;
 
-  uint8_t boot_version[4] = { U32_TO_U8S_BE(FEATHERLIB_BOOTLOADER_VERSION) };
+  uint8_t boot_version[4] = { U32_BYTES_BE(FEATHERLIB_BOOTLOADER_VERSION) };
 	sprintf(_boot_version, "%d.%d.%d", boot_version[0], boot_version[1], boot_version[2]);
 
-  uint8_t fw_version[4] = { U32_TO_U8S_BE(FEATHERLIB->firmware_version) };
+  uint8_t fw_version[4] = { U32_BYTES_BE(FEATHERLIB->firmware_version) };
 	sprintf(_fw_version, "%d.%d.%d", fw_version[0], fw_version[1], fw_version[2]);
 
-	uint8_t sdk_version[4] = { U32_TO_U8S_BE(FEATHERLIB->sdk_version) };
+	uint8_t sdk_version[4] = { U32_BYTES_BE(FEATHERLIB->sdk_version) };
 	sprintf(_sdk_version, "%d.%d.%d", sdk_version[0], sdk_version[1], sdk_version[2]);
 }
 
@@ -678,17 +678,25 @@ uint32_t AdafruitFeather::getUtcTime(void)
 void AdafruitFeather::printVersions(Print& p)
 {
   p.print("Bootloader  : ");
-  p.println(Feather.bootloaderVersion());
+  p.println(this->_boot_version);
 
   p.print("WICED SDK   : ");
-  p.println(Feather.sdkVersion());
+  p.println(this->_sdk_version);
 
   p.print("FeatherLib  : ");
-  p.println(Feather.firmwareVersion());
+  p.println(this->_fw_version);
 
   p.print("Arduino API : ");
   p.println(Feather.arduinoVersion());
   p.println();
+
+  // warns if Arduino and Featherlib version is not matched
+  if ( strcmp(Feather.arduinoVersion(), this->_fw_version) )
+  {
+    p.println("WARNING: Featherlib & Arduino library version are not matched");
+    p.println("Please update Featherlib or Arduino library if possible");
+    p.println();
+  }
 }
 
 /******************************************************************************/

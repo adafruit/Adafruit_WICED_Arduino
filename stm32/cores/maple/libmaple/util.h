@@ -60,22 +60,22 @@ extern "C"{
 //--------------------------------------------------------------------+
 // MACROS
 //--------------------------------------------------------------------+
-#define U16_HIGH_U8(u16)            ((uint8_t) (((u16) >> 8) & 0x00ff))
-#define U16_LOW_U8(u16)             ((uint8_t) ((u16)       & 0x00ff))
-#define U16_TO_U8S_BE(u16)          U16_HIGH_U8(u16), U16_LOW_U8(u16)
-#define U16_TO_U8S_LE(u16)          U16_LOW_U8(u16), U16_HIGH_U8(u16)
+#define U16_HIGH(u16)              ((uint8_t) (((u16) >> 8) & 0x00ff))
+#define U16_LOW(u16)               ((uint8_t) ((u16)       & 0x00ff))
+#define U16_BYTES_BE(u16)           U16_HIGH(u16), U16_LOW(u16)
+#define U16_BYTES_LE(u16)           U16_LOW(u16), U16_HIGH(u16)
 
-#define U32_B1_U8(u32)              ((uint8_t) (((u32) >> 24) & 0x000000ff)) // MSB
-#define U32_B2_U8(u32)              ((uint8_t) (((u32) >> 16) & 0x000000ff))
-#define U32_B3_U8(u32)              ((uint8_t) (((u32) >>  8) & 0x000000ff))
-#define U32_B4_U8(u32)              ((uint8_t) ((u32)         & 0x000000ff)) // LSB
+#define U32_BYTE1(u32)              ((uint8_t) (((u32) >> 24) & 0x000000ff)) // MSB
+#define U32_BYTE2(u32)              ((uint8_t) (((u32) >> 16) & 0x000000ff))
+#define U32_BYTE3(u32)              ((uint8_t) (((u32) >>  8) & 0x000000ff))
+#define U32_BYTE4(u32)              ((uint8_t) ((u32)         & 0x000000ff)) // LSB
 
 #define U32_FROM_U8(b1, b2, b3, b4) ((uint32_t) (((b1) << 24) + ((b2) << 16) + ((b3) << 8) + (b4)))
 #define U32_FROM_U16(high, low)     ((uint32_t) (((high) << 16) | (low)))
 #define U16_FROM_U8(high, low)      ((uint32_t) (((high) << 8) | (low)))
 
-#define U32_TO_U8S_BE(u32)          U32_B1_U8(u32), U32_B2_U8(u32), U32_B3_U8(u32), U32_B4_U8(u32)
-#define U32_TO_U8S(u32)             U32_B4_U8(u32), U32_B3_U8(u32), U32_B2_U8(u32), U32_B1_U8(u32)
+#define U32_BYTES_BE(u32)            U32_BYTE1(u32), U32_BYTE2(u32), U32_BYTE3(u32), U32_BYTE4(u32)
+#define U32_BYTES_LE(u32)            U32_BYTE4(u32), U32_BYTE3(u32), U32_BYTE2(u32), U32_BYTE1(u32)
 
 #define BIN8(x)                     ((uint8_t)  (0b##x))
 #define BIN16(b1, b2)               ((uint16_t) (0b##b1##b2))
@@ -85,6 +85,18 @@ extern "C"{
 #define __swap16(u16)  __builtin_bswap16(u16)  ///< built-in function to swap Endian of 16-bit number
 
 #define memclr(buffer, size)  memset(buffer, 0, size)
+#define varclr(_var)          memclr(&_var, sizeof(_var))
+#define arrcount(_arr)       ( sizeof(_arr) / sizeof(_arr[0]) )
+
+#define maxof(a,b) \
+    ({ typeof (a) _a = (a); \
+       typeof (b) _b = (b); \
+       _a > _b ? _a : _b; })
+
+#define minof(a,b) \
+    ({ typeof (a) _a = (a); \
+       typeof (b) _b = (b); \
+       _a < _b ? _a : _b; })
 
 /*
  * Failure routines
