@@ -325,6 +325,7 @@ void AdafruitHTTP::send_keyvalues_data(const char* keyvalues[][2], uint16_t coun
 
       urlEncode(value, encoded_value, bufsize);
       print(encoded_value);
+
       free(encoded_value);
     }else
     {

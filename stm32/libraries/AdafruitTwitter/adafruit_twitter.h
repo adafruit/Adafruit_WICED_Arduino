@@ -43,6 +43,14 @@
 #include <adafruit_feather.h>
 #include <adafruit_http.h>
 
+struct TwitterDM
+{
+  uint64_t id;
+  uint32_t utc;
+  const char * username;
+  const char * message;
+};
+
 class AdafruitTwitter :  public AdafruitSDEP
 {
 protected:
@@ -59,7 +67,7 @@ protected:
   void generate_oauth_authorization(char authorization[], const char* http_method, const char* base_url,
                                     char const* contents_para[][2], uint8_t contents_count);
 
-  bool send_request(const char* http_method, const char* json_api, const char* authorization, char const* contents_para[][2], uint8_t contents_count);
+  bool send_post_request(const char* json_api, const char* authorization, char const* contents_para[][2], uint8_t contents_count);
 
 public:
   AdafruitTwitter(void);
@@ -68,14 +76,12 @@ public:
   bool stop(void);
 
   bool tweet(char const* status);
-  bool sendDirectMessage(char const* screen_name, char const* text);
+//  bool getHomeTimeline(void);
+//  bool getUserTimeline(void);
 
-  virtual void err_actions (bool print, bool halt)
-  {
-//    _http.err_actions(print, halt);
-    _err_print = print;
-    _err_halt  = halt;
-  }
+  bool sendDirectMessage(char const* username, char const* text);
+  bool getDirectMessage(TwitterDM* dm, uint8_t count, uint64_t since_id);
+  bool getDirectMessage(TwitterDM* dm);
 };
 
 #endif /* _ADAFRUIT_TWITTER_H_ */
