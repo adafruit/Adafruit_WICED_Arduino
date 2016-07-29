@@ -104,6 +104,46 @@ void AdafruitHTTP::sendHeaders(size_t content_len)
   println(); // End of header
 }
 
+//--------------------------------------------------------------------+
+// TCP API INTERFACE
+//--------------------------------------------------------------------+
+int AdafruitHTTP::connect( const char * host, uint16_t port )
+{
+  _server = host;
+  return AdafruitTCP::connect(host, port);
+}
+
+int AdafruitHTTP::connectSSL( const char* host, uint16_t port )
+{
+  _server = host;
+  return AdafruitTCP::connectSSL(host, port);
+}
+
+void AdafruitHTTP::stop( void )
+{
+  _packet_buffering = true;
+  _server           = NULL;
+  _verbose          = false;
+  this->clearHeaders();
+
+  return AdafruitTCP::stop();
+}
+
+size_t AdafruitHTTP::write( uint8_t b)
+{
+  if (_verbose) Serial.write(b);
+  return AdafruitTCP::write(b);
+}
+
+size_t AdafruitHTTP::write( const uint8_t *content, size_t len )
+{
+  if (_verbose) Serial.write(content, len);
+  return AdafruitTCP::write(content, len);
+}
+
+//--------------------------------------------------------------------+
+// GET
+//--------------------------------------------------------------------+
 /**
  *
  * @param host
@@ -127,10 +167,99 @@ bool AdafruitHTTP::get(char const * host, char const *url)
 bool AdafruitHTTP::get(char const *url)
 {
   if(_server == NULL) return false;
-
   this->get(_server, url);
 }
 
+//--------------------------------------------------------------------+
+// POST WITH URLENCODING DATA
+//--------------------------------------------------------------------+
+bool AdafruitHTTP::post(char const *host, char const *url, const char* keyvalues[][2], uint16_t count)
+{
+  return post_internal(host, url, keyvalues, count, true);
+}
+
+bool AdafruitHTTP::post(char const * host, char const *url, char const* key, char const* value)
+{
+  const char* keyvalues[][2] = { key, value };
+  return post_internal(host, url, keyvalues, 1, true);
+}
+
+bool AdafruitHTTP::post(char const *url, const char* keyvalues[][2], uint16_t count)
+{
+  return post(_server, url, keyvalues, count);
+}
+
+bool AdafruitHTTP::post(char const *url, char const* key, char const* value)
+{
+  return post(_server, url, key, value);
+}
+
+//--------------------------------------------------------------------+
+// POST WITHOUT URLENCODING DATA
+//--------------------------------------------------------------------+
+bool AdafruitHTTP::postWithoutURLencoded(char const * host, char const *url, const char* keyvalues[][2], uint16_t count)
+{
+  return post_internal(host, url, keyvalues, count, false);
+}
+
+bool AdafruitHTTP::postWithoutURLencoded(char const * host, char const *url, char const* key, char const* value)
+{
+  const char* keyvalues[][2] = { key, value };
+  return post_internal(host, url, keyvalues, 1, false);
+}
+
+bool AdafruitHTTP::postWithoutURLencoded(char const *url, const char* keyvalues[][2], uint16_t count)
+{
+  return postWithoutURLencoded(_server, url, keyvalues, count);
+}
+
+bool AdafruitHTTP::postWithoutURLencoded(char const *url, char const* key, char const* value)
+{
+  return postWithoutURLencoded(_server, url, key, value);
+}
+
+//--------------------------------------------------------------------+
+// POST WITH RAW DATA
+//--------------------------------------------------------------------+
+bool AdafruitHTTP::postRaw(char const * host, char const *url, char const* raw_data)
+{
+  return postRaw(host, url, (uint8_t const*) raw_data, strlen(raw_data));
+}
+
+bool AdafruitHTTP::postRaw(char const *url, uint8_t const* raw_data, uint16_t len )
+{
+  return postRaw(_server, url, raw_data, len);
+}
+
+bool AdafruitHTTP::postRaw(char const *url, char const* raw_data)
+{
+  return postRaw(url, (uint8_t const*) raw_data, strlen(raw_data));
+}
+
+/**
+ * POST with raw data useful for binary POST
+ * @param host
+ * @param url
+ * @param raw_data
+ * @param len
+ * @return
+ */
+bool AdafruitHTTP::postRaw(char const * host, char const *url, uint8_t const* raw_data, uint16_t len)
+{
+  printf(HTTP_METHOD_POST " %s " HTTP_VERSION, url); println();
+  printf("Host: %s", host); println();
+
+  sendHeaders( len  );
+
+  // send data
+  write(raw_data, len);
+
+  flush();
+}
+
+//--------------------------------------------------------------------+
+//
+//--------------------------------------------------------------------+
 /**
  *
  * @param host
@@ -183,27 +312,6 @@ bool AdafruitHTTP::post_internal(char const * host, char const *url, const char*
   }
 
   println();
-  flush();
-}
-
-/**
- * POST with raw data useful for binary POST
- * @param host
- * @param url
- * @param raw_data
- * @param len
- * @return
- */
-bool AdafruitHTTP::postRaw(char const * host, char const *url, uint8_t const* raw_data, uint16_t len )
-{
-  printf(HTTP_METHOD_POST " %s " HTTP_VERSION, url); println();
-  printf("Host: %s", host); println();
-
-  sendHeaders( len  );
-
-  // send data
-  write(raw_data, len);
-
   flush();
 }
 

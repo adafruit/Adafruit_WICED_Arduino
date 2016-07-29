@@ -78,105 +78,37 @@ public:
   bool clearHeaders(void);
 
   // GET
-  bool get(char const * host, char const *url);
+//  bool get(char const *host, char const *url, const char* keyvalues[][2], uint16_t count);
+  bool get(char const *host, char const *url);
+//  bool get(char const *url, const char* keyvalues[][2], uint16_t count);
   bool get(char const *url);
 
-  // POST with urlencoding data
-  bool post(char const *host, char const *url, const char* keyvalues[][2], uint16_t count)
-  {
-    return post_internal(host, url, keyvalues, count, true);
-  }
+  //------------- POST with urlencoding data -------------//
+  bool post(char const *host, char const *url, const char* keyvalues[][2], uint16_t count);
+  bool post(char const *host, char const *url, char const* key, char const* value);
+  bool post(char const *url, const char* keyvalues[][2], uint16_t count);
+  bool post(char const *url, char const* key, char const* value);
 
-  bool post(char const * host, char const *url, char const* key, char const* value)
-  {
-    const char* keyvalues[][2] = { key, value };
-    return post_internal(host, url, keyvalues, 1, true);
-  }
+  //------------- POST without urlencoding data -------------//
+  bool postWithoutURLencoded(char const *host, char const *url, const char* keyvalues[][2], uint16_t count);
+  bool postWithoutURLencoded(char const *host, char const *url, char const* key, char const* value);
+  bool postWithoutURLencoded(char const *url, const char* keyvalues[][2], uint16_t count);
+  bool postWithoutURLencoded(char const *url, char const* key, char const* value);
 
-  bool post(char const *url, const char* keyvalues[][2], uint16_t count)
-  {
-    return post(_server, url, keyvalues, count);
-  }
+  //------------- POST with Raw data, useful with binary -------------//
+  bool postRaw(char const *host, char const *url, uint8_t const* raw_data, uint16_t len);
+  bool postRaw(char const *host, char const *url, char const* raw_data);
+  bool postRaw(char const *url, uint8_t const* raw_data, uint16_t len );
+  bool postRaw(char const *url, char const* raw_data);
 
-  bool post(char const *url, char const* key, char const* value)
-  {
-    return post(_server, url, key, value);
-  }
+  //------------- TCP API -------------//
+  virtual int    connect    ( const char *host, uint16_t port );
+  virtual int    connectSSL ( const char *host, uint16_t port );
+  virtual void   stop       ( void );
+  virtual size_t write      ( uint8_t b);
+  virtual size_t write      ( const uint8_t *content, size_t len );
 
-
-  // POST without urlencoded
-  bool postWithoutURLencoded(char const * host, char const *url, const char* keyvalues[][2], uint16_t count)
-  {
-    return post_internal(host, url, keyvalues, count, false);
-  }
-
-  bool postWithoutURLencoded(char const * host, char const *url, char const* key, char const* value)
-  {
-    const char* keyvalues[][2] = { key, value };
-    return post_internal(host, url, keyvalues, 1, false);
-  }
-
-  bool postWithoutURLencoded(char const *url, const char* keyvalues[][2], uint16_t count)
-  {
-    return postWithoutURLencoded(_server, url, keyvalues, count);
-  }
-
-  bool postWithoutURLencoded(char const *url, char const* key, char const* value)
-  {
-    return postWithoutURLencoded(_server, url, key, value);
-  }
-
-  // POST with Raw data, useful with binary
-  bool postRaw(char const * host, char const *url, uint8_t const* raw_data, uint16_t len );
-
-  bool postRaw(char const * host, char const *url, char const* raw_data)
-  {
-    return postRaw(host, url, (uint8_t const*) raw_data, strlen(raw_data));
-  }
-
-  bool postRaw(char const *url, uint8_t const* raw_data, uint16_t len )
-  {
-    return postRaw(_server, url, raw_data, len);
-  }
-
-  bool postRaw(char const *url, char const* raw_data)
-  {
-    return postRaw(url, (uint8_t const*) raw_data, strlen(raw_data));
-  }
-
-  // TCP API
-  virtual int connect    ( const char * host, uint16_t port )
-  {
-    _server = host;
-    return AdafruitTCP::connect(host, port);
-  }
-  virtual int connectSSL ( const char* host, uint16_t port )
-  {
-    _server = host;
-    return AdafruitTCP::connectSSL(host, port);
-  }
-
-  virtual void stop       ( void )
-  {
-    _packet_buffering = true;
-    _server           = NULL;
-    _verbose          = false;
-    this->clearHeaders();
-
-    return AdafruitTCP::stop();
-  }
-
-  virtual size_t    write      ( uint8_t b)
-  {
-    if (_verbose) Serial.write(b);
-    return AdafruitTCP::write(b);
-  }
-  virtual size_t    write      ( const uint8_t *content, size_t len )
-  {
-    if (_verbose) Serial.write(content, len);
-    return AdafruitTCP::write(content, len);
-  }
-
+  //------------- Base64 & URL Encoding -------------//
   static uint16_t urlEncodeLength(const char* input);
   static uint16_t urlEncode(const char* input, char* output, uint16_t bufsize);
 #if 0
