@@ -9,7 +9,7 @@
 AdafruitHTTP	KEYWORD1
 
 #######################################
-# AdafruitHTTP Methods and Functions (KEYWORD2)
+# Methods and Functions (KEYWORD2)
 #######################################
 
 addHeader	KEYWORD2
@@ -18,11 +18,10 @@ get	KEYWORD2
 post	KEYWORD2
 postWithoutURLencoded	KEYWORD2
 postRaw	KEYWORD2
+
 urlEncodeLength	KEYWORD2
 urlEncode	KEYWORD2
 urlDecode	KEYWORD2
-base64Encode	KEYWORD2
-base64Decode	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

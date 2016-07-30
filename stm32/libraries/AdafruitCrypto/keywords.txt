@@ -6,16 +6,20 @@
 # Datatypes (KEYWORD1)
 #######################################
 
-AdafruitEmail	KEYWORD1
+AdafruitSHA1	KEYWORD1
+AdafruitBase64	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
 
-outgoingServer	KEYWORD2
-recipients	KEYWORD2
-signature	KEYWORD2
-send	KEYWORD2
+beginHMAC	KEYWORD2
+updateHMAC	KEYWORD2
+stopHMAC	KEYWORD2
+generateHMAC	KEYWORD2
+
+encode	KEYWORD2
+decode	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

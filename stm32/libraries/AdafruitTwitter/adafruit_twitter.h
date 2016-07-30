@@ -70,7 +70,7 @@ protected:
   void prepare_http_request(AdafruitHTTP& http, const char* authorization);
 
   bool send_post_request(const char* json_api, const char* authorization, char const* httpdata[][2], uint8_t data_count);
-  bool send_get_request (const char* json_api, const char* authorization, char const* httpdata[][2], uint8_t data_count);
+//  bool send_get_request (const char* json_api, const char* authorization, char const* httpdata[][2], uint8_t data_count);
 public:
   AdafruitTwitter(void);
 

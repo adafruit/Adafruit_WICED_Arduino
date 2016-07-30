@@ -6,16 +6,16 @@
 # Datatypes (KEYWORD1)
 #######################################
 
-AdafruitEmail	KEYWORD1
+AdafruitTwitter	KEYWORD1
+TwitterDM	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
 
-outgoingServer	KEYWORD2
-recipients	KEYWORD2
-signature	KEYWORD2
-send	KEYWORD2
+tweet	KEYWORD2
+sendDirectMessage	KEYWORD2
+getDirectMessage	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

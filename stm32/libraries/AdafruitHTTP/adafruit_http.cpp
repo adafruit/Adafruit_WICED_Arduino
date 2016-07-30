@@ -508,29 +508,3 @@ char *url_decode(char *str) {
   return buf;
 }
 #endif
-
-/**
- * Encode data to base64
- * @param input     Input data
- * @param inputlen  Input length
- * @param output    Output buffer
- * @param size      Output buffer size
- * @return  Number of bytes converted, 0 if failed
- */
-uint16_t AdafruitHTTP::base64Encode(const uint8_t* input, uint16_t inputlen, char* output, uint16_t bufsize)
-{
-  return Feather.sdep(SDEP_CMD_BASE64_ENCODE, inputlen, input, &bufsize, output) ? bufsize : 0;
-}
-
-///**
-// * Decode data from base64
-// * @param input     Input data
-// * @param inputlen  Input length
-// * @param output    Output buffer
-// * @param size      Output buffer size
-// * @return  Number of bytes converted, 0 if failed
-// */
-//uint16_t AdafruitHTTP::base64Decode(const char* input, uint16_t inputlen, uint8_t* output, uint16_t size)
-//{
-//  return Feather.sdep(SDEP_CMD_BASE64_DECODE, inputlen, input, &size, output) ? size : 0;
-//}

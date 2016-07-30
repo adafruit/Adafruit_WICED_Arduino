@@ -117,14 +117,6 @@ public:
   static uint16_t urlEncode(const char* keys_values[][2], uint16_t count, char* output, uint16_t bufsize);
 #endif
 //  static uint16_t urlDecode(const char* input, char* output, uint16_t bufsize);
-
-  static uint16_t base64Encode(const uint8_t* input, uint16_t inputlen, char* output, uint16_t bufsize);
-  static uint16_t base64Encode(const char* input   , uint16_t inputlen, char* output, uint16_t bufsize)
-  {
-    return base64Encode( (const uint8_t*) input, inputlen, output, bufsize);
-  }
-
-//  static uint16_t base64Decode(const char   * input, uint16_t inputlen, uint8_t* output, uint16_t size);
 };
 
 

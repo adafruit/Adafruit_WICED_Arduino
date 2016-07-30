@@ -37,6 +37,7 @@
 #include "adafruit_twitter.h"
 #include "rng.h"
 #include "adafruit_sha1.h"
+#include "adafruit_base64.h"
 
 /* Implement using these guide
  * - REST API https://dev.twitter.com/rest/public
@@ -213,7 +214,24 @@ bool AdafruitTwitter::getDirectMessage(TwitterDM* dm, uint8_t count, uint64_t si
   Serial.println(authorization);
 #else
   // Send HTTP request
-  send_get_request(TWITTER_JSON_DIRECTMESSAGE, authorization, httpdata, data_count);
+  AdafruitHTTP http;
+  prepare_http_request(http, authorization);
+
+  http.get(TWITTER_JSON_DIRECTMESSAGE, httpdata, data_count);
+
+  while (1)
+  {
+    if (http.available())
+    {
+      int c = http.read();
+      Serial.write( (isprint(c) || iscntrl(c)) ? ((char)c) : '.');
+    }else
+    {
+      delay(1);
+    }
+  }
+
+  http.stop();
 #endif
 
   return true;
@@ -273,7 +291,7 @@ void AdafruitTwitter::create_oauth_signature(char signature[], const char* http_
   sha1.stopHMAC(hash_output);
 
   // convert to Base64 then urlEncode HMAC-SHA1 result
-  AdafruitHTTP::base64Encode(hash_output, 20, buffer1, sizeof(buffer1));
+  AdafruitBase64::encode(hash_output, 20, buffer1, sizeof(buffer1));
   AdafruitHTTP::urlEncode(buffer1, signature, TWITTER_OAUTH_SIGNATURE_MAXLEN);
 }
 
@@ -336,6 +354,19 @@ void AdafruitTwitter::generate_oauth_authorization(char authorization[], const c
   }
 }
 
+bool AdafruitTwitter::send_post_request(const char* json_api, const char* authorization, char const* httpdata[][2], uint8_t data_count)
+{
+  //------------- Send HTTP request -------------//
+  AdafruitHTTP http;
+  prepare_http_request(http, authorization);
+
+  http.post(json_api, httpdata, data_count);
+
+  http.stop();
+  return true;
+}
+
+#if 0
 bool AdafruitTwitter::send_get_request(const char* json_api, const char* authorization, char const* httpdata[][2], uint8_t data_count)
 {
   //------------- Send HTTP request -------------//
@@ -360,18 +391,7 @@ bool AdafruitTwitter::send_get_request(const char* json_api, const char* authori
 
   return true;
 }
-
-bool AdafruitTwitter::send_post_request(const char* json_api, const char* authorization, char const* httpdata[][2], uint8_t data_count)
-{
-  //------------- Send HTTP request -------------//
-  AdafruitHTTP http;
-  prepare_http_request(http, authorization);
-
-  http.post(json_api, httpdata, data_count);
-
-  http.stop();
-  return true;
-}
+#endif
 
 static void sha1_keyvalue(AdafruitSHA1& sha1, char const* keyvalue[2], bool is_http_data)
 {

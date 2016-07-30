@@ -9,7 +9,7 @@
 AdafruitMQTT	KEYWORD1
 
 #######################################
-# AdafruitSDEP Methods and Functions (KEYWORD2)
+# Methods and Functions (KEYWORD2)
 #######################################
 
 will	KEYWORD2
