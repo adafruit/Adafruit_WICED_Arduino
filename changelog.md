@@ -1,4 +1,18 @@
-# 0.5.5 (Work In Progress)
+# 0.5.6 (WIP)
+
+- rename menu Featherlib (Beta) --> Featherlib (Debug)
+- print warning message when Featherlib & Arduino library version are not matched
+- AdafruitHTTP
+	- add get() with keyvalues data support
+	- move base64Decode to its own class in AdafruitCrypto
+	- move urlencode to its own class
+- add AdafruitBase64
+- add AdafruitUrlencode
+- move AdafruitCrc32 to AdafruitCrypto
+- AdafruitTwitter
+	- add getDirectMessage()
+
+# 0.5.5
 
 - rename HardWire to TwoWire to stay compatible with Arduino
 - fix #43 : Implement UDP as buffered stream (enabled by default), can be changed using usePacketBuffering()
