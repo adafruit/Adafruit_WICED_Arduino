@@ -255,7 +255,7 @@ void AdafruitTwitter::create_oauth_signature(char signature[], const char* http_
   // POST&https://api.twitter.com/1/statuses/update.json&
   sha1.updateHMAC(http_method);
   sha1.updateHMAC("&");
-  AdafruitHTTP::urlEncode(base_url, buffer1, sizeof(buffer1));
+  AdafruitUrlencode::encode(base_url, buffer1, sizeof(buffer1));
   sha1.updateHMAC(buffer1);
   sha1.updateHMAC("&");
 
@@ -290,9 +290,9 @@ void AdafruitTwitter::create_oauth_signature(char signature[], const char* http_
   uint8_t hash_output[20];
   sha1.stopHMAC(hash_output);
 
-  // convert to Base64 then urlEncode HMAC-SHA1 result
+  // convert to Base64 then urlencode HMAC-SHA1 result
   AdafruitBase64::encode(hash_output, 20, buffer1, sizeof(buffer1));
-  AdafruitHTTP::urlEncode(buffer1, signature, TWITTER_OAUTH_SIGNATURE_MAXLEN);
+  AdafruitUrlencode::encode(buffer1, signature, TWITTER_OAUTH_SIGNATURE_MAXLEN);
 }
 
 
@@ -406,13 +406,13 @@ static void sha1_keyvalue(AdafruitSHA1& sha1, char const* keyvalue[2], bool is_h
   if (is_http_data)
   {
     // main data's value is double urlencoded (since it is urlencoded when passing to HTTP Request)
-    uint32_t len1 = AdafruitHTTP::urlEncodeLength(value)+1;
+    uint32_t len1 = AdafruitUrlencode::encodeLength(value)+1;
     char *buffer1 = (char*) malloc(len1);
-    AdafruitHTTP::urlEncode(value  , buffer1, len1);
+    AdafruitUrlencode::encode(value  , buffer1, len1);
 
-    uint32_t len2 = AdafruitHTTP::urlEncodeLength(buffer1)+1;
+    uint32_t len2 = AdafruitUrlencode::encodeLength(buffer1)+1;
     char *buffer2 = (char*) malloc(len2);
-    AdafruitHTTP::urlEncode(buffer1, buffer2, len2);
+    AdafruitUrlencode::encode(buffer1, buffer2, len2);
     sha1.updateHMAC(buffer2);
 
     free(buffer1);

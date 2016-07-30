@@ -7,6 +7,7 @@
 #######################################
 
 AdafruitHTTP	KEYWORD1
+AdafruitUrlencode	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
@@ -19,9 +20,8 @@ post	KEYWORD2
 postWithoutURLencoded	KEYWORD2
 postRaw	KEYWORD2
 
-urlEncodeLength	KEYWORD2
-urlEncode	KEYWORD2
-urlDecode	KEYWORD2
+encodeLength	KEYWORD2
+encode	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

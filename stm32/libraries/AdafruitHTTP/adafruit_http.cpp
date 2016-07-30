@@ -268,7 +268,7 @@ bool AdafruitHTTP::postRaw(char const * host, char const *url, uint8_t const* ra
 }
 
 //--------------------------------------------------------------------+
-//
+// INTERNAL FUNCTION
 //--------------------------------------------------------------------+
 /**
  *
@@ -291,7 +291,9 @@ bool AdafruitHTTP::post_internal(char const * host, char const *url, const char*
   uint16_t total_len = 0;
   for(uint16_t i = 0; i<count; i++)
   {
-    total_len += (strlen(keyvalues[i][0]) + 1) + (url_encode ? urlEncodeLength(keyvalues[i][1]) : strlen(keyvalues[i][1]));
+    const char* key = keyvalues[i][0];
+    const char* value = keyvalues[i][1];
+    total_len += strlen(key) + 1 + (url_encode ? AdafruitUrlencode::encodeLength(value) : strlen(value));
   }
   total_len += count-1; // number of "&" between each key=value
 
@@ -320,10 +322,10 @@ void AdafruitHTTP::send_keyvalues_data(const char* keyvalues[][2], uint16_t coun
 
     if (url_encode)
     {
-      uint16_t bufsize = urlEncodeLength(value)+1;
+      uint16_t bufsize = AdafruitUrlencode::encodeLength(value)+1;
       char* encoded_value = (char*) malloc(bufsize);
 
-      urlEncode(value, encoded_value, bufsize);
+      AdafruitUrlencode::encode(value, encoded_value, bufsize);
       print(encoded_value);
 
       free(encoded_value);
@@ -334,177 +336,3 @@ void AdafruitHTTP::send_keyvalues_data(const char* keyvalues[][2], uint16_t coun
   }
 }
 
-//--------------------------------------------------------------------+
-// STATIC FUNCTIONS (UTILITIES)
-//--------------------------------------------------------------------+
-/* Converts a hex character to its integer value */
-static char from_hex(char ch)
-{
-  return isdigit(ch) ? ch - '0' : tolower(ch) - 'a' + 10;
-}
-
-/* Converts an integer value to its hex character*/
-static char to_hex(char code)
-{
-  static char const hex[] = "0123456789ABCDEF";
-  return hex[code & 15];
-}
-
-/**
- *
- * @param input   Input string
- * @param output  Output string
- * @param size    Maximum size of output string
- * @return  number of bytes in output string, 0 if failed (possibly not enough memory in output)
- */
-uint16_t AdafruitHTTP::urlEncode(const char* input, char* output, uint16_t bufsize)
-{
-  uint16_t len=0;
-  char ch;
-  while( (ch = *input++) && (len < bufsize-1)  )
-  {
-    if ( isalnum(ch) || strchr("-_.~", ch) )
-    {
-      *output++ = ch;
-      len++;
-    }
-    else
-    {
-      *output++ = '%';
-      *output++ = to_hex( ch >> 4  );
-      *output++ = to_hex( ch & 0x0f);
-
-      len += 3;
-    }
-  }
-
-  *output = 0;
-
-  // not enough memory to hold the encoded --> return 0
-  if ( ch && (len == bufsize-1) ) return 0;
-
-  return len;
-}
-
-#if 0
-/**
- * Encode URL with keys and values, each are passed in separated array
- * @param keys    Array of key which are left untouched
- * @param values  Array of value which will be urlencoded
- * @param output  Result in format
- *                key1=encoded(value1)&key2=encoded(value2)&.....
- * @param bufsize Buffer size of output
- *
- * @note If either a key or value is NULL, that pair will be skipped in the encoding result as if
- * it is not existed.
- * @return number of bytes in output string, 0 if failed (possibly not enough memory in output)
- */
-uint16_t AdafruitHTTP::urlEncode(const char* keys[], const char* values[], uint16_t count, char* output, uint16_t bufsize)
-{
-  uint16_t total_bytes = 0;
-
-  for(uint16_t i=0; i<count && total_bytes < bufsize-1; i++)
-  {
-    // skip NULL key or value
-    if ( keys[i] && values[i] )
-    {
-      if (i != 0) output[total_bytes++] = '&';
-
-      uint16_t keylen = strlen(keys[i]);
-      strncpy(output+total_bytes, keys[i], bufsize-total_bytes);
-      total_bytes += keylen;
-
-      output[total_bytes++] = '=';
-
-      uint16_t n = urlEncode(values[i], output+total_bytes, bufsize-total_bytes);
-      if (n == 0) return 0; // failed to encode
-
-      total_bytes += n;
-    }
-  }
-
-  output[total_bytes] = 0;
-
-  return total_bytes;
-}
-
-/**
- * Encode URL with keys and values, both are passed in an 2-dimension array
- * @param keys_values  2-dimension Array of key (index 0) & value (index 1)
- * @param output  Result in format
- *                key1=encoded(value1)&key2=encoded(value2)&.....
- * @param bufsize Buffer size of output
- *
- * @note If either a key or value is NULL, that pair will be skipped in the encoding result as if
- * it is not existed.
- * @return number of bytes in output string, 0 if failed (possibly not enough memory in output)
- */
-uint16_t AdafruitHTTP::urlEncode(const char* keys_values[][2], uint16_t count, char* output, uint16_t bufsize)
-{
-  uint16_t total_bytes = 0;
-
-  for(uint16_t i=0; i<count && total_bytes < bufsize-1; i++)
-  {
-    char const * key   = keys_values[i][0];
-    char const * value = keys_values[i][1];
-
-    // skip NULL key or value
-    if ( key && value )
-    {
-      if (i != 0) output[total_bytes++] = '&';
-      uint16_t n = urlEncode(&key, &value, 1, output+total_bytes, bufsize-total_bytes);
-      if (n == 0) return 0; // failed to encode
-
-      total_bytes += n;
-    }
-  }
-
-  output[total_bytes] = 0;
-
-  return total_bytes;
-}
-#endif
-/**
- * Get length of url encoded without perform the encoding
- * @param input Input string
- * @return
- */
-uint16_t AdafruitHTTP::urlEncodeLength(const char* input)
-{
-  uint16_t len=0;
-  char ch;
-  while( (ch = *input++) )
-  {
-    if ( isalnum(ch) || strchr("-_.~", ch) /*|| ch == ' '*/ )
-    {
-      len++;
-    } else
-    {
-      len += 3;
-    }
-  }
-  return len;
-}
-
-#if 0
-/* Returns a url-decoded version of str */
-/* IMPORTANT: be sure to free() the returned string after use */
-char *url_decode(char *str) {
-  char *pstr = str, *buf = malloc(strlen(str) + 1), *pbuf = buf;
-  while (*pstr) {
-    if (*pstr == '%') {
-      if (pstr[1] && pstr[2]) {
-        *pbuf++ = from_hex(pstr[1]) << 4 | from_hex(pstr[2]);
-        pstr += 2;
-      }
-    } else if (*pstr == '+') {
-      *pbuf++ = ' ';
-    } else {
-      *pbuf++ = *pstr;
-    }
-    pstr++;
-  }
-  *pbuf = '\0';
-  return buf;
-}
-#endif

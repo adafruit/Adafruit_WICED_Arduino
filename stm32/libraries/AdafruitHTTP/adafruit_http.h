@@ -41,6 +41,7 @@
 #include <Client.h>
 #include <IPAddress.h>
 #include <adafruit_feather.h>
+#include <adafruit_urlencode.h>
 
 #define ADAFRUIT_HTTP_MAX_HEADER  10
 
@@ -108,15 +109,6 @@ public:
   virtual void   stop       ( void );
   virtual size_t write      ( uint8_t b);
   virtual size_t write      ( const uint8_t *content, size_t len );
-
-  //------------- Base64 & URL Encoding -------------//
-  static uint16_t urlEncodeLength(const char* input);
-  static uint16_t urlEncode(const char* input, char* output, uint16_t bufsize);
-#if 0
-  static uint16_t urlEncode(const char* keys[], const char* values[], uint16_t count, char* output, uint16_t bufsize);
-  static uint16_t urlEncode(const char* keys_values[][2], uint16_t count, char* output, uint16_t bufsize);
-#endif
-//  static uint16_t urlDecode(const char* input, char* output, uint16_t bufsize);
 };
 
 
