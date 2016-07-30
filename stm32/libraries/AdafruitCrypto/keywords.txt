@@ -8,6 +8,7 @@
 
 AdafruitSHA1	KEYWORD1
 AdafruitBase64	KEYWORD1
+AdafruitCRC32	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
@@ -20,6 +21,9 @@ generateHMAC	KEYWORD2
 
 encode	KEYWORD2
 decode	KEYWORD2
+
+reset	KEYWORD2
+compute	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
