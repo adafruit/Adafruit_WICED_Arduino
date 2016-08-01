@@ -193,24 +193,13 @@ bool AdafruitHTTP::get(char const *url)
  */
 int AdafruitHTTP::readline(char* buffer, uint16_t bufsize)
 {
-  int count = 0;
+  int count = readUntil('\n', buffer, bufsize);
 
-  while( (bufsize == 0) || (count < bufsize-1) )
+  // chop ending '\r'
+  if (buffer[count-1] == '\r')
   {
-    int ch = read();
-
-    if (ch == '\r') continue;
-    if (ch == '\n') break;
-
-    // end of data before encountering newline
-    if (ch == EOF) return count;
-
-    if (buffer)
-    {
-      *buffer++ = (char) ch;
-    }
-
-    count++;
+    count--;
+    buffer[count] = 0;
   }
 
   return count;
@@ -219,6 +208,33 @@ int AdafruitHTTP::readline(char* buffer, uint16_t bufsize)
 int AdafruitHTTP::readline(void)
 {
   return readline(NULL, 0);
+}
+
+int AdafruitHTTP::readUntil(char terminator, char *buffer, uint16_t bufsize)
+{
+  int count = 0;
+
+  while( (bufsize == 0) || (count < bufsize-1) )
+  {
+    int ch = read();
+
+    // terminator found
+    if (ch == terminator) break;
+
+    // end of data before encountering terminator
+    if (ch == EOF) break;
+
+    // allow pass NULL to swallow data
+    if (buffer)
+    {
+      *buffer++ = (char) ch;
+    }
+
+    count++;
+  }
+
+  if (buffer) *buffer = 0; // null terminator
+  return count;
 }
 
 /**
@@ -234,7 +250,7 @@ bool AdafruitHTTP::respParseHeader(void)
   while ( readline(buffer, sizeof(buffer)) )
   {
     if ( (0 == strnicmp("HTTP/", buffer, 5)) &&
-         isdigit(buffer[6]) && (buffer[7] == '.') && isdigit(buffer[8]) )
+         isdigit(buffer[5]) && (buffer[6] == '.') && isdigit(buffer[7]) )
     {
       _resp_status = strtoul(buffer+9, NULL, 10);
     }

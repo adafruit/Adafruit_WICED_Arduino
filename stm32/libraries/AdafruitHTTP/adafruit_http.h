@@ -84,7 +84,7 @@ public:
 
   int  readline(char* buffer, uint16_t bufsize);
   int  readline(void); // skip line
-  using Stream::readBytesUntil;
+  int  readUntil(char terminator, char *buffer, uint16_t bufsize);
 
   //------------- GET request -------------//
   bool get(char const *host, char const *url, const char* keyvalues[][2], uint16_t count);
