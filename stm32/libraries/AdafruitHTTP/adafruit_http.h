@@ -93,9 +93,9 @@ public:
   bool get(char const *url);
 
   //------------- Response processing -------------//
+  bool respParseHeader(void);
   int  respStatus(void);
   int  respContentLength(void);
-  bool respParseHeader(void);
 
 
   //------------- POST with urlencoding data -------------//

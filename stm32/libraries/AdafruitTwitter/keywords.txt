@@ -15,7 +15,8 @@ TwitterDM	KEYWORD1
 
 tweet	KEYWORD2
 sendDirectMessage	KEYWORD2
-getDirectMessage	KEYWORD2
+checkDirectMessage	KEYWORD2
+setDirectMessageRecvCallback	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

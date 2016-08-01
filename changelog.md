@@ -2,15 +2,20 @@
 
 - rename menu Featherlib (Beta) --> Featherlib (Debug)
 - print warning message when Featherlib & Arduino library version are not matched
+- add AdafruitBase64
+- add AdafruitUrlencode
+- move AdafruitCrc32 to AdafruitCrypto
 - AdafruitHTTP
 	- add get() with keyvalues data support
 	- move base64Decode to its own class in AdafruitCrypto
 	- move urlencode to its own class
-- add AdafruitBase64
-- add AdafruitUrlencode
-- move AdafruitCrc32 to AdafruitCrypto
+	- add response processing function
+		- respParseHeader
+		- respStatus
+		- respContentLength
 - AdafruitTwitter
-	- add getDirectMessage()
+	- add checkDirectMessage()
+	- add setDirectMessageRecvCallback()
 
 # 0.5.5
 

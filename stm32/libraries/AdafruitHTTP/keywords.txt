@@ -15,7 +15,16 @@ AdafruitUrlencode	KEYWORD1
 
 addHeader	KEYWORD2
 clearHeaders	KEYWORD2
+
 get	KEYWORD2
+
+readline	KEYWORD2
+readUntil	KEYWORD2
+
+respParseHeader	KEYWORD2
+respStatus	KEYWORD2
+respContentLength	KEYWORD2
+
 post	KEYWORD2
 postWithoutURLencoded	KEYWORD2
 postRaw	KEYWORD2
