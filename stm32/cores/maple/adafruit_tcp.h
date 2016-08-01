@@ -111,6 +111,7 @@ public:
 
 protected:
   tcp_handle_t   _tcp_handle;
+  bool           _connected;
 
   bool           _tls_verification;
 

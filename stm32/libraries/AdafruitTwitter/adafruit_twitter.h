@@ -53,25 +53,9 @@ struct TwitterDM
 
 class AdafruitTwitter :  public AdafruitSDEP
 {
-protected:
-  char const * _consumer_key;
-  char const * _consumer_secret;
-  char const * _token_access;
-  char const * _token_secret;
-
-  void reset(void);
-
-  void create_oauth_signature(char signature[], const char* http_method, const char* base_url,
-                              char const* oauth_para[][2]   , uint8_t oauth_count,
-                              char const* contents_para[][2], uint8_t contents_count);
-  void generate_oauth_authorization(char authorization[], const char* http_method, const char* base_url,
-                                    char const* contents_para[][2], uint8_t contents_count);
-
-  void prepare_http_request(AdafruitHTTP& http, const char* authorization);
-
-  bool send_post_request(const char* json_api, const char* authorization, char const* httpdata[][2], uint8_t data_count);
-//  bool send_get_request (const char* json_api, const char* authorization, char const* httpdata[][2], uint8_t data_count);
 public:
+  typedef void (*dm_rx_callback_t)(TwitterDM);
+
   AdafruitTwitter(void);
 
   bool begin(char const* consumer_key, char const* consumer_secret, char const* token_access, char const * token_secret);
@@ -82,8 +66,31 @@ public:
 //  bool getUserTimeline(void);
 
   bool sendDirectMessage(char const* username, char const* text);
-  bool getDirectMessage(TwitterDM* dm, uint8_t count, uint64_t since_id);
-  bool getDirectMessage(TwitterDM* dm);
+  bool checkDirectMessage(uint64_t since_id, uint64_t max_id);
+  bool checkDirectMessage(void);
+
+  void setDirectMessageRecvCallback(dm_rx_callback_t fp)
+  {
+    _dm_rx_callback = fp;
+  }
+
+protected:
+  char const * _consumer_key;
+  char const * _consumer_secret;
+  char const * _token_access;
+  char const * _token_secret;
+
+  uint64_t         _dm_last_sinceid;
+  dm_rx_callback_t _dm_rx_callback;
+
+  void reset(void);
+
+  void create_oauth_signature(char signature[], const char* http_method, const char* json_api,
+                              char const* oauth_para[][2]   , uint8_t oauth_count,
+                              char const* contents_para[][2], uint8_t contents_count);
+  void generate_oauth_authorization(char authorization[], const char* http_method, const char* json_api,
+                                    char const* contents_para[][2], uint8_t contents_count);
+  bool send_http_request(AdafruitHTTP& http, const char* http_method, const char* json_api, char const* httpdata[][2], uint8_t data_count);
 };
 
 #endif /* _ADAFRUIT_TWITTER_H_ */

@@ -110,6 +110,9 @@ void AdafruitTwitter::reset(void)
 {
   _consumer_key = _consumer_secret = NULL;
   _token_access = _token_secret    = NULL ;
+
+  _dm_last_sinceid     = 0;
+  _dm_rx_callback = NULL;
 }
 
 /**
@@ -126,16 +129,10 @@ bool AdafruitTwitter::tweet(char const* status)
   };
   uint8_t data_count = sizeof(httpdata) / sizeof(httpdata[0]);
 
-  char authorization[512];
-  generate_oauth_authorization(authorization, HTTP_METHOD_POST, "https://" TWITTER_API_HOST TWITTER_JSON_UPDATE,
-                               httpdata, data_count);
-#if TWITTER_DEBUG
-  Serial.println();
-  Serial.println(authorization);
-#else
   // Send HTTP request
-  send_post_request(TWITTER_JSON_UPDATE, authorization, httpdata, data_count);
-#endif
+  AdafruitHTTP http;
+  send_http_request(http, HTTP_METHOD_POST, TWITTER_JSON_UPDATE, httpdata, data_count);
+  http.stop();
 
   return true;
 }
@@ -162,62 +159,53 @@ bool AdafruitTwitter::sendDirectMessage(char const* username, char const* text)
   httpdata[0][1] = DEBUG_TWITTER_DM_SCREENNAME;
 #endif
 
-  char authorization[512];
-  generate_oauth_authorization(authorization, HTTP_METHOD_POST, "https://" TWITTER_API_HOST TWITTER_JSON_DIRECTMESSAGE_NEW,
-                               httpdata, data_count);
-
-#if TWITTER_DEBUG
-  Serial.println();
-  Serial.println(authorization);
-#else
   // Send HTTP request
-  send_post_request(TWITTER_JSON_DIRECTMESSAGE_NEW, authorization, httpdata, data_count);
-#endif
+  AdafruitHTTP http;
+  send_http_request(http, HTTP_METHOD_POST, TWITTER_JSON_DIRECTMESSAGE_NEW, httpdata, data_count);
+  http.stop();
 
   return true;
 }
 
-bool AdafruitTwitter::getDirectMessage(TwitterDM* dm)
+bool AdafruitTwitter::checkDirectMessage(void)
 {
-  return getDirectMessage(dm, 1, 0);
+  checkDirectMessage(_dm_last_sinceid, 0);
 }
 
-bool AdafruitTwitter::getDirectMessage(TwitterDM* dm, uint8_t count, uint64_t since_id)
+
+bool AdafruitTwitter::checkDirectMessage(uint64_t since_id, uint64_t max_id)
 {
 #if TWITTER_DEBUG // test code
   since_id = 240136858829479935ULL;
 #endif
 
-  VERIFY(count < 10);
-
-  char const count_str[] = { '0' + count , 0};
+//  char const count_str[] = { '0' + count , 0};
   char sinceid_str[64];
   sprintf(sinceid_str, "%llu", since_id);
+
+  char maxid_str[64];
+  sprintf(maxid_str, "%llu", max_id);
 
   // Data contents: ASSUME key are already in urlencoded
   char const* httpdata[][2] =
   {
-      { "count"    , count_str   },
+      { "count"    , "1"         },
       { "since_id" , sinceid_str },
+      { "max_id "  , maxid_str   },
   };
   uint8_t data_count = arrcount(httpdata);
 
-  // skip since_id if it is zero
-  if (since_id == 0) data_count--;
+  if ( max_id == 0 ) data_count--;
 
-  char authorization[512];
-  generate_oauth_authorization(authorization, HTTP_METHOD_GET, "https://" TWITTER_API_HOST TWITTER_JSON_DIRECTMESSAGE,
-                               httpdata, data_count);
-
-#if TWITTER_DEBUG
-  Serial.println();
-  Serial.println(authorization);
-#else
   // Send HTTP request
   AdafruitHTTP http;
-  prepare_http_request(http, authorization);
+  send_http_request(http, HTTP_METHOD_GET, TWITTER_JSON_DIRECTMESSAGE, httpdata, data_count);
 
-  http.get(TWITTER_JSON_DIRECTMESSAGE, httpdata, data_count);
+  http.respParseHeader();
+  Serial.println(http.respStatus());
+  Serial.println(http.respContentLength());
+
+//  http.readBytesUntil(',', buffer, sizeof(buffer));
 
   while (1)
   {
@@ -232,7 +220,6 @@ bool AdafruitTwitter::getDirectMessage(TwitterDM* dm, uint8_t count, uint64_t si
   }
 
   http.stop();
-#endif
 
   return true;
 }
@@ -241,7 +228,7 @@ bool AdafruitTwitter::getDirectMessage(TwitterDM* dm, uint8_t count, uint64_t si
 //--------------------------------------------------------------------+
 // Internal helper function
 //--------------------------------------------------------------------+
-void AdafruitTwitter::create_oauth_signature(char signature[], const char* http_method, const char* base_url,
+void AdafruitTwitter::create_oauth_signature(char signature[], const char* http_method, const char* json_api,
                                              char const* oauth_para[][2]   , uint8_t oauth_count,
                                              char const* contents_para[][2], uint8_t contents_count)
 {
@@ -255,7 +242,11 @@ void AdafruitTwitter::create_oauth_signature(char signature[], const char* http_
   // POST&https://api.twitter.com/1/statuses/update.json&
   sha1.updateHMAC(http_method);
   sha1.updateHMAC("&");
-  AdafruitUrlencode::encode(base_url, buffer1, sizeof(buffer1));
+
+  AdafruitUrlencode::encode("https://" TWITTER_API_HOST, buffer1, sizeof(buffer1));
+  sha1.updateHMAC(buffer1);
+
+  AdafruitUrlencode::encode(json_api, buffer1, sizeof(buffer1));
   sha1.updateHMAC(buffer1);
   sha1.updateHMAC("&");
 
@@ -270,7 +261,7 @@ void AdafruitTwitter::create_oauth_signature(char signature[], const char* http_
     if ( (oauth_idx < oauth_count) && strcmp(oauth_para[oauth_idx][0], contents_para[content_idx][0]) < 0 )
     {
       // Hashing Oauth
-      // skip oauth_signature
+      // skip NULL value (e.g oauth_signature)
       if ( oauth_para[oauth_idx][1] )
       {
         if (i != 0) sha1.updateHMAC(URLENCODE_AMPERSAND);
@@ -280,8 +271,12 @@ void AdafruitTwitter::create_oauth_signature(char signature[], const char* http_
     }else
     {
       // Hashing HTTP contents data
-      if (i != 0) sha1.updateHMAC(URLENCODE_AMPERSAND);
-      sha1_keyvalue(sha1, contents_para[content_idx], true);
+      // skip NULL value
+      if ( contents_para[content_idx][1] )
+      {
+        if (i != 0) sha1.updateHMAC(URLENCODE_AMPERSAND);
+        sha1_keyvalue(sha1, contents_para[content_idx], true);
+      }
       content_idx++;
     }
   }
@@ -296,7 +291,7 @@ void AdafruitTwitter::create_oauth_signature(char signature[], const char* http_
 }
 
 
-void AdafruitTwitter::generate_oauth_authorization(char authorization[], const char* http_method, const char* base_url,
+void AdafruitTwitter::generate_oauth_authorization(char authorization[], const char* http_method, const char* json_api,
                                                    char const* contents_para[][2], uint8_t contents_count)
 {
   //------------- Generate Oauth nonce & timestamp -------------//
@@ -330,7 +325,7 @@ void AdafruitTwitter::generate_oauth_authorization(char authorization[], const c
 
   //------------- Create Signature with HMAC SHA1 -------------//
   char signature[TWITTER_OAUTH_SIGNATURE_MAXLEN];
-  create_oauth_signature(signature, http_method, base_url, oauth_para, oauth_count, contents_para, contents_count);
+  create_oauth_signature(signature, http_method, json_api, oauth_para, oauth_count, contents_para, contents_count);
 
   // Update OAUTH table
   oauth_para[2][1] = signature;
@@ -354,44 +349,37 @@ void AdafruitTwitter::generate_oauth_authorization(char authorization[], const c
   }
 }
 
-bool AdafruitTwitter::send_post_request(const char* json_api, const char* authorization, char const* httpdata[][2], uint8_t data_count)
+bool AdafruitTwitter::send_http_request(AdafruitHTTP& http, const char* http_method, const char* json_api, char const* httpdata[][2], uint8_t data_count)
 {
-  //------------- Send HTTP request -------------//
-  AdafruitHTTP http;
-  prepare_http_request(http, authorization);
+//  http.verbose(true);
+  http.err_actions(_err_print, _err_halt);
+  http.connectSSL(TWITTER_API_HOST, TWITTER_API_PORT);
 
-  http.post(json_api, httpdata, data_count);
+  // Setup the HTTP request with any required header entries
+  http.addHeader("Accept", "*/*");
+  http.addHeader("Connection", "close");
+  http.addHeader("User-Agent", TWITTER_AGENT);
+  http.addHeader("Content-Type", "application/x-www-form-urlencoded");
 
-  http.stop();
-  return true;
-}
+  // Generate Authorization header
+  char authorization[512];
+  generate_oauth_authorization(authorization, http_method, json_api, httpdata, data_count);
 
-#if 0
-bool AdafruitTwitter::send_get_request(const char* json_api, const char* authorization, char const* httpdata[][2], uint8_t data_count)
-{
-  //------------- Send HTTP request -------------//
-  AdafruitHTTP http;
-  prepare_http_request(http, authorization);
+  http.addHeader("Authorization", authorization);
 
-  http.get(json_api, httpdata, data_count);
-
-  while (1)
+  if ( strcmp(HTTP_METHOD_POST, http_method) == 0 )
   {
-    if (http.available())
-    {
-      int c = http.read();
-      Serial.write( (isprint(c) || iscntrl(c)) ? ((char)c) : '.');
-    }else
-    {
-      delay(1);
-    }
+    http.post(json_api, httpdata, data_count);
+  }else if ( strcmp(HTTP_METHOD_GET, http_method) == 0 )
+  {
+    http.get(json_api, httpdata, data_count);
+  }else
+  {
+    return false;
   }
 
-  http.stop();
-
   return true;
 }
-#endif
 
 static void sha1_keyvalue(AdafruitSHA1& sha1, char const* keyvalue[2], bool is_http_data)
 {
@@ -422,18 +410,4 @@ static void sha1_keyvalue(AdafruitSHA1& sha1, char const* keyvalue[2], bool is_h
     // HMAC Oauth parameters: values are already in urlencoded
     sha1.updateHMAC(value);
   }
-}
-
-void AdafruitTwitter::prepare_http_request(AdafruitHTTP& http, const char* authorization)
-{
-//  http.verbose(true);
-  http.err_actions(_err_print, _err_halt);
-  http.connectSSL(TWITTER_API_HOST, TWITTER_API_PORT);
-
-  // Setup the HTTP request with any required header entries
-  http.addHeader("Accept", "*/*");
-  http.addHeader("Connection", "close");
-  http.addHeader("User-Agent", TWITTER_AGENT);
-  http.addHeader("Content-Type", "application/x-www-form-urlencoded");
-  http.addHeader("Authorization", authorization);
 }

@@ -34,10 +34,6 @@
 */
 /**************************************************************************/
 
-/** 
- *  @{
- */
-
 #ifndef _TIMEOUT_TIMER_H_
 #define _TIMEOUT_TIMER_H_
 
@@ -58,5 +54,3 @@ class TimeoutTimer
 };
 
 #endif /* _TIMEOUT_TIMER_H_ */
-
-/** @} */

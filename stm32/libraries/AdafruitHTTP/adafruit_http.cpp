@@ -45,6 +45,9 @@ AdafruitHTTP::AdafruitHTTP()
   _server           = NULL;
   _verbose          = false;
 
+  _resp_len         = 0;
+  _resp_status      = 0;
+
   this->clearHeaders();
 }
 
@@ -176,6 +179,86 @@ bool AdafruitHTTP::get(char const * host, char const *url)
 bool AdafruitHTTP::get(char const *url)
 {
   return this->get(_server, url, NULL, 0);
+}
+
+//--------------------------------------------------------------------+
+// RESPONSE PROCESSING
+//--------------------------------------------------------------------+
+/**
+ * Read an line from TCP stream into buffer, '\r' and '\n' is chopped,
+ * null-terminator is also added at the end of buffer
+ * @param buffer  Buffer, can be null to skip line
+ * @param bufsize Size of buffer
+ * @return Number of bytes in the line
+ */
+int AdafruitHTTP::readline(char* buffer, uint16_t bufsize)
+{
+  int count = 0;
+
+  while( (bufsize == 0) || (count < bufsize-1) )
+  {
+    int ch = read();
+
+    if (ch == '\r') continue;
+    if (ch == '\n') break;
+
+    // end of data before encountering newline
+    if (ch == EOF) return count;
+
+    if (buffer)
+    {
+      *buffer++ = (char) ch;
+    }
+
+    count++;
+  }
+
+  return count;
+}
+
+int AdafruitHTTP::readline(void)
+{
+  return readline(NULL, 0);
+}
+
+/**
+ * Parse through the whole header. Though the HTTP status code, "content-length"
+ * are still extract to get data length.
+ * @return  true if successful, false otherwise
+ */
+bool AdafruitHTTP::respParseHeader(void)
+{
+  char buffer[128];
+
+  // Header end with an empty line
+  while ( readline(buffer, sizeof(buffer)) )
+  {
+    if ( (0 == strnicmp("HTTP/", buffer, 5)) &&
+         isdigit(buffer[6]) && (buffer[7] == '.') && isdigit(buffer[8]) )
+    {
+      _resp_status = strtoul(buffer+9, NULL, 10);
+    }
+    else if ( 0 == strnicmp("content-length", buffer, 14) )
+    {
+      _resp_len = strtoul(buffer+16, NULL, 10);
+    }
+  }
+
+  return true;
+}
+
+/**
+ * Get HTTP Status code
+ * @return Status code
+ */
+int AdafruitHTTP::respStatus(void)
+{
+  return _resp_status;
+}
+
+int AdafruitHTTP::respContentLength(void)
+{
+  return _resp_len;
 }
 
 //--------------------------------------------------------------------+

@@ -45,6 +45,7 @@
 void AdafruitTCP::reset()
 {
   _tcp_handle          = NULL;
+  _connected           = false;
 
   _tls_verification    = true;
   _tls_context         = NULL;
@@ -155,6 +156,7 @@ bool AdafruitTCP::connect_internal ( uint8_t interface, uint32_t ipv4, uint16_t 
     return false;
   }
 
+  _connected = true;
   this->install_callback();
 
   DBG_HEAP();
@@ -232,9 +234,7 @@ bool AdafruitTCP::tlsSetIdentity(char const* private_key, uint8_t const* local_c
 /******************************************************************************/
 uint8_t AdafruitTCP::connected()
 {
-  // Handle not zero --> still connected
-  // TODO handle disconnection
-  return ( _tcp_handle != NULL ) ? 1 : 0;
+  return (uint8_t) _connected;
 }
 
 void AdafruitTCP::get_peer_info(void)
@@ -454,11 +454,12 @@ void AdafruitTCP::stop()
 {
   DBG_HEAP();
 
-  if ( _tcp_handle == NULL) return;
+  if ( _tcp_handle )
+  {
+    sdep(SDEP_CMD_TCP_DISCONNECT, 4, &_tcp_handle, NULL, NULL);
+    free_named("TCP Client", _tcp_handle);
+  }
 
-  sdep(SDEP_CMD_TCP_DISCONNECT, 4, &_tcp_handle, NULL, NULL);
-
-  free_named("TCP Client", _tcp_handle);
   if ( _tls_context ) free_named("TCP TLS Context" , _tls_context);
   if ( _tls_identity) free_named("TCP TLS Identity", _tls_identity);
 
@@ -494,9 +495,15 @@ err_t adafruit_tcp_disconnect_callback(void* socket, void* p_tcp)
 {
   AdafruitTCP* pTCP = (AdafruitTCP*) p_tcp;
 
-  // TODO set connected as false or call TCP::Stop() ???
+  // Mark as disconnected
+  pTCP->_connected = false;
 
   if (pTCP->_disconnect_callback) pTCP->_disconnect_callback();
+
+  // Make sure all resource of TCP are released
+  // WARNING AFter disconnect event, currently read() is not possible even if data is
+  // not fully retrieved
+  pTCP->stop();
 
   return ERROR_NONE;
 }

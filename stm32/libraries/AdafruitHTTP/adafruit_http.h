@@ -57,6 +57,9 @@ class AdafruitHTTP : public AdafruitTCP
 protected:
   const char* _server;
 
+  int _resp_len;
+  int _resp_status;
+
   uint8_t _header_count;
   struct {
     const char* name;
@@ -79,11 +82,21 @@ public:
   bool addHeader(const char* name, const char* value);
   bool clearHeaders(void);
 
-  // GET
+  int  readline(char* buffer, uint16_t bufsize);
+  int  readline(void); // skip line
+  using Stream::readBytesUntil;
+
+  //------------- GET request -------------//
   bool get(char const *host, char const *url, const char* keyvalues[][2], uint16_t count);
   bool get(char const *host, char const *url);
   bool get(char const *url, const char* keyvalues[][2], uint16_t count);
   bool get(char const *url);
+
+  //------------- Response processing -------------//
+  int  respStatus(void);
+  int  respContentLength(void);
+  bool respParseHeader(void);
+
 
   //------------- POST with urlencoding data -------------//
   bool post(char const *host, char const *url, const char* keyvalues[][2], uint16_t count);
