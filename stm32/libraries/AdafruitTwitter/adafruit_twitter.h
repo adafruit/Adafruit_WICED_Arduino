@@ -46,9 +46,15 @@
 struct TwitterDM
 {
   uint64_t id;
-  uint32_t utc;
-  const char * username;
-  const char * message;
+  char* sender;
+  char* text;
+  char* created_at;
+
+  TwitterDM(void)
+  {
+    id = 0;
+    sender = text = created_at = NULL;
+  }
 };
 
 class AdafruitTwitter :  public AdafruitSDEP

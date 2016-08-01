@@ -175,6 +175,9 @@ bool AdafruitTwitter::checkDirectMessage(void)
 
 bool AdafruitTwitter::checkDirectMessage(uint64_t since_id, uint64_t max_id)
 {
+  // False if setDirectMessageRecvCallback() is not called
+  VERIFY(_dm_rx_callback);
+
 #if TWITTER_DEBUG // test code
   since_id = 240136858829479935ULL;
 #endif
@@ -201,25 +204,79 @@ bool AdafruitTwitter::checkDirectMessage(uint64_t since_id, uint64_t max_id)
   AdafruitHTTP http;
   send_http_request(http, HTTP_METHOD_GET, TWITTER_JSON_DIRECTMESSAGE, httpdata, data_count);
 
+  // Process HTTP response
+  TwitterDM dm;
+
   http.respParseHeader();
-  Serial.println(http.respStatus());
-  Serial.println(http.respContentLength());
 
-//  http.readBytesUntil(',', buffer, sizeof(buffer));
-
-  while (1)
+  // Content Length is too short for a new message --> skip
+  // Only process response if message is arrived
+  if ( http.respContentLength() > 100 )
   {
-    if (http.available())
+    char buffer[256];
+    while ( http.readUntil(',', buffer, sizeof(buffer)) )
     {
-      int c = http.read();
-      Serial.write( (isprint(c) || iscntrl(c)) ? ((char)c) : '.');
-    }else
-    {
-      delay(1);
+      char* key = buffer;
+      char* value = strchr(buffer, ':');
+
+      if ( value == NULL ) continue;
+      *value++ = 0; // separate key & value with null-terminator
+
+      // Both interested (key and value) are quoted, discard them
+      key++;
+      key[strlen(key)-1] = 0;
+
+      value++;
+      value[strlen(value)-1] = 0;
+
+      //    Serial.print(key); Serial.print('='); Serial.println(value);
+
+      if ( (dm.id == 0) && !strcmp("id_str", key) )
+      {
+        dm.id = strtoull(value, NULL, 10);
+      }
+
+      if ( (dm.text == NULL) && !strcmp("text", key) )
+      {
+        dm.text = (char*) malloc_named("Twitter DM", strlen(value) + 1);
+        strcpy(dm.text, value);
+      }
+
+      if ( (dm.sender == NULL) && !strcmp("screen_name", key) )
+      {
+        dm.sender = (char*) malloc_named("Twitter DM", strlen(value) + 1);
+        strcpy(dm.sender, value);
+      }
+
+      if ( !strcmp("created_at", key) )
+      {
+        // message time is likely the last time field
+        if ( dm.created_at == NULL )
+        {
+          dm.created_at = (char*) malloc_named("Twitter DM", strlen(value) + 10);
+        }
+
+        strcpy(dm.created_at, value);
+      }
     }
   }
 
   http.stop();
+
+  // There is new message
+  if (dm.id)
+  {
+    // update last sinceid
+    _dm_last_sinceid = dm.id;
+
+    // Fire callback
+    _dm_rx_callback(dm);
+
+    // clean up DM resource
+    if (dm.sender     ) free(dm.sender);
+    if (dm.text       ) free(dm.text);
+    if (dm.created_at ) free(dm.created_at);
+  }
 
   return true;
 }
@@ -357,7 +414,6 @@ bool AdafruitTwitter::send_http_request(AdafruitHTTP& http, const char* http_met
 
   // Setup the HTTP request with any required header entries
   http.addHeader("Accept", "*/*");
-  http.addHeader("Connection", "close");
   http.addHeader("User-Agent", TWITTER_AGENT);
   http.addHeader("Content-Type", "application/x-www-form-urlencoded");
 
@@ -369,6 +425,7 @@ bool AdafruitTwitter::send_http_request(AdafruitHTTP& http, const char* http_met
 
   if ( strcmp(HTTP_METHOD_POST, http_method) == 0 )
   {
+    http.addHeader("Connection", "close");
     http.post(json_api, httpdata, data_count);
   }else if ( strcmp(HTTP_METHOD_GET, http_method) == 0 )
   {
