@@ -36,6 +36,10 @@ AdafruitTCPServer tcpserver(PORT);
 AdafruitTCP clientList[MAX_CLIENTS];  //can have MAX_CLIENTS simultaneous clients
 int freeClientIndex = 0;  //init to first client slot
 
+int ledPin = PA15;
+
+void disconnect_callback(void);
+
 /**************************************************************************/
 /*!
     @brief  This callback is fired when there is a connection request from
@@ -71,10 +75,15 @@ void setup()
   // Wait for the serial port to connect. Needed for native USB port only.
   while (!Serial) delay(1);
 
+  pinMode(ledPin, OUTPUT); // Init LED pin
+
   Serial.println("TCP Server Example (Callbacks)\r\n");
 
   // Print all software versions
   Feather.printVersions();
+
+  // Set disconnection callback
+  Feather.setDisconnectCallback(disconnect_callback);
 
   while ( !connectAP() )
   {
@@ -112,12 +121,13 @@ void loop()
     {
       if (clientList[index].available())  //any data available?
       {
+        digitalWrite(ledPin, HIGH);   // turn the LED on (HIGH is the voltage level)
         len = clientList[index].read(buffer, 256);   //read client input
-        // Display the incoming message and source in Serial Monitor
-        Serial.print("[RX:");
+        Serial.print("[RX:"); // Display the incoming message and source in Serial Monitor
         Serial.print(clientList[index].remoteIP());
         Serial.print("] ");
         Serial.write(buffer, len);
+        digitalWrite(ledPin, LOW);    // turn the LED off by making the voltage LOW
         for (int receiverindex = 0; receiverindex < MAX_CLIENTS; receiverindex++)  //look for receiving clients
         {
           if ((receiverindex!= index) && (NULL != clientList[receiverindex]))  //if it's a valid client, and it's not the sending client
@@ -153,3 +163,18 @@ bool connectAP(void)
 
   return Feather.connected();
 }
+
+/**************************************************************************/
+/*!
+    @brief  AP disconnect callback
+*/
+/**************************************************************************/
+void disconnect_callback(void)
+{
+  Serial.println();
+  Serial.println("------------------------");
+  Serial.println("AP DISCONNECTED CALLBACK");
+  Serial.println("------------------------");
+  Serial.println();
+}
+
