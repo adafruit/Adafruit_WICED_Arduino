@@ -113,6 +113,11 @@ void loop()
       if (clientList[index].available())  //any data available?
       {
         len = clientList[index].read(buffer, 256);   //read client input
+        // Display the incoming message and source in Serial Monitor
+        Serial.print("[RX:");
+        Serial.print(clientList[index].remoteIP());
+        Serial.print("] ");
+        Serial.write(buffer, len);
         for (int receiverindex = 0; receiverindex < MAX_CLIENTS; receiverindex++)  //look for receiving clients
         {
           if ((receiverindex!= index) && (NULL != clientList[receiverindex]))  //if it's a valid client, and it's not the sending client
