@@ -273,9 +273,9 @@ bool AdafruitTwitter::checkDirectMessage(uint64_t since_id, uint64_t max_id)
     _dm_rx_callback(dm);
 
     // clean up DM resource
-    if (dm.sender     ) free(dm.sender);
-    if (dm.text       ) free(dm.text);
-    if (dm.created_at ) free(dm.created_at);
+    if (dm.sender     ) free_named("Twitter DM", dm.sender);
+    if (dm.text       ) free_named("Twitter DM", dm.text);
+    if (dm.created_at ) free_named("Twitter DM", dm.created_at);
   }
 
   return true;
