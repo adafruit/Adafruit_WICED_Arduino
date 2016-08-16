@@ -212,8 +212,10 @@ public:
   void      printEncryption (int32_t enc, Print& p = Serial);
 
   // Debug functions
-  void      dbgThreadlist   (void) { sdep(SDEP_CMD_THREADLIST, 0, NULL, NULL, NULL); }
-
+  void dbgThreadlist   (void) { sdep(SDEP_CMD_THREADLIST, 0, NULL, NULL, NULL); }
+  int  dbgHeapTotal    (void);
+  int  dbgHeapUsed     (void);
+  int  dbgHeapFree     (void);
 
   /* callback from featherlib */
   friend void adafruit_wifi_disconnect_callback(void);
@@ -243,12 +245,12 @@ extern AdafruitFeather Feather;
 
   #define calloc_named( name, nelems, elemsize) ({ Serial.printf("[calloc] %s : %d\r\n", name, nelems*elemsize); calloc ( nelems, elemsize ); })
   #define malloc_named( name, size )            ({ Serial.printf("[malloc] %s : %d\r\n", name, size); malloc(size); })
-  #define free_named( name, ptr )               ({ Serial.printf("[free  ] %s\r\n"     , name      ); free  (ptr ); })
+  #define free_named( name, ptr )               ({ Serial.printf("[free] %s\r\n"     , name      ); free  (ptr ); })
 
   #if DBG_ENABLE == 3
-  #define DBG_HEAP()      Serial.printf("%s: %d: Heap free: %d\r\n", __FUNCTION__, __LINE__, FEATHERLIB->heap_get_free_size()); delay(5)
+    #define DBG_HEAP() Serial.printf("\r\n[Heap free] %s %d: Arudino = %d, featherlib = %d\r\n", __FUNCTION__, __LINE__, Feather.dbgHeapFree(), FEATHERLIB->heap_get_free_size()); delay(5);
   #else
-  #define DBG_HEAP()
+    #define DBG_HEAP()
   #endif
 #else
   #define DBG_LOCATION()

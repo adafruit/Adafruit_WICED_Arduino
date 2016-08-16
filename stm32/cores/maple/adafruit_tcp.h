@@ -55,9 +55,9 @@ class AdafruitTCP : public Client, public AdafruitSDEP
 {
 public:
   enum {
-    TCP_SOCKET_HANDLE_SIZE = 400 , // need only 372 (352+20) bytes, extra for reserved
-    TCP_TLS_CONTEXT_SIZE   = 2600, // need 2588 bytes, extra for reserved
-    TCP_TLS_IDENTITY_SIZE  = 200 , // need 184 bytes, extra for reserved
+    TCP_SOCKET_HANDLE_SIZE = 400 , // need only 384 (364+20) bytes, extra for reserved
+    TCP_TLS_CONTEXT_SIZE   = 4400, // need 4388 bytes, extra for reserved
+    TCP_TLS_IDENTITY_SIZE  = 550 , // need 548 bytes, extra for reserved
   };
   typedef void* tcp_handle_t;
   typedef void (*tcpcallback_t)(void);

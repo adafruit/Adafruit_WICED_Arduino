@@ -31,6 +31,7 @@
  */
 
 #include "libmaple.h"
+#include <malloc.h>
 
 #include <sys/stat.h>
 #include <errno.h>
@@ -164,4 +165,15 @@ int _write(int fd, const char *buf, size_t cnt) {
 char *fgets(char *s, int bufsize, void *f) {
     cgets(s, bufsize);
     return s;
+}
+
+int heap_get_used_size(void)
+{
+  return (mallinfo()).uordblks;
+}
+
+//extern unsigned char __msp_init[];
+int heap_get_total_size(void)
+{
+  return ((char*) CONFIG_HEAP_END) - ((char*)CONFIG_HEAP_START);
 }

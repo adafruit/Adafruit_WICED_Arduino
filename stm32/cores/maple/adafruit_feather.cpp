@@ -42,6 +42,8 @@
 extern "C"
 {
   extern adafruit_arduino_t const adafruit_arduino;
+  int heap_get_used_size(void);
+  int heap_get_total_size(void);
 }
 
 AdafruitFeather Feather;
@@ -809,4 +811,19 @@ void adafruit_wifi_disconnect_callback(void)
   {
     Feather.wlan_disconnect_callback();
   }
+}
+
+int AdafruitFeather::dbgHeapUsed (void)
+{
+  return heap_get_used_size();
+}
+
+int AdafruitFeather::dbgHeapFree (void)
+{
+  return heap_get_total_size() - heap_get_used_size();
+}
+
+int AdafruitFeather::dbgHeapTotal(void)
+{
+  return heap_get_total_size();
 }

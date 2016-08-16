@@ -3,24 +3,25 @@
 # https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5-3rd-party-Hardware-specification
 
 name=Adafruit Boards
-version=0.5.6
+version=0.6.0
 
 # compiler variables
 # ----------------------
 compiler.path={runtime.tools.arm-none-eabi-gcc.path}/bin/
 compiler.c.cmd=arm-none-eabi-gcc
-compiler.c.flags=-c -g -Os -w -MMD -ffunction-sections -fdata-sections -nostdlib --param max-inline-insns-single=500 -DBOARD_{build.variant} -D{build.vect} -D{build.density} -DERROR_LED_PORT={build.error_led_port} -DERROR_LED_PIN={build.error_led_pin} {compiler.extra_includes}
-#compiler.c.flags=-c -g -Os -w -MMD -ffunction-sections -fdata-sections -nostdlib --param max-inline-insns-single=500 -DBOARD_{build.variant} -D{build.vect} -D{build.density} -DERROR_LED_PORT={build.error_led_port} -DERROR_LED_PIN={build.error_led_pin} {compiler.extra_includes} -include "{runtime.platform.path}/platform_debug.h"
+compiler.c.flags=-c -g -O1 -w -MMD -ffunction-sections -fdata-sections --specs=nano.specs --specs=nosys.specs --param max-inline-insns-single=500 -DBOARD_{build.variant} -D{build.vect} -D{build.density} -DERROR_LED_PORT={build.error_led_port} -DERROR_LED_PIN={build.error_led_pin} {compiler.extra_includes}
+#compiler.c.flags=-c -g -O1 -w -MMD -ffunction-sections -fdata-sections --specs=nano.specs --specs=nosys.specs --param max-inline-insns-single=500 -DBOARD_{build.variant} -D{build.vect} -D{build.density} -DERROR_LED_PORT={build.error_led_port} -DERROR_LED_PIN={build.error_led_pin} {compiler.extra_includes} -include "{runtime.platform.path}/platform_debug.h"
+
+compiler.cpp.cmd=arm-none-eabi-g++
+compiler.cpp.flags=-c -g -O1 -w -MMD -ffunction-sections -fdata-sections --specs=nano.specs --specs=nosys.specs --param max-inline-insns-single=500 -fno-rtti -fno-exceptions -DBOARD_{build.variant} -D{build.vect} -D{build.density} -DERROR_LED_PORT={build.error_led_port} -DERROR_LED_PIN={build.error_led_pin} {compiler.extra_includes}
+#compiler.cpp.flags=-c -g -O1 -w -MMD -ffunction-sections -fdata-sections --specs=nano.specs --specs=nosys.specs --param max-inline-insns-single=500 -fno-rtti -fno-exceptions -DBOARD_{build.variant} -D{build.vect} -D{build.density} -DERROR_LED_PORT={build.error_led_port} -DERROR_LED_PIN={build.error_led_pin} {compiler.extra_includes} -include "{runtime.platform.path}/platform_debug.h"
 
 compiler.c.elf.cmd=arm-none-eabi-g++
-compiler.c.elf.flags=-Os -Wl,--gc-sections -Wl,--defsym,FIRMWARE_MAGIC_OFFSET=512
+compiler.c.elf.flags=--specs=nano.specs --specs=nosys.specs  -O1 -Wl,--gc-sections -Wl,--defsym,FIRMWARE_MAGIC_OFFSET=512
 
 compiler.S.cmd=arm-none-eabi-gcc
 compiler.S.flags=-c -g -x assembler-with-cpp -MMD {compiler.extra_includes}
 
-compiler.cpp.cmd=arm-none-eabi-g++
-compiler.cpp.flags=-c -g -Os -w -MMD -ffunction-sections -fdata-sections -nostdlib --param max-inline-insns-single=500 -fno-rtti -fno-exceptions -DBOARD_{build.variant} -D{build.vect} -D{build.density} -DERROR_LED_PORT={build.error_led_port} -DERROR_LED_PIN={build.error_led_pin} {compiler.extra_includes}
-#compiler.cpp.flags=-c -g -Os -w -MMD -ffunction-sections -fdata-sections -nostdlib --param max-inline-insns-single=500 -fno-rtti -fno-exceptions -DBOARD_{build.variant} -D{build.vect} -D{build.density} -DERROR_LED_PORT={build.error_led_port} -DERROR_LED_PIN={build.error_led_pin} {compiler.extra_includes} -include "{runtime.platform.path}/platform_debug.h"
 
 compiler.ar.cmd=arm-none-eabi-ar
 compiler.ar.flags=rcs
@@ -62,22 +63,19 @@ build.extra_flags= {build.cpu_flags} {build.hs_flag} {build.common_flags}
 # ---------------------
 
 ## Compile c files
-recipe.c.o.pattern="{compiler.path}{compiler.c.cmd}" {compiler.c.flags} -mcpu={build.mcu} -DF_CPU={build.f_cpu} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} {compiler.c.extra_flags} {build.extra_flags} {includes} "{source_file}" -o "{object_file}"
+recipe.c.o.pattern="{compiler.path}{compiler.c.cmd}" {compiler.c.flags} -mcpu={build.mcu} -mlittle-endian -mfloat-abi=soft -mthumb -DF_CPU={build.f_cpu} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} {compiler.c.extra_flags} {build.extra_flags} {includes} "{source_file}" -o "{object_file}"
 
 ## Compile c++ files
-recipe.cpp.o.pattern="{compiler.path}{compiler.cpp.cmd}" {compiler.cpp.flags} -mcpu={build.mcu} -DF_CPU={build.f_cpu} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} {compiler.cpp.extra_flags} {build.extra_flags} {build.cpu_flags} {build.hs_flag} {build.common_flags} {includes} "{source_file}" -o "{object_file}"
+recipe.cpp.o.pattern="{compiler.path}{compiler.cpp.cmd}" {compiler.cpp.flags} -mcpu={build.mcu} -mlittle-endian -mfloat-abi=soft -mthumb -DF_CPU={build.f_cpu} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} {compiler.cpp.extra_flags} {build.extra_flags} {build.cpu_flags} {build.hs_flag} {build.common_flags} {includes} "{source_file}" -o "{object_file}"
 
 ## Compile S files
-recipe.S.o.pattern="{compiler.path}{compiler.c.cmd}" {compiler.S.flags} -mcpu={build.mcu} -DF_CPU={build.f_cpu} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} {compiler.S.extra_flags} {build.extra_flags} {build.cpu_flags} {build.hs_flag} {build.common_flags} {includes} "{source_file}" -o "{object_file}"
-#recipe.S.o.pattern="{compiler.path}{compiler.c.cmd}" "{source_file}" -o "{object_file}"
+recipe.S.o.pattern="{compiler.path}{compiler.c.cmd}" {compiler.S.flags} -mcpu={build.mcu} -mlittle-endian -mfloat-abi=soft -mthumb  -DF_CPU={build.f_cpu} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} {compiler.S.extra_flags} {build.extra_flags} {build.cpu_flags} {build.hs_flag} {build.common_flags} {includes} "{source_file}" -o "{object_file}"
 
 ## Create archives
 recipe.ar.pattern="{compiler.path}{compiler.ar.cmd}" {compiler.ar.flags} {compiler.ar.extra_flags} "{archive_file_path}" "{object_file}"
 
 ## Combine gc-sections, archives, and objects
-#recipe.c.combine.pattern="{compiler.path}{compiler.c.elf.cmd}" {compiler.c.elf.flags} -mcpu={build.mcu} "-T{build.variant.path}/{build.ldscript}" "-Wl,-Map,{build.path}/{build.project_name}.map" {compiler.c.elf.extra_flags} -o "{build.path}/{build.project_name}.elf" "-L{build.path}" -lm -lgcc -mthumb -Wl,--cref -Wl,--check-sections -Wl,--gc-sections -Wl,--unresolved-symbols=report-all -Wl,--warn-common -Wl,--warn-section-align -Wl,--warn-unresolved-symbols -Wl,--start-group {object_files} "{build.variant.path}/{build.variant_system_lib}" "{build.path}/{archive_file}" -Wl,--end-group
-
-recipe.c.combine.pattern="{compiler.path}{compiler.c.elf.cmd}" {compiler.c.elf.flags} -mcpu={build.mcu} "-T{build.variant.path}/{build.ldscript}" "-Wl,-Map,{build.path}/{build.project_name}.map" {compiler.c.elf.extra_flags} -o "{build.path}/{build.project_name}.elf" "-L{build.path}" -lm -lgcc -mthumb -Wl,--cref -Wl,--check-sections -Wl,--gc-sections -Wl,--unresolved-symbols=report-all -Wl,--warn-common -Wl,--warn-section-align -Wl,--warn-unresolved-symbols -Wl,--start-group {object_files} -Wl,--whole-archive "{archive_file_path}" -Wl,--no-whole-archive -Wl,--end-group
+recipe.c.combine.pattern="{compiler.path}{compiler.c.elf.cmd}" {compiler.c.elf.flags} -mcpu={build.mcu} "-T{build.variant.path}/{build.ldscript}" "-Wl,-Map,{build.path}/{build.project_name}.map" {compiler.c.elf.extra_flags} -o "{build.path}/{build.project_name}.elf" "-L{build.path}" -lm -lgcc -mthumb  -Wl,--cref -Wl,--check-sections -Wl,--gc-sections -Wl,--unresolved-symbols=report-all -Wl,--warn-common -Wl,--warn-section-align -Wl,--warn-unresolved-symbols -Wl,--start-group {object_files} -Wl,--whole-archive "{archive_file_path}" -Wl,--no-whole-archive -Wl,--end-group
 
 ## Create eeprom
 recipe.objcopy.eep.pattern=
@@ -113,6 +111,8 @@ tools.adafruit_upload.python.windows=
 tools.adafruit_upload.cmd.windows=feather_dfu/feather_dfu.exe
 tools.adafruit_upload.path.windows={runtime.hardware.path}/tools/win32-x86
 tools.adafruit_upload.dfu_util.windows=-u "{path}/dfu-util/dfu-util-static.exe"
+
+tools.adafruit_upload.upload.pattern=adalink stm32f2 --programmer jlink --program-bin "{upload.binfile}" {upload.address}
 
 # Adalink Programmer/Uploader tools
 # -------------------

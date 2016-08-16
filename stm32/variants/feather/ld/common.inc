@@ -167,8 +167,8 @@ SECTIONS
          * I'm shoving these here naively; there's probably a cleaner way
          * to go about this. [mbolivar]
          */
-        _lm_heap_start = DEFINED(_lm_heap_start) ? _lm_heap_start : _end;
-        _lm_heap_end   = DEFINED(_lm_heap_end) ? _lm_heap_end : __msp_init;
+        /*_lm_heap_start = DEFINED(_lm_heap_start) ? _lm_heap_start : _end;*/
+        /*_lm_heap_end   = DEFINED(_lm_heap_end) ? _lm_heap_end : __msp_init;*/
       } > REGION_RODATA
 
     /*
@@ -220,3 +220,6 @@ SECTIONS
     .ARM.attributes 0 : { KEEP (*(.ARM.attributes)) }
     /DISCARD/ : { *(.note.GNU-stack) }
 }
+
+PROVIDE(_lm_heap_start = _end);
+PROVIDE(_lm_heap_end   = __msp_init); 
