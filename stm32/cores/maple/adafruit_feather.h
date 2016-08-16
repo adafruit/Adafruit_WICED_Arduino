@@ -248,7 +248,7 @@ extern AdafruitFeather Feather;
   #define free_named( name, ptr )               ({ Serial.printf("[free] %s\r\n"     , name      ); free  (ptr ); })
 
   #if DBG_ENABLE == 3
-    #define DBG_HEAP() Serial.printf("\r\n[Heap free] %s %d: Arudino = %d, featherlib = %d\r\n", __FUNCTION__, __LINE__, Feather.dbgHeapFree(), FEATHERLIB->heap_get_free_size()); delay(5);
+    #define DBG_HEAP() ({ Serial.printf("\r\n[Heap free] %s %d: Arudino = %d, featherlib = %d\r\n", __FUNCTION__, __LINE__, Feather.dbgHeapFree(), FEATHERLIB->heap_get_free_size()); delay(5); })
   #else
     #define DBG_HEAP()
   #endif
