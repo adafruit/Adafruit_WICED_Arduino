@@ -49,10 +49,7 @@ const char * file_arr[] =
     [2] = "/text_1MB.txt"   ,
 };
 
-const int filelen_arr[]= { 10000, 100000, 1000000 };
-
 const char * url = file_arr[FILE_ID];
-const int filelen = filelen_arr[FILE_ID];
 
 // Use the HTTP class
 AdafruitHTTP http;
@@ -60,7 +57,6 @@ AdafruitHTTP http;
 // Use CRC32 class to compute checksum
 AdafruitCRC32 crc32;
 
-bool     skippedHeader = false;
 uint32_t datacount = 0;
 int      time_start;
 int      time_duration;
@@ -75,38 +71,24 @@ void receive_callback(void)
   // skip if byte is not available yet
   if ( !http.available() ) return;
 
-  if (!skippedHeader)
+  // HTTP Reponse header is not parsed
+  // respParseHeader() will detect and save Status & Content-Length
+  if ( http.respStatus() == 0 )
   {
-    size_t count;
-    uint8_t buffer[256];
-
-    // Header ends with empty line "\r\n", count should be 1 at that point
-    do{
-      count = http.readBytesUntil('\n', buffer, 256);
-    }while( count > 1 );
-
-    // read timeout, no bytes available
-    if ( count == 0 ) return;
-    if ( count == 1 )
-    {
-      skippedHeader = true;
-    }
+    http.respParseHeader();
   }
 
-  if (skippedHeader)
+  if (http.respStatus() == HTTP_STATUS_RESPONSE_OK)
   {
-    while( http.available() )
+    while( http.available() && (datacount < http.respContentLength()) )
     {
       int c = http.read();
-      if (isprint(c) || isspace(c))
-      {
-        datacount++;
-        crc32.compute((char)c);
-      }
+      datacount++;
+      crc32.compute((char)c);
     }
 
-    // received all data, disconnect
-    if (datacount >= filelen)
+    // all data is received, disconnect right away to compute speed
+    if (datacount >= http.respContentLength())
     {
       time_duration = millis() - time_start;
       disconnect_server();
