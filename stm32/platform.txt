@@ -3,7 +3,7 @@
 # https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5-3rd-party-Hardware-specification
 
 name=Adafruit Boards
-version=0.6.0
+version=0.5.6
 
 # compiler variables
 # ----------------------
@@ -112,7 +112,7 @@ tools.adafruit_upload.cmd.windows=feather_dfu/feather_dfu.exe
 tools.adafruit_upload.path.windows={runtime.hardware.path}/tools/win32-x86
 tools.adafruit_upload.dfu_util.windows=-u "{path}/dfu-util/dfu-util-static.exe"
 
-tools.adafruit_upload.upload.pattern=adalink stm32f2 --programmer jlink --program-bin "{upload.binfile}" {upload.address}
+#tools.adafruit_upload.upload.pattern=adalink stm32f2 --programmer jlink --program-bin "{upload.binfile}" {upload.address}
 
 # Adalink Programmer/Uploader tools
 # -------------------
