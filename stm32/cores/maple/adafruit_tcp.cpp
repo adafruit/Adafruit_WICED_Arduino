@@ -242,13 +242,12 @@ void AdafruitTCP::get_peer_info(void)
   struct ATTR_PACKED {
     uint32_t remote_ip;
     uint16_t remote_port;
-  } response;
+  } response = { 0, 0 };
 
-  if ( sdep(SDEP_CMD_TCP_PEER_INFO, 4, &_tcp_handle, NULL, &response) )
-  {
-    _remote_ip   = response.remote_ip;
-    _remote_port = response.remote_port;
-  }
+  (void) sdep(SDEP_CMD_TCP_PEER_INFO, 4, &_tcp_handle, NULL, &response);
+
+  _remote_ip   = response.remote_ip;
+  _remote_port = response.remote_port;
 }
 
 IPAddress AdafruitTCP::remoteIP ( void )
