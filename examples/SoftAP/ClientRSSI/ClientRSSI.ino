@@ -42,7 +42,11 @@ void setup()
 
   Serial.println("SoftAP Client RSSI Example\r\n");
 
+  Serial.println("Configuring SoftAP\r\n");
+  FeatherAP.err_actions(true, true);
   FeatherAP.begin(apIP, apGateway, apNetmask, WLAN_CHANNEL);
+
+  Serial.println("Starting SoftAP\r\n");
   FeatherAP.start(WLAN_SSID, WLAN_PASS, WLAN_ENCRYPTION);
 }
 
@@ -53,10 +57,10 @@ void setup()
 /**************************************************************************/
 void loop()
 {
-  Serial.println();
-  Serial.println("Scanning available networks...");
+//  Serial.println();
+ // Serial.println("Scanning available networks...");
 
-  Serial.println();
-  Serial.println("Waiting 10 seconds before trying again");
+//  Serial.println();
+  //Serial.println("Waiting 10 seconds before trying again");
   delay(10000);
 }
