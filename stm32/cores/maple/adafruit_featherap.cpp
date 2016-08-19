@@ -36,11 +36,24 @@
 
 #include "adafruit_featherap.h"
 
+typedef enum
+{
+  SOFTAP_EVENT_UNKNOWN,
+  SOFTAP_EVENT_JOINED,
+  SOFTAP_EVENT_LEAVE,
+} softap_event_t;
+
 AdafruitFeatherAP FeatherAP;
 
 void AdafruitFeatherAP::clear(void)
 {
-  _ip = _gateway = _subnet = _channel = 0;
+  _ip = _gateway = _subnet = 0;
+  _channel = 0;
+
+  _client_count = 0;
+  memclr(_client_maclist, sizeof(_client_maclist));
+
+  _join_callback = _leave_callback = NULL;
 }
 
 /**
@@ -110,4 +123,56 @@ bool AdafruitFeatherAP::start(const char *ssid, const char *key, int enc_type)
 void AdafruitFeatherAP::stop(void)
 {
 //  return FEATHERLIB->sdep_execute(SDEP_CMD_APSTOP, 0, NULL, NULL, NULL);
+}
+
+
+const uint8_t* AdafruitFeatherAP::clientMAC(uint8_t id)
+{
+  return  ( id < _client_count) ? _client_maclist[id] : NULL;
+}
+
+void AdafruitFeatherAP::featherlib_event_callback(uint32_t event, const uint8_t mac[6] )
+{
+  if ( SOFTAP_EVENT_JOINED == event && _client_count < SOFTAP_MAX_CLIENT)
+  {
+    memcpy(_client_maclist[_client_count++], mac, 6);
+    if(_join_callback) _join_callback(mac);
+  }
+
+  if ( SOFTAP_EVENT_LEAVE == event)
+  {
+    // Find the corresponding client and shift the maclist
+    for(int i=0; i<_client_count; i++)
+    {
+      if ( 0 == memcmp(mac, _client_maclist[i], 6) )
+      {
+        if ( i < _client_count-1)
+        {
+          memmove(_client_maclist[i], _client_maclist[i+1], 6*(_client_count-1-i) );
+        }
+        memclr(_client_maclist[_client_count-1], 6);
+
+        break;
+      }
+    }
+
+    _client_count--;
+    if (_leave_callback) _leave_callback(mac);
+  }
+}
+
+void AdafruitFeatherAP::setJoinCallback( void(*fp)(const uint8_t[6]))
+{
+  _join_callback = fp;
+}
+
+void AdafruitFeatherAP::setLeaveCallback( void(*fp)(const uint8_t[6]))
+{
+  _leave_callback = fp;
+}
+
+
+void adafruit_softap_event_callback(uint32_t event, const uint8_t mac[6] )
+{
+  FeatherAP.featherlib_event_callback(event, mac);
 }

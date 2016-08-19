@@ -43,9 +43,9 @@ SDEP_CMD_THREADLIST          = 0x0304    # Get thread information
 SDEP_CMD_SCAN                = 0x0400    # AP scan                                    
 SDEP_CMD_CONNECT             = 0x0401    # Connect to AP                              
 SDEP_CMD_DISCONNECT          = 0x0402    # Disconnect from AP                         
-SDEP_CMD_APSTART             = 0x0403    # Start AP                                   
-SDEP_CMD_APSTOP              = 0x0404    # Stop AP                                    
-SDEP_CMD_WIFI_GET_RSSI       = 0x0405    # Get RSSI of current connected signal       
+# 0x4003
+# 0x4004
+SDEP_CMD_WIFI_GET_RSSI       = 0x0405    # Get RSSI of current connected signal
 SDEP_CMD_WIFI_PROFILE_ADD    = 0x0406    # Add a network profile                      
 SDEP_CMD_WIFI_PROFILE_DEL    = 0x0407    # Remove a network profile                   
 SDEP_CMD_WIFI_PROFILE_CLEAR  = 0x0408    # Clear all network profiles                 
@@ -93,7 +93,8 @@ SDEP_CMD_MQTTCONNECT         = 0x0900    # Connect to a broker
 SDEP_CMD_MQTTDISCONNECT      = 0x0901    # Disconnect from a broker                   
 SDEP_CMD_MQTTPUBLISH         = 0x0902    # Publish a message to a topic               
 SDEP_CMD_MQTTSUBSCRIBE       = 0x0903    # Subscribe to a topic                       
-SDEP_CMD_MQTTUNSUBSCRIBE     = 0x0904    # Unsubscribe from a topic                   
+SDEP_CMD_MQTTUNSUBSCRIBE     = 0x0904    # Unsubscribe from a topic
+
 #******************************************************************************
 # ERROR Constants
 #******************************************************************************

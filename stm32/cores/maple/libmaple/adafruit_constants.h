@@ -183,8 +183,8 @@ typedef enum {
   SDEP_CMD_SCAN                = 0x0400,    ///< AP scan
   SDEP_CMD_CONNECT             = 0x0401,    ///< Connect to AP
   SDEP_CMD_DISCONNECT          = 0x0402,    ///< Disconnect from AP
-  SDEP_CMD_APSTART             = 0x0403,    ///< Start AP
-  SDEP_CMD_APSTOP              = 0x0404,    ///< Stop AP
+  // 0x0403,    ///< Reserved1
+  // 0x0404,    ///< Reserved1
   SDEP_CMD_WIFI_GET_RSSI       = 0x0405,    ///< Get RSSI of current connected signal
   SDEP_CMD_WIFI_PROFILE_ADD    = 0x0406,    ///< Add a network profile
   SDEP_CMD_WIFI_PROFILE_DEL    = 0x0407,    ///< Remove a network profile
@@ -249,6 +249,11 @@ typedef enum {
   SDEP_CMD_HMAC_SHA1_FINISH    = 0x0B02,    ///< HMAC SHA1 Finish
   SDEP_CMD_BASE64_ENCODE       = 0x0B03,    ///< Base64 encode
   SDEP_CMD_BASE64_DECODE       = 0x0B04,    ///< Base64 decode
+
+  // SoftAP
+  SDEP_CMD_SOFTAP_START        = 0x0C00,    ///< Start SoftAP
+  SDEP_CMD_SOFTAP_STOP         = 0x0C01,    ///< Stop SoftAP
+  SDEP_CMD_SOFTAP_CLIENT_RSSI  = 0x0C02,    ///< SoftAP get client RSSI
 } sdep_command_t;
 
 enum

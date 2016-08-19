@@ -8,6 +8,7 @@
 
 AdafruitSDEP	KEYWORD1
 AdafruitFeather	KEYWORD1
+AdafruitFeatherAP	KEYWORD1
 AdafruitTCP	KEYWORD1
 AdafruitUDP	KEYWORD1
 UTF8String	KEYWORD1
@@ -17,6 +18,8 @@ UTF8String	KEYWORD1
 #######################################
 
 printf	KEYWORD2
+printBuffer	KEYWORD2
+
 sdep	KEYWORD2
 sdep_n	KEYWORD2
 errno	KEYWORD2
@@ -66,6 +69,14 @@ useDefaultRootCA	KEYWORD2
 initRootCA	KEYWORD2
 addRootCA	KEYWORD2
 clearRootCA	KEYWORD2
+
+#######################################
+# AdafruitFeatherAP Methods and Functions (KEYWORD2)
+#######################################
+setJoinCallback	KEYWORD2
+setLeaveCallback	KEYWORD2
+clientno	KEYWORD2
+clientMAC	KEYWORD2
 
 #######################################
 # AdafruitTCP Methods and Functions (KEYWORD2)

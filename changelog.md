@@ -17,6 +17,9 @@
 - AdafruitTwitter
 	- add checkDirectMessage()
 	- add setDirectMessageRecvCallback()
+- SoftAP support with FeatherAP
+	- add setJoinCallback(), setLeaveCallback()
+	- add clientno() clientMAC()
 
 # 0.5.5
 

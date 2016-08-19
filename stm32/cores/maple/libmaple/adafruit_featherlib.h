@@ -86,7 +86,8 @@ typedef struct ATTR_ALIGNED(512)
   // 192 - 255 (16 functions)
   void (*wifi_connect_callback    )(void); // not used for now
   void (*wifi_disconnect_callback )(void);
-  uint32_t RESERVED_[2];
+  void (*softap_event_callback    )(uint32_t event, const uint8_t mac[6] );
+  uint32_t RESERVED_;
 
   err_t (*tcpserver_connect_callback    )(void* socket, void* p_tcpserver);
   err_t (*tcp_receive_callback          )(void* socket, void* p_tcp);

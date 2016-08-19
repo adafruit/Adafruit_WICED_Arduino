@@ -44,8 +44,8 @@ SDEP_CMD_THREADLIST          = 0x0304    # Get thread information
 SDEP_CMD_SCAN                = 0x0400    # AP scan                                    
 SDEP_CMD_CONNECT             = 0x0401    # Connect to AP                              
 SDEP_CMD_DISCONNECT          = 0x0402    # Disconnect from AP                         
-SDEP_CMD_APSTART             = 0x0403    # Start AP                                   
-SDEP_CMD_APSTOP              = 0x0404    # Stop AP                                    
+# 0x0403
+# 0x0404
 SDEP_CMD_WIFI_GET_RSSI       = 0x0405    # Get RSSI of current connected signal       
 SDEP_CMD_WIFI_PROFILE_ADD    = 0x0406    # Add a network profile                      
 SDEP_CMD_WIFI_PROFILE_DEL    = 0x0407    # Remove a network profile                   

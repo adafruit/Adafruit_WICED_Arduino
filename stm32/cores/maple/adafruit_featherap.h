@@ -51,6 +51,14 @@
 #include "adafruit_tcp_server.h"
 #include "adafruit_udp.h"
 
+// Limit by SDK due to RAM restriction
+#define SOFTAP_MAX_CLIENT   5
+
+extern "C"
+{
+  void adafruit_softap_event_callback(uint32_t event, const uint8_t mac[6] );
+}
+
 class AdafruitFeatherAP : public AdafruitSDEP
 {
 private:
@@ -58,6 +66,14 @@ private:
   uint32_t _gateway;
   uint32_t _subnet;
   uint8_t  _channel;
+
+  uint8_t  _client_count;
+  uint8_t  _client_maclist[SOFTAP_MAX_CLIENT][6];
+
+  void (*_join_callback)(const uint8_t mac[6]);
+  void (*_leave_callback)(const uint8_t mac[6]);
+
+  void featherlib_event_callback(uint32_t event, const uint8_t mac[6] );
 
 
   void clear(void);
@@ -71,6 +87,15 @@ public:
   bool start(const char *ssid ) { return this->start(ssid, NULL, ENC_TYPE_OPEN); }
 
   void stop();
+
+  uint8_t clientno() { return _client_count; }
+  const uint8_t* clientMAC(uint8_t id);
+
+  void setJoinCallback( void(*fp)(const uint8_t[6]));
+  void setLeaveCallback( void(*fp)(const uint8_t[6]));
+
+  /* callback from featherlib */
+  friend void adafruit_softap_event_callback(uint32_t event, const uint8_t mac[6] );
 };
 
 extern AdafruitFeatherAP FeatherAP;
