@@ -87,7 +87,7 @@ void loop()
   for(int i=0; i<FeatherAP.clientno(); i++)
   {
     Serial.print(i);
-    Serial.print('  ');
+    Serial.print("  ");
     
     printMAC( FeatherAP.clientMAC(i) );
     Serial.print(' ');
