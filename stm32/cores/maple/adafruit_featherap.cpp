@@ -45,6 +45,9 @@ typedef enum
 
 AdafruitFeatherAP FeatherAP;
 
+/**
+ *
+ */
 void AdafruitFeatherAP::clear(void)
 {
   _ip = _gateway = _subnet = 0;
@@ -64,6 +67,14 @@ AdafruitFeatherAP::AdafruitFeatherAP(void)
   this->clear();
 }
 
+/**
+ *
+ * @param ip
+ * @param gateway
+ * @param subnet
+ * @param channel
+ * @return
+ */
 bool AdafruitFeatherAP::begin(IPAddress ip, IPAddress gateway, IPAddress subnet, uint8_t channel)
 {
   _ip      = (uint32_t) ip;
@@ -90,8 +101,7 @@ bool AdafruitFeatherAP::begin(IPAddress ip, IPAddress gateway, IPAddress subnet,
     5. Config Subnet
     6. Channel
 
-    @return Returns ERROR_NONE if everything executed properly, otherwise a
-            specific err_t error condition if something went wrong.
+    @return true if success
 */
 /******************************************************************************/
 bool AdafruitFeatherAP::start(const char *ssid, const char *key, int enc_type)
@@ -112,7 +122,7 @@ bool AdafruitFeatherAP::start(const char *ssid, const char *key, int enc_type)
       { .len = 1                     , .p_value = &_channel },
   };
 
-  return sdep_n(SDEP_CMD_APSTART, arrcount(para_arr), para_arr, NULL, NULL);
+  return sdep_n(SDEP_CMD_SOFTAP_START, arrcount(para_arr), para_arr, NULL, NULL);
 }
 
 /******************************************************************************/
@@ -131,6 +141,34 @@ const uint8_t* AdafruitFeatherAP::clientMAC(uint8_t id)
   return  ( id < _client_count) ? _client_maclist[id] : NULL;
 }
 
+/******************************************************************************/
+/*!
+    @brief  Get RSSI of an connected client based on its index
+
+    @param[in]      id    Client ID
+
+    SDEP Parameter
+    0. Client MAC
+
+    @return SSID of client
+*/
+/******************************************************************************/
+int32_t AdafruitFeatherAP::clientRSSI(uint8_t id)
+{
+  if ( id >= _client_count ) return 0;
+
+  int32_t rssi = 0;
+
+  (void) sdep(SDEP_CMD_SOFTAP_CLIENT_RSSI, 6, _client_maclist[id], NULL, &rssi);
+
+  return rssi;
+}
+
+/**
+ *
+ * @param event
+ * @param mac
+ */
 void AdafruitFeatherAP::featherlib_event_callback(uint32_t event, const uint8_t mac[6] )
 {
   if ( SOFTAP_EVENT_JOINED == event && _client_count < SOFTAP_MAX_CLIENT)
@@ -161,17 +199,29 @@ void AdafruitFeatherAP::featherlib_event_callback(uint32_t event, const uint8_t 
   }
 }
 
+/**
+ *
+ * @param fp
+ */
 void AdafruitFeatherAP::setJoinCallback( void(*fp)(const uint8_t[6]))
 {
   _join_callback = fp;
 }
 
+/**
+ *
+ * @param fp
+ */
 void AdafruitFeatherAP::setLeaveCallback( void(*fp)(const uint8_t[6]))
 {
   _leave_callback = fp;
 }
 
-
+/**
+ *
+ * @param event
+ * @param mac
+ */
 void adafruit_softap_event_callback(uint32_t event, const uint8_t mac[6] )
 {
   FeatherAP.featherlib_event_callback(event, mac);

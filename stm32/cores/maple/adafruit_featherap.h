@@ -88,8 +88,9 @@ public:
 
   void stop();
 
-  uint8_t clientno() { return _client_count; }
+  uint8_t        clientno() { return _client_count; }
   const uint8_t* clientMAC(uint8_t id);
+  int32_t        clientRSSI(uint8_t id);
 
   void setJoinCallback( void(*fp)(const uint8_t[6]));
   void setLeaveCallback( void(*fp)(const uint8_t[6]));

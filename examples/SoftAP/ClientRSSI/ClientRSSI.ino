@@ -44,10 +44,36 @@ void setup()
 
   Serial.println("Configuring SoftAP\r\n");
   FeatherAP.err_actions(true, true);
+  FeatherAP.setJoinCallback(client_join_callback);
+  FeatherAP.setLeaveCallback(client_leave_callback);
+  
   FeatherAP.begin(apIP, apGateway, apNetmask, WLAN_CHANNEL);
 
   Serial.println("Starting SoftAP\r\n");
   FeatherAP.start(WLAN_SSID, WLAN_PASS, WLAN_ENCRYPTION);
+}
+
+void client_join_callback(const uint8_t mac[6])
+{
+  Serial.print("Client Joined: Mac = ");
+  printMAC(mac);
+  Serial.println();
+}
+
+void client_leave_callback(const uint8_t mac[6])
+{
+  Serial.print("Client Left  : Mac = ");
+  printMAC(mac);
+  Serial.println();
+}
+
+void printMAC(const uint8_t mac[6])
+{
+  for(int i=0; i<6; i++)
+  {
+    if (i > 0) Serial.print(':');
+    Serial.printf("%02X", mac[i]);  
+  }
 }
 
 /**************************************************************************/
@@ -57,10 +83,21 @@ void setup()
 /**************************************************************************/
 void loop()
 {
-//  Serial.println();
- // Serial.println("Scanning available networks...");
+  Serial.println("ID MAC               RSSI");
+  for(int i=0; i<FeatherAP.clientno(); i++)
+  {
+    Serial.print(i);
+    Serial.print('  ');
+    
+    printMAC( FeatherAP.clientMAC(i) );
+    Serial.print(' ');
 
-//  Serial.println();
-  //Serial.println("Waiting 10 seconds before trying again");
+    Serial.println(FeatherAP.clientRSSI(i));  
+  }
+  Serial.println();
+
+
+  Serial.println();
+  Serial.println("Waiting 10 seconds before trying again");
   delay(10000);
 }

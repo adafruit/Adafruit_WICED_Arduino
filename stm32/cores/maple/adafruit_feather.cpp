@@ -511,9 +511,6 @@ int AdafruitFeather::scanNetworks(wl_ap_info_t ap_list[], uint8_t max_ap)
 /******************************************************************************/
 /*!
     @brief  Disconnects from the access point if a connection exists
-
-    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
-            a specific error if something went wrong.
 */
 /******************************************************************************/
 void AdafruitFeather::disconnect(void)
