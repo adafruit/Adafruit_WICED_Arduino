@@ -157,9 +157,18 @@ bool AdafruitFeather::connect(const char *ssid)
 {
   VERIFY(ssid != NULL && strlen(ssid) > 0);
 
+  int enc_type = ENC_TYPE_OPEN;
+
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = strlen(ssid), .p_value = ssid      },
+      { .len = 0           , .p_value = NULL      },
+      { .len = 4           , .p_value = &enc_type },
+  };
   uint16_t resp_len = sizeof(wl_ap_info_t);
-  _connected = sdep(SDEP_CMD_CONNECT, strlen(ssid), ssid,
-                                      &resp_len, &_ap_info);
+
+  _connected = sdep_n(SDEP_CMD_CONNECT, arrcount(para_arr), para_arr, &resp_len, &_ap_info);
+
 	return _connected;
 }
 
@@ -581,67 +590,6 @@ bool AdafruitFeather::addRootCA(uint8_t const* root_ca, uint16_t len)
 
   return sdep_n(SDEP_CMD_TLS_ADD_ROOT_CA, para_count, para_arr, NULL, NULL);
 }
-
-#if 0
-/******************************************************************************/
-/*!
-    @brief  Starts AP mode on the module, causing the module to advertise a new
-            Wireless network and SSID, etc.
-
-    @param[in]      ssid    SSID of Wi-Fi access point
-
-    @param[in]      passwd  Password of Wi-Fi access point
-
-    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
-            a specific error if something went wrong.
-
-    @note   ssid and passwd are combined in a single payload buffer which are
-            separated by ',' character
-
-            The passwd could be NULL or empty string if it does not exist
-*/
-/******************************************************************************/
-err_t AdafruitFeather::startAP(char* ssid, char* passwd)
-{
-  if (ssid == NULL || ssid == "" || passwd == NULL) return ERROR_SDEP_INVALIDPARAMETER;
-
-  sdep_cmd_para_t para_arr[] =
-  {
-      { .len = strlen(ssid)  , .p_value = ssid   },
-      { .len = strlen(passwd), .p_value = passwd },
-  };
-  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
-
-  err_t err = FEATHERLIB->sdep_execute_n(SDEP_CMD_APSTART, para_count, para_arr, NULL, NULL);
-  return err;
-}
-
-/******************************************************************************/
-/*!
-    @brief  Starts AP mode on the module with default SSID and password
-
-    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
-            a specific error if something went wrong.
-*/
-/******************************************************************************/
-err_t AdafruitFeather::startAP(void)
-{
-  return FEATHERLIB->sdep_execute(SDEP_CMD_APSTART, 0, NULL, NULL, NULL);
-}
-
-/******************************************************************************/
-/*!
-    @brief  Stop AP mode on the module
-
-    @return Returns ERROR_NONE (0x0000) if everything executed properly, otherwise
-            a specific error if something went wrong.
-*/
-/******************************************************************************/
-err_t AdafruitFeather::stopAP(void)
-{
-  return FEATHERLIB->sdep_execute(SDEP_CMD_APSTOP, 0, NULL, NULL, NULL);
-}
-#endif
 
 /******************************************************************************/
 /*!

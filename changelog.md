@@ -2,6 +2,7 @@
 
 - rename menu Featherlib (Beta) --> Featherlib (Debug)
 - print warning message when Featherlib & Arduino library version are not matched
+- fix get TCP peer information when SOCKET is CLOSED
 - add AdafruitBase64
 - add AdafruitUrlencode
 - move AdafruitCrc32 to AdafruitCrypto
