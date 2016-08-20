@@ -19,7 +19,7 @@
 	- add setDirectMessageRecvCallback()
 - SoftAP support with FeatherAP
 	- add setJoinCallback(), setLeaveCallback()
-	- add clientno() clientMAC()
+	- add clientNum() clientMAC()
 
 # 0.5.5
 

@@ -84,7 +84,7 @@ void printMAC(const uint8_t mac[6])
 void loop()
 {
   Serial.println("ID MAC               RSSI");
-  for(int i=0; i<FeatherAP.clientno(); i++)
+  for(int i=0; i<FeatherAP.clientNum(); i++)
   {
     Serial.print(i);
     Serial.print("  ");

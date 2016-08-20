@@ -75,7 +75,7 @@ clearRootCA	KEYWORD2
 #######################################
 setJoinCallback	KEYWORD2
 setLeaveCallback	KEYWORD2
-clientno	KEYWORD2
+clientNum	KEYWORD2
 clientMAC	KEYWORD2
 
 #######################################
