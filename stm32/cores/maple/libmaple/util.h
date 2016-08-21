@@ -30,6 +30,7 @@
  */
 
 #include "libmaple_types.h"
+#include <string.h>
 
 #ifndef _UTIL_H_
 #define _UTIL_H_
@@ -87,6 +88,11 @@ extern "C"{
 #define memclr(buffer, size)  memset(buffer, 0, size)
 #define varclr(_var)          memclr(&_var, sizeof(_var))
 #define arrcount(_arr)       ( sizeof(_arr) / sizeof(_arr[0]) )
+
+static inline int stringlen(const char* str)
+{
+  return str ? strlen(str) : 0;
+}
 
 #define maxof(a,b) \
     ({ typeof (a) _a = (a); \

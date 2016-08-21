@@ -12,25 +12,33 @@
  any redistribution
 *********************************************************************/
 
-/* This example will start a TCP server on the feather, polling
- * for any incoming messages and echoing them back. To run this demo:
+/* This example will start a TCP server on the feather, registering
+ * a 'receive' callback and echoing back any incoming messages. To
+ * run this demo:
  * - Change SSID/Pass
  * - Compile and run
- * - Use a  TCP client on your PC such as netcast as follows
- *   'echo "your message" | nc IP port'. e.g your Feather's IP is 192.168.1.100
+ * - Use a TCP client on your PC such as netcast as follows:
+ *  'echo "your message" | nc IP port'. e.g your Feather's IP is 192.168.1.100
  *   and PORT is 8888 then
  *     > echo "Hello Feather" | nc 192.168.100 8888
  */
 
 #include <adafruit_feather.h>
+#include <adafruit_featherap.h>
 
 #define WLAN_SSID            "yourSSID"
-#define WLAN_PASS            "yourPass"
+#define WLAN_PASS            "yourPassword"
+#define WLAN_ENCRYPTION       ENC_TYPE_WPA2_AES
+#define WLAN_CHANNEL          1
 
-#define PORT                 8888                     // The TCP port to use
+// The TCP port to use
+#define PORT                 8888
 
-AdafruitTCPServer tcpserver(PORT);
+IPAddress apIP     (192, 168, 2, 1);
+IPAddress apGateway(192, 168, 2, 1);
+IPAddress apNetmask(255, 255, 255, 0);
 
+AdafruitTCPServer tcpserver(PORT, WIFI_INTERFACE_SOFTAP);
 
 /**************************************************************************/
 /*!
@@ -41,24 +49,17 @@ void setup()
 {
   Serial.begin(115200);
 
-  // Wait for the serial port to connect. Needed for native USB port only.
+  // wait for serial port to connect. Needed for native USB port only
   while (!Serial) delay(1);
 
-  Serial.println("TCP Server Example (Polling)\r\n");
+  Serial.println("SoftAP TCP Server Example\r\n");
 
-  // Print all software versions
-  Feather.printVersions();
+  Serial.println("Configuring SoftAP\r\n");
+  FeatherAP.err_actions(true, true);
+  FeatherAP.begin(apIP, apGateway, apNetmask, WLAN_CHANNEL);
 
-  while ( !connectAP() )
-  {
-    delay(500); // delay between each attempt
-  }
-
-  // Connected: Print network info
-  Feather.printNetwork();
-
-  // Tell the TCP Server to auto print error codes and halt on errors
-  tcpserver.err_actions(true, true);
+  Serial.println("Starting SoftAP\r\n");
+  FeatherAP.start(WLAN_SSID, WLAN_PASS, WLAN_ENCRYPTION);
 
   // Starting server at defined port
   Serial.print("Listening on port "); Serial.println(PORT);
@@ -79,9 +80,11 @@ void loop()
 
   if ( client )
   {
+    delay(100);
+   
     // read data
     len = client.read(buffer, 256);
-
+    
     // Print data along with peer's info
     Serial.print("[RX] from ");
     Serial.print(client.remoteIP());
@@ -95,28 +98,4 @@ void loop()
     // call stop() to free memory by Client
     client.stop();
   }
-}
-
-/**************************************************************************/
-/*!
-    @brief  Connect to defined Access Point
-*/
-/**************************************************************************/
-bool connectAP(void)
-{
-  // Attempt to connect to an AP
-  Serial.print("Please wait while connecting to: '" WLAN_SSID "' ... ");
-
-  if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
-  {
-    Serial.println("Connected!");
-  }
-  else
-  {
-    Serial.printf("Failed! %s (%d)", Feather.errstr(), Feather.errno());
-    Serial.println();
-  }
-  Serial.println();
-
-  return Feather.connected();
 }

@@ -200,12 +200,6 @@ public:
   bool       addRootCA             (uint8_t const* root_ca, uint16_t len);
   bool       clearRootCA           (void);
 
-  // Enable later when complete
-//  err_t startAP(char* ssid, char* passwd);
-//  err_t startAP(void);
-//  err_t stopAP(void);
-
-
   // Helper functions
   void      printVersions   (Print& p = Serial);
   void      printNetwork    (Print& p = Serial);

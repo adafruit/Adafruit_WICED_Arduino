@@ -64,8 +64,8 @@ public:
   typedef void* tcp_handle_t;
   typedef void (*tcpcallback_t)(void);
 
-  AdafruitTCP ( tcp_handle_t handle );
-  AdafruitTCP ( void );
+  AdafruitTCP ( uint8_t interface = WIFI_INTERFACE_STATION );
+  AdafruitTCP ( uint8_t interface, tcp_handle_t handle );
   virtual ~AdafruitTCP();
 
   virtual operator bool() { return _tcp_handle != NULL; }
@@ -73,6 +73,7 @@ public:
   void     verbose                ( bool enable ) { _verbose = enable; }
   void     usePacketBuffering     ( bool enable ) { _packet_buffering = enable; }
   uint32_t getHandle              ( void        ) { return (uint32_t) _tcp_handle; }
+  uint8_t  interface              ( void        ) { return _interface; }
 
   void     tlsRequireVerification (bool required) { _tls_verification = required; }
   bool     tlsSetIdentity         (char const* private_key, uint8_t const* local_cert, uint16_t local_certlen);
@@ -114,6 +115,7 @@ public:
 protected:
   tcp_handle_t   _tcp_handle;
   bool           _connected;
+  uint8_t        _interface;
 
   bool           _tls_verification;
 
@@ -138,7 +140,7 @@ protected:
   tcpcallback_t _rx_callback;
   tcpcallback_t _disconnect_callback;
 
-  bool connect_internal ( uint8_t interface, uint32_t ipv4, uint16_t port, uint8_t is_tls);
+  bool connect_internal ( uint32_t ipv4, uint16_t port, uint8_t is_tls);
   void install_callback ( void );
   void reset            ( void );
   void get_peer_info    ( void );

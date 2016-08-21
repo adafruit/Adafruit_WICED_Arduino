@@ -12,8 +12,9 @@
  any redistribution
 *********************************************************************/
 
-/* This example scans for nearby networks and prints out the SSID
- * details every 10 seconds. Hidden SSIDs are printed as '*'.
+/* This example start SoftAP, register callback for client
+ * join and leave event. The sketch will display the connected list
+ * with MAC and RSSI.
  */
 
 #include <adafruit_feather.h>

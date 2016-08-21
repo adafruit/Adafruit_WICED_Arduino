@@ -55,12 +55,12 @@ public:
   typedef void* tcp_handle_t;
   typedef void (*tcpserver_callback_t)(void);
 
-  AdafruitTCPServer(uint16_t port);
+  AdafruitTCPServer(uint16_t port, uint8_t interface = WIFI_INTERFACE_STATION);
 
-  void setConnectCallback    (tcpserver_callback_t fp) { _connect_callback    = fp; }
+  void    setConnectCallback   (tcpserver_callback_t fp);
+  uint8_t interface            (void);
 
   // Server API
-
   virtual bool        begin    ( void );
   virtual AdafruitTCP accept   ( void );
   virtual AdafruitTCP available( void ) { return this->accept(); }
@@ -68,8 +68,9 @@ public:
 
 protected:
   tcp_handle_t _tcp_handle;
-  bool _has_connect_request;
   uint16_t _port;
+  uint8_t  _interface;
+  bool     _has_connect_request;
 
   tcpserver_callback_t _connect_callback;
 
@@ -79,6 +80,7 @@ protected:
   uint32_t     _tls_certlen;
 
   bool listen (bool first_time);
+  void clear  (void);
 
 public:
   friend err_t adafruit_tcpserver_connect_callback   (void* socket, void* p_tcpserver);

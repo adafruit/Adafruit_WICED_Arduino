@@ -37,16 +37,23 @@
 #include "adafruit_feather.h"
 #include "adafruit_tcp_server.h"
 
-AdafruitTCPServer::AdafruitTCPServer(uint16_t port)
+void AdafruitTCPServer::clear(void)
 {
   _tcp_handle          = NULL;
-  _port                = port;
   _has_connect_request = false;
   _connect_callback    = NULL;
 
   _tls_private_key     = NULL;
   _tls_certificate     = NULL;
   _tls_certlen         = 0;
+}
+
+AdafruitTCPServer::AdafruitTCPServer(uint16_t port, uint8_t interface)
+{
+  this->clear();
+
+  _port      = port;
+  _interface = interface;
 }
 /******************************************************************************/
 /*!
@@ -59,6 +66,28 @@ bool AdafruitTCPServer::begin(void)
 }
 
 /******************************************************************************/
+/**
+ * Get current interface
+ * @return  interface
+ */
+/******************************************************************************/
+uint8_t AdafruitTCPServer::interface(void)
+{
+  return _interface;
+}
+
+/******************************************************************************/
+/**
+ * Set client connect callback
+ * @param fp  callback function
+ */
+/******************************************************************************/
+void AdafruitTCPServer::setConnectCallback(tcpserver_callback_t fp)
+{
+  _connect_callback    = fp;
+}
+
+/******************************************************************************/
 /*!
     @brief
     @para first_time whether this is the first time listen is called
@@ -67,7 +96,6 @@ bool AdafruitTCPServer::begin(void)
 bool AdafruitTCPServer::listen(bool first_time)
 {
   DBG_HEAP();
-  uint8_t  interface  = WIFI_INTERFACE_STATION;
   uint32_t this_value = (uint32_t) this;
 
   _tcp_handle = malloc_named("TCP Server", TCP_SOCKET_HANDLE_SIZE);
@@ -76,7 +104,7 @@ bool AdafruitTCPServer::listen(bool first_time)
   {
       { .len = TCP_SOCKET_HANDLE_SIZE , .p_value = _tcp_handle },
 
-      { .len = 1 , .p_value = &interface  },
+      { .len = 1 , .p_value = &_interface },
       { .len = 2 , .p_value = &_port      },
       { .len = 4 , .p_value = &this_value },
       { .len = 1 , .p_value = &first_time },
@@ -102,7 +130,7 @@ AdafruitTCP AdafruitTCPServer::accept (void)
   if( !sdep(SDEP_CMD_TCP_ACCEPT, 4, &_tcp_handle, NULL, NULL) ) return AdafruitTCP();
 
   // Create Client and get its IP/Port info
-  AdafruitTCP accepted_client = AdafruitTCP(_tcp_handle);
+  AdafruitTCP accepted_client = AdafruitTCP(_interface, _tcp_handle);
   (void) accepted_client.remotePort();
 
   _has_connect_request = false;
@@ -121,6 +149,8 @@ void AdafruitTCPServer::stop ( void )
 
   sdep(SDEP_CMD_TCP_DISCONNECT, 4, &_tcp_handle, NULL, NULL);
   free_named("TCP Server", _tcp_handle);
+
+  this->clear();
 
   DBG_HEAP();
 }

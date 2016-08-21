@@ -71,9 +71,11 @@ void AdafruitTCP::reset()
     @brief Constructor
 */
 /******************************************************************************/
-AdafruitTCP::AdafruitTCP(void)
+AdafruitTCP::AdafruitTCP(uint8_t interface)
 {
   this->reset();
+
+  _interface = interface;
 }
 
 /******************************************************************************/
@@ -81,9 +83,11 @@ AdafruitTCP::AdafruitTCP(void)
     @brief Constructor from an tcp handle
 */
 /******************************************************************************/
-AdafruitTCP::AdafruitTCP ( tcp_handle_t handle )
+AdafruitTCP::AdafruitTCP ( uint8_t interface, tcp_handle_t handle )
 {
   this->reset();
+
+  _interface = interface;
   _tcp_handle = handle;
 }
 
@@ -101,9 +105,22 @@ AdafruitTCP::~AdafruitTCP()
 /******************************************************************************/
 /*!
     @brief Internal function
+
+    SDEP parameters
+    0. TCP Handle buffer
+    1. Interface (STA, AP)
+    2. IP Address
+    3. Port
+    4. Timeout
+    5. TLS enabled
+    6. TLS Verification option
+    7. TLS context (NULL if TLS is not enabled)
+    8. TLS Identity data pointer
+    9. TLS Identity Private Key
+    10. TLS Identity Local Certificate
 */
 /******************************************************************************/
-bool AdafruitTCP::connect_internal ( uint8_t interface, uint32_t ipv4, uint16_t port, uint8_t is_tls)
+bool AdafruitTCP::connect_internal(uint32_t ipv4, uint16_t port, uint8_t is_tls)
 {
   DBG_HEAP();
 
@@ -128,20 +145,19 @@ bool AdafruitTCP::connect_internal ( uint8_t interface, uint32_t ipv4, uint16_t 
 
   sdep_cmd_para_t para_arr[] =
   {
-      { .len = TCP_SOCKET_HANDLE_SIZE , .p_value = _tcp_handle       },
+      { .len = TCP_SOCKET_HANDLE_SIZE      , .p_value = _tcp_handle      },
 
-      { .len = 1                       , .p_value = &interface       },
-      { .len = 4                       , .p_value = &_remote_ip      },
-      { .len = 2                       , .p_value = &_remote_port    },
-      { .len = 4                       , .p_value = &_timeout        },
-      { .len = 1                       , .p_value = &is_tls          },
-      { .len = 1                       , .p_value = &tls_option      },
-
-      { .len = TCP_TLS_CONTEXT_SIZE    , .p_value = _tls_context     },
-      { .len = TCP_TLS_IDENTITY_SIZE   , .p_value = _tls_identity    },
-      { .len = _tls_private_key ?
-           strlen(_tls_private_key) : 0, .p_value = _tls_private_key },
-      { .len = _tls_local_certlen      , .p_value = _tls_local_cert  },
+      { .len = 1                           , .p_value = &_interface      },
+      { .len = 4                           , .p_value = &_remote_ip      },
+      { .len = 2                           , .p_value = &_remote_port    },
+      { .len = 4                           , .p_value = &_timeout        },
+      { .len = 1                           , .p_value = &is_tls          },
+      { .len = 1                           , .p_value = &tls_option      },
+      { .len = TCP_TLS_CONTEXT_SIZE        , .p_value = _tls_context     },
+      // Optional
+      { .len = TCP_TLS_IDENTITY_SIZE       , .p_value = _tls_identity    },
+      { .len = stringlen(_tls_private_key) , .p_value = _tls_private_key },
+      { .len = _tls_local_certlen          , .p_value = _tls_local_cert  },
   };
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
@@ -172,7 +188,7 @@ bool AdafruitTCP::connect_internal ( uint8_t interface, uint32_t ipv4, uint16_t 
 int AdafruitTCP::connect(IPAddress ip, uint16_t port)
 {
   if ( !Feather.connected() ) return 0;
-  return connect_internal(WIFI_INTERFACE_STATION, (uint32_t) ip, port, false);
+  return connect_internal((uint32_t) ip, port, false);
 }
 
 /******************************************************************************/
@@ -203,7 +219,7 @@ int AdafruitTCP::connectSSL(IPAddress ip, uint16_t port)
     VERIFY( Feather.initRootCA() );
   }
 
-  return connect_internal(WIFI_INTERFACE_STATION, (uint32_t) ip, port, true);
+  return connect_internal((uint32_t) ip, port, true);
 }
 
 /******************************************************************************/
