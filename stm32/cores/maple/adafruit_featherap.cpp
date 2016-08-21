@@ -132,7 +132,7 @@ bool AdafruitFeatherAP::start(const char *ssid, const char *key, int enc_type)
 /******************************************************************************/
 void AdafruitFeatherAP::stop(void)
 {
-//  return FEATHERLIB->sdep_execute(SDEP_CMD_APSTOP, 0, NULL, NULL, NULL);
+  (void) sdep(SDEP_CMD_SOFTAP_STOP, 0, NULL, NULL, NULL);
 }
 
 
