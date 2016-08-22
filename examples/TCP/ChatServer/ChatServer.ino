@@ -25,8 +25,8 @@
 
 #include <adafruit_feather.h>
 
-#define WLAN_SSID            "xxxx"
-#define WLAN_PASS            "xxxx"
+#define WLAN_SSID            "yourSSID"
+#define WLAN_PASS            "yourPassword"
 
 #define PORT                 23                     // The TCP port to use.  23 is telnet
 
@@ -34,7 +34,6 @@ AdafruitTCPServer tcpserver(PORT);
 
 #define MAX_CLIENTS 3
 AdafruitTCP clientList[MAX_CLIENTS];  //can have MAX_CLIENTS simultaneous clients
-int freeClientIndex = 0;  //init to first client slot
 
 int ledPin = PA15;
 
@@ -49,16 +48,49 @@ void disconnect_callback(void);
 /**************************************************************************/
 void connect_request_callback(void)
 {
-  uint8_t buffer[256];
-  uint16_t len;
-
-  if (freeClientIndex < MAX_CLIENTS)  //any free client slots left?
+  for(int i=0; i<MAX_CLIENTS; i++)
   {
-    clientList[freeClientIndex] = tcpserver.available();  //get the new client
-
-    if ( clientList[freeClientIndex]  )  //was that successful?
+    // find a free slot in client list
+    if ( !clientList[i] )
     {
-      freeClientIndex++;   //increment to next client slot
+      //get the new client
+      clientList[i] = tcpserver.available();
+
+      if ( clientList[i] ) //was that successful?
+      {
+        Serial.print("Client ");
+        Serial.print(i);
+        Serial.println(" connected");
+                
+        // Set disconnect callback to free up resource
+        // NOTE: Resource is also automatically freed up when client
+        // disconnected even if we don't explicitly call stop()
+        clientList[i].setDisconnectCallback(client_disconnect_callback);
+      }  
+
+      break;
+    }
+  }
+}
+
+/**************************************************************************/
+/*!
+    @brief  This callback is fired when client disconnect from server
+*/
+/**************************************************************************/
+void client_disconnect_callback(void)
+{
+  // All clients in the list share the same disconnect callback
+  // Scan the list to find existed client but not connected to free it up
+  for(int i=0; i<MAX_CLIENTS; i++)
+  {
+    if ( clientList[i] && !clientList[i].connected() )
+    {
+      clientList[i].stop();
+
+      Serial.print("Client ");
+      Serial.print(i);
+      Serial.println(" disconnected");
     }
   }
 }
@@ -117,7 +149,7 @@ void loop()
 
   for (int index = 0; index < MAX_CLIENTS; index++)  //scan clients for input
   {
-    if (NULL != clientList[index])  //is this a valid client?
+    if ( clientList[index] )  //is this a valid client?
     {
       if (clientList[index].available())  //any data available?
       {
@@ -125,12 +157,15 @@ void loop()
         len = clientList[index].read(buffer, 256);   //read client input
         Serial.print("[RX:"); // Display the incoming message and source in Serial Monitor
         Serial.print(clientList[index].remoteIP());
-        Serial.print("] ");
+        Serial.print("] Client ");
+        Serial.print(index);
+        Serial.print(": ");
         Serial.write(buffer, len);
+        Serial.println();
         digitalWrite(ledPin, LOW);    // turn the LED off by making the voltage LOW
         for (int receiverindex = 0; receiverindex < MAX_CLIENTS; receiverindex++)  //look for receiving clients
         {
-          if ((receiverindex!= index) && (NULL != clientList[receiverindex]))  //if it's a valid client, and it's not the sending client
+          if ((receiverindex!= index) && clientList[receiverindex])  //if it's a valid client, and it's not the sending client
           {
             clientList[receiverindex].write(buffer, len);  //send the data
           }
