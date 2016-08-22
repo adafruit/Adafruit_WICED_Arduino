@@ -52,6 +52,7 @@ void setup()
 
   Serial.println("Starting SoftAP\r\n");
   FeatherAP.start(WLAN_SSID, WLAN_PASS, WLAN_ENCRYPTION);
+  FeatherAP.printNetwork();
 }
 
 void client_join_callback(const uint8_t mac[6])

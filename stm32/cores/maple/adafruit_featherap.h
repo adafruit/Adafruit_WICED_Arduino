@@ -67,6 +67,9 @@ private:
   uint32_t _subnet;
   uint8_t  _channel;
 
+  char const * _ssid;
+  uint32_t     _enc_type;
+
   bool    _started;
 
   uint8_t  _client_count;
@@ -90,14 +93,17 @@ public:
   void stop();
 
   bool started (void);
+  uint8_t*       macAddress ( uint8_t *mac );
 
-
-  uint8_t        clientNum() { return _client_count; }
-  const uint8_t* clientMAC(uint8_t id);
-  int32_t        clientRSSI(uint8_t id);
+  uint8_t        clientNum  (void) { return _client_count; }
+  const uint8_t* clientMAC  (uint8_t id);
+  int32_t        clientRSSI (uint8_t id);
 
   void setJoinCallback( void(*fp)(const uint8_t[6]));
   void setLeaveCallback( void(*fp)(const uint8_t[6]));
+
+  // Helper functions
+  void      printNetwork    (Print& p = Serial);
 
   /* callback from featherlib */
   friend void adafruit_softap_event_callback(uint32_t event, const uint8_t mac[6] );

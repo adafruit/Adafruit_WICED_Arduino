@@ -35,6 +35,7 @@
 /**************************************************************************/
 
 #include "adafruit_featherap.h"
+#include "adafruit_feather.h"
 
 typedef enum
 {
@@ -51,9 +52,11 @@ AdafruitFeatherAP FeatherAP;
 void AdafruitFeatherAP::clear(void)
 {
   _ip = _gateway = _subnet = 0;
-  _channel = 0;
+  _channel  = 0;
 
-  _started = false;
+  _started  = false;
+  _ssid     = NULL;
+  _enc_type = ENC_TYPE_AUTO;
 
   _client_count = 0;
   memclr(_client_maclist, sizeof(_client_maclist));
@@ -125,6 +128,10 @@ bool AdafruitFeatherAP::start(const char *ssid, const char *key, int enc_type)
   };
 
   _started = sdep_n(SDEP_CMD_SOFTAP_START, arrcount(para_arr), para_arr, NULL, NULL);
+
+  _ssid     = ssid;
+  _enc_type = enc_type;
+
   return _started;
 }
 
@@ -233,4 +240,35 @@ void AdafruitFeatherAP::setLeaveCallback( void(*fp)(const uint8_t[6]))
 void adafruit_softap_event_callback(uint32_t event, const uint8_t mac[6] )
 {
   FeatherAP.featherlib_event_callback(event, mac);
+}
+
+uint8_t* AdafruitFeatherAP::macAddress( uint8_t *mac )
+{
+	sdep(SDEP_CMD_GET_MAC_ADDRESS, 0, NULL, NULL, mac);
+	return mac;
+}
+
+/******************************************************************************/
+/*!
+    @brief  Helper to print out all network status
+*/
+/******************************************************************************/
+void AdafruitFeatherAP::printNetwork(Print& p)
+{
+  if (!_started)
+  {
+    p.println("NOT STARTED");
+    return;
+  }
+
+  uint8_t mac[6];
+  macAddress(mac);
+
+  p.printf("SSID        : %s (channel %d)\r\n", _ssid, _channel);
+  p.print ("Encryption  : "); Feather.printEncryption(_enc_type, p); p.println();
+  p.print ("MAC Address : "); p.printf("%02X:%02X:%02X:%02X:%02X:%02X\r\n", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+  p.print ("Local IP    : "); p.println( IPAddress(_ip)     );
+  p.print ("Gateway     : "); p.println( IPAddress(_gateway)   );
+  p.print ("Subnet Mask : "); p.println( IPAddress(_subnet)  );
+  p.println();
 }

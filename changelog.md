@@ -28,6 +28,7 @@
 	- add interface() to return current bound interface (STATION or SoftAP)
 	- add started()
 	- enhance AdafruitTCP/AdafruitTCPServer to support both STA & SoftAP interface
+	- enhance AdafruitUDP to support both STA & SoftAP interface
 	- add APChatServer, APClientRSSI, APTcpServer examples
 
 # 0.5.5

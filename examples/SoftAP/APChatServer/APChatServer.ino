@@ -124,6 +124,7 @@ void setup()
 
   Serial.println("Starting SoftAP\r\n");
   FeatherAP.start(WLAN_SSID, WLAN_PASS, WLAN_ENCRYPTION);
+  FeatherAP.printNetwork();
 
   // Tell the TCP Server to auto print error codes and halt on errors
   tcpserver.err_actions(true, true);
