@@ -37,7 +37,6 @@
 #define PORT                 8888
 #define MAX_CLIENTS          3
 
-
 IPAddress apIP     (192, 168, 2, 1);
 IPAddress apGateway(192, 168, 2, 1);
 IPAddress apNetmask(255, 255, 255, 0);
@@ -58,6 +57,9 @@ void setup()
   while (!Serial) delay(1);
 
   Serial.println("SoftAP TCP Server Example\r\n");
+
+  // Print all software versions
+  Feather.printVersions();
 
   Serial.println("Configuring SoftAP\r\n");
   FeatherAP.err_actions(true, true);
@@ -94,18 +96,30 @@ void connect_request_callback(void)
       //get the new client
       clientList[i] = tcpserver.available();
 
-      // Set disconnect callback to free up resource
-      clientList[i].setDisconnectCallback(client_disconnect_callback);
+      // Successfully connected to client
+      if ( clientList[i] )
+      {
+        Serial.print("Client ");
+        Serial.print(i);
+        Serial.println(" connected");
 
-      Serial.print("Client ");
-      Serial.print(i);
-      Serial.println(" connected");
-
+        // Set disconnect callback to free up resource
+        // NOTE: Resource is also automatically freed up when client
+        // disconnected even if we don't explicitly call stop()
+        clientList[i].setDisconnectCallback(client_disconnect_callback);
+      }
+      
       break;
     }
   }
 }
 
+
+/**************************************************************************/
+/*!
+    @brief  This callback is fired when client disconnect from server
+*/
+/**************************************************************************/
 void client_disconnect_callback(void)
 {
   // All clients in the list share the same disconnect callback
