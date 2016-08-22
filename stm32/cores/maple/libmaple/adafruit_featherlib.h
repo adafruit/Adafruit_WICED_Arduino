@@ -60,7 +60,7 @@
 
 //------------- Arduino Shared Structure -------------//
 #define CFG_ARDUINO_CODE_MAGIC    0xDEC0DED
-#define CFG_ARDUINO_CODE_VERSION  "0.5.6"
+#define CFG_ARDUINO_CODE_VERSION  "0.6.0"
 
 #define RESERVED_           XSTRING_CONCAT_(_rerserved, __LINE__)
 

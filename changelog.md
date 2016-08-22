@@ -1,4 +1,4 @@
-# 0.5.6 (WIP)
+# 0.6.0 (WIP)
 
 - rename menu Featherlib (Beta) --> Featherlib (Debug)
 - print warning message when Featherlib & Arduino library version are not matched
