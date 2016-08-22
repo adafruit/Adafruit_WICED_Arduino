@@ -3,11 +3,13 @@
 - rename menu Featherlib (Beta) --> Featherlib (Debug)
 - print warning message when Featherlib & Arduino library version are not matched
 - fix get TCP peer information when SOCKET is CLOSED
+- Move memory allocation for UDP from featherlib to arduino code
 - Debug Feather
 	- add dbgHeapTotal(), dbgHeapUsed(), dbgHeapFree()
 - add AdafruitBase64
 - add AdafruitUrlencode
 - move AdafruitCrc32 to AdafruitCrypto
+- AdafruitTCP : automatically free up resource when disconnected even user does not register disconnect callback
 - AdafruitHTTP
 	- add get() with keyvalues data support
 	- move base64Decode to its own class in AdafruitCrypto
@@ -24,6 +26,9 @@
 	- add clientNum() clientMAC()
 	- add interface properties to AdafruitTCP & AdafruitTCPServer, change constructors accordingly.
 	- add interface() to return current bound interface (STATION or SoftAP)
+	- add started()
+	- enhance AdafruitTCP/AdafruitTCPServer to support both STA & SoftAP interface
+	- add APChatServer, APClientRSSI, APTcpServer examples
 
 # 0.5.5
 

@@ -35,6 +35,7 @@
 /**************************************************************************/
 
 #include "adafruit_feather.h"
+#include "adafruit_featherap.h"
 #include "adafruit_udp.h"
 
 /******************************************************************************/
@@ -42,9 +43,11 @@
     @brief Instantiates a new instance of the AdafruitUDP class
 */
 /******************************************************************************/
-AdafruitUDP::AdafruitUDP()
+AdafruitUDP::AdafruitUDP(uint8_t interface)
 {
   this->reset();
+
+  _interface = interface;
 }
 
 /******************************************************************************/
@@ -54,7 +57,7 @@ AdafruitUDP::AdafruitUDP()
 /******************************************************************************/
 void AdafruitUDP::reset(void)
 {
-  _udp_handle       = 0;
+  _udp_handle       = NULL;
   _bytesRead        = 0;
 
   _rcvPort          = 0;
@@ -68,27 +71,50 @@ void AdafruitUDP::reset(void)
   _timeout          = ADAFRUIT_UDP_TIMEOUT;
 }
 
+bool AdafruitUDP::interface_connected(void)
+{
+  return (_interface == WIFI_INTERFACE_STATION) ? Feather.connected() : FeatherAP.started();
+}
+
 /******************************************************************************/
 /*!
     @brief Start UDP socket, listening at local port
+
+           SDEP parameters
+           0. UDP Handle buffer
+           1. Interface
+           2. Port
+           3. Arduino UDP This pointer for Received callback (optional)
 */
 /******************************************************************************/
 uint8_t AdafruitUDP::begin(uint16_t port)
 {
-  if ( !Feather.connected() ) return 0;
+  if ( !interface_connected() ) return 0;
 
-  uint8_t interface = WIFI_INTERFACE_STATION;
+  DBG_HEAP();
+
   uint32_t this_value = (uint32_t) this;
+
+  _udp_handle = malloc_named("UDP", UDP_SOCKET_HANDLE_SIZE);
+  VERIFY(_udp_handle != NULL);
 
   sdep_cmd_para_t para_arr[] =
   {
-      { .len = 1, .p_value = &interface  },
+      { .len = UDP_SOCKET_HANDLE_SIZE, .p_value = _udp_handle },
+
+      { .len = 1, .p_value = &_interface },
       { .len = 2, .p_value = &port       },
       { .len = 4, .p_value = &this_value },
   };
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t) - (rx_callback == NULL ? 1 : 0);
 
-  return sdep_n(SDEP_CMD_UDP_CREATE, para_count, para_arr, NULL, &_udp_handle);
+  if ( !sdep_n(SDEP_CMD_UDP_CREATE, para_count, para_arr, NULL, NULL) )
+  {
+    free_named("UDP", _udp_handle);
+    _udp_handle = NULL;
+  }
+
+  DBG_HEAP();
 }
 
 /******************************************************************************/
@@ -98,10 +124,16 @@ uint8_t AdafruitUDP::begin(uint16_t port)
 /******************************************************************************/
 void AdafruitUDP::stop()
 {
-  if (_udp_handle == 0) return;
+  if (_udp_handle == NULL) return;
+
+  DBG_HEAP();
 
   sdep(SDEP_CMD_UDP_CLOSE, 4, &_udp_handle, NULL, NULL);
+  free_named("UDP", _udp_handle);
+
   this->reset();
+
+  DBG_HEAP();
 }
 
 /******************************************************************************/
@@ -113,7 +145,7 @@ void AdafruitUDP::stop()
 /******************************************************************************/
 int AdafruitUDP::parsePacket()
 {
-  if (_udp_handle == 0) return 0;
+  if (_udp_handle == NULL) return 0;
 
   struct ATTR_PACKED {
     uint32_t remote_ip;
@@ -181,7 +213,7 @@ int AdafruitUDP::read()
 /******************************************************************************/
 int AdafruitUDP::read(unsigned char* buf, size_t size)
 {
-  if ( _udp_handle == 0 ) return 0;
+  if ( _udp_handle == NULL ) return 0;
 
   uint16_t size16 = (uint16_t) size;
   sdep_cmd_para_t para_arr[] =
@@ -206,7 +238,7 @@ int AdafruitUDP::read(unsigned char* buf, size_t size)
 /******************************************************************************/
 int AdafruitUDP::peek()
 {
-  if ( _udp_handle == 0 ) return EOF;
+  if ( _udp_handle == NULL ) return EOF;
 
   uint8_t data;
   sdep_cmd_para_t para_arr[] =
@@ -227,7 +259,7 @@ int AdafruitUDP::peek()
 /******************************************************************************/
 int AdafruitUDP::available()
 {
-  if ( _udp_handle == 0 ) return 0;
+  if ( _udp_handle == NULL ) return 0;
 
   int32_t result = 0;
   VERIFY_RETURN(sdep(SDEP_CMD_UDP_AVAILABLE, 4, &_udp_handle, NULL, &result), 0);
@@ -294,7 +326,7 @@ size_t AdafruitUDP::write(uint8_t byte)
 /******************************************************************************/
 size_t AdafruitUDP::write(const uint8_t* buffer, size_t size)
 {
-  if (_udp_handle == 0 || _sndIP == 0 || _sndPort == 0) return 0;
+  if (_udp_handle == NULL || _sndIP == 0 || _sndPort == 0) return 0;
 
   sdep_cmd_para_t para_arr[] =
   {
@@ -320,7 +352,7 @@ size_t AdafruitUDP::write(const uint8_t* buffer, size_t size)
 /******************************************************************************/
 void AdafruitUDP::flush()
 {
-  if (_udp_handle == 0) return;
+  if (_udp_handle == NULL) return;
 
   sdep_cmd_para_t para_arr[] =
   {
@@ -356,11 +388,7 @@ err_t adafruit_udp_receive_callback(void* socket, void* p_udp)
 {
   AdafruitUDP* pUDP = (AdafruitUDP*) p_udp;
 
-  // Integrity check
-  if ( *((uint32_t*) pUDP->_udp_handle) == ((uint32_t) socket) )
-  {
-    if (pUDP->rx_callback) pUDP->rx_callback();
-  }
+  if (pUDP->rx_callback) pUDP->rx_callback();
 
   return ERROR_NONE;
 }

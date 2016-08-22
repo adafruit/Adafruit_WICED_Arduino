@@ -51,12 +51,16 @@ extern "C"
 class AdafruitUDP : public UDP, public AdafruitSDEP
 {
 public:
+  enum {
+    UDP_SOCKET_HANDLE_SIZE = 180, // need only 164 (144+20) bytes, extra for reserved
+  };
   typedef void* udp_handle_t;
   typedef void (*udpcallback_t)(void);
 
-  AdafruitUDP();
+  AdafruitUDP( uint8_t interface = WIFI_INTERFACE_STATION );
 
-  void              usePacketBuffering ( bool enable ) { _packet_buffering = enable; }
+  void     usePacketBuffering ( bool enable ) { _packet_buffering = enable; }
+  uint8_t  interface          ( void        ) { return _interface; }
 
   // UDP API
   virtual uint8_t   begin       ( uint16_t port );
@@ -91,12 +95,14 @@ public:
   friend err_t adafruit_udp_receive_callback(void* socket, void* p_udp);
 
 protected:
-  uint32_t  _udp_handle;
-  uint16_t  _rcvPort;
-  uint32_t  _rcvIP;
-  uint16_t  _sndPort;
-  uint32_t  _sndIP;
-  uint32_t  _bytesRead;
+  udp_handle_t _udp_handle;
+  uint8_t      _interface;
+
+  uint16_t     _rcvPort;
+  uint32_t     _rcvIP;
+  uint16_t     _sndPort;
+  uint32_t     _sndIP;
+  uint32_t     _bytesRead;
 
   // If enabled, data is written to a buffer until the network packet is full
   // (~1500 bytes) or until .flush() is called
@@ -106,6 +112,7 @@ protected:
   udpcallback_t rx_callback;
 
   void reset(void);
+  bool interface_connected ( void );
 };
 
 #endif
