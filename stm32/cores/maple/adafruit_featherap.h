@@ -67,6 +67,8 @@ private:
   uint32_t _subnet;
   uint8_t  _channel;
 
+  bool    _started;
+
   uint8_t  _client_count;
   uint8_t  _client_maclist[SOFTAP_MAX_CLIENT][6];
 
@@ -85,8 +87,10 @@ public:
 
   bool start(const char *ssid, const char *key, int enc_type = ENC_TYPE_WPA2_AES );
   bool start(const char *ssid ) { return this->start(ssid, NULL, ENC_TYPE_OPEN); }
-
   void stop();
+
+  bool started (void);
+
 
   uint8_t        clientNum() { return _client_count; }
   const uint8_t* clientMAC(uint8_t id);

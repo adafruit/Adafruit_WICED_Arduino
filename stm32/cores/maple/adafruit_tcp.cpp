@@ -35,6 +35,7 @@
 /**************************************************************************/
 
 #include "adafruit_feather.h"
+#include "adafruit_featherap.h"
 #include "adafruit_tcp.h"
 
 /******************************************************************************/
@@ -80,15 +81,16 @@ AdafruitTCP::AdafruitTCP(uint8_t interface)
 
 /******************************************************************************/
 /*!
-    @brief Constructor from an tcp handle
+    @brief Constructor from an tcp handle & interface. Used by TCPServer accept().
 */
 /******************************************************************************/
 AdafruitTCP::AdafruitTCP ( uint8_t interface, tcp_handle_t handle )
 {
   this->reset();
 
-  _interface = interface;
   _tcp_handle = handle;
+  _interface  = interface;
+  _connected  = true; // connection is already estiablished by accept()
 }
 
 /******************************************************************************/
@@ -100,6 +102,11 @@ AdafruitTCP::~AdafruitTCP()
 {
   // cannot call stop() since AdafruitTCPServer accept() won't be able to
   // return AdafruitTCP instance
+}
+
+bool AdafruitTCP::interface_connected(void)
+{
+  return (_interface == WIFI_INTERFACE_STATION) ? Feather.connected() : FeatherAP.started();
 }
 
 /******************************************************************************/
@@ -187,7 +194,7 @@ bool AdafruitTCP::connect_internal(uint32_t ipv4, uint16_t port, uint8_t is_tls)
 /******************************************************************************/
 int AdafruitTCP::connect(IPAddress ip, uint16_t port)
 {
-  if ( !Feather.connected() ) return 0;
+  if ( !interface_connected() ) return 0;
   return connect_internal((uint32_t) ip, port, false);
 }
 
@@ -210,7 +217,7 @@ int AdafruitTCP::connect(const char* host, uint16_t port)
 /******************************************************************************/
 int AdafruitTCP::connectSSL(IPAddress ip, uint16_t port)
 {
-  if ( !Feather.connected() ) return 0;
+  if ( !interface_connected() ) return 0;
 
   // Only need to init Root CA if verification is enabled
   if ( _tls_verification )
@@ -448,6 +455,9 @@ void AdafruitTCP::install_callback(void)
 void AdafruitTCP::setReceivedCallback( tcpcallback_t fp )
 {
   _rx_callback = fp;
+
+  // Already connected, need to execute SDEP command to update callbacks
+  if (_connected) this->install_callback();
 }
 
 /******************************************************************************/
@@ -458,6 +468,9 @@ void AdafruitTCP::setReceivedCallback( tcpcallback_t fp )
 void AdafruitTCP::setDisconnectCallback( tcpcallback_t fp )
 {
   _disconnect_callback = fp;
+
+  // Already connected, need to execute SDEP command to update callbacks
+  if (_connected) this->install_callback();
 }
 
 /******************************************************************************/

@@ -53,6 +53,8 @@ void AdafruitFeatherAP::clear(void)
   _ip = _gateway = _subnet = 0;
   _channel = 0;
 
+  _started = false;
+
   _client_count = 0;
   memclr(_client_maclist, sizeof(_client_maclist));
 
@@ -122,7 +124,13 @@ bool AdafruitFeatherAP::start(const char *ssid, const char *key, int enc_type)
       { .len = 1                     , .p_value = &_channel },
   };
 
-  return sdep_n(SDEP_CMD_SOFTAP_START, arrcount(para_arr), para_arr, NULL, NULL);
+  _started = sdep_n(SDEP_CMD_SOFTAP_START, arrcount(para_arr), para_arr, NULL, NULL);
+  return _started;
+}
+
+bool AdafruitFeatherAP::started (void)
+{
+  return _started;
 }
 
 /******************************************************************************/

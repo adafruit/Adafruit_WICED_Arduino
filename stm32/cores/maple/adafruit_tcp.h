@@ -140,10 +140,11 @@ protected:
   tcpcallback_t _rx_callback;
   tcpcallback_t _disconnect_callback;
 
-  bool connect_internal ( uint32_t ipv4, uint16_t port, uint8_t is_tls);
-  void install_callback ( void );
-  void reset            ( void );
-  void get_peer_info    ( void );
+  bool connect_internal    ( uint32_t ipv4, uint16_t port, uint8_t is_tls);
+  void install_callback    ( void );
+  void reset               ( void );
+  void get_peer_info       ( void );
+  bool interface_connected ( void );
 
 private:
   bool          _verbose;

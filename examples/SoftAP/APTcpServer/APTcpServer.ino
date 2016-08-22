@@ -12,8 +12,11 @@
  any redistribution
 *********************************************************************/
 
-/* This example will start a TCP server on the feather, registering
- * a 'receive' callback and echoing back any incoming messages. To
+/* This example will start a TCP server on the Feather SoftAP interface.
+ * There is up to MAX_CLIENTS (hard limit at 5) can connect to SoftAP
+ * simultaneously. Anything received from a client will be printed to Serial
+ * and echoed back to the sending client.
+ * 
  * run this demo:
  * - Change SSID/Pass
  * - Compile and run
@@ -31,14 +34,16 @@
 #define WLAN_ENCRYPTION       ENC_TYPE_WPA2_AES
 #define WLAN_CHANNEL          1
 
-// The TCP port to use
 #define PORT                 8888
+#define MAX_CLIENTS          3
+
 
 IPAddress apIP     (192, 168, 2, 1);
 IPAddress apGateway(192, 168, 2, 1);
 IPAddress apNetmask(255, 255, 255, 0);
 
 AdafruitTCPServer tcpserver(PORT, WIFI_INTERFACE_SOFTAP);
+AdafruitTCP clientList[MAX_CLIENTS];
 
 /**************************************************************************/
 /*!
@@ -61,9 +66,61 @@ void setup()
   Serial.println("Starting SoftAP\r\n");
   FeatherAP.start(WLAN_SSID, WLAN_PASS, WLAN_ENCRYPTION);
 
+  // Tell the TCP Server to auto print error codes and halt on errors
+  tcpserver.err_actions(true, true);
+  
+  // Setup callbacks: must be done before begin()
+  tcpserver.setConnectCallback(connect_request_callback);
+
   // Starting server at defined port
   Serial.print("Listening on port "); Serial.println(PORT);
   tcpserver.begin();
+}
+
+/**************************************************************************/
+/*!
+    @brief  This callback is fired when there is a connection request from
+            a TCP client. Use accept() to establish the connection and
+            retrieve the client 'AdafruitTCP' instance.
+*/
+/**************************************************************************/
+void connect_request_callback(void)
+{
+  for(int i=0; i<MAX_CLIENTS; i++)
+  {
+    // find a free slot in client list
+    if ( !clientList[i] )
+    {
+      //get the new client
+      clientList[i] = tcpserver.available();
+
+      // Set disconnect callback to free up resource
+      clientList[i].setDisconnectCallback(client_disconnect_callback);
+
+      Serial.print("Client ");
+      Serial.print(i);
+      Serial.println(" connected");
+
+      break;
+    }
+  }
+}
+
+void client_disconnect_callback(void)
+{
+  // All clients in the list share the same disconnect callback
+  // Scan the list to find existed client but not connected to free it up
+  for(int i=0; i<MAX_CLIENTS; i++)
+  {
+    if ( clientList[i] && !clientList[i].connected() )
+    {
+      clientList[i].stop();
+
+      Serial.print("Client ");
+      Serial.print(i);
+      Serial.println(" disconnected");
+    }
+  }
 }
 
 /**************************************************************************/
@@ -76,26 +133,21 @@ void loop()
   uint8_t buffer[256];
   uint16_t len;
 
-  AdafruitTCP client = tcpserver.available();
-
-  if ( client )
+  for (int i=0; i < MAX_CLIENTS; i++)
   {
-    delay(100);
-   
-    // read data
-    len = client.read(buffer, 256);
-    
-    // Print data along with peer's info
-    Serial.print("[RX] from ");
-    Serial.print(client.remoteIP());
-    Serial.printf(" port %d : ", client.remotePort());
-    Serial.write(buffer, len);
-    Serial.println();
+    if ( clientList[i] && clientList[i].available() )
+    {
+      len = clientList[i].read(buffer, 256);
 
-    // Echo back
-    client.write(buffer, len);
+      // Print data along with peer's info
+      Serial.printf("[RX] from Client %d ", i);
+      Serial.print(clientList[i].remoteIP());
+      Serial.printf(" port %d : ", clientList[i].remotePort());
+      Serial.write(buffer, len);
+      Serial.println();
 
-    // call stop() to free memory by Client
-    client.stop();
+      // Echo back
+      clientList[i].write(buffer, len);
+    }
   }
 }
