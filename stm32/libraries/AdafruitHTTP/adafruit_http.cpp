@@ -39,7 +39,7 @@
 /**
  * Constructor
  */
-AdafruitHTTP::AdafruitHTTP()
+AdafruitHTTP::AdafruitHTTP(uint8_t interface) : AdafruitTCP(interface)
 {
   _packet_buffering = true;
   _server           = NULL;

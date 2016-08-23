@@ -75,7 +75,7 @@ private:
   bool _verbose;
 
 public:
-  AdafruitHTTP();
+  AdafruitHTTP(uint8_t interface = WIFI_INTERFACE_STATION);
 
   void verbose(bool enable) { _verbose = enable; }
 
