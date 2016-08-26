@@ -28,11 +28,11 @@ int ledPin = PA15;
 // Use the HTTP class
 AdafruitHTTPServer httpserver(5);
 
-const char hello_html[] = "<h2>Hello World<h2>";
+const char hello_html[] = "<html><body> <h1>Hello World!</h1> </body></html>";
 
 HTTPPage pages[] = 
 {
-  HTTPPage("/info.html", HTTP_MIME_TEXT_PLAIN, hello_html),
+  HTTPPage("/info.html", HTTP_MIME_TEXT_HTML, hello_html),
   //HTTPPage("/hello.html", HTTP_MIME_TEXT_HTML, info_html),
 };
 
