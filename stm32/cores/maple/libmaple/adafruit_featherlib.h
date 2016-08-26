@@ -73,33 +73,34 @@ typedef struct ATTR_ALIGNED(512)
   uint8_t  RESERVED_[52];
 
   // 64 - 127
-  void (*startup) (void);
+  void    (*startup) (void);
   uint32_t RESERVED_[15];
 
   // 128 - 191
   uint32_t RESERVED_;
-  void (*cdc_serial_event_cb)(uint32_t eid, void* p_data);
+  void     (*cdc_serial_event_cb)(uint32_t eid, void* p_data);
   uint32_t RESERVED_[2];
 
   uint32_t RESERVED_[12];
 
   // 192 - 255 (16 functions)
-  void (*wifi_connect_callback    )(void); // not used for now
-  void (*wifi_disconnect_callback )(void);
-  void (*softap_event_callback    )(uint32_t event, const uint8_t mac[6] );
+  void     (*wifi_connect_callback    )(void); // not used for now
+  void     (*wifi_disconnect_callback )(void);
+  void     (*softap_event_callback    )(uint32_t event, const uint8_t mac[6] );
   uint32_t RESERVED_;
 
-  err_t (*tcpserver_connect_callback    )(void* socket, void* p_tcpserver);
-  err_t (*tcp_receive_callback          )(void* socket, void* p_tcp);
-  err_t (*tcp_disconnect_callback       )(void* socket, void* p_tcp);
+  err_t    (*tcpserver_connect_callback    )(void* socket, void* p_tcpserver);
+  err_t    (*tcp_receive_callback          )(void* socket, void* p_tcp);
+  err_t    (*tcp_disconnect_callback       )(void* socket, void* p_tcp);
   uint32_t RESERVED_[1];
 
-  err_t (*udp_receive_callback          )(void* socket, void* p_udp);
+  err_t   (*udp_receive_callback          )(void* socket, void* p_udp);
   uint32_t RESERVED_[3];
 
-  void  (*mqtt_subscribed_callback)(char* topic_data, size_t topic_len, uint8_t* message, size_t len, void* callback_func, void* arg);
-  void  (*mqtt_disconnect_callback)(void* p_mqtt);
-  uint32_t RESERVED_[2];
+  void    (*mqtt_subscribed_callback  )(char* topic_data, size_t topic_len, uint8_t* message, size_t len, void* callback_func, void* arg);
+  void    (*mqtt_disconnect_callback  )(void* p_mqtt);
+  int32_t (*httpserver_url_generator_callback   )(const char* url, const char* query, void* response_stream, void* args[], void* http_data );
+  uint32_t RESERVED_;
 
   // 256 - 512
   uint32_t RESERVED_[64];

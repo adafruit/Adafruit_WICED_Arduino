@@ -254,6 +254,10 @@ typedef enum {
   SDEP_CMD_SOFTAP_START        = 0x0C00,    ///< Start SoftAP
   SDEP_CMD_SOFTAP_STOP         = 0x0C01,    ///< Stop SoftAP
   SDEP_CMD_SOFTAP_CLIENT_RSSI  = 0x0C02,    ///< SoftAP get client RSSI
+
+  // HTTP Server
+  SDEP_CMD_HTTPSERVER_START    = 0x0D00,    ///< Start HTTP Server
+
 } sdep_command_t;
 
 enum

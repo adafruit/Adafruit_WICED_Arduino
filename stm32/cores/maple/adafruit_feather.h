@@ -237,9 +237,9 @@ extern AdafruitFeather Feather;
       Serial.print("\r\n");\
     }while(0)
 
-  #define calloc_named( name, nelems, elemsize) ({ Serial.printf("[calloc] %s : %d\r\n", name, nelems*elemsize); calloc ( nelems, elemsize ); })
-  #define malloc_named( name, size )            ({ Serial.printf("[malloc] %s : %d\r\n", name, size); malloc(size); })
-  #define free_named( name, ptr )               ({ Serial.printf("[free] %s\r\n"     , name      ); free  (ptr ); })
+  #define calloc_named(_name, nelems, elemsize) ({ Serial.printf("[calloc] %s : %d\r\n", _name, nelems*elemsize); calloc(nelems, elemsize); })
+  #define malloc_named(_name, _size )           ({ Serial.printf("[malloc] %s : %d\r\n", _name, _size); malloc(_size); })
+  #define free_named(_name, ptr )               ({ Serial.printf("[free] %s\r\n"       , _name       ); free  (ptr ); })
 
   #if DBG_ENABLE == 3
     #define DBG_HEAP() ({ Serial.printf("\r\n[Heap free] %s %d: Arudino = %d, featherlib = %d\r\n", __FUNCTION__, __LINE__, Feather.dbgHeapFree(), FEATHERLIB->heap_get_free_size()); delay(5); })
@@ -252,9 +252,9 @@ extern AdafruitFeather Feather;
   #define DBG_HEX(x)  #define DBG_STR(x)  #define DBG_HEAP()
   #define DBG_BUFFER(buf, n)
 
-  #define calloc_named( name, nelems, elemsize) calloc ( nelems, elemsize )
-  #define malloc_named( name, size )            malloc ( size )
-  #define free_named( name, ptr )               free   ( ptr )
+  #define calloc_named( _name, nelems, elemsize) calloc ( nelems, elemsize )
+  #define malloc_named( _name, size )            malloc ( size )
+  #define free_named( _name, ptr )               free   ( ptr )
 #endif
 
 #define malloc_type(object_type)      ((object_type*)malloc_named(#object_type, sizeof(object_type)))
