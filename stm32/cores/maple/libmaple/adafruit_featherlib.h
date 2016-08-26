@@ -99,8 +99,7 @@ typedef struct ATTR_ALIGNED(512)
 
   void    (*mqtt_subscribed_callback  )(char* topic_data, size_t topic_len, uint8_t* message, size_t len, void* callback_func, void* arg);
   void    (*mqtt_disconnect_callback  )(void* p_mqtt);
-  int32_t (*httpserver_url_generator_callback   )(const char* url, const char* query, void* response_stream, void* args[], void* http_data );
-  uint32_t RESERVED_;
+  uint32_t RESERVED_[2];
 
   // 256 - 512
   uint32_t RESERVED_[64];

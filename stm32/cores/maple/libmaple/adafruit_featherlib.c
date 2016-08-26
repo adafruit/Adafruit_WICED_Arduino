@@ -59,8 +59,6 @@ extern err_t adafruit_udp_receive_callback(void* socket, void* p_udp);
 void adafruit_mqtt_subscribed_callback(char* topic_data, size_t topic_len, uint8_t* mess_data, size_t len, void* callback_func, void* arg) ATTR_WEAK;
 void adafruit_mqtt_disconnect_callback(void* p_mqtt) ATTR_WEAK;
 
-int32_t adafruit_httpserver_url_generator_callback(const char* url, const char* query, void* response_stream, void* args[], void* http_data );
-
 //--------------------------------------------------------------------+
 // IMPLEMENTATION
 //--------------------------------------------------------------------+
@@ -88,7 +86,4 @@ ATTR_USED adafruit_arduino_t const adafruit_arduino =
     // MQTT
     .mqtt_subscribed_callback   = adafruit_mqtt_subscribed_callback,
     .mqtt_disconnect_callback   = adafruit_mqtt_disconnect_callback,
-
-    // HTTP Server
-    .httpserver_url_generator_callback = adafruit_httpserver_url_generator_callback,
 };

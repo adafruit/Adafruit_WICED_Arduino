@@ -97,5 +97,11 @@ struct HTTPPage
   HTTPPage(const char* url, HTTPMimeType mime_type, httppage_generator_t page_generator);
 };
 
+// Callback proxy from Featherlib
+extern "C"
+{
+  ATTR_USED int32_t adafruit_httpserver_url_generator_callback(const char* url, const char* query, void* response_stream, void* args[], void* http_data );
+}
+
 
 #endif /* _HTTP_COMMON_H_ */

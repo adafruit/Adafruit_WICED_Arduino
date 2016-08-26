@@ -36,13 +36,6 @@
 
 #include "http_common.h"
 
-// Callback proxy from Featherlib
-extern "C"
-{
-  int32_t adafruit_httpserver_url_generator_callback(const char* url, const char* query, void* response_stream, void* args[], void* http_data );
-}
-
-
 ASSERT_STATIC(sizeof(HTTPPage) == 24);
 
 const char* const http_mime_string[] =

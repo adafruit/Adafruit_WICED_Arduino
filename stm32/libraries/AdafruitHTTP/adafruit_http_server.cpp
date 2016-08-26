@@ -36,13 +36,6 @@
 
 #include "adafruit_http_server.h"
 
-// Callback proxy from Featherlib
-extern "C"
-{
-  ATTR_USED int32_t adafruit_httpserver_url_generator_callback(const char* url, const char* query, void* response_stream, void* args[], void* http_data );
-}
-
-
 /******************************************************************************/
 /**
  * Constructors
@@ -202,14 +195,9 @@ size_t AdafruitHTTPServer::println(void)
 }
 
 
-
-
-//--------------------------------------------------------------------+
-// Callback
-//--------------------------------------------------------------------+
 /******************************************************************************/
 /*!
-    @brief
+    @brief Callback, invoked by Featherlib when client accessing a dynamic page
 */
 /******************************************************************************/
 int32_t adafruit_httpserver_url_generator_callback(const char* url, const char* query, void* response_stream, void* args[], void* http_data )
