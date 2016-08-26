@@ -21,9 +21,12 @@
 #define WLAN_SSID            "yourSSID"
 #define WLAN_PASS            "yourPassword"
 
-#define PORT                 80                     // The TCP port to use
+#define PORT                 80            // The TCP port to use
+#define MAX_CLIENTS          3
 
 int ledPin = PA15;
+
+void info_html_generator (const char* url, const char* query, void* http_request);
 
 // Use the HTTP class
 AdafruitHTTPServer httpserver(5);
@@ -32,25 +35,30 @@ const char hello_html[] = "<html><body> <h1>Hello World!</h1> </body></html>";
 
 HTTPPage pages[] = 
 {
-  HTTPPage("/info.html", HTTP_MIME_TEXT_HTML, hello_html),
-  //HTTPPage("/hello.html", HTTP_MIME_TEXT_HTML, info_html),
+  HTTPPage("/hello.html", HTTP_MIME_TEXT_HTML, hello_html),
+  HTTPPage("/info.html" , HTTP_MIME_TEXT_HTML, info_html_generator),
 };
 
-
-/**************************************************************************/
-/*!
-    @brief  TCP/HTTP disconnect callback
-*/
-/**************************************************************************/
-void disconnect_callback(void)
+void info_html_generator (const char* url, const char* query, void* http_request)
 {
-  Serial.println();
-  Serial.println("---------------------");
-  Serial.println("DISCONNECTED CALLBACK");
-  Serial.println("---------------------");
-  Serial.println();
+  (void) url;
+  (void) query;
+  (void) http_request;
 
-  httpserver.stop();
+  Serial.println("info.html callback");
+
+  httpserver.print("<b>Bootloader</b>:");
+  httpserver.println( Feather.bootloaderVersion() );
+
+  httpserver.print("<b>WICED SDK</b>:");
+  httpserver.println( Feather.sdkVersion() );
+
+  httpserver.print("<b>FeatherLib</b>:");
+  httpserver.println( Feather.firmwareVersion() );
+
+  httpserver.print("<b>Arduino API</b>:");
+  httpserver.println( Feather.arduinoVersion() );
+  httpserver.println();
 }
 
 /**************************************************************************/
@@ -84,9 +92,11 @@ void setup()
 
   // Configure HTTP Server Pages
   Serial.println("Adding Pages to HTTP Server");
-  httpserver.addPages(pages, 1);
+  httpserver.addPages(pages, sizeof(pages)/sizeof(HTTPPage));
 
-  httpserver.begin(80, 3);
+  Serial.print("Starting HTTP Server ... ");
+  httpserver.begin(PORT, MAX_CLIENTS);
+  Serial.println(" running");
 }
 
 /**************************************************************************/
@@ -122,4 +132,20 @@ bool connectAP(void)
   Serial.println();
 
   return Feather.connected();
+}
+
+/**************************************************************************/
+/*!
+    @brief  TCP/HTTP disconnect callback
+*/
+/**************************************************************************/
+void disconnect_callback(void)
+{
+  Serial.println();
+  Serial.println("---------------------");
+  Serial.println("DISCONNECTED CALLBACK");
+  Serial.println("---------------------");
+  Serial.println();
+
+  httpserver.stop();
 }

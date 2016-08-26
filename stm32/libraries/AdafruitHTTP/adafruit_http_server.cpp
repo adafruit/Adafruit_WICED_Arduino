@@ -39,7 +39,7 @@
 // Callback proxy from Featherlib
 extern "C"
 {
-  int32_t adafruit_httpserver_url_generator_callback(const char* url, const char* query, void* response_stream, void* args[], void* http_data );
+  ATTR_USED int32_t adafruit_httpserver_url_generator_callback(const char* url, const char* query, void* response_stream, void* args[], void* http_data );
 }
 
 
@@ -62,6 +62,11 @@ AdafruitHTTPServer::AdafruitHTTPServer(uint8_t max_pages, uint8_t interface) : _
   _page_count = 0;
 }
 
+/******************************************************************************/
+/**
+ * Destructor
+ */
+/******************************************************************************/
 AdafruitHTTPServer::~AdafruitHTTPServer()
 {
   this->stop();
@@ -76,7 +81,13 @@ void AdafruitHTTPServer::addPages(HTTPPage const * http_pages, uint8_t count)
       i<count && _page_count < _page_max;
       i++, _page_count++)
   {
-    memcpy(_pages+_page_count, http_pages + i, sizeof(HTTPPage));
+    _pages[_page_count] = http_pages[i];
+
+    // add this pointer if page is dyanmic
+    if ( http_pages[i]._type == HTTPPAGE_TYPE_DYNAMIC )
+    {
+      _pages[_page_count]._dynamic.this_ptr = (void*) this;
+    }
   }
 }
 
@@ -151,11 +162,44 @@ void AdafruitHTTPServer::stop(void)
   }
 }
 
-int AdafruitHTTPServer::url_generator_callback(const char* url, const char* query, void* response_stream, void* http_data )
+void AdafruitHTTPServer::url_generator_callback(const char* url, const char* query, void* response_stream, httppage_generator_t generator_cb, void* http_data)
 {
+  _resp_stream = response_stream;
 
+  if (generator_cb)
+  {
+    generator_cb(url, query, http_data);
+  }
+
+  _resp_stream = NULL;
 }
 
+
+size_t AdafruitHTTPServer::write(uint8_t ch)
+{
+  return this->write(&ch, 1);
+}
+
+size_t AdafruitHTTPServer::write(const uint8_t *buffer, size_t size)
+{
+  if (_resp_stream == NULL) return 0;
+  uint16_t len = 0;
+
+  sdep_cmd_para_t para_arr[] =
+  {
+      { .len = 4   , .p_value = _resp_stream },
+      { .len = size, .p_value = buffer       },
+  };
+
+  sdep_n(SDEP_CMD_HTTPSERVER_RESP_WRITE, arrcount(para_arr), para_arr, NULL, &len);
+
+  return len;
+}
+
+size_t AdafruitHTTPServer::println(void)
+{
+  return this->write("<br>");
+}
 
 
 
@@ -174,6 +218,8 @@ int32_t adafruit_httpserver_url_generator_callback(const char* url, const char* 
 
   if ( p_server )
   {
-    p_server->url_generator_callback(url, query, response_stream, http_data);
+    p_server->url_generator_callback(url, query, response_stream, (httppage_generator_t) args[0], http_data);
   }
+
+  return 0;
 }

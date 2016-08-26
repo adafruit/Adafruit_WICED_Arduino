@@ -43,7 +43,7 @@
 
 #define HTPPSREVER_STACKSIZE_DEFAULT    (3*1024)
 
-class AdafruitHTTPServer : public AdafruitSDEP
+class AdafruitHTTPServer : public AdafruitSDEP, public Print
 {
 public:
   enum {
@@ -63,8 +63,16 @@ public:
 
   bool started(void);
 
+  // Print Interface
+  virtual size_t write(uint8_t);
+  virtual size_t write(const uint8_t *buffer, size_t size);
+  using Print::write;
+
+  virtual size_t println(void); // shadow Print::println() to print break line <br>
+  using Print::println;
+
   // call from featherlib only
-  int url_generator_callback(const char* url, const char* query, void* response_stream, void* http_data );
+  void url_generator_callback(const char* url, const char* query, void* response_stream, httppage_generator_t generator_cb, void* http_data );
 
 protected:
   void*         _handle;
@@ -74,6 +82,8 @@ protected:
   uint8_t       _page_count;
 
   uint8_t       _interface;
+
+  void*         _resp_stream;
 
   void clear(void);
 };

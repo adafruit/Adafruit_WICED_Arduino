@@ -68,7 +68,7 @@ enum HTTPMimeType
   HTTP_MIME_ALL                    , // "*/*" This must always be the last mimne
 };
 
-typedef int (*httppage_generator_t) (const char* url, const char* query, void* http_request);
+typedef void (*httppage_generator_t) (const char* url, const char* query, void* http_request);
 
 // This struct's layout must matches with wiced_http_page_t in Featherlib
 struct HTTPPage
