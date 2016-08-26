@@ -51,10 +51,11 @@ extern "C"
 /******************************************************************************/
 AdafruitHTTPServer::AdafruitHTTPServer(uint8_t max_pages, uint8_t interface) : _page_max(max_pages)
 {
+  _handle    = NULL;
   _interface = interface;
 
   // extra zero page as terminator
-  uint32_t size = (max_pages+1)*sizeof(HTTPPage);
+  uint32_t size = (_page_max+1)*sizeof(HTTPPage);
   _pages = (HTTPPage*) malloc(size);
   memclr(_pages, size);
 
@@ -63,13 +64,10 @@ AdafruitHTTPServer::AdafruitHTTPServer(uint8_t max_pages, uint8_t interface) : _
 
 AdafruitHTTPServer::~AdafruitHTTPServer()
 {
+  this->stop();
+
   free(_pages);
   _pages = NULL;
-}
-
-void AdafruitHTTPServer::clear(void)
-{
-
 }
 
 void AdafruitHTTPServer::addPages(HTTPPage const * http_pages, uint8_t count)
@@ -92,31 +90,65 @@ void AdafruitHTTPServer::homepage(HTTPPage const* http_page)
  * @param port          Listening port
  * @param max_clients   Max number of clients can access server simultaneously.
  *                      More clients will consume more featherlib's SRAM
- * @param stacksize     HTTP Server's stack size in bytes. HTTP Serverrun on its
- *                      own thread/task. Specific application may want to
+ * @param stacksize     HTTP Server's stack size in bytes. HTTP Server run on its
+ *                      own thread/task as daemon. Specific application may want to
  *                      increase/decrease stack size (default: HTPPSREVER_STACKSIZE_DEFAULT)
+ *
+ *                      SDEP parameters
+ *                      0. Handle buffer
+ *                      1. Interface (STA, SoftAP)
+ *                      2. Listenning Port
+ *                      3. Max Clients
+ *                      4. HTTP Daemon Stack Size
+ *                      5. HTTP Pages
  *
  * @return true if successful, false otherwise
  *****************************************************************************/
 bool AdafruitHTTPServer::begin(uint16_t port, uint8_t max_clients, uint32_t stacksize)
 {
+  DBG_HEAP();
+
+  _handle = malloc_named("HTTPServer Handle", HTTPSERVER_HANDLE_SIZE);
+  VERIFY( _handle != NULL );
+
   sdep_cmd_para_t para_arr[] =
   {
-      { .len = 0      , .p_value = NULL      },
+      { .len = HTTPSERVER_HANDLE_SIZE, .p_value = _handle      },
+
+      { .len = 1, .p_value = &_interface  },
+      { .len = 2, .p_value = &port        },
+      { .len = 1, .p_value = &max_clients },
+      { .len = 4, .p_value = &stacksize   },
+
+      { .len = (_page_max+1)*sizeof(HTTPPage), .p_value = _pages },
   };
 
   if ( !sdep_n(SDEP_CMD_HTTPSERVER_START, arrcount(para_arr), para_arr, NULL, NULL) )
   {
+    free_named("HTTPServer Handle", _handle);
     return false;
   }
 
+  DBG_HEAP();
+
   return true;
+}
+
+bool AdafruitHTTPServer::started(void)
+{
+  return _handle != NULL;
 }
 
 
 void AdafruitHTTPServer::stop(void)
 {
+  if ( _handle )
+  {
+    sdep(SDEP_CMD_HTTPSERVER_STOP, 4, &_handle, NULL, NULL);
 
+    free_named("HTTPServer Handle", _handle);
+    _handle = NULL;
+  }
 }
 
 int AdafruitHTTPServer::url_generator_callback(const char* url, const char* query, void* response_stream, void* http_data )

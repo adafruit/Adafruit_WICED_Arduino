@@ -257,6 +257,7 @@ typedef enum {
 
   // HTTP Server
   SDEP_CMD_HTTPSERVER_START    = 0x0D00,    ///< Start HTTP Server
+  SDEP_CMD_HTTPSERVER_STOP     = 0x0D01,    ///< Stop HTTP Server
 
 } sdep_command_t;
 

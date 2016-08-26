@@ -49,23 +49,23 @@ enum HTTPPageType
 
 enum HTTPMimeType
 {
-  HTTP_MIME_TYPE_TLV = 0                , // "application/x-tlv8"
-  HTTP_MIME_TYPE_APPLE_BINARY_PLIST     , // "application/x-apple-binary-plist"
-  HTTP_MIME_TYPE_APPLE_PROXY_AUTOCONFIG , // "application/x-ns-proxy-autoconfig"
-  HTTP_MIME_TYPE_BINARY_DATA            , // "application/octet-stream"
-  HTTP_MIME_TYPE_JAVASCRIPT             , // "application/javascript"
-  HTTP_MIME_TYPE_JSON                   , // "application/json"
-  HTTP_MIME_TYPE_HAP_PAIRING            , // "application/pairing+tlv8"
-  HTTP_MIME_TYPE_HAP_JSON               , // "application/hap+json"
-  HTTP_MIME_TYPE_HAP_VERIFY             , // "application/hap+verify"
-  HTTP_MIME_TYPE_TEXT_HTML              , // "text/html"
-  HTTP_MIME_TYPE_TEXT_PLAIN             , // "text/plain"
-  HTTP_MIME_TYPE_TEXT_EVENT_STREAM      , // "text/event-stream"
-  HTTP_MIME_TYPE_TEXT_CSS               , // "text/css"
-  HTTP_MIME_TYPE_IMAGE_GIF              , // "image/gif"
-  HTTP_MIME_TYPE_IMAGE_PNG              , // "image/png"
-  HTTP_MIME_TYPE_IMAGE_MICROSOFT        , // "image/vnd.microsoft.icon"
-  HTTP_MIME_TYPE_ALL                    , // "*/*" This must always be the last mimne
+  HTTP_MIME_TLV = 0                , // "application/x-tlv8"
+  HTTP_MIME_APPLE_BINARY_PLIST     , // "application/x-apple-binary-plist"
+  HTTP_MIME_APPLE_PROXY_AUTOCONFIG , // "application/x-ns-proxy-autoconfig"
+  HTTP_MIME_BINARY_DATA            , // "application/octet-stream"
+  HTTP_MIME_JAVASCRIPT             , // "application/javascript"
+  HTTP_MIME_JSON                   , // "application/json"
+  HTTP_MIME_HAP_PAIRING            , // "application/pairing+tlv8"
+  HTTP_MIME_HAP_JSON               , // "application/hap+json"
+  HTTP_MIME_HAP_VERIFY             , // "application/hap+verify"
+  HTTP_MIME_TEXT_HTML              , // "text/html"
+  HTTP_MIME_TEXT_PLAIN             , // "text/plain"
+  HTTP_MIME_TEXT_EVENT_STREAM      , // "text/event-stream"
+  HTTP_MIME_TEXT_CSS               , // "text/css"
+  HTTP_MIME_IMAGE_GIF              , // "image/gif"
+  HTTP_MIME_IMAGE_PNG              , // "image/png"
+  HTTP_MIME_IMAGE_MICROSOFT        , // "image/vnd.microsoft.icon"
+  HTTP_MIME_ALL                    , // "*/*" This must always be the last mimne
 };
 
 typedef int (*httppage_generator_t) (const char* url, const char* query, void* http_request);

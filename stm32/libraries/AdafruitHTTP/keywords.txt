@@ -7,10 +7,12 @@
 #######################################
 
 AdafruitHTTP	KEYWORD1
+AdafruitHTTPServer	KEYWORD1
 AdafruitUrlencode	KEYWORD1
+HTTPPage	KEYWORD1
 
 #######################################
-# Methods and Functions (KEYWORD2)
+# AdafruitHTTP Methods and Functions (KEYWORD2)
 #######################################
 
 addHeader	KEYWORD2
@@ -29,6 +31,20 @@ post	KEYWORD2
 postWithoutURLencoded	KEYWORD2
 postRaw	KEYWORD2
 
+#######################################
+# AdafruitHTTPServer Methods and Functions (KEYWORD2)
+#######################################
+
+interface	KEYWORD2
+addPages	KEYWORD2
+homepage	KEYWORD2
+started	KEYWORD2
+
+
+#######################################
+# AdafruitUrlencode Methods and Functions (KEYWORD2)
+#######################################
+
 encodeLength	KEYWORD2
 encode	KEYWORD2
 
@@ -37,3 +53,25 @@ encode	KEYWORD2
 #######################################
 
 ADAFRUIT_HTTP_MAX_HEADER	LITERAL1
+
+HTTPPAGE_TYPE_STATIC	LITERAL1
+HTTPPAGE_TYPE_DYNAMIC	LITERAL1
+HTTPPAGE_TYPE_RESOUCE	LITERAL1
+
+HTTP_MIME_TLV	LITERAL1
+HTTP_MIME_APPLE_BINARY_PLIST	LITERAL1
+HTTP_MIME_APPLE_PROXY_AUTOCONFIG	LITERAL1
+HTTP_MIME_BINARY_DATA	LITERAL1
+HTTP_MIME_JAVASCRIPT	LITERAL1
+HTTP_MIME_JSON	LITERAL1
+HTTP_MIME_HAP_PAIRING	LITERAL1
+HTTP_MIME_HAP_JSON	LITERAL1
+HTTP_MIME_HAP_VERIFY	LITERAL1
+HTTP_MIME_TEXT_HTML	LITERAL1
+HTTP_MIME_TEXT_PLAIN	LITERAL1
+HTTP_MIME_TEXT_EVENT_STREAM	LITERAL1
+HTTP_MIME_TEXT_CSS	LITERAL1
+HTTP_MIME_IMAGE_GIF	LITERAL1
+HTTP_MIME_IMAGE_PNG	LITERAL1
+HTTP_MIME_IMAGE_MICROSOFT	LITERAL1
+HTTP_MIME_ALL	LITERAL1

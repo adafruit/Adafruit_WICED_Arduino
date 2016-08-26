@@ -46,6 +46,10 @@
 class AdafruitHTTPServer : public AdafruitSDEP
 {
 public:
+  enum {
+    HTTPSERVER_HANDLE_SIZE = 568, // sizeof(wiced_http_server_t)
+  };
+
   AdafruitHTTPServer(uint8_t max_pages, uint8_t interface = WIFI_INTERFACE_STATION);
   virtual ~AdafruitHTTPServer();
 
@@ -57,10 +61,14 @@ public:
   bool begin(uint16_t port, uint8_t max_clients, uint32_t stacksize = HTPPSREVER_STACKSIZE_DEFAULT);
   void stop(void);
 
+  bool started(void);
+
   // call from featherlib only
   int url_generator_callback(const char* url, const char* query, void* response_stream, void* http_data );
 
 protected:
+  void*         _handle;
+
   HTTPPage*     _pages;
   uint8_t const _page_max;
   uint8_t       _page_count;
