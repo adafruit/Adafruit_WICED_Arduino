@@ -64,7 +64,7 @@ public:
   size_t print(double, int=2);
   size_t print(const Printable&);
   size_t println(const Printable&);
-  size_t println(void);
+  virtual size_t println(void); // Adafruit change to virtual to allow httpserver override with <br>
   size_t println(const String &s);
   size_t println(char);
   size_t println(const char[]);
