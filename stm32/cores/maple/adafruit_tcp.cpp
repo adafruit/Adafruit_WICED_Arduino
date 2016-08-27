@@ -322,7 +322,7 @@ int AdafruitTCP::read(uint8_t* buf, size_t size)
   };
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
-  uint16_t readlen = size16;
+  uint32_t readlen = size;
   VERIFY_RETURN( sdep_n(SDEP_CMD_TCP_READ, para_count, para_arr, &readlen, buf), 0);
 
   _bytesRead += readlen;

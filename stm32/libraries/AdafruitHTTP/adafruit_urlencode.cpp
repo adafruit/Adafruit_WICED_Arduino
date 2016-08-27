@@ -56,9 +56,9 @@ static char to_hex(char code)
  * @param size    Maximum size of output string
  * @return  number of bytes in output string, 0 if failed (possibly not enough memory in output)
  */
-uint16_t AdafruitUrlencode::encode(const char* input, char* output, uint16_t bufsize)
+uint32_t AdafruitUrlencode::encode(const char* input, char* output, uint32_t bufsize)
 {
-  uint16_t len=0;
+  uint32_t len=0;
   char ch;
   while( (ch = *input++) && (len < bufsize-1)  )
   {
@@ -90,9 +90,9 @@ uint16_t AdafruitUrlencode::encode(const char* input, char* output, uint16_t buf
  * @param input Input string
  * @return
  */
-uint16_t AdafruitUrlencode::encodeLength(const char* input)
+uint32_t AdafruitUrlencode::encodeLength(const char* input)
 {
-  uint16_t len=0;
+  uint32_t len=0;
   char ch;
   while( (ch = *input++) )
   {
@@ -106,86 +106,6 @@ uint16_t AdafruitUrlencode::encodeLength(const char* input)
   }
   return len;
 }
-
-
-#if 0
-/**
- * Encode URL with keys and values, each are passed in separated array
- * @param keys    Array of key which are left untouched
- * @param values  Array of value which will be urlencoded
- * @param output  Result in format
- *                key1=encoded(value1)&key2=encoded(value2)&.....
- * @param bufsize Buffer size of output
- *
- * @note If either a key or value is NULL, that pair will be skipped in the encoding result as if
- * it is not existed.
- * @return number of bytes in output string, 0 if failed (possibly not enough memory in output)
- */
-uint16_t AdafruitUrlencode::encode(const char* keys[], const char* values[], uint16_t count, char* output, uint16_t bufsize)
-{
-  uint16_t total_bytes = 0;
-
-  for(uint16_t i=0; i<count && total_bytes < bufsize-1; i++)
-  {
-    // skip NULL key or value
-    if ( keys[i] && values[i] )
-    {
-      if (i != 0) output[total_bytes++] = '&';
-
-      uint16_t keylen = strlen(keys[i]);
-      strncpy(output+total_bytes, keys[i], bufsize-total_bytes);
-      total_bytes += keylen;
-
-      output[total_bytes++] = '=';
-
-      uint16_t n = encode(values[i], output+total_bytes, bufsize-total_bytes);
-      if (n == 0) return 0; // failed to encode
-
-      total_bytes += n;
-    }
-  }
-
-  output[total_bytes] = 0;
-
-  return total_bytes;
-}
-
-/**
- * Encode URL with keys and values, both are passed in an 2-dimension array
- * @param keys_values  2-dimension Array of key (index 0) & value (index 1)
- * @param output  Result in format
- *                key1=encoded(value1)&key2=encoded(value2)&.....
- * @param bufsize Buffer size of output
- *
- * @note If either a key or value is NULL, that pair will be skipped in the encoding result as if
- * it is not existed.
- * @return number of bytes in output string, 0 if failed (possibly not enough memory in output)
- */
-uint16_t AdafruitUrlencode::encode(const char* keys_values[][2], uint16_t count, char* output, uint16_t bufsize)
-{
-  uint16_t total_bytes = 0;
-
-  for(uint16_t i=0; i<count && total_bytes < bufsize-1; i++)
-  {
-    char const * key   = keys_values[i][0];
-    char const * value = keys_values[i][1];
-
-    // skip NULL key or value
-    if ( key && value )
-    {
-      if (i != 0) output[total_bytes++] = '&';
-      uint16_t n = encode(&key, &value, 1, output+total_bytes, bufsize-total_bytes);
-      if (n == 0) return 0; // failed to encode
-
-      total_bytes += n;
-    }
-  }
-
-  output[total_bytes] = 0;
-
-  return total_bytes;
-}
-#endif
 
 #if 0
 /* Returns a url-decoded version of str */

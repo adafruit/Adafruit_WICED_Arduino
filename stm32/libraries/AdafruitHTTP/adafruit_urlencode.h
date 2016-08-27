@@ -43,13 +43,9 @@
 class AdafruitUrlencode
 {
 public:
-  static uint16_t encodeLength(const char* input);
-  static uint16_t encode(const char* input, char* output, uint16_t bufsize);
-#if 0
-  static uint16_t encode(const char* keys[], const char* values[], uint16_t count, char* output, uint16_t bufsize);
-  static uint16_t encode(const char* keys_values[][2], uint16_t count, char* output, uint16_t bufsize);
-#endif
-//  static uint16_t urlDecode(const char* input, char* output, uint16_t bufsize);
+  static uint32_t encodeLength(const char* input);
+  static uint32_t encode(const char* input, char* output, uint32_t bufsize);
+//  static uint32_t urlDecode(const char* input, char* output, uint32_t bufsize);
 };
 
 

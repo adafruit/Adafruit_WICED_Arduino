@@ -111,7 +111,7 @@ ASSERT_STATIC( sizeof(adafruit_arduino_t) == 512 );
 //------------- Featherlib Shared Structure -------------//
 typedef struct
 {
-  uint16_t    len;
+  uint32_t    len;
   void const* p_value;
 }sdep_cmd_para_t;
 
@@ -131,12 +131,12 @@ typedef struct ATTR_ALIGNED(512)
 
   // SDEP Command
   err_t (*sdep_execute) (uint16_t  cmd_id     ,
-                         uint16_t  paylen    , void const* parameter,
-                         uint16_t* result_len , void* result_buffer);
+                         uint32_t  paylen    , void const* parameter,
+                         uint32_t* result_len , void* result_buffer);
 
   err_t (*sdep_execute_n)(uint16_t  cmd_id       ,
                           uint8_t   para_count   , sdep_cmd_para_t const* para_arr,
-                          uint16_t* p_result_len , void* p_result);
+                          uint32_t* p_result_len , void* p_result);
 
   uint32_t RESERVED_[6];
 

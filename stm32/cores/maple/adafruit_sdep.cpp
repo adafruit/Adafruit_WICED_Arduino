@@ -47,8 +47,8 @@
 */
 /******************************************************************************/
 bool AdafruitSDEP::sdep(uint16_t  cmd_id       ,
-          uint16_t  param_len    , void const* p_param,
-          uint16_t* p_result_len , void* p_result)
+          uint32_t  param_len    , void const* p_param,
+          uint32_t* p_result_len , void* p_result)
 {
   _errno = FEATHERLIB->sdep_execute(cmd_id, param_len, p_param, p_result_len, p_result);
   handle_error(cmd_id);
@@ -62,7 +62,7 @@ bool AdafruitSDEP::sdep(uint16_t  cmd_id       ,
 /******************************************************************************/
 bool AdafruitSDEP::sdep_n(uint16_t  cmd_id       ,
             uint8_t   para_count   , sdep_cmd_para_t const* para_arr,
-            uint16_t* p_result_len , void* p_result)
+            uint32_t* p_result_len , void* p_result)
 {
   _errno = FEATHERLIB->sdep_execute_n(cmd_id, para_count, para_arr, p_result_len, p_result);
   handle_error(cmd_id);

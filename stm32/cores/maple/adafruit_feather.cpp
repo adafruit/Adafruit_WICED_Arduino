@@ -165,7 +165,7 @@ bool AdafruitFeather::connect(const char *ssid)
       { .len = 0           , .p_value = NULL      },
       { .len = 4           , .p_value = &enc_type },
   };
-  uint16_t resp_len = sizeof(wl_ap_info_t);
+  uint32_t resp_len = sizeof(wl_ap_info_t);
 
   _connected = sdep_n(SDEP_CMD_CONNECT, arrcount(para_arr), para_arr, &resp_len, &_ap_info);
 
@@ -204,7 +204,7 @@ bool AdafruitFeather::connect(const char *ssid, const char *key, int enc_type)
     para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
   }
 
-  uint16_t resp_len = sizeof(wl_ap_info_t);
+  uint32_t resp_len = sizeof(wl_ap_info_t);
   _connected = sdep_n(SDEP_CMD_CONNECT, para_count, para_arr, &resp_len, &_ap_info);
 
 	return _connected;
@@ -394,7 +394,7 @@ char* AdafruitFeather::profileSSID (uint8_t pos)
   };
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
-  uint16_t len = 0;
+  uint32_t len = 0;
 
   sdep_n(SDEP_CMD_WIFI_PROFILE_GET, para_count, para_arr, &len, profile_ssid);
 
@@ -502,7 +502,7 @@ uint32_t AdafruitFeather::ping(IPAddress ipaddr)
 /******************************************************************************/
 int AdafruitFeather::scanNetworks(wl_ap_info_t ap_list[], uint8_t max_ap)
 {
-  uint16_t length = max_ap*sizeof(wl_ap_info_t);
+  uint32_t length = max_ap*sizeof(wl_ap_info_t);
   VERIFY_RETURN( sdep(SDEP_CMD_SCAN, 0, NULL, &length, ap_list), 0);
 
   return length/sizeof(wl_ap_info_t);
@@ -577,7 +577,6 @@ bool AdafruitFeather::addRootCA(uint8_t const* root_ca, uint16_t len)
   // Init Root CA first if not initialized
   VERIFY( this->initRootCA() ) ;
 
-//  return sdep(SDEP_CMD_TLS_SET_ROOT_CERTS, len, root_ca, NULL, NULL);
   // TODO use sdep instead of sdep_n
   sdep_cmd_para_t para_arr[] =
   {
@@ -756,6 +755,11 @@ void adafruit_wifi_disconnect_callback(void)
   {
     Feather.wlan_disconnect_callback();
   }
+}
+
+void AdafruitFeather::dbgThreadlist(void)
+{
+  sdep(SDEP_CMD_THREADLIST, 0, NULL, NULL, NULL);
 }
 
 int AdafruitFeather::dbgHeapUsed (void)

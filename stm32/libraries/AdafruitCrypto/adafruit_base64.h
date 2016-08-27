@@ -43,8 +43,8 @@
 class AdafruitBase64
 {
 public:
-  static uint16_t encode(const uint8_t* input, uint16_t inputlen, char* output, uint16_t bufsize);
-//  static uint16_t base64Decode(const char   * input, uint16_t inputlen, uint8_t* output, uint16_t size);
+  static uint32_t encode(const uint8_t* input, uint32_t inputlen, char* output, uint32_t bufsize);
+//  static uint32_t base64Decode(const char   * input, uint32_t inputlen, uint8_t* output, uint32_t size);
 };
 
 #endif /* _ADAFRUIT_BASE64_H_ */

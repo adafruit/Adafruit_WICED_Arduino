@@ -4,6 +4,7 @@
 - print warning message when Featherlib & Arduino library version are not matched
 - fix get TCP peer information when SOCKET is CLOSED
 - Move memory allocation for UDP from featherlib to arduino code
+- change sdep parameter length from uint16_t to uint32_t
 - Debug Feather
 	- add dbgHeapTotal(), dbgHeapUsed(), dbgHeapFree()
 - add AdafruitBase64
@@ -30,6 +31,7 @@
 	- enhance AdafruitTCP/AdafruitTCPServer to support both STA & SoftAP interface
 	- enhance AdafruitUDP to support both STA & SoftAP interface
 	- add APChatServer, APClientRSSI, APTcpServer examples
+- AdafruitHTTPServer support
 
 # 0.5.5
 

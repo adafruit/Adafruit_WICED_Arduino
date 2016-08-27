@@ -55,7 +55,7 @@ void info_html_generator (const char* url, const char* query, void* http_request
   httpserver.print("<b>FeatherLib</b> : ");
   httpserver.println( Feather.firmwareVersion() );
 
-  httpserver.print("<b>Arduino API</b> : ");
+  httpserver.print("<b>Arduino API</b> : "); 
   httpserver.println( Feather.arduinoVersion() );
   httpserver.println();
 

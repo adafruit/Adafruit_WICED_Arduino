@@ -57,12 +57,12 @@ public:
   AdafruitSDEP() { _errno = ERROR_NONE; _err_print = _err_halt = false; }
 
   bool sdep  (uint16_t  cmd_id       ,
-              uint16_t  param_len    , void const* p_param,
-              uint16_t* p_result_len , void* p_result);
+              uint32_t  param_len    , void const* p_param,
+              uint32_t* p_result_len , void* p_result);
 
   bool sdep_n(uint16_t  cmd_id       ,
               uint8_t   para_count   , sdep_cmd_para_t const* para_arr,
-              uint16_t* p_result_len , void* p_result);
+              uint32_t* p_result_len , void* p_result);
 
   err_t        errno       (void ) { return _errno; }
   char const*  errstr      (void );

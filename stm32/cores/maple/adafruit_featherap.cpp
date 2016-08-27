@@ -117,14 +117,14 @@ bool AdafruitFeatherAP::start(const char *ssid, const char *key, int enc_type)
 
   sdep_cmd_para_t para_arr[] =
   {
-      { .len = strlen(ssid)          , .p_value = ssid      },
-      { .len = key ? strlen(key) : 0 , .p_value = key       },
-      { .len = 4                     , .p_value = &enc_type },
+      { .len = strlen(ssid)   , .p_value = ssid      },
+      { .len = stringlen(key) , .p_value = key       },
+      { .len = 4              , .p_value = &enc_type },
 
-      { .len = 4                     , .p_value = &_ip      },
-      { .len = 4                     , .p_value = &_gateway },
-      { .len = 4                     , .p_value = &_subnet  },
-      { .len = 1                     , .p_value = &_channel },
+      { .len = 4              , .p_value = &_ip      },
+      { .len = 4              , .p_value = &_gateway },
+      { .len = 4              , .p_value = &_subnet  },
+      { .len = 1              , .p_value = &_channel },
   };
 
   _started = sdep_n(SDEP_CMD_SOFTAP_START, arrcount(para_arr), para_arr, NULL, NULL);

@@ -206,7 +206,7 @@ public:
   void      printEncryption (int32_t enc, Print& p = Serial);
 
   // Debug functions
-  void dbgThreadlist   (void) { sdep(SDEP_CMD_THREADLIST, 0, NULL, NULL, NULL); }
+  void dbgThreadlist   (void);
   int  dbgHeapTotal    (void);
   int  dbgHeapUsed     (void);
   int  dbgHeapFree     (void);

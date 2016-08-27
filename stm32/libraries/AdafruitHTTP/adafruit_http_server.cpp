@@ -176,7 +176,6 @@ size_t AdafruitHTTPServer::write(uint8_t ch)
 size_t AdafruitHTTPServer::write(const uint8_t *buffer, size_t size)
 {
   if (_resp_stream == NULL) return 0;
-  uint16_t len = 0;
 
   sdep_cmd_para_t para_arr[] =
   {
@@ -184,9 +183,9 @@ size_t AdafruitHTTPServer::write(const uint8_t *buffer, size_t size)
       { .len = size, .p_value = buffer       },
   };
 
-  sdep_n(SDEP_CMD_HTTPSERVER_RESP_WRITE, arrcount(para_arr), para_arr, NULL, &len);
+  sdep_n(SDEP_CMD_HTTPSERVER_RESP_WRITE, arrcount(para_arr), para_arr, NULL, &size);
 
-  return len;
+  return size;
 }
 
 size_t AdafruitHTTPServer::println(void)

@@ -224,7 +224,7 @@ int AdafruitUDP::read(unsigned char* buf, size_t size)
   };
   uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
-  uint16_t read_count=0;
+  uint32_t read_count=0;
   VERIFY_RETURN(sdep_n(SDEP_CMD_UDP_READ, para_count, para_arr, &read_count, buf), -1);
 
   _bytesRead += read_count;
