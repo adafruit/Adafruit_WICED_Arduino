@@ -25,6 +25,7 @@
 #define MAX_CLIENTS          3
 
 int ledPin = PA15;
+int visit_count = 0;
 
 void info_html_generator (const char* url, const char* query, void* http_request);
 
@@ -45,20 +46,22 @@ void info_html_generator (const char* url, const char* query, void* http_request
   (void) query;
   (void) http_request;
 
-  Serial.println("info.html callback");
-
-  httpserver.print("<b>Bootloader</b>:");
+  httpserver.print("<b>Bootloader</b> : ");
   httpserver.println( Feather.bootloaderVersion() );
 
-  httpserver.print("<b>WICED SDK</b>:");
+  httpserver.print("<b>WICED SDK</b> : ");
   httpserver.println( Feather.sdkVersion() );
 
-  httpserver.print("<b>FeatherLib</b>:");
+  httpserver.print("<b>FeatherLib</b> : ");
   httpserver.println( Feather.firmwareVersion() );
 
-  httpserver.print("<b>Arduino API</b>:");
+  httpserver.print("<b>Arduino API</b> : ");
   httpserver.println( Feather.arduinoVersion() );
   httpserver.println();
+
+  visit_count++;
+  httpserver.print("<b>visit count</b> : ");
+  httpserver.print(visit_count);
 }
 
 /**************************************************************************/
