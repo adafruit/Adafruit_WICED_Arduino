@@ -36,7 +36,10 @@
 #define AIO_KEY           "...your AIO key..."
 
 // AdafruitAIO will auto append "username/feeds/" prefix to your feed"
+// COLOR_FEED change color of Neopixel
+// 
 #define COLOR_FEED         "color"
+#define BRIGHTNESS_FEED     "brightness"
 
 // Connect using TLS/SSL or not
 #define USE_TLS             0
@@ -51,6 +54,8 @@
 
 AdafruitAIO           aio(AIO_USERNAME, AIO_KEY);
 AdafruitAIOFeedColor  color(&aio, COLOR_FEED, MQTT_QOS_AT_LEAST_ONCE);
+AdafruitAIOFeedSlider<int>  slider(&aio, BRIGHTNESS_FEED, MQTT_QOS_AT_LEAST_ONCE);
+
 Adafruit_NeoPixel     pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 
 /**************************************************************************/
@@ -99,41 +104,17 @@ void setup()
   }
   Serial.println("OK");
 
-  // follow text feed
+  // follow color feed
   Serial.print("Subcribing to feed: '" COLOR_FEED "' ... ");
   color.follow(color_callback);
   Serial.println("OK");
 
+  // follow slider state change
+  Serial.print("Subcribing to feed: '" BRIGHTNESS_FEED "' ... ");
+  slider.follow(slider_callback);
+  Serial.println("OK");
+
   Serial.print("Enter RGB hex value (e.g ff00bb): ");
-}
-
-/**************************************************************************/
-/*!
-    @brief  Parse the input. Correct input is color code in hex without 0x
-    prefix e.g 'ff00bb'.
-    
-    @return true if successful, false if format error
-*/
-/**************************************************************************/
-bool parseInput(char* input, uint8_t rgb[3])
-{
-  // Length must be 6
-  if ( strlen(input) != 6 ) return false;
-
-  // All must be a hex digit 
-  for(int i=0; i<6; i++)
-  {
-    if ( !isxdigit(input[i]) ) return false;
-  }
-
-  // Parse each color byte
-  for(int i=0; i<3; i++)
-  {
-    char str[3] = { input[2*i] , input[2*i+1], 0 };
-    rgb[i] = (uint8_t) strtoul(str, NULL, 16);
-  }
-
-  return true;
 }
 
 /**************************************************************************/
@@ -143,28 +124,7 @@ bool parseInput(char* input, uint8_t rgb[3])
 /**************************************************************************/
 void loop()
 {
-  // Get input from user
-  if ( Serial.available() )
-  {
-    // Get input and echo
-    char* input = getUserInput();
-    Serial.println(input);
-
-    // Parse the input
-    uint8_t rgb[3];
-    if ( !parseInput(input, rgb) ) 
-    {
-      Serial.println("Invalid input, HEX for RGB (wihtout 0x prefix)");
-      Serial.println("Example: 'ff00bb'");
-
-      Serial.println();
-      Serial.print("Enter RGB hex value (e.g ff00bb): ");
-      return;
-    }
-    
-    // AIO Feed OnOff can be update with assignment like normal string variable
-    color = rgb;
-  }
+  // do nothng
 }
 
 /**************************************************************************/
@@ -184,9 +144,26 @@ void color_callback(uint8_t rgb[3])
   
   Serial.printf("Feed value: RGB = %02x%02x%02x", rgb[0], rgb[1], rgb[2]);
   Serial.println();
+}
 
-  // print prompt
-  Serial.print("Enter RGB hex value (e.g ff00bb): ");
+/**************************************************************************/
+/*!
+    @brief  Feed OnOff callback event
+
+    @param  value      value of the feed, must be the same as class template
+                       (int or float)
+*/
+/**************************************************************************/
+void slider_callback(int value)
+{
+  if ( 0 <= value && value <= 255)
+  {
+    pixels.setBrightness(value);
+    pixels.show();
+  }
+  
+  Serial.print("Feed value: ");
+  Serial.println(value);
 }
 
 /**************************************************************************/

@@ -89,7 +89,7 @@ void setup()
   }
   Serial.println("OK");
 
-  // follow text feed
+  // follow color feed
   Serial.print("Subcribing to feed: '" COLOR_FEED "' ... ");
   color.follow(color_callback);
   Serial.println("OK");

@@ -95,7 +95,7 @@ void setup()
   }
   Serial.println("OK");
 
-  // follow onoff state change
+  // follow slider state change
   Serial.print("Subcribing to feed: '" PHOTOCELL_FEED "' ... ");
   slider.follow(slider_callback);
   Serial.println("OK");
