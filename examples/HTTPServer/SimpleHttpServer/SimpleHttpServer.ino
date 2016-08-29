@@ -36,6 +36,7 @@ const char hello_html[] = "<html><body> <h1>Hello World!</h1> </body></html>";
 
 HTTPPage pages[] = 
 {
+  HTTPPageRedirect("/", "/hello.html"), // redirect root to hello page
   HTTPPage("/hello.html", HTTP_MIME_TEXT_HTML, hello_html),
   HTTPPage("/info.html" , HTTP_MIME_TEXT_HTML, info_html_generator),
 };

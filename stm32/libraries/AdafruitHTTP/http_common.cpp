@@ -62,6 +62,16 @@ const char* const http_mime_string[] =
 //--------------------------------------------------------------------+
 // HTTPPage Constructor
 //--------------------------------------------------------------------+
+HTTPPage::HTTPPage(const char* url, const char* redirect_url)
+{
+  _url       = url;
+  _mime_type = http_mime_string[HTTP_MIME_TEXT_HTML];
+  _type      = HTTPPAGE_TYPE_REDIRECT;
+
+  _static.data = redirect_url;
+  _static.len  = strlen(redirect_url);
+}
+
 HTTPPage::HTTPPage(const char* url, HTTPMimeType mime_type, const uint8_t* static_page, uint32_t len)
 {
   _url       = url;
