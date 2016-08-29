@@ -11,7 +11,7 @@ if platform.system() == 'Darwin':
     os.environ["PATH"] = os.environ["PATH"] + ':/usr/local/bin'
 
 ###### CONFIGURATION
-arduino_addr = 0x080E0000
+arduino_addr = 0x080C0000
 featherlib_addr = 0x08010000
 
 # Global state:

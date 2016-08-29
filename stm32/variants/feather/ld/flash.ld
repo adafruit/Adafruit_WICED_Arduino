@@ -7,7 +7,7 @@ MEMORY
 {
   /*ram (rwx) : ORIGIN = 0x2001B000, LENGTH = 20K*/
   ram (rwx) : ORIGIN = 0x2001C000, LENGTH = 16K
-  rom (rx)  : ORIGIN = 0x080E0000, LENGTH = 128K
+  rom (rx)  : ORIGIN = 0x080C0000, LENGTH = 256K
 }
 
 /* GROUP(libcs4_stm32_high_density.a) */

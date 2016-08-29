@@ -128,7 +128,7 @@ dfuIDLE, continuing
 DFU mode device DFU version 011a
 Device returned transfer size 1024
 DfuSe interface name: "Internal Flash   "
-Downloading to address = 0x080e0000, size = 22020
+Downloading to address = 0x080C0000, size = 22020
 
 Download	[                         ]   0%            0 bytes
 Download	[                         ]   0%            0 bytes

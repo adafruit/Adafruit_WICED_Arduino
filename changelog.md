@@ -1,5 +1,6 @@
 # 0.6.0 (WIP)
 
+- Increase Arduino code size from 128KB to 256KB
 - rename menu Featherlib (Beta) --> Featherlib (Debug)
 - print warning message when Featherlib & Arduino library version are not matched
 - fix get TCP peer information when SOCKET is CLOSED
