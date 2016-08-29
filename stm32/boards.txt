@@ -42,9 +42,7 @@ feather.menu.section.usercode=User Code
 feather.menu.section.usercode.upload.subcommand=arduino_upgrade
 feather.menu.section.usercode.upload.binfile={build.path}/{build.project_name}.bin
 feather.menu.section.usercode.upload.address=0x080C0000
-feather.menu.section.usercode.upload.maximum_size=131072
-#feather.menu.section.usercode.upload.ram.maximum_size=16384
-#feather.menu.section.usercode.upload.flash.maximum_size=1048576
+feather.menu.section.usercode.upload.maximum_size=262144
 
 ## Feather Lib (Release) section
 ## -------------------------
@@ -52,9 +50,7 @@ feather.menu.section.featherlib=Feather Lib (Release)
 feather.menu.section.featherlib.upload.subcommand=featherlib_upgrade
 feather.menu.section.featherlib.upload.binfile={runtime.platform.path}/featherlib/featherlib.bin
 feather.menu.section.featherlib.upload.address=0x08010000
-feather.menu.section.featherlib.upload.maximum_size=851968
-#feather.menu.section.featherlib.upload.ram.maximum_size=114688
-#feather.menu.section.featherlib.upload.flash.maximum_size=1048576
+feather.menu.section.featherlib.upload.maximum_size=720896
 
 ## Feather Lib (Debug) section
 ## -------------------------
@@ -62,9 +58,7 @@ feather.menu.section.featherlib_beta=Feather Lib (Debug)
 feather.menu.section.featherlib_beta.upload.subcommand=featherlib_upgrade
 feather.menu.section.featherlib_beta.upload.binfile={runtime.platform.path}/featherlib/debug/featherlib.bin
 feather.menu.section.featherlib_beta.upload.address=0x08010000
-feather.menu.section.featherlib_beta.upload.maximum_size=851968
-#feather.menu.section.featherlib_beta.upload.ram.maximum_size=114688
-#feather.menu.section.featherlib_beta.upload.flash.maximum_size=1048576
+feather.menu.section.featherlib_beta.upload.maximum_size=720896
 
 ## Factory reset section
 ## -------------------------
