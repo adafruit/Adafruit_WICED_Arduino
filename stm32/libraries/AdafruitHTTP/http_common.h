@@ -126,13 +126,14 @@ enum HTTPMimeType
 // HTTP Page
 //--------------------------------------------------------------------+
 #define HTTPPageRedirect(_url, _redirect)   HTTPPage(_url, _redirect)
+#define PAGE404         "/error404.hml"
 
 typedef void (*httppage_generator_t) (const char* url, const char* query, void* http_request);
 
 // This struct's layout must matches with wiced_http_page_t in Featherlib
 struct HTTPPage
 {
-  const char * _url;
+  const char * url;
   const char * _mime_type;
   uint32_t _type;
 
@@ -151,10 +152,10 @@ struct HTTPPage
     }_static;
   };
 
-  HTTPPage(const char* url, const char* redirect_url);
-  HTTPPage(const char* url, HTTPMimeType mime_type, const uint8_t* static_page, uint32_t len);
-  HTTPPage(const char* url, HTTPMimeType mime_type, const char* static_page);
-  HTTPPage(const char* url, HTTPMimeType mime_type, httppage_generator_t page_generator);
+  HTTPPage(const char* page_url, const char* redirect_url);
+  HTTPPage(const char* page_url, HTTPMimeType mime_type, const uint8_t* static_page, uint32_t len);
+  HTTPPage(const char* page_url, HTTPMimeType mime_type, const char* static_page);
+  HTTPPage(const char* page_url, HTTPMimeType mime_type, httppage_generator_t page_generator);
 };
 
 // Callback proxy from Featherlib

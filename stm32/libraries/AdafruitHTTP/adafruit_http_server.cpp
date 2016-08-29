@@ -84,11 +84,6 @@ void AdafruitHTTPServer::addPages(HTTPPage const * http_pages, uint8_t count)
   }
 }
 
-void AdafruitHTTPServer::homepage(HTTPPage const* http_page)
-{
-
-}
-
 /******************************************************************************
  * Start the HTTP Server
  * @param port          Listening port

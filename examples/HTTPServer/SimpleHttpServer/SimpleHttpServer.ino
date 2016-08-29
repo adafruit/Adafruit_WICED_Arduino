@@ -28,6 +28,7 @@ int ledPin = PA15;
 int visit_count = 0;
 
 void info_html_generator (const char* url, const char* query, void* http_request);
+void file_not_found_generator (const char* url, const char* query, void* http_request);
 
 // Use the HTTP class
 AdafruitHTTPServer httpserver(5);
@@ -39,7 +40,10 @@ HTTPPage pages[] =
   HTTPPageRedirect("/", "/hello.html"), // redirect root to hello page
   HTTPPage("/hello.html", HTTP_MIME_TEXT_HTML, hello_html),
   HTTPPage("/info.html" , HTTP_MIME_TEXT_HTML, info_html_generator),
+  HTTPPage("/error404.html" , HTTP_MIME_TEXT_HTML, file_not_found_generator),
 };
+
+uint8_t pagecount = sizeof(pages)/sizeof(HTTPPage);
 
 void info_html_generator (const char* url, const char* query, void* http_request)
 {
@@ -63,6 +67,28 @@ void info_html_generator (const char* url, const char* query, void* http_request
   visit_count++;
   httpserver.print("<b>visit count</b> : ");
   httpserver.print(visit_count);
+}
+
+void file_not_found_generator (const char* url, const char* query, void* http_request)
+{
+  (void) url;
+  (void) query;
+  (void) http_request;
+
+  httpserver.print("<html><body>");
+  httpserver.println("<h1>Error 404 File Not Found!</h1>");
+  
+  httpserver.println("Available pages are:");
+  httpserver.print("<ul>");
+  for(int i=0; i<pagecount; i++)
+  {
+    httpserver.print("<li>");
+    httpserver.print(pages[i].url);
+    httpserver.print("</li>");
+  }
+  httpserver.print("</ul>");
+  
+  httpserver.print("</body></html>");
 }
 
 /**************************************************************************/
@@ -96,7 +122,7 @@ void setup()
 
   // Configure HTTP Server Pages
   Serial.println("Adding Pages to HTTP Server");
-  httpserver.addPages(pages, sizeof(pages)/sizeof(HTTPPage));
+  httpserver.addPages(pages, pagecount);
 
   Serial.print("Starting HTTP Server ... ");
   httpserver.begin(PORT, MAX_CLIENTS);

@@ -62,34 +62,34 @@ const char* const http_mime_string[] =
 //--------------------------------------------------------------------+
 // HTTPPage Constructor
 //--------------------------------------------------------------------+
-HTTPPage::HTTPPage(const char* url, const char* redirect_url)
+HTTPPage::HTTPPage(const char* page_url, const char* redirect_url)
 {
-  _url       = url;
-  _mime_type = http_mime_string[HTTP_MIME_TEXT_HTML];
-  _type      = HTTPPAGE_TYPE_REDIRECT;
+  url          = page_url;
+  _mime_type   = http_mime_string[HTTP_MIME_TEXT_HTML];
+  _type        = HTTPPAGE_TYPE_REDIRECT;
 
   _static.data = redirect_url;
   _static.len  = strlen(redirect_url);
 }
 
-HTTPPage::HTTPPage(const char* url, HTTPMimeType mime_type, const uint8_t* static_page, uint32_t len)
+HTTPPage::HTTPPage(const char* page_url, HTTPMimeType mime_type, const uint8_t* static_page, uint32_t len)
 {
-  _url       = url;
-  _mime_type = http_mime_string[mime_type];
-  _type      = HTTPPAGE_TYPE_STATIC;
+  url          = page_url;
+  _mime_type   = http_mime_string[mime_type];
+  _type        = HTTPPAGE_TYPE_STATIC;
 
   _static.data = static_page;
   _static.len  = len;
 }
 
-HTTPPage::HTTPPage(const char* url, HTTPMimeType mime_type, const char* static_page):
-  HTTPPage(url, mime_type, (const uint8_t*) static_page, strlen(static_page) )
+HTTPPage::HTTPPage(const char* page_url, HTTPMimeType mime_type, const char* static_page):
+  HTTPPage(page_url, mime_type, (const uint8_t*) static_page, strlen(static_page) )
 {
 }
 
-HTTPPage::HTTPPage(const char* url, HTTPMimeType mime_type, httppage_generator_t page_generator)
+HTTPPage::HTTPPage(const char* page_url, HTTPMimeType mime_type, httppage_generator_t page_generator)
 {
-  _url       = url;
+  url        = page_url;
   _mime_type = http_mime_string[mime_type];
   _type      = HTTPPAGE_TYPE_DYNAMIC;
 

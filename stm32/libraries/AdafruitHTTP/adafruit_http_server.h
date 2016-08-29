@@ -56,7 +56,6 @@ public:
   uint8_t  interface ( void ) { return _interface; }
 
   void addPages(HTTPPage const* http_pages, uint8_t count = 1);
-  void homepage(HTTPPage const* http_page);
 
   bool begin(uint16_t port, uint8_t max_clients, uint32_t stacksize = HTPPSREVER_STACKSIZE_DEFAULT);
   void stop(void);
