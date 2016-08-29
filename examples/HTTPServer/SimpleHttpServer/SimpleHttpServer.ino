@@ -40,7 +40,7 @@ HTTPPage pages[] =
   HTTPPageRedirect("/", "/hello.html"), // redirect root to hello page
   HTTPPage("/hello.html", HTTP_MIME_TEXT_HTML, hello_html),
   HTTPPage("/info.html" , HTTP_MIME_TEXT_HTML, info_html_generator),
-  HTTPPage("/error404.html" , HTTP_MIME_TEXT_HTML, file_not_found_generator),
+  HTTPPage("/404.html" , HTTP_MIME_TEXT_HTML, file_not_found_generator),
 };
 
 uint8_t pagecount = sizeof(pages)/sizeof(HTTPPage);

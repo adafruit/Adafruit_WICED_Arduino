@@ -126,7 +126,7 @@ enum HTTPMimeType
 // HTTP Page
 //--------------------------------------------------------------------+
 #define HTTPPageRedirect(_url, _redirect)   HTTPPage(_url, _redirect)
-#define PAGE404         "/error404.hml"
+#define PAGE404         "/404.hml"
 
 typedef void (*httppage_generator_t) (const char* url, const char* query, void* http_request);
 
