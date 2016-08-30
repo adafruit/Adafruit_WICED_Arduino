@@ -24,6 +24,27 @@
 
 #include "wirish.h"
 
+// Source: https://github.com/arduino/Arduino/blob/master/hardware/arduino/sam/cores/arduino/wiring_shift.c
+uint32_t shiftIn( uint32_t dataPin, uint32_t clockPin, uint32_t bitOrder )
+{
+	uint8_t value = 0 ;
+	uint8_t i ;
+
+	for (i=0 ; i < 8 ; ++i) {
+		digitalWrite( clockPin, HIGH );
+
+		if ( bitOrder == LSBFIRST ) {
+			value |= digitalRead( dataPin ) << i ;
+    } else {
+			value |= digitalRead( dataPin ) << (7 - i) ;
+    }
+
+		digitalWrite( clockPin, LOW ) ;
+	}
+
+	return value ;
+}
+
 void shiftOut(uint8 dataPin, uint8 clockPin, uint8 bitOrder, uint8 val) {
     int i;
 
