@@ -37,6 +37,8 @@
 #include "http_common.h"
 
 ASSERT_STATIC(sizeof(HTTPPage) == 24);
+ASSERT_STATIC(sizeof(HTTPResource) == 16);
+
 
 const char* const http_mime_string[] =
 {
@@ -58,6 +60,26 @@ const char* const http_mime_string[] =
     "image/vnd.microsoft.icon"         ,
     "*/*"                              , // This must always be the last mimne
 };
+
+//--------------------------------------------------------------------+
+// HTTPResource Constructor
+//--------------------------------------------------------------------+
+HTTPResource::HTTPResource(uint8_t const* addr, uint32_t size)
+{
+  _location = RESOURCE_IN_MEMORY;
+
+  _size     = size;
+  _mem      = addr;
+}
+
+HTTPResource::HTTPResource(char const* filename, uint32_t size, uint32_t offset)
+{
+  _location = RESOURCE_IN_SFLASH;
+
+  _size     = size;
+  _offset   = offset;
+  _filename = filename;
+}
 
 //--------------------------------------------------------------------+
 // HTTPPage Constructor
@@ -96,4 +118,13 @@ HTTPPage::HTTPPage(const char* page_url, HTTPMimeType mime_type, httppage_genera
   _dynamic.featherlib_cb  = (void*) adafruit_httpserver_url_generator_callback;
   _dynamic.page_generator = page_generator;
   _dynamic.this_ptr       = NULL;
+}
+
+HTTPPage::HTTPPage(const char* page_url, HTTPMimeType mime_type, HTTPResource const* p_resource)
+{
+  url        = page_url;
+  _mime_type = http_mime_string[mime_type];
+  _type      = HTTPPAGE_TYPE_RESOURCE;
+
+  _resource  = p_resource;
 }

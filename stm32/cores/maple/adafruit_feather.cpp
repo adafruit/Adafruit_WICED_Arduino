@@ -757,14 +757,18 @@ void adafruit_wifi_disconnect_callback(void)
   }
 }
 
-void AdafruitFeather::dbgThreadlist(void)
+
+//--------------------------------------------------------------------+
+// Debug
+//--------------------------------------------------------------------+
+void AdafruitFeather::printThreadlist(void)
 {
-  sdep(SDEP_CMD_THREADLIST, 0, NULL, NULL, NULL);
+  sdep(SDEP_CMD_THREADLIST_PRINT, 0, NULL, NULL, NULL);
 }
 
-int AdafruitFeather::dbgHeapUsed (void)
+int AdafruitFeather::dbgHeapTotal(void)
 {
-  return heap_get_used_size();
+  return heap_get_total_size();
 }
 
 int AdafruitFeather::dbgHeapFree (void)
@@ -772,7 +776,22 @@ int AdafruitFeather::dbgHeapFree (void)
   return heap_get_total_size() - heap_get_used_size();
 }
 
-int AdafruitFeather::dbgHeapTotal(void)
+int AdafruitFeather::dbgHeapUsed (void)
 {
-  return heap_get_total_size();
+  return heap_get_used_size();
+}
+
+int AdafruitFeather::dbgFeatherlibHeapTotal(void)
+{
+  return FEATHERLIB->heap_get_total_size();
+}
+
+int AdafruitFeather::dbgFeatherlibHeapFree (void)
+{
+  return FEATHERLIB->heap_get_free_size();
+}
+
+int AdafruitFeather::dbgFeatherlibHeapUsed (void)
+{
+  return dbgFeatherlibHeapTotal() - dbgFeatherlibHeapFree();
 }

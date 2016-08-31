@@ -7,7 +7,9 @@
 - Move memory allocation for UDP from featherlib to arduino code
 - change sdep parameter length from uint16_t to uint32_t
 - Debug Feather
-	- add dbgHeapTotal(), dbgHeapUsed(), dbgHeapFree()
+	- Retrieve Arduino Heap usage: dbgHeapTotal(), dbgHeapUsed(), dbgHeapFree()
+	- Retrieve Featherlib Heap usage: dbgFeatherlibHeapTotal(), dbgFeatherlibHeapFree(), dbgFeatherlibHeapUsed()
+	- add printThreadlist()
 - add AdafruitBase64
 - add AdafruitUrlencode
 - move AdafruitCrc32 to AdafruitCrypto
@@ -33,6 +35,8 @@
 	- enhance AdafruitUDP to support both STA & SoftAP interface
 	- add APChatServer, APClientRSSI, APTcpServer examples
 - AdafruitHTTPServer support
+	- Static, Dynamic Page support (SimpleHTTPServer example)
+	- Page resource generation with advance page design (D3Graphic example)
 
 # 0.5.5
 

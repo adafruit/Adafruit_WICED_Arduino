@@ -93,6 +93,15 @@ typedef struct ATTR_PACKED
 
 ASSERT_STATIC( sizeof(iso8601_time_t) == 28 );
 
+typedef struct {
+  uint32_t prio;
+  uint32_t stack_highest;
+  uint32_t stack_total;
+  char const* name;
+} thread_info_t;
+
+ASSERT_STATIC( sizeof(thread_info_t) == 16 );
+
 extern "C"
 {
 //  void adafruit_wifi_connect_callback(void);
@@ -204,12 +213,16 @@ public:
   void      printVersions   (Print& p = Serial);
   void      printNetwork    (Print& p = Serial);
   void      printEncryption (int32_t enc, Print& p = Serial);
+  void      printThreadlist (void);
 
   // Debug functions
-  void dbgThreadlist   (void);
   int  dbgHeapTotal    (void);
-  int  dbgHeapUsed     (void);
   int  dbgHeapFree     (void);
+  int  dbgHeapUsed     (void);
+
+  int  dbgFeatherlibHeapTotal(void);
+  int  dbgFeatherlibHeapFree (void);
+  int  dbgFeatherlibHeapUsed (void);
 
   /* callback from featherlib */
   friend void adafruit_wifi_disconnect_callback(void);
@@ -242,7 +255,7 @@ extern AdafruitFeather Feather;
   #define free_named(_name, ptr )               ({ Serial.printf("[free] %s\r\n"       , _name       ); free  (ptr ); })
 
   #if DBG_ENABLE == 3
-    #define DBG_HEAP() ({ Serial.printf("\r\n[Heap free] %s %d: Arudino = %d, featherlib = %d\r\n", __FUNCTION__, __LINE__, Feather.dbgHeapFree(), FEATHERLIB->heap_get_free_size()); delay(5); })
+    #define DBG_HEAP() ({ Serial.printf("\r\n[Heap free] %s %d: Arudino = %d, featherlib = %d\r\n", __FUNCTION__, __LINE__, Feather.dbgHeapFree(), Feather.dbgFeatherlibHeapFree()); delay(5); })
   #else
     #define DBG_HEAP()
   #endif

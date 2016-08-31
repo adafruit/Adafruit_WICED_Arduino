@@ -159,7 +159,8 @@ typedef struct ATTR_ALIGNED(512)
 
   // DEBUG
   int32_t  (*heap_get_free_size)(void);
-  uint32_t RESERVED_[3];
+  int32_t  (*heap_get_total_size)(void);
+  uint32_t RESERVED_[2];
 
 }adafruit_featherlib_t;
 

@@ -39,6 +39,12 @@
 
 #include <Arduino.h>
 
+// Callback proxy from Featherlib
+extern "C"
+{
+  ATTR_USED int32_t adafruit_httpserver_url_generator_callback(const char* url, const char* query, void* response_stream, void* args[], void* http_data );
+}
+
 #define HTTP_METHOD_GET         "GET"
 #define HTTP_METHOD_POST        "POST"
 #define HTTP_VERSION            "HTTP/1.1"
@@ -87,9 +93,9 @@ typedef enum
   HTTP_STATUS_SERVICE_UNAVAILABLE             = 503,
   HTTP_STATUS_GATEWAY_TIMEOUT                 = 504,
   HTTP_STATUS_VERSION_NOT_SUPPORTED           = 505,
-} http_status_code_t;
+} HTTPStatusCode;
 
-enum HTTPPageType
+typedef enum
 {
   HTTPPAGE_TYPE_STATIC =0    , // Page is located in ROM or RAM
   HTTPPAGE_TYPE_DYNAMIC      , // Page is dynamically generated
@@ -98,10 +104,9 @@ enum HTTPPageType
   HTTPPAGE_TYPE_REDIRECT     , // Use HTTP 301 to redirect one page to another
   HTTPPAGE_TYPE_RAW_DYNAMIC  , // Same as DYNAMIC but HTTP headers must be included
   HTTPPAGE_TYPE_RAW_RESOURCE , // Same as RESOURCE but HTTP headers must be included
-};
+} HTTPPageType;
 
-
-enum HTTPMimeType
+typedef enum
 {
   HTTP_MIME_TLV = 0                , // "application/x-tlv8"
   HTTP_MIME_APPLE_BINARY_PLIST     , // "application/x-apple-binary-plist"
@@ -120,6 +125,34 @@ enum HTTPMimeType
   HTTP_MIME_IMAGE_PNG              , // "image/png"
   HTTP_MIME_IMAGE_MICROSOFT        , // "image/vnd.microsoft.icon"
   HTTP_MIME_ALL                    , // "*/*" This must always be the last mimne
+} HTTPMimeType;
+
+typedef enum
+{
+  RESOURCE_IN_MEMORY = 0,
+  RESOURCE_IN_SFLASH,
+}HTTPResourceLocation;
+
+struct HTTPResource
+{
+  uint32_t _location;
+  uint32_t _size;
+  union
+  {
+    struct
+    {
+      uint32_t _offset; // offset from the start of file in bytes
+      const char* _filename;
+    };
+
+    uint8_t const * _mem;
+  };
+
+  // In Memory
+  HTTPResource(uint8_t const* addr, uint32_t size);
+
+  // SFlash
+  HTTPResource(char const* filename, uint32_t size, uint32_t offset = 0);
 };
 
 //--------------------------------------------------------------------+
@@ -150,19 +183,24 @@ struct HTTPPage
       const void* data;
       uint32_t len;
     }_static;
+
+    const HTTPResource* _resource;
   };
 
+  // Redirect
   HTTPPage(const char* page_url, const char* redirect_url);
+
+  // Static
   HTTPPage(const char* page_url, HTTPMimeType mime_type, const uint8_t* static_page, uint32_t len);
   HTTPPage(const char* page_url, HTTPMimeType mime_type, const char* static_page);
+
+  // Dynamic
   HTTPPage(const char* page_url, HTTPMimeType mime_type, httppage_generator_t page_generator);
+
+  // Resource
+  HTTPPage(const char* page_url, HTTPMimeType mime_type, HTTPResource const* p_resource);
 };
 
-// Callback proxy from Featherlib
-extern "C"
-{
-  ATTR_USED int32_t adafruit_httpserver_url_generator_callback(const char* url, const char* query, void* response_stream, void* args[], void* http_data );
-}
-
-
 #endif /* _HTTP_COMMON_H_ */
+
+

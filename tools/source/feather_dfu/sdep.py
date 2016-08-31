@@ -38,7 +38,7 @@ SDEP_CMD_STACKDUMP           = 0x0300    # Dump the stack
 SDEP_CMD_STACKSIZE           = 0x0301    # Get stack size                             
 SDEP_CMD_HEAPDUMP            = 0x0302    # Dump the heap                              
 SDEP_CMD_HEAPSIZE            = 0x0303    # Get heap size                              
-SDEP_CMD_THREADLIST          = 0x0304    # Get thread information                     
+SDEP_CMD_THREADLIST_PRINT    = 0x0304    # Get thread information                     
 
 # WiFi Commands 
 SDEP_CMD_SCAN                = 0x0400    # AP scan                                    
