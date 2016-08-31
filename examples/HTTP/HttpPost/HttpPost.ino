@@ -27,8 +27,8 @@
 // TODO help user to encoded post data
 const char* post_data[][2] =
 {
-    {"name"    , "email"},
-    {"feather" , "feather@adafruit.com"}
+    {"name"  , "feather"},
+    {"email" , "feather@adafruit.com"}
 };
 
 // Some servers such as Facebook check the user_agent header to
