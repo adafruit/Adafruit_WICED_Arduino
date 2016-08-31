@@ -795,3 +795,21 @@ int AdafruitFeather::dbgFeatherlibHeapUsed (void)
 {
   return dbgFeatherlibHeapTotal() - dbgFeatherlibHeapFree();
 }
+
+/******************************************************************************/
+/*!
+    @brief  Get Thread information
+
+    @param[out] threadinfo  List of Thread
+    @param[out] max_count   Number of Thread that the buffer can hold
+
+    @return     Number of scanned AP
+*/
+/******************************************************************************/
+int AdafruitFeather::dbgThreadInfo(thread_info_t* threadinfo, uint8_t max_count)
+{
+  uint32_t length = max_count*sizeof(thread_info_t);
+  VERIFY_RETURN( sdep(SDEP_CMD_THREAD_INFO, 0, NULL, &length, threadinfo), 0);
+
+  return length/sizeof(thread_info_t);
+}

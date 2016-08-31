@@ -224,6 +224,8 @@ public:
   int  dbgFeatherlibHeapFree (void);
   int  dbgFeatherlibHeapUsed (void);
 
+  int  dbgThreadInfo(thread_info_t* threadinfo, uint8_t max_count);
+
   /* callback from featherlib */
   friend void adafruit_wifi_disconnect_callback(void);
 };

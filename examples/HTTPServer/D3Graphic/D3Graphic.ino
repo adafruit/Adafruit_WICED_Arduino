@@ -49,6 +49,8 @@ uint8_t pagecount = sizeof(pages)/sizeof(HTTPPage);
 // Use the HTTP class
 AdafruitHTTPServer httpserver(pagecount);
 
+thread_info_t threadInfo[20];
+
 void heap_generator (const char* url, const char* query, void* http_request)
 {
   (void) url;
@@ -68,7 +70,19 @@ void thread_generator (const char* url, const char* query, void* http_request)
   (void) url;
   (void) query;
   (void) http_request;
+
+  httpserver.print("Name,Used,Free\r\n");
   
+  // Get Thread Info
+  int count = Feather.dbgThreadInfo(threadInfo, 20);
+  //DBG_INT(count);
+  
+  for(int i=0; i<count; i++)
+  {
+    httpserver.printf("%s (%u),%ld,%ld\r\n", 
+                      threadInfo[i].name, threadInfo[i].prio,
+                      threadInfo[i].stack_highest, threadInfo[i].stack_total-threadInfo[i].stack_highest);
+  }
 }
 
 void file_not_found_generator (const char* url, const char* query, void* http_request)

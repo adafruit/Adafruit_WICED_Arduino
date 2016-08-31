@@ -9,7 +9,7 @@
 - Debug Feather
 	- Retrieve Arduino Heap usage: dbgHeapTotal(), dbgHeapUsed(), dbgHeapFree()
 	- Retrieve Featherlib Heap usage: dbgFeatherlibHeapTotal(), dbgFeatherlibHeapFree(), dbgFeatherlibHeapUsed()
-	- add printThreadlist()
+	- add printThreadlist() and dbgThreadInfo()
 - add AdafruitBase64
 - add AdafruitUrlencode
 - move AdafruitCrc32 to AdafruitCrypto

@@ -10,8 +10,13 @@ AdafruitSDEP	KEYWORD1
 AdafruitFeather	KEYWORD1
 AdafruitFeatherAP	KEYWORD1
 AdafruitTCP	KEYWORD1
+AdafruitTCPServer	KEYWORD1
 AdafruitUDP	KEYWORD1
 UTF8String	KEYWORD1
+
+wl_ap_info_t	KEYWORD1
+iso8601_time_t	KEYWORD1
+thread_info_t	KEYWORD1
 
 #######################################
 # AdafruitSDEP Methods and Functions (KEYWORD2)
@@ -39,6 +44,7 @@ arduinoVersion	KEYWORD2
 
 connect	KEYWORD2
 begin	KEYWORD2
+config	KEYWORD2
 connected	KEYWORD2
 disconnect	KEYWORD2
 
@@ -64,41 +70,67 @@ setDisconnectCallback	KEYWORD2
 scanNetworks	KEYWORD2
 hostByName	KEYWORD2
 ping	KEYWORD2
+getISO8601Time	KEYWORD2
+getUtcTime	KEYWORD2
 
 useDefaultRootCA	KEYWORD2
 initRootCA	KEYWORD2
 addRootCA	KEYWORD2
 clearRootCA	KEYWORD2
 
+printVersions	KEYWORD2
+printNetwork	KEYWORD2
+printEncryption	KEYWORD2
+printThreadlist	KEYWORD2
+
+dbgHeapTotal	KEYWORD2
+dbgHeapFree	KEYWORD2
+dbgHeapUsed	KEYWORD2
+dbgFeatherlibHeapTotal	KEYWORD2
+dbgFeatherlibHeapFree	KEYWORD2
+dbgFeatherlibHeapUsed	KEYWORD2
+dbgThreadInfo	KEYWORD2
+
 #######################################
 # AdafruitFeatherAP Methods and Functions (KEYWORD2)
 #######################################
+start	KEYWORD2
 started	KEYWORD2
-setJoinCallback	KEYWORD2
-setLeaveCallback	KEYWORD2
+macAddress	KEYWORD2
 
 clientNum	KEYWORD2
 clientMAC	KEYWORD2
 clientRSSI	KEYWORD2
 
+setJoinCallback	KEYWORD2
+setLeaveCallback	KEYWORD2
+
 #######################################
 # AdafruitTCP Methods and Functions (KEYWORD2)
 #######################################
 
+verbose	KEYWORD2
 usePacketBuffering	KEYWORD2
 getHandle	KEYWORD2
-byteRead	KEYWORD2
+interface	KEYWORD2
+
+tlsRequireVerification	KEYWORD2
+tlsSetIdentity	KEYWORD2
 
 connect	KEYWORD2
 connectSSL	KEYWORD2
 connected	KEYWORD2
 stop	KEYWORD2
+disconnect	KEYWORD2
+remoteIP	KEYWORD2
+remotePort	KEYWORD2
 
+byteRead	KEYWORD2
 setReceivedCallback	KEYWORD2
 setDisconnectCallback	KEYWORD2
 
-tlsRequireVerification	KEYWORD2
-tlsSetIdentity	KEYWORD2
+accept	KEYWORD2
+setConnectCallback	KEYWORD2
 
 #######################################
 # AdafruitUDP Methods and Functions (KEYWORD2)
