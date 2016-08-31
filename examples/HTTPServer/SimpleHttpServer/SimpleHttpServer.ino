@@ -30,9 +30,6 @@ int visit_count = 0;
 void info_html_generator (const char* url, const char* query, void* http_request);
 void file_not_found_generator (const char* url, const char* query, void* http_request);
 
-// Use the HTTP class
-AdafruitHTTPServer httpserver(5);
-
 const char hello_html[] = "<html><body> <h1>Hello World!</h1> </body></html>";
 
 HTTPPage pages[] = 
@@ -44,6 +41,9 @@ HTTPPage pages[] =
 };
 
 uint8_t pagecount = sizeof(pages)/sizeof(HTTPPage);
+
+// Declare HTTPServer with max number of pages
+AdafruitHTTPServer httpserver(pagecount);
 
 void info_html_generator (const char* url, const char* query, void* http_request)
 {
