@@ -35,7 +35,7 @@ def pyresource(dirs):
 
     Example of converting the contents of the current folder ('./'):
 
-      $ python pyresource ./
+      $ python pyresource.py ./
     """
     includes = ''
     for d in dirs:
