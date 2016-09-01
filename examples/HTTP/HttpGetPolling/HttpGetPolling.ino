@@ -22,7 +22,7 @@
 #define WLAN_SSID            "yourSSID"
 #define WLAN_PASS            "yourPassword"
 
-#define SERVER               "www.adafruit.com"     // The TCP server to connect to
+#define SERVER               "wifitest.adafruit.com"     // The TCP server to connect to
 #define PAGE                 "/testwifi/index.html" // The HTTP resource to request
 #define PORT                 80                     // The TCP port to use
 
