@@ -37,6 +37,7 @@
 - AdafruitHTTPServer support
 	- Static, Dynamic Page support (SimpleHTTPServer example)
 	- Page resource generation with advance page design (D3Graphic example)
+	- add tools/pyresource to generate C header for HTTP Server
 
 # 0.5.5
 

@@ -5,6 +5,7 @@
 
 #include "http_common.h"
 #include "d3_min_js.h"
+#include "favicon_ico.h"
 #include "index_html.h"
 
 

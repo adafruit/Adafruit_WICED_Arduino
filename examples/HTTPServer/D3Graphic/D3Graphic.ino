@@ -12,8 +12,31 @@
  any redistribution
 *********************************************************************/
 
-/* This example use the AdafruitHTTP class to send requests and get
- * the response via a callback */
+/* This example use D3 javascript on the HTTP Server to to illustrate 
+ * running Threads (with highest stack) and Arduino Heap usage. Web's 
+ * design are included in resources folder.
+ * 
+ * - d3.min.js : javascript to draw graphic for more details https://d3js.org/
+ * - index.html: mainpage import data from thread.csv & heap.csv and use D3
+ *               to draw charts.
+ * - thread.csv, heap.csv : dynamic data of running Thread and Heap memory
+ *               provided by function generator.
+ * - favicon.ico: optional icon of Adafruit
+ * 
+ * NOTE: Javascript skill help !!!!!
+ * 
+ * To convert web design files (html, jpg etc..) into C header, please use
+ * included tools/pyresource. E.g command to convert all the files in resources 
+ * folder for this sketch is
+ *    $ python ../../../tools/pyresource/pyresource resources
+ * 
+ * pyresource will convert each file to a header file with '.' is
+ * replaced by '_' e.g
+ *    index.html --> index_html.h with HTTPResource variable is index_html
+ * For your convenience, a master header named resources.h is also generated 
+ * and include all of generated header file. Your sketch only need to
+ *      #include "resources.h
+ */
 
 #include <adafruit_feather.h>
 #include <adafruit_http_server.h>
@@ -41,6 +64,7 @@ HTTPPage pages[] =
   HTTPPage("/heap.csv"   , HTTP_MIME_TEXT_PLAIN, heap_generator),
   HTTPPage("/thread.csv" , HTTP_MIME_TEXT_PLAIN, thread_generator),
 
+  HTTPPage("/favicon.ico", HTTP_MIME_IMAGE_MICROSOFT, &favicon_ico),
   HTTPPage("/404.html"   , HTTP_MIME_TEXT_HTML      , file_not_found_generator),
 };
 
