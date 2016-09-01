@@ -34,14 +34,14 @@ void file_not_found_generator (const char* url, const char* query, void* http_re
 // Page database
 HTTPPage pages[] = 
 {
-  HTTPPageRedirect("/", "/debug/index.html"), // redirect root
+  HTTPPageRedirect("/", "/index.html"), // redirect root
 
-  HTTPPage("/d3.min.js"       , HTTP_MIME_JAVASCRIPT, &webserver_DIR_d3_min_js),
-  HTTPPage("/debug/index.html", HTTP_MIME_TEXT_HTML , &webserver_DIR_debug_DIR_index_html),
-  HTTPPage("/debug/heap.csv"  , HTTP_MIME_TEXT_PLAIN, heap_generator),
-  HTTPPage("/debug/thread.csv", HTTP_MIME_TEXT_PLAIN, thread_generator),
-  
-  HTTPPage("/404.html"        , HTTP_MIME_TEXT_HTML , file_not_found_generator),
+  HTTPPage("/d3.min.js"  , HTTP_MIME_JAVASCRIPT, &d3_min_js),
+  HTTPPage("/index.html" , HTTP_MIME_TEXT_HTML , &index_html),
+  HTTPPage("/heap.csv"   , HTTP_MIME_TEXT_PLAIN, heap_generator),
+  HTTPPage("/thread.csv" , HTTP_MIME_TEXT_PLAIN, thread_generator),
+
+  HTTPPage("/404.html"   , HTTP_MIME_TEXT_HTML      , file_not_found_generator),
 };
 
 uint8_t pagecount = sizeof(pages)/sizeof(HTTPPage);
