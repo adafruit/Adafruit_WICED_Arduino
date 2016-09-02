@@ -42,7 +42,7 @@
 #define WLAN_PASS            "your_password"
 
 #define PORT                 80            // The TCP port to use
-#define MAX_CLIENTS          3
+#define MAX_CLIENTS          5
 
 int ledPin = PA15;
 
@@ -97,6 +97,9 @@ void about_generator (const char* url, const char* query, void* http_request)
 
   visit_count++;
 
+  int heap_used_size = Feather.dbgHeapUsed();
+  int heap_free_size = Feather.dbgHeapFree();  
+
   // Note that all double quotes have been replaced with single quotes in
   // the HTML code below, taken from the default index.html template file.
   // Some double quotes and backslashes have also been escaped ('\' to '\\',
@@ -128,6 +131,8 @@ void about_generator (const char* url, const char* query, void* http_request)
   httpserver.print("            <li><b>WICED SDK</b> : "); httpserver.print( Feather.sdkVersion() ); httpserver.print("</li>\n");
   httpserver.print("            <li><b>FeatherLib</b> : "); httpserver.print( Feather.firmwareVersion() ); httpserver.print("</li>\n");
   httpserver.print("            <li><b>Arduino API</b> : "); httpserver.print( Feather.arduinoVersion() ); httpserver.print("</li>\n");
+  httpserver.print("            <li><b>Heap Used</b> : "); httpserver.print( heap_used_size ); httpserver.print(" bytes</li>\n");
+  httpserver.print("            <li><b>Heap Free</b> : "); httpserver.print( heap_free_size ); httpserver.print(" bytes</li>\n");
   httpserver.print("        </ul>\n");
   httpserver.print("        <h2>Page Details</h2>\n");
   httpserver.print("        <ul>\n");
