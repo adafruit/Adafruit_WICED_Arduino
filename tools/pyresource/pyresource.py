@@ -53,7 +53,7 @@ def pyresource(dir):
             # Make sure this isn't the python script or a hidden file/folder
             if (f != os.path.basename(__file__)) and not (f.startswith(".")):
                 varname = f.replace('.', '_')
-                varname = varname.replace('/', '-')
+                varname = varname.replace('-', '_')
                 params = {}
                 params['varname'] = varname
                 with open(pf, "rb") as fin:
