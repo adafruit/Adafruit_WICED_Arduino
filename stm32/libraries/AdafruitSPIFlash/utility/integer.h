@@ -5,14 +5,6 @@
 #ifndef _FF_INTEGER
 #define _FF_INTEGER
 
-#ifdef _WIN32	/* FatFs development platform */
-
-#include <windows.h>
-#include <tchar.h>
-typedef unsigned __int64 QWORD;
-
-
-#else			/* Embedded platform */
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -22,6 +14,7 @@ typedef int				INT;
 typedef unsigned int	UINT;
 
 /* This type MUST be 8-bit */
+// Adafruit: to resolve confliction with BYTE as enum in Print.h
 //typedef unsigned char	BYTE;
 
 /* These types MUST be 16-bit */
@@ -35,7 +28,5 @@ typedef unsigned long	DWORD;
 
 /* This type MUST be 64-bit (Remove this for C89 compatibility) */
 typedef unsigned long long QWORD;
-
-#endif
 
 #endif

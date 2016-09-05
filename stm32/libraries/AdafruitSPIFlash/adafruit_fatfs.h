@@ -39,11 +39,18 @@
 
 #include <Arduino.h>
 #include <adafruit_feather.h>
+#include "utility/ff.h"
+
+class FatEntry
+{
+public:
+
+};
 
 class AdafruitFatfs
 {
 private:
-  void* _fs; // FATFS pointer
+  FATFS* _fs;
 
 public:
   AdafruitFatfs();

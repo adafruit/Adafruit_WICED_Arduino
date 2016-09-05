@@ -35,10 +35,7 @@
 /**************************************************************************/
 
 #include "adafruit_fatfs.h"
-#include "utility/ff.h"
 //#include "fatfs/diskio.h"
-
-#define _fatfs  ((FATFS*) _fs)
 
 AdafruitFatfs::AdafruitFatfs()
 {
@@ -47,9 +44,9 @@ AdafruitFatfs::AdafruitFatfs()
 
 bool AdafruitFatfs::begin()
 {
-  _fs = malloc_named("FATFS", sizeof(FATFS));
+  _fs = malloc_type(FATFS);
 
-  if ( FR_NO_FILESYSTEM != f_mount(_fatfs, "", 1) )
+  if ( FR_NO_FILESYSTEM != f_mount(_fs, "", 1) )
   {
     stop();
   }

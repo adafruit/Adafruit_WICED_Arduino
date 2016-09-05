@@ -361,6 +361,7 @@ int ff_del_syncobj (_SYNC_t sobj);				/* Delete a sync object */
 #define AM_DIR	0x10	/* Directory */
 #define AM_ARC	0x20	/* Archive */
 
+// Adafruit: to resolve confliction with BYTE as enum in Print.h
 #undef BYTE
 
 #ifdef __cplusplus
