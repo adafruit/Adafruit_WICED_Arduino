@@ -34,14 +34,9 @@ def pyresource(dir):
     resources in a C header format. These headers can then be imported into
     WICED Feather HTTP server sketches.
 
-    Example of recursively converting the contents of the current folder:
+    Example of recursively converting the contents of the 'resources' folder:
 
-      $ python pyresource.py .
-
-    All files found are written in a flat structure in the root folder,
-    meaning that duplicate filenames in the structure will overwrite each
-    other (ex. multiple 'index.html' files). Please ensure all files in the
-    folder and sub-folders have unique filenames.
+      $ python pyresource.py resources
     """
     includes = ''
 
