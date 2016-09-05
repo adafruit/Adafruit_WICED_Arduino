@@ -14,6 +14,9 @@ typedef unsigned __int64 QWORD;
 
 #else			/* Embedded platform */
 
+#include <stdint.h>
+#include <stdbool.h>
+
 /* These types MUST be 16-bit or 32-bit */
 typedef int				INT;
 typedef unsigned int	UINT;

@@ -25,6 +25,7 @@
 extern "C" {
 #endif
 
+// Adafruit: to resolve confliction with BYTE as enum in Print.h
 #define BYTE  uint8_t
 
 #include "integer.h"	/* Basic integer types */
