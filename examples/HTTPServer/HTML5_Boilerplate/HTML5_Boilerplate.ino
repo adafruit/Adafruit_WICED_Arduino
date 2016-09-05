@@ -57,11 +57,10 @@ HTTPPage pages[] =
   // Static content
   HTTPPage("/404.html"                        , HTTP_MIME_TEXT_HTML       , &err404_html), // Note: files can't start with a number!
   HTTPPage("/apple-touch-icon.png"            , HTTP_MIME_IMAGE_PNG       , &apple_touch_icon_png),
-  HTTPPage("/browserconfig.xml"               , HTTP_MIME_TEXT_PLAIN      , &browserconfig_xml),
-  HTTPPage("/crossdomain.xml"                 , HTTP_MIME_TEXT_PLAIN      , &crossdomain_xml),
+  HTTPPage("/browserconfig.xml"               , HTTP_MIME_TEXT_XML        , &browserconfig_xml),
+  HTTPPage("/crossdomain.xml"                 , HTTP_MIME_TEXT_XML        , &crossdomain_xml),
   HTTPPage("/favicon.ico"                     , HTTP_MIME_IMAGE_MICROSOFT , &favicon_ico),
   HTTPPage("/index.html"                      , HTTP_MIME_TEXT_HTML       , &index_html),
-  HTTPPage("/robots.txt"                      , HTTP_MIME_TEXT_PLAIN      , &robots_txt),
   HTTPPage("/tile-wide.png"                   , HTTP_MIME_IMAGE_PNG       , &tile_wide_png),
   HTTPPage("/tile.png"                        , HTTP_MIME_IMAGE_PNG       , &tile_png),
   HTTPPage("/css/main.css"                    , HTTP_MIME_TEXT_CSS        , &css_dir_main_css),
@@ -98,7 +97,7 @@ void about_generator (const char* url, const char* query, void* http_request)
   visit_count++;
 
   int heap_used_size = Feather.dbgHeapUsed();
-  int heap_free_size = Feather.dbgHeapFree();  
+  int heap_free_size = Feather.dbgHeapFree();
 
   // Note that all double quotes have been replaced with single quotes in
   // the HTML code below, taken from the default index.html template file.
@@ -123,7 +122,7 @@ void about_generator (const char* url, const char* query, void* http_request)
                    "        <!--[if lt IE 8]>\n"
                    "            <p class='browserupgrade'>You are using an <strong>outdated</strong> browser. Please <a href='http://browsehappy.com/'>upgrade your browser</a> to improve your experience.</p>\n"
                    "        <![endif]-->\n");
-  
+
   // Insert the dynamic body content here
   httpserver.print("        <h2>Module Details</h2>\n");
   httpserver.print("        <ul>\n");
@@ -139,7 +138,7 @@ void about_generator (const char* url, const char* query, void* http_request)
   httpserver.print("            <li><b>Page Loads</b> : "); httpserver.print( visit_count ); httpserver.print("</li>\n");
   httpserver.print("        </ul>\n");
   httpserver.print("        <p>This page has been dynamically generated.</p>\n");
-  
+
   // Take note of the escaped backslash and double-quotes in the text below
   httpserver.print("        <script src='https://code.jquery.com/jquery-1.12.0.min.js'></script>\n"
                    "        <script>window.jQuery || document.write('<script src=\"js/vendor/jquery-1.12.0.min.js\"><\\/script>')</script>\n"
@@ -246,4 +245,3 @@ void disconnect_callback(void)
 
   httpserver.stop();
 }
-
