@@ -41,6 +41,7 @@
 #include "ff.h"
 #include "diskio.h"
 
+// Adafruit: to resolve confliction with BYTE as enum in Print.h
 #define BYTE  uint8_t
 
 //--------------------------------------------------------------------+
@@ -55,6 +56,9 @@ static DSTATUS disk_state = STA_NOINIT;
 #define sflash_read(a, b, c)  RES_ERROR
 #define sflash_write(a, b, c)  RES_ERROR
 #define sflash_erase_sector(a)  RES_ERROR
+#define CFG_SFLASH_CAPACITY                       (2*1024*1024)
+#define SFLASH_SECTOR_SIZE        4096
+#define SFLASH_SECTOR_PER_BLOCK   16
 
 //--------------------------------------------------------------------+
 // IMPLEMENTATION

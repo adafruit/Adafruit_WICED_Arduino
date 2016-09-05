@@ -21,6 +21,8 @@
 #include "ff.h"			/* Declarations of FatFs API */
 #include "diskio.h"		/* Declarations of device I/O functions */
 
+// Adafruit: to resolve confliction with BYTE as enum in Print.h
+#define BYTE  uint8_t
 
 /*--------------------------------------------------------------------------
 
