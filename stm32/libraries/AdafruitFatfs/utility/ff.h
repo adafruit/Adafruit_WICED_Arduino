@@ -25,6 +25,8 @@
 extern "C" {
 #endif
 
+#define BYTE  uint8_t
+
 #include "integer.h"	/* Basic integer types */
 #include "ffconf.h"		/* FatFs configuration options */
 
@@ -358,6 +360,7 @@ int ff_del_syncobj (_SYNC_t sobj);				/* Delete a sync object */
 #define AM_DIR	0x10	/* Directory */
 #define AM_ARC	0x20	/* Archive */
 
+#undef BYTE
 
 #ifdef __cplusplus
 }
