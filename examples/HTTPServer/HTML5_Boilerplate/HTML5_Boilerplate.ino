@@ -64,12 +64,12 @@ HTTPPage pages[] =
   HTTPPage("/robots.txt"                      , HTTP_MIME_TEXT_PLAIN      , &robots_txt),
   HTTPPage("/tile-wide.png"                   , HTTP_MIME_IMAGE_PNG       , &tile_wide_png),
   HTTPPage("/tile.png"                        , HTTP_MIME_IMAGE_PNG       , &tile_png),
-  HTTPPage("/css/main.css"                    , HTTP_MIME_TEXT_CSS        , &main_css),
-  HTTPPage("/css/normalize.css"               , HTTP_MIME_TEXT_CSS        , &normalize_css),
-  HTTPPage("/js/main.js"                      , HTTP_MIME_JAVASCRIPT      , &main_js),
-  HTTPPage("/js/plugins.js"                   , HTTP_MIME_JAVASCRIPT      , &plugins_js),
-  HTTPPage("/js/vendor/jquery-1.12.0.min.js"  , HTTP_MIME_JAVASCRIPT      , &jquery_1_12_0_min_js),
-  HTTPPage("/js/vendor/modernizr-2.8.3.min.js", HTTP_MIME_JAVASCRIPT      , &modernizr_2_8_3_min_js),
+  HTTPPage("/css/main.css"                    , HTTP_MIME_TEXT_CSS        , &css_dir_main_css),
+  HTTPPage("/css/normalize.css"               , HTTP_MIME_TEXT_CSS        , &css_dir_normalize_css),
+  HTTPPage("/js/main.js"                      , HTTP_MIME_JAVASCRIPT      , &js_dir_main_js),
+  HTTPPage("/js/plugins.js"                   , HTTP_MIME_JAVASCRIPT      , &js_dir_plugins_js),
+  HTTPPage("/js/vendor/jquery-1.12.0.min.js"  , HTTP_MIME_JAVASCRIPT      , &js_dir_vendor_dir_jquery_1_12_0_min_js),
+  HTTPPage("/js/vendor/modernizr-2.8.3.min.js", HTTP_MIME_JAVASCRIPT      , &js_dir_vendor_dir_modernizr_2_8_3_min_js),
 
   // Dynamic content
   HTTPPage("/about.html", HTTP_MIME_TEXT_HTML, about_generator),

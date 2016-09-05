@@ -13,12 +13,12 @@
 #include "robots_txt.h"
 #include "tile_wide_png.h"
 #include "tile_png.h"
-#include "main_css.h"
-#include "normalize_css.h"
-#include "main_js.h"
-#include "plugins_js.h"
-#include "jquery_1_12_0_min_js.h"
-#include "modernizr_2_8_3_min_js.h"
+#include "css_dir_main_css.h"
+#include "css_dir_normalize_css.h"
+#include "js_dir_main_js.h"
+#include "js_dir_plugins_js.h"
+#include "js_dir_vendor_dir_jquery_1_12_0_min_js.h"
+#include "js_dir_vendor_dir_modernizr_2_8_3_min_js.h"
 
 
 #endif /* ifndef _RESOURCE_H_ */
