@@ -52,17 +52,21 @@ void info_html_generator (const char* url, const char* query, void* http_request
   (void) http_request;
 
   httpserver.print("<b>Bootloader</b> : ");
-  httpserver.println( Feather.bootloaderVersion() );
+  httpserver.print( Feather.bootloaderVersion() );
+  httpserver.print("<br>");
 
   httpserver.print("<b>WICED SDK</b> : ");
-  httpserver.println( Feather.sdkVersion() );
+  httpserver.print( Feather.sdkVersion() );
+  httpserver.print("<br>");
 
   httpserver.print("<b>FeatherLib</b> : ");
-  httpserver.println( Feather.firmwareVersion() );
+  httpserver.print( Feather.firmwareVersion() );
+  httpserver.print("<br>");
 
   httpserver.print("<b>Arduino API</b> : "); 
-  httpserver.println( Feather.arduinoVersion() );
-  httpserver.println();
+  httpserver.print( Feather.arduinoVersion() );
+  httpserver.print("<br>");
+  httpserver.print("<br>");
 
   visit_count++;
   httpserver.print("<b>visit count</b> : ");
@@ -76,9 +80,12 @@ void file_not_found_generator (const char* url, const char* query, void* http_re
   (void) http_request;
 
   httpserver.print("<html><body>");
-  httpserver.println("<h1>Error 404 File Not Found!</h1>");
+  httpserver.print("<h1>Error 404 File Not Found!</h1>");
+  httpserver.print("<br>");
   
-  httpserver.println("Available pages are:");
+  httpserver.print("Available pages are:");
+  httpserver.print("<br>");
+  
   httpserver.print("<ul>");
   for(int i=0; i<pagecount; i++)
   {

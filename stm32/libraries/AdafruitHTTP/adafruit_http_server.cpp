@@ -183,12 +183,6 @@ size_t AdafruitHTTPServer::write(const uint8_t *buffer, size_t size)
   return size;
 }
 
-size_t AdafruitHTTPServer::println(void)
-{
-  return this->write("<br>");
-}
-
-
 /******************************************************************************/
 /*!
     @brief Callback, invoked by Featherlib when client accessing a dynamic page

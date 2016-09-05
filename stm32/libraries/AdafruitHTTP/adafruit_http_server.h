@@ -67,9 +67,6 @@ public:
   virtual size_t write(const uint8_t *buffer, size_t size);
   using Print::write;
 
-  virtual size_t println(void); // shadow Print::println() to print break line <br>
-  using Print::println;
-
   // call from featherlib only
   void url_generator_callback(const char* url, const char* query, void* response_stream, httppage_generator_t generator_cb, void* http_data );
 

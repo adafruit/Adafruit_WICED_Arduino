@@ -84,7 +84,7 @@ void heap_generator (const char* url, const char* query, void* http_request)
   int used_size = Feather.dbgHeapUsed();
   int free_size = Feather.dbgHeapFree();
 
-  httpserver.print("label,count\r\n");
+  httpserver.println("label,count");
   httpserver.printf("Used %ld,%ld\r\n", used_size, used_size);
   httpserver.printf("Free %ld,%ld\r\n", free_size, free_size);
 }
@@ -95,7 +95,7 @@ void thread_generator (const char* url, const char* query, void* http_request)
   (void) query;
   (void) http_request;
 
-  httpserver.print("Name,Used,Free\r\n");
+  httpserver.println("Name,Used,Free");
   
   // Get Thread Info
   int count = Feather.dbgThreadInfo(threadInfo, 20);
@@ -116,9 +116,12 @@ void file_not_found_generator (const char* url, const char* query, void* http_re
   (void) http_request;
 
   httpserver.print("<html><body>");
-  httpserver.println("<h1>Error 404 File Not Found!</h1>");
+  httpserver.print("<h1>Error 404 File Not Found!</h1>");
+  httpserver.print("<br>");
   
-  httpserver.println("Available pages are:");
+  httpserver.print("Available pages are:");
+  httpserver.print("<br>");
+  
   httpserver.print("<ul>");
   for(int i=0; i<pagecount; i++)
   {
