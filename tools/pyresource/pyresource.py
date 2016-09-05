@@ -52,7 +52,12 @@ def pyresource(dir):
             pf = os.path.join(root, f); # f = path + filename
             # Make sure this isn't the python script or a hidden file/folder
             if (f != os.path.basename(__file__)) and not (f.startswith(".")):
-                varname = f.replace('.', '_')
+                # varname is name of C variable, also used as basename for header file
+                # dir prefix is drop, "/" is replaced by _dir_ and "." or "-" is replace by "_"
+                # e.g resources/css/style.cs ---> css_dir_style_cs.h (resources is parameter to pyresource.py)
+                varname = pf[len(dir)+1:]
+                varname = varname.replace(os.sep, '_dir_')
+                varname = varname.replace('.', '_')
                 varname = varname.replace('-', '_')
                 params = {}
                 params['varname'] = varname
