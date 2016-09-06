@@ -56,7 +56,10 @@ public:
   bool begin();
   bool stop(void);
 
-  FatDir openDir(const char *path);
+  FatDir openDir(const char* path);
+
+  bool setLabel(const char* label);
+  bool getLabel(      char* label);
 };
 
 class FatFileInfo

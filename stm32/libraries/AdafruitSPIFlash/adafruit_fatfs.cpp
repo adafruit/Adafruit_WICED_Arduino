@@ -37,6 +37,13 @@
 #include "adafruit_fatfs.h"
 //#include "fatfs/diskio.h"
 
+#define DEFAULT_LABEL   "SPI FLASH"
+
+//--------------------------------------------------------------------+
+//
+//  AdafruitFatfs
+//
+//--------------------------------------------------------------------+
 AdafruitFatfs::AdafruitFatfs()
 {
   _fs = NULL;
@@ -53,7 +60,8 @@ bool AdafruitFatfs::begin()
   if ( FR_NO_FILESYSTEM == status )
   {
     uint8_t workbuf[_MAX_SS];
-    return FR_OK == f_mkfs("", FM_FAT | FM_SFD, _MAX_SS, workbuf, sizeof(workbuf));
+    VERIFY( FR_OK == f_mkfs("", FM_FAT | FM_SFD, _MAX_SS, workbuf, sizeof(workbuf)) );
+    setLabel(DEFAULT_LABEL);
   }else
   {
     return FR_OK == status;
@@ -74,7 +82,19 @@ FatDir AdafruitFatfs::openDir(const char *path)
   return fd;
 }
 
+bool AdafruitFatfs::setLabel(const char* label)
+{
+  return FR_OK == f_setlabel(label);
+}
+
+bool AdafruitFatfs::getLabel(char* label)
+{
+  return FR_OK == f_getlabel(NULL, label, NULL);
+}
+
 //--------------------------------------------------------------------+
+//
+//  FatDir
 //
 //--------------------------------------------------------------------+
 FatDir::FatDir(void)
