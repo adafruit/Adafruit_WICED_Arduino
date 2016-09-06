@@ -68,7 +68,8 @@ public:
   AdafruitTCP ( uint8_t interface, tcp_handle_t handle );
   virtual ~AdafruitTCP();
 
-  virtual operator bool() { return _tcp_handle != NULL; }
+  virtual operator bool() { return valid(); }
+  bool     valid(void)    { return _tcp_handle != NULL; }
 
   void     verbose                ( bool enable ) { _verbose = enable; }
   void     usePacketBuffering     ( bool enable ) { _packet_buffering = enable; }

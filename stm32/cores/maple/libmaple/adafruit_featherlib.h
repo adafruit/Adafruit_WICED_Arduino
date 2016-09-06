@@ -117,7 +117,7 @@ typedef struct
 
 typedef struct ATTR_ALIGNED(512)
 {
-  // Static Information
+  // Static Information (128 bytes)
   uint32_t firmware_magic;
   uint32_t firmware_version;
   uint32_t codebase_verion;
@@ -148,8 +148,14 @@ typedef struct ATTR_ALIGNED(512)
 
   // Peripheral API
   uint32_t (*system_millis) (void);
-  bool     (*sflash_is_available)(void);
-  uint32_t RESERVED_[14];
+  uint32_t RESERVED_[3];
+
+  bool     (*sflash_enabled      )(void);
+  uint32_t (*sflash_read         )(uint32_t address, void* buf, uint32_t size);
+  uint32_t (*sflash_write        )(uint32_t address, void const * buf, uint32_t size);
+  uint32_t (*sflash_erase_sector )(uint32_t address);
+
+  uint32_t RESERVED_[8];
 
   // FILE Interface
   int (*file_write     ) (int file, char *ptr, int len);
@@ -161,6 +167,8 @@ typedef struct ATTR_ALIGNED(512)
   int32_t  (*heap_get_free_size)(void);
   int32_t  (*heap_get_total_size)(void);
   uint32_t RESERVED_[2];
+
+  uint32_t RESERVED_[48];
 
 }adafruit_featherlib_t;
 

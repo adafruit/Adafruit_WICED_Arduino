@@ -41,11 +41,9 @@
 #include <adafruit_feather.h>
 #include "utility/ff.h"
 
-class FatEntry
-{
-public:
-
-};
+class FatFileInfo;
+class FatFile;
+class FatDir;
 
 class AdafruitFatfs
 {
@@ -57,6 +55,53 @@ public:
 
   bool begin();
   bool stop(void);
+
+  FatDir openDir(const char *path);
 };
+
+class FatFileInfo
+{
+  friend class AdafruitFatfs;
+  friend class FatFile;
+  friend class FatDir;
+
+private:
+  FILINFO _info;
+
+public:
+  FatFileInfo(void) { varclr(_info); }
+
+  uint32_t size(void) { return _info.fsize; }
+  uint8_t  attribute(void) { return _info.fattrib; }
+  char*    name(void) { return _info.fname; }
+};
+
+class FatFile
+{
+  friend class AdafruitFatfs;
+
+private:
+  FIL _file;
+
+public:
+
+};
+
+class FatDir
+{
+  friend class AdafruitFatfs;
+
+private:
+  DIR _dir;
+
+public:
+  FatDir(void);
+
+  bool valid(void);
+  bool read(FatFileInfo* finfo);
+  FatFileInfo read(void);
+  bool rewind(void);
+};
+
 
 #endif /* _ADAFRUIT_FATFS_H_ */

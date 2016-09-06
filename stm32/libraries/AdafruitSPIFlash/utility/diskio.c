@@ -41,6 +41,9 @@
 #include "ff.h"
 #include "diskio.h"
 
+#include "adafruit_featherlib.h"
+
+
 // Adafruit: to resolve confliction with BYTE as enum in Print.h
 #define BYTE  uint8_t
 
@@ -52,32 +55,18 @@ static DSTATUS disk_state = STA_NOINIT;
 //--------------------------------------------------------------------+
 // INTERNAL OBJECT & FUNCTION DECLARATION
 //--------------------------------------------------------------------+
-#define sflash_is_enabled() true
-#define sflash_read(a, b, c)  RES_ERROR
-#define sflash_write(a, b, c)  RES_ERROR
-#define sflash_erase_sector(a)  RES_ERROR
-#define CFG_SFLASH_CAPACITY                       (2*1024*1024)
+#define CFG_SFLASH_CAPACITY       (2*1024*1024)
 #define SFLASH_SECTOR_SIZE        4096
 #define SFLASH_SECTOR_PER_BLOCK   16
 
-//--------------------------------------------------------------------+
-// IMPLEMENTATION
-//--------------------------------------------------------------------+
 
-//pdrv Specifies the physical drive number.
 DSTATUS disk_initialize ( BYTE pdrv )
 {
   (void) pdrv;
 
-  disk_state = (sflash_is_enabled() ? 0 : STA_NOINIT);
+  disk_state = (FEATHERLIB->sflash_enabled() ? 0 : STA_NOINIT);
 
   return disk_state;
-}
-
-void disk_deinitialize ( BYTE pdrv )
-{
-  (void) pdrv;
-  disk_state |= STA_NOINIT; // set NOINIT bit
 }
 
 DSTATUS disk_status (BYTE pdrv)
@@ -86,35 +75,56 @@ DSTATUS disk_status (BYTE pdrv)
   return disk_state;
 }
 
-//pdrv
-//    Specifies the physical drive number -->  == dev_addr-1
-//buff
-//    Pointer to the byte array to store the read data. The size of buffer must be in sector size * sector count.
-//sector
-//    Specifies the start sector number in logical block address (LBA).
-//count
-//    Specifies number of sectors to read. The value can be 1 to 128. Generally, a multiple sector transfer request
-//    must not be split into single sector transactions to the device, or you may not get good read performance.
+/******************************************************************************/
+/**
+ * Read data from DISK (SFLASH)
+ * @param pdrv    Physical drive number
+ * @param buff    Pointer to the byte array to store the read data.
+ *                The size of buffer must be in sector size * sector count.
+ * @param sector  Start sector number in logical block address (LBA).
+ * @param count   Number of sectors to read. The value can be 1 to 128. Generally,
+ *                a multiple sector transfer request must not be split into single
+ *                sector transactions to the device, or you may not get good read performance.
+ * @return        Status
+ */
+/******************************************************************************/
 DRESULT disk_read (BYTE pdrv, BYTE*buff, DWORD sector, UINT count)
 {
   (void) pdrv;
-  return sflash_read(SFLASH_SECTOR_SIZE*sector, buff, count*SFLASH_SECTOR_SIZE);
+  return FEATHERLIB->sflash_read(SFLASH_SECTOR_SIZE*sector, buff, count*SFLASH_SECTOR_SIZE);
 }
 
-
+/******************************************************************************/
+/**
+ * Write data to DISK (SFLASH)
+ * @param pdrv    Physical drive number
+ * @param buff    Pointer to data.
+ * @param sector  Start sector number in logical block address (LBA).
+ * @param count   Number of sectors to write. The value can be 1 to 128. Generally,
+ *                a multiple sector transfer request must not be split into single
+ *                sector transactions to the device, or you may not get good read performance.
+ * @return        Status
+ */
+/******************************************************************************/
 DRESULT disk_write (BYTE pdrv, const BYTE* buff, DWORD sector, UINT count)
 {
   (void) pdrv;
   for(UINT i=0; i<count; i++)
   {
-    sflash_erase_sector( (sector+i)*SFLASH_SECTOR_SIZE );
+    FEATHERLIB->sflash_erase_sector( (sector+i)*SFLASH_SECTOR_SIZE );
   }
-  return sflash_write(SFLASH_SECTOR_SIZE*sector, buff, count*SFLASH_SECTOR_SIZE);
+  return FEATHERLIB->sflash_write(SFLASH_SECTOR_SIZE*sector, buff, count*SFLASH_SECTOR_SIZE);
 }
 
-/* [IN] Drive number */
-/* [IN] Control command code */
-/* [I/O] Parameter and data buffer */
+/******************************************************************************/
+/**
+ * Disk I/O Control
+ * @param pdrv  Physical drive number
+ * @param cmd   Control command code
+ * @param buff  Parameter and data buffer
+ * @return      Status
+ */
+/******************************************************************************/
 DRESULT disk_ioctl (BYTE pdrv, BYTE cmd, void* buff)
 {
   (void) pdrv;
@@ -133,12 +143,9 @@ DRESULT disk_ioctl (BYTE pdrv, BYTE cmd, void* buff)
       *((DWORD*) buff) = SFLASH_SECTOR_SIZE*SFLASH_SECTOR_PER_BLOCK;
     break;
 
-    case CTRL_SYNC:
-      // nothing to since each write operation to the media is completed within the disk_write function.
-    break;
-
-    case CTRL_TRIM:
-    break;
+    // nothing to since each write operation to the media is completed within the disk_write function.
+    case CTRL_SYNC: break;
+    case CTRL_TRIM: break;
 
     default: return RES_ERROR;
   }

@@ -59,3 +59,61 @@ bool AdafruitFatfs::stop(void)
   free_named("FATFS", _fs);
   _fs = NULL;
 }
+
+FatDir AdafruitFatfs::openDir(const char *path)
+{
+  FatDir fd;
+  f_opendir(&fd._dir, path);
+
+  return fd;
+}
+
+//--------------------------------------------------------------------+
+//
+//--------------------------------------------------------------------+
+FatDir::FatDir(void)
+{
+  varclr(_dir);
+}
+
+bool FatDir::valid(void)
+{
+  _FDID* obj = &_dir.obj;
+  return !(!obj || !obj->fs || !obj->fs->fs_type || obj->fs->id != obj->id);
+}
+
+/******************************************************************************/
+/**
+ * Read File Entry Information in sequence
+ * @param finfo FileInfo to hold read info
+ * @return true if successful
+ */
+/******************************************************************************/
+bool FatDir::read(FatFileInfo* finfo)
+{
+  return (FR_OK == f_readdir(&_dir, &finfo->_info)) && (finfo->name()[0] != 0);
+}
+
+/******************************************************************************/
+/**
+ * Read File Entry Information in sequence
+ * @return File Information object
+ */
+/******************************************************************************/
+FatFileInfo FatDir::read(void)
+{
+  FatFileInfo entry;
+  f_readdir(&_dir, &entry._info);
+  return entry;
+}
+
+/******************************************************************************/
+/**
+ * Rewind Directory
+ * @return true if successful
+ */
+/******************************************************************************/
+bool FatDir::rewind(void)
+{
+  return FR_OK == f_readdir(&_dir, NULL);
+}
