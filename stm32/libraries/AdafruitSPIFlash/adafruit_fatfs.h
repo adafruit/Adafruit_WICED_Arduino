@@ -71,9 +71,15 @@ private:
 public:
   FatFileInfo(void) { varclr(_info); }
 
-  uint32_t size(void) { return _info.fsize; }
-  uint8_t  attribute(void) { return _info.fattrib; }
-  char*    name(void) { return _info.fname; }
+  uint32_t size        (void) { return _info.fsize; }
+  uint8_t  attribute   (void) { return _info.fattrib; }
+  char*    name        (void) { return _info.fname; }
+
+  bool     isReadonly  (void) { return _info.fattrib & AM_RDO; }
+  bool     isHidden    (void) { return _info.fattrib & AM_HID; }
+  bool     isSystemFile(void) { return _info.fattrib & AM_SYS; }
+  bool     isDirectory (void) { return _info.fattrib & AM_DIR; }
+  bool     isArchive   (void) { return _info.fattrib & AM_ARC; }
 };
 
 class FatFile

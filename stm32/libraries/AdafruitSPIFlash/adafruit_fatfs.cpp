@@ -46,12 +46,18 @@ bool AdafruitFatfs::begin()
 {
   _fs = malloc_type(FATFS);
 
-  if ( FR_NO_FILESYSTEM != f_mount(_fs, "", 1) )
-  {
-    stop();
-  }
+  // Mount fat filessystem
+  FRESULT status = f_mount(_fs, "", 1);
 
-  return true;
+  // If FileSystem is not available, make one
+  if ( FR_NO_FILESYSTEM == status )
+  {
+    uint8_t workbuf[_MAX_SS];
+    return FR_OK == f_mkfs("", FM_FAT | FM_SFD, _MAX_SS, workbuf, sizeof(workbuf));
+  }else
+  {
+    return FR_OK == status;
+  }
 }
 
 bool AdafruitFatfs::stop(void)
