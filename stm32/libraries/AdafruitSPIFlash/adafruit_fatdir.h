@@ -39,7 +39,7 @@
 
 #include <Arduino.h>
 
-class FatFileInfo;
+struct FileInfo;
 
 class FatDir
 {
@@ -57,8 +57,8 @@ public:
   bool open(const char* path);
   bool close(void);
 
-  bool read(FatFileInfo* finfo);
-  FatFileInfo read(void);
+  bool read(FileInfo* finfo);
+  FileInfo read(void);
 
   bool rewind(void);
 };

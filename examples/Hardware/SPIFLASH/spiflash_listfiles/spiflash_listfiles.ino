@@ -81,7 +81,7 @@ void printTreeDir(const char* path, uint8_t level)
   }
   
   // File Entry Information which hold file attribute and name
-  FatFileInfo finfo;
+  FileInfo finfo;
 
   // Loop through the directory  
   while( dir.read(&finfo) )

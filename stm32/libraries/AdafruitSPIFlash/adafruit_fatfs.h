@@ -67,21 +67,15 @@ public:
   bool   pwd(char* buffer, uint32_t bufsize);
 
   // File
-  bool        fileInfo(const char* path, FatFileInfo* finfo);
-  FatFileInfo fileInfo(const char* path);
+  bool        fileInfo(const char* path, FileInfo* finfo);
+  FileInfo fileInfo(const char* path);
 };
 
-class FatFileInfo
+struct FileInfo
 {
-  friend class AdafruitFatfs;
-  friend class FatFile;
-  friend class FatDir;
-
-private:
   FILINFO _info;
 
-public:
-  FatFileInfo(void) { varclr(_info); }
+  FileInfo(void) { varclr(_info); }
 
   uint32_t size        (void) { return _info.fsize; }
   uint8_t  attribute   (void) { return _info.fattrib; }

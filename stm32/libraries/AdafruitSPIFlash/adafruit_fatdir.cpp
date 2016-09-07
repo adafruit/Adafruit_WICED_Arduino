@@ -97,7 +97,7 @@ bool FatDir::opened(void)
  * @return true if successful
  */
 /******************************************************************************/
-bool FatDir::read(FatFileInfo* finfo)
+bool FatDir::read(FileInfo* finfo)
 {
   return (FR_OK == f_readdir(&_dir, &finfo->_info)) && (finfo->name()[0] != 0);
 }
@@ -108,9 +108,9 @@ bool FatDir::read(FatFileInfo* finfo)
  * @return File Information object
  */
 /******************************************************************************/
-FatFileInfo FatDir::read(void)
+FileInfo FatDir::read(void)
 {
-  FatFileInfo entry;
+  FileInfo entry;
   f_readdir(&_dir, &entry._info);
   return entry;
 }

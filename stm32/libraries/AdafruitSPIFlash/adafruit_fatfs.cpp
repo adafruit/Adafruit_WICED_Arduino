@@ -161,7 +161,7 @@ bool AdafruitFatfs::pwd(char* buffer, uint32_t bufsize)
  * Get a File Information
  */
 /******************************************************************************/
-bool AdafruitFatfs::fileInfo(const char* path, FatFileInfo* finfo)
+bool AdafruitFatfs::fileInfo(const char* path, FileInfo* finfo)
 {
   return FR_OK == f_stat(path, &finfo->_info);
 }
@@ -171,9 +171,9 @@ bool AdafruitFatfs::fileInfo(const char* path, FatFileInfo* finfo)
  * Get a File Information
  */
 /******************************************************************************/
-FatFileInfo AdafruitFatfs::fileInfo(const char* path)
+FileInfo AdafruitFatfs::fileInfo(const char* path)
 {
-  FatFileInfo finfo;
+  FileInfo finfo;
   (void) f_stat(path, &finfo._info);
   return finfo;
 }
