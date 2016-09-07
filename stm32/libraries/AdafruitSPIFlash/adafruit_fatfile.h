@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*!
-    @file     adafruit_fatfs.h
+    @file     adafruit_fatfile.h
     @author   hathach
 
     @section LICENSE
@@ -34,64 +34,29 @@
 */
 /**************************************************************************/
 
-#ifndef _ADAFRUIT_FATFS_H_
-#define _ADAFRUIT_FATFS_H_
+#ifndef _ADAFRUIT_FATFILE_H_
+#define _ADAFRUIT_FATFILE_H_
 
 #include <Arduino.h>
-#include <adafruit_feather.h>
-#include "utility/ff.h"
-#include "adafruit_fatdir.h"
-#include "adafruit_fatfile.h"
 
-class AdafruitFatfs
-{
-private:
-  FATFS* _fs;
+//class FatFile : public Stream
+//{
+//  friend class AdafruitFatfs;
+//
+//private:
+//  FIL _file;
+//
+//public:
+//  // Stream API
+//  virtual int       read       ( void );
+//  virtual int       read       ( uint8_t * buf, size_t size );
+//  virtual size_t    write      ( uint8_t b );
+//  virtual size_t    write      ( const uint8_t *content, size_t len );
+//  virtual int       available  ( void );
+//  virtual int       peek       ( void );
+//  virtual void      flush      ( void );
+//
+//
+//};
 
-public:
-  AdafruitFatfs();
-
-  bool begin(void);
-  bool stop(void);
-
-  // Volume
-  bool setLabel(const char* label);
-  bool getLabel(      char* label);
-
-  // Directory
-  FatDir openDir(const char* path);
-  bool   openDir(const char* path, FatDir* dir);
-  bool   closeDir(FatDir* dir);
-
-  bool   cd(const char* path);
-  bool   pwd(char* buffer, uint32_t bufsize);
-
-  // File
-  bool        fileInfo(const char* path, FatFileInfo* finfo);
-  FatFileInfo fileInfo(const char* path);
-};
-
-class FatFileInfo
-{
-  friend class AdafruitFatfs;
-  friend class FatFile;
-  friend class FatDir;
-
-private:
-  FILINFO _info;
-
-public:
-  FatFileInfo(void) { varclr(_info); }
-
-  uint32_t size        (void) { return _info.fsize; }
-  uint8_t  attribute   (void) { return _info.fattrib; }
-  char*    name        (void) { return _info.fname; }
-
-  bool     isReadonly  (void) { return _info.fattrib & AM_RDO; }
-  bool     isHidden    (void) { return _info.fattrib & AM_HID; }
-  bool     isSystemFile(void) { return _info.fattrib & AM_SYS; }
-  bool     isDirectory (void) { return _info.fattrib & AM_DIR; }
-  bool     isArchive   (void) { return _info.fattrib & AM_ARC; }
-};
-
-#endif /* _ADAFRUIT_FATFS_H_ */
+#endif /* _ADAFRUIT_FATFILE_H_ */

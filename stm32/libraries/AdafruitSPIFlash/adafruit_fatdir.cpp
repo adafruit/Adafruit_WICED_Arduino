@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*!
-    @file     adafruit_fatfs.cpp
+    @file     adafruit_fatdir.cpp
     @author   hathach
 
     @section LICENSE
@@ -36,144 +36,93 @@
 
 #include "adafruit_fatfs.h"
 
-#define DEFAULT_LABEL   "SPI FLASH"
+/******************************************************************************/
+/**
+ * Constructor
+ */
+/******************************************************************************/
+FatDir::FatDir(void)
+{
+  varclr(_dir);
+}
 
 /******************************************************************************/
 /**
  * Constructor
  */
 /******************************************************************************/
-AdafruitFatfs::AdafruitFatfs()
+FatDir::FatDir(const char* path)
 {
-  _fs = NULL;
+  this->open(path);
 }
 
 /******************************************************************************/
 /**
- * Begin
+ * Open Directory
+ * @return true if successful
  */
 /******************************************************************************/
-bool AdafruitFatfs::begin(void)
+bool FatDir::open(const char* path)
 {
-  _fs = malloc_type(FATFS);
-
-  // Mount fat filessystem
-  FRESULT status = f_mount(_fs, "", 1);
-
-  // If FileSystem is not available, make one
-  if ( FR_NO_FILESYSTEM == status )
-  {
-    uint8_t workbuf[_MAX_SS];
-    VERIFY( FR_OK == f_mkfs("", FM_FAT | FM_SFD, _MAX_SS, workbuf, sizeof(workbuf)) );
-    setLabel(DEFAULT_LABEL);
-  }else
-  {
-    return FR_OK == status;
-  }
+  return FR_OK == f_opendir(&_dir, path);
 }
 
 /******************************************************************************/
 /**
- * Stop
+ * Close Directory
+ * @return true if successful
  */
 /******************************************************************************/
-bool AdafruitFatfs::stop(void)
+bool FatDir::close(void)
 {
-  free_named("FATFS", _fs);
-  _fs = NULL;
+  return FR_OK == f_closedir(&_dir);
 }
 
 /******************************************************************************/
 /**
- * Set Volume Label
+ * Check if Directory is valid (bound with an folder)
+ * @return true if successful
  */
 /******************************************************************************/
-bool AdafruitFatfs::setLabel(const char* label)
+bool FatDir::opened(void)
 {
-  return FR_OK == f_setlabel(label);
+  _FDID* obj = &_dir.obj;
+  return !(!obj || !obj->fs || !obj->fs->fs_type || obj->fs->id != obj->id);
 }
 
 /******************************************************************************/
 /**
- * Get Volume Label
+ * Read File Entry Information in sequence
+ * @param finfo FileInfo to hold read info
+ * @return true if successful
  */
 /******************************************************************************/
-bool AdafruitFatfs::getLabel(char* label)
+bool FatDir::read(FatFileInfo* finfo)
 {
-  return FR_OK == f_getlabel(NULL, label, NULL);
+  return (FR_OK == f_readdir(&_dir, &finfo->_info)) && (finfo->name()[0] != 0);
 }
 
 /******************************************************************************/
 /**
- * Open a directory in the filesystem
+ * Read File Entry Information in sequence
+ * @return File Information object
  */
 /******************************************************************************/
-FatDir AdafruitFatfs::openDir(const char *path)
+FatFileInfo FatDir::read(void)
 {
-  FatDir fd;
-  f_opendir(&fd._dir, path);
-
-  return fd;
+  FatFileInfo entry;
+  f_readdir(&_dir, &entry._info);
+  return entry;
 }
 
 /******************************************************************************/
 /**
- * Open a directory in the filesystem
+ * Rewind Directory
+ * @return true if successful
  */
 /******************************************************************************/
-bool AdafruitFatfs::openDir(const char* path, FatDir* dir)
+bool FatDir::rewind(void)
 {
-  return FR_OK == f_opendir(&dir->_dir, path);
+  return FR_OK == f_readdir(&_dir, NULL);
 }
 
-/******************************************************************************/
-/**
- * Close a opened directory
- */
-/******************************************************************************/
-bool AdafruitFatfs::closeDir(FatDir* dir)
-{
-  return FR_OK == f_closedir(&dir->_dir);
-}
-
-/******************************************************************************/
-/**
- * Change current directory in filesystem
- */
-/******************************************************************************/
-bool AdafruitFatfs::cd(const char* path)
-{
-  return FR_OK == f_chdir(path);
-}
-
-/******************************************************************************/
-/**
- * Get current working directory in absolute path
- */
-/******************************************************************************/
-bool AdafruitFatfs::pwd(char* buffer, uint32_t bufsize)
-{
-  return FR_OK == f_getcwd(buffer, (UINT) bufsize);
-}
-
-/******************************************************************************/
-/**
- * Get a File Information
- */
-/******************************************************************************/
-bool AdafruitFatfs::fileInfo(const char* path, FatFileInfo* finfo)
-{
-  return FR_OK == f_stat(path, &finfo->_info);
-}
-
-/******************************************************************************/
-/**
- * Get a File Information
- */
-/******************************************************************************/
-FatFileInfo AdafruitFatfs::fileInfo(const char* path)
-{
-  FatFileInfo finfo;
-  (void) f_stat(path, &finfo._info);
-  return finfo;
-}
