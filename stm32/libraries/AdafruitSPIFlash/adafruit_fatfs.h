@@ -56,12 +56,21 @@ public:
   bool begin();
   bool stop(void);
 
+  // Volume
+  bool setLabel(const char* label);
+  bool getLabel(      char* label);
+
+  // Directory
   FatDir openDir(const char* path);
+  bool   openDir(const char* path, FatDir* dir);
+  bool   closeDir(FatDir* dir);
+
   bool   cd(const char* path);
   bool   pwd(char* buffer, uint32_t bufsize);
 
-  bool setLabel(const char* label);
-  bool getLabel(      char* label);
+  // File
+  bool        fileInfo(const char* path, FatFileInfo* finfo);
+  FatFileInfo fileInfo(const char* path);
 };
 
 class FatFileInfo
@@ -107,10 +116,16 @@ private:
 
 public:
   FatDir(void);
+  FatDir(const char* path);
 
-  bool valid(void);
+  bool opened(void);
+
+  bool open(const char* path);
+  bool close(void);
+
   bool read(FatFileInfo* finfo);
   FatFileInfo read(void);
+
   bool rewind(void);
 };
 

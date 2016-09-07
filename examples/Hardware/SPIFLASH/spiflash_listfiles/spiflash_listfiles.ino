@@ -48,10 +48,8 @@ void setup()
 // the loop function runs over and over again forever
 void loop() 
 {
-  // Waiting until there is any user input
+  // Waiting until there is any user input and echo
   char* input = getUserInput();
-  
-  // Echo user input
   Serial.println(input);
 
   // Print whole directory tree of root whose level is 0
@@ -67,7 +65,9 @@ void loop()
 void printTreeDir(const char* path, uint8_t level)
 {
   // Open the input folder
-  FatDir dir = SpiFlash.openDir(path);
+  FatDir dir;
+  
+  dir.open(path);
   
   // Print root
   if (level == 0)
@@ -109,17 +109,19 @@ void printTreeDir(const char* path, uint8_t level)
       // Print file size starting from position 50
       int pos = level*3 + 3 + strlen(finfo.name());
 
-      // Print at least one space in case current position > 50
-      Serial.print(' ');
-
       // Print padding
       for (int i=pos; i<50; i++) Serial.print(' ');
+
+      // Print at least one extra space in case current position > 50
+      Serial.print(' ');
 
       // Print size in KB
       Serial.print( finfo.size() / 1024 );
       Serial.println( " KB");
     }
   }
+
+  dir.close();
 
   // Change back to Parent if not root
   if (level != 0)

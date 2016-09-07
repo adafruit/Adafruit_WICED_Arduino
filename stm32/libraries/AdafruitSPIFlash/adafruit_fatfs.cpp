@@ -68,6 +68,16 @@ bool AdafruitFatfs::begin()
   }
 }
 
+bool AdafruitFatfs::setLabel(const char* label)
+{
+  return FR_OK == f_setlabel(label);
+}
+
+bool AdafruitFatfs::getLabel(char* label)
+{
+  return FR_OK == f_getlabel(NULL, label, NULL);
+}
+
 bool AdafruitFatfs::stop(void)
 {
   free_named("FATFS", _fs);
@@ -82,6 +92,16 @@ FatDir AdafruitFatfs::openDir(const char *path)
   return fd;
 }
 
+bool AdafruitFatfs::openDir(const char* path, FatDir* dir)
+{
+  return FR_OK == f_opendir(&dir->_dir, path);
+}
+
+bool AdafruitFatfs::closeDir(FatDir* dir)
+{
+  return FR_OK == f_closedir(&dir->_dir);
+}
+
 bool AdafruitFatfs::cd(const char* path)
 {
   return FR_OK == f_chdir(path);
@@ -92,27 +112,74 @@ bool AdafruitFatfs::pwd(char* buffer, uint32_t bufsize)
   return FR_OK == f_getcwd(buffer, (UINT) bufsize);
 }
 
-bool AdafruitFatfs::setLabel(const char* label)
+bool AdafruitFatfs::fileInfo(const char* path, FatFileInfo* finfo)
 {
-  return FR_OK == f_setlabel(label);
+  return FR_OK == f_stat(path, &finfo->_info);
 }
 
-bool AdafruitFatfs::getLabel(char* label)
+FatFileInfo AdafruitFatfs::fileInfo(const char* path)
 {
-  return FR_OK == f_getlabel(NULL, label, NULL);
+  FatFileInfo finfo;
+  (void) f_stat(path, &finfo._info);
+  return finfo;
 }
+
 
 //--------------------------------------------------------------------+
 //
 //  FatDir
 //
 //--------------------------------------------------------------------+
+
+/******************************************************************************/
+/**
+ * Constructor
+ */
+/******************************************************************************/
 FatDir::FatDir(void)
 {
   varclr(_dir);
 }
 
-bool FatDir::valid(void)
+/******************************************************************************/
+/**
+ * Constructor
+ */
+/******************************************************************************/
+FatDir::FatDir(const char* path)
+{
+  this->open(path);
+}
+
+/******************************************************************************/
+/**
+ * Open Directory
+ * @return true if successful
+ */
+/******************************************************************************/
+bool FatDir::open(const char* path)
+{
+  return FR_OK == f_opendir(&_dir, path);
+}
+
+/******************************************************************************/
+/**
+ * Close Directory
+ * @return true if successful
+ */
+/******************************************************************************/
+bool FatDir::close(void)
+{
+  return FR_OK == f_closedir(&_dir);
+}
+
+/******************************************************************************/
+/**
+ * Check if Directory is valid (bound with an folder)
+ * @return true if successful
+ */
+/******************************************************************************/
+bool FatDir::opened(void)
 {
   _FDID* obj = &_dir.obj;
   return !(!obj || !obj->fs || !obj->fs->fs_type || obj->fs->id != obj->id);
@@ -153,3 +220,4 @@ bool FatDir::rewind(void)
 {
   return FR_OK == f_readdir(&_dir, NULL);
 }
+
