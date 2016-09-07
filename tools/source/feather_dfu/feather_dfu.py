@@ -31,6 +31,8 @@ def dfu_download_bin(dfu_util, binfile, address):
                     '-a', '0',
                     '-s', '0x{0:08X}:leave'.format(address),
                     '-D', binfile])
+    # delay a few seconds since WICED USB enumeration takes time with Dual CDC + MSC
+    time.sleep(2.5)
 
 
 @click.group()
