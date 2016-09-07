@@ -46,19 +46,61 @@ FatFile::FatFile(void)
   varclr(_file);
 }
 
-bool FatFile::open(const char* path)
+/******************************************************************************/
+/**
+ * Constructor
+ */
+/******************************************************************************/
+FatFile::FatFile(const char* path, uint8_t mode)
 {
-
+  this->open(path, mode);
 }
 
+/******************************************************************************/
+/**
+ * Open a FAT file
+ */
+/******************************************************************************/
+bool FatFile::open(const char* path, uint8_t mode)
+{
+  return FR_OK == f_open(&_file, path, mode);
+}
+
+/******************************************************************************/
+/**
+ * Close file
+ */
+/******************************************************************************/
+bool FatFile::close(void)
+{
+  return FR_OK == f_close(&_file);
+}
+
+/******************************************************************************/
+/**
+ * Read a byte from file
+ */
+/******************************************************************************/
 int FatFile::read( void )
 {
+  UINT count = 0;
+  uint8_t data;
 
+  (void) f_read(&_file, &data, 1, &count);
+
+  return (count == 1) ? data : EOF;
 }
 
+/******************************************************************************/
+/**
+ * Read data from file
+ */
+/******************************************************************************/
 int FatFile::read( uint8_t * buf, size_t size )
 {
-
+  UINT count = 0;
+  (void) f_read(&_file, buf, size, &count);
+  return count;
 }
 
 size_t FatFile::write( uint8_t b )
@@ -73,7 +115,7 @@ size_t FatFile::write( const uint8_t *content, size_t len )
 
 int FatFile::available( void )
 {
-
+  return f_size(&_file) - f_tell(&_file);
 }
 
 int FatFile::peek( void )

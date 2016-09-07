@@ -48,9 +48,11 @@ private:
 
 public:
   FatFile(void);
+  FatFile(const char* path, uint8_t mode = FAT_FILE_READ);
 
   // FAT API
-  bool open(const char* path);
+  bool open(const char* path, uint8_t mode = FAT_FILE_READ);
+  bool close(void);
 
   // Stream API
   virtual int       read       ( void );

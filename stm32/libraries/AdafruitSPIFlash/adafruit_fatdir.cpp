@@ -84,7 +84,7 @@ bool FatDir::close(void)
  * @return true if successful
  */
 /******************************************************************************/
-bool FatDir::opened(void)
+bool FatDir::valid(void)
 {
   _FDID* obj = &_dir.obj;
   return !(!obj || !obj->fs || !obj->fs->fs_type || obj->fs->id != obj->id);

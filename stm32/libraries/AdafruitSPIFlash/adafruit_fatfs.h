@@ -37,6 +37,14 @@
 #ifndef _ADAFRUIT_FATFS_H_
 #define _ADAFRUIT_FATFS_H_
 
+#define	FAT_FILE_OPEN_EXISTING  0x00
+#define	FAT_FILE_READ           0x01
+#define	FAT_FILE_WRITE          0x02
+#define	FAT_FILE_CREATE_NEW     0x04
+#define	FAT_FILE_CREATE_ALWAYS  0x08
+#define	FAT_FILE_OPEN_ALWAYS    0x10
+#define	FAT_FILE_OPEN_APPEND    0x30
+
 #include <Arduino.h>
 #include <adafruit_feather.h>
 #include "utility/ff.h"
@@ -67,19 +75,32 @@ public:
   bool   cwd(char* buffer, uint32_t bufsize);
 
   // File
-  bool        fileInfo(const char* path, FileInfo* finfo);
+  bool     fileInfo(const char* path, FileInfo* finfo);
   FileInfo fileInfo(const char* path);
 };
 
-struct FileInfo
+class FileInfo
 {
+  friend class AdafruitFatfs;
+  friend class FatDir;
+  friend class FatFile;
+
+private:
   FILINFO _info;
 
+public:
   FileInfo(void) { varclr(_info); }
+  FileInfo(const char* path) { fetch(path); }
 
-  uint32_t size        (void) { return _info.fsize; }
-  uint8_t  attribute   (void) { return _info.fattrib; }
-  char*    name        (void) { return _info.fname; }
+  bool fetch(const char* path)
+  {
+    return (FR_OK == f_stat(path, &_info));
+  }
+
+  bool     valid       (void) { return _info.fname[0] != 0; }
+  uint32_t size        (void) { return _info.fsize;         }
+  uint8_t  attribute   (void) { return _info.fattrib;       }
+  char*    name        (void) { return _info.fname;         }
 
   bool     isReadonly  (void) { return _info.fattrib & AM_RDO; }
   bool     isHidden    (void) { return _info.fattrib & AM_HID; }
