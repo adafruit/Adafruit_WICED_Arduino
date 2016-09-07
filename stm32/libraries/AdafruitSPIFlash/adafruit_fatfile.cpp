@@ -34,7 +34,56 @@
 */
 /**************************************************************************/
 
-
 #include "adafruit_fatfs.h"
+
+/******************************************************************************/
+/**
+ * Constructor
+ */
+/******************************************************************************/
+FatFile::FatFile(void)
+{
+  varclr(_file);
+}
+
+bool FatFile::open(const char* path)
+{
+
+}
+
+int FatFile::read( void )
+{
+
+}
+
+int FatFile::read( uint8_t * buf, size_t size )
+{
+
+}
+
+size_t FatFile::write( uint8_t b )
+{
+
+}
+
+size_t FatFile::write( const uint8_t *content, size_t len )
+{
+
+}
+
+int FatFile::available( void )
+{
+
+}
+
+int FatFile::peek( void )
+{
+
+}
+
+void FatFile::flush( void )
+{
+
+}
 
 

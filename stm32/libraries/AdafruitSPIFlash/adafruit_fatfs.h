@@ -64,7 +64,7 @@ public:
   bool   closeDir(FatDir* dir);
 
   bool   cd(const char* path);
-  bool   pwd(char* buffer, uint32_t bufsize);
+  bool   cwd(char* buffer, uint32_t bufsize);
 
   // File
   bool        fileInfo(const char* path, FileInfo* finfo);

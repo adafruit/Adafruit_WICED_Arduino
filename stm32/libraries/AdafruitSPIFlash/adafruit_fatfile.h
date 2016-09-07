@@ -39,24 +39,27 @@
 
 #include <Arduino.h>
 
-//class FatFile : public Stream
-//{
-//  friend class AdafruitFatfs;
-//
-//private:
-//  FIL _file;
-//
-//public:
-//  // Stream API
-//  virtual int       read       ( void );
-//  virtual int       read       ( uint8_t * buf, size_t size );
-//  virtual size_t    write      ( uint8_t b );
-//  virtual size_t    write      ( const uint8_t *content, size_t len );
-//  virtual int       available  ( void );
-//  virtual int       peek       ( void );
-//  virtual void      flush      ( void );
-//
-//
-//};
+class FatFile : public Stream
+{
+  friend class AdafruitFatfs;
+
+private:
+  FIL _file;
+
+public:
+  FatFile(void);
+
+  // FAT API
+  bool open(const char* path);
+
+  // Stream API
+  virtual int       read       ( void );
+  virtual int       read       ( uint8_t * buf, size_t size );
+  virtual size_t    write      ( uint8_t b );
+  virtual size_t    write      ( const uint8_t *content, size_t len );
+  virtual int       available  ( void );
+  virtual int       peek       ( void );
+  virtual void      flush      ( void );
+};
 
 #endif /* _ADAFRUIT_FATFILE_H_ */

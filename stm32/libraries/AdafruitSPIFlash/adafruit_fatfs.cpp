@@ -151,7 +151,7 @@ bool AdafruitFatfs::cd(const char* path)
  * Get current working directory in absolute path
  */
 /******************************************************************************/
-bool AdafruitFatfs::pwd(char* buffer, uint32_t bufsize)
+bool AdafruitFatfs::cwd(char* buffer, uint32_t bufsize)
 {
   return FR_OK == f_getcwd(buffer, (UINT) bufsize);
 }
