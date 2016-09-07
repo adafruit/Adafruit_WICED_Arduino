@@ -10,7 +10,6 @@
 #include "err404_html.h"
 #include "favicon_ico.h"
 #include "index_html.h"
-#include "robots_txt.h"
 #include "tile_wide_png.h"
 #include "tile_png.h"
 #include "css_dir_main_css.h"
