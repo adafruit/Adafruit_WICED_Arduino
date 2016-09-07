@@ -57,6 +57,8 @@ public:
   bool stop(void);
 
   FatDir openDir(const char* path);
+  bool   cd(const char* path);
+  bool   pwd(char* buffer, uint32_t bufsize);
 
   bool setLabel(const char* label);
   bool getLabel(      char* label);

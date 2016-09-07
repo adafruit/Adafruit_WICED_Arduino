@@ -82,6 +82,16 @@ FatDir AdafruitFatfs::openDir(const char *path)
   return fd;
 }
 
+bool AdafruitFatfs::cd(const char* path)
+{
+  return FR_OK == f_chdir(path);
+}
+
+bool AdafruitFatfs::pwd(char* buffer, uint32_t bufsize)
+{
+  return FR_OK == f_getcwd(buffer, (UINT) bufsize);
+}
+
 bool AdafruitFatfs::setLabel(const char* label)
 {
   return FR_OK == f_setlabel(label);
