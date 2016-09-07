@@ -39,8 +39,31 @@ void setup()
 
   // Print whole directory tree of root whose level is 0
   printTreeDir("/", 0);
+
+  // Print prompt
+  Serial.println();
+  Serial.println("Enter anything to print directory tree (again):");
 }
 
+// the loop function runs over and over again forever
+void loop() 
+{
+  // Waiting until there is any user input
+  char* input = getUserInput();
+  
+  // Echo user input
+  Serial.println(input);
+
+  // Print whole directory tree of root whose level is 0
+  printTreeDir("/", 0);
+}
+
+/**************************************************************************/
+/*!
+    @brief  Print out whole directory tree of an folder
+            until the level reach MAX_LEVEL
+*/
+/**************************************************************************/
 void printTreeDir(const char* path, uint8_t level)
 {
   // Open the input folder
@@ -105,9 +128,27 @@ void printTreeDir(const char* path, uint8_t level)
   }
 }
 
-// the loop function runs over and over again forever
-void loop() 
+
+/**************************************************************************/
+/*!
+    @brief  Get user input from Serial
+*/
+/**************************************************************************/
+char* getUserInput(void)
 {
-  toggleLED();
-  delay(1000);
+  static char inputs[64+1];
+  memset(inputs, 0, sizeof(inputs));
+
+  // wait until data is available
+  while( Serial.available() == 0 ) { delay(1); }
+
+  uint8_t count=0;
+  do
+  {
+    count += Serial.readBytes(inputs+count, 64);
+  } while( (count < 64) && Serial.available() );
+
+  return inputs;
 }
+
+
