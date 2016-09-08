@@ -71,6 +71,9 @@ def pyresource(dir):
                 varname = varname.replace(os.sep, '_dir_')
                 varname = varname.replace('.', '_')
                 varname = varname.replace('-', '_')
+                # add undercore if file name start with a number
+                if varname[1].isdigit():
+                    varname = '_' + varname
                 params = {}
                 params['varname'] = varname
                 with open(pf, "rb") as fin:
