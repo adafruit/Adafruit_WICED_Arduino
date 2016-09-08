@@ -97,8 +97,6 @@ void filesystem_generator (const char* url, const char* query, void* http_reques
   (void) url;
   (void) http_request;
 
-  Serial.println(query);
-
   // JSON start bracket
   httpserver.print("[");
 
@@ -107,21 +105,16 @@ void filesystem_generator (const char* url, const char* query, void* http_reques
   if ( 0 == strncmp(query, prefix, strlen(prefix)) )
   {   
     const char* filepath = query + strlen(prefix);
-
-    DBG_LOCATION();
-
+    
     // No path means Root
     if(*filepath == 0) filepath = "/";
 
     // Check if file is existed
     if ( SpiFlash.exists(filepath) )
-    {
-      DBG_LOCATION();
-      
+    { 
       // if directory, list its entry
       if ( SpiFlash.isDirectory(filepath) )
       {
-        DBG_LOCATION();
         FatDir dir;
         dir.open(filepath);
 
@@ -148,26 +141,33 @@ void filesystem_generator (const char* url, const char* query, void* http_reques
       // if file, read its content
       else
       {
-        DBG_LOCATION();
-        FatFile file;
-        if ( file.open(filepath, FAT_FILE_READ) )
-        {
-          while( file.available() )
-          {
-            uint8_t buffer[64];
-            uint32_t count = file.read(buffer, 64);
-
-            // If not printable --> binary file, skip
-            if ( !isPrintable(buffer, count) )
-            {
-              httpserver.print("Binary file is currently not supported!");
-              break;
-            }
-
-            httpserver.write(buffer, count);
-          }
-        }
-        file.close();
+        httpserver.print("File viewer is not supported yet");
+//        DBG_LOCATION();
+//        FatFile file;
+//        if ( file.open(filepath, FAT_FILE_READ) )
+//        {
+//          DBG_LOCATION();
+//          uint8_t* buffer = (uint8_t*) malloc(1024);
+//          
+//          while( file.available() )
+//          {
+//            DBG_LOCATION();
+//            uint32_t count = file.read(buffer, 1024);
+//
+//            // If not printable --> binary file, skip
+//            if ( !isPrintable(buffer, count) )
+//            {
+//              DBG_LOCATION();
+//              httpserver.print("Binary file is currently not supported!");
+//              break;
+//            }
+//            Serial.write(buffer,count);
+//            httpserver.write(buffer, count);
+//          }
+//
+//          free(buffer);
+//        }
+//        file.close();
       }
     }
   }
