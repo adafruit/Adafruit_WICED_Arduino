@@ -75,7 +75,7 @@ class Sdep(object):
         self.syscommand(SDEP_CMD_RESET)
 
     def syscommand(self, cmd_id):
-        if cmd_id > SDEP_CMD_NVM_RESET:
+        if cmd_id > SDEP_CMD_SFLASH_ERASEALL:
             return
 
         # sys command will try to run system command with normal mode USB_VID

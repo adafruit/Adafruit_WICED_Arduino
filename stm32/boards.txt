@@ -76,6 +76,14 @@ feather.menu.section.nvmreset.upload.binfile=
 feather.menu.section.nvmreset.upload.address=
 feather.menu.section.nvmreset.upload.maximum_size=851968
 
+## NVM reset section
+## -------------------------
+feather.menu.section.nvmreset=Erase SPI Flash
+feather.menu.section.nvmreset.upload.subcommand=erase_spiflash
+feather.menu.section.nvmreset.upload.binfile=
+feather.menu.section.nvmreset.upload.address=
+feather.menu.section.nvmreset.upload.maximum_size=851968
+
 
 ## Bootloader
 ## -------------------------

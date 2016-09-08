@@ -64,6 +64,12 @@ def nvm_reset():
     sdep.syscommand(SDEP_CMD_NVM_RESET)
 
 @cli.command()
+def erase_spiflash():
+    """Erase the whole SPI Flash, normally take 12 seconds to complete"""
+    sdep.syscommand(SDEP_CMD_SFLASH_ERASEALL)
+    time.sleep(12)
+
+@cli.command()
 def info():
     """Print information about the connected board."""
     resp = sdep.syscommand(SDEP_CMD_INFO)

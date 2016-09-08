@@ -69,7 +69,7 @@ void AdafruitFatfs::eraseAll(void)
   this->stop(); // stop any working, user have to call begin() again
 
   AdafruitSDEP sdep;
-  sdep->sdep(SDEP_CMD_SFLASH_ERASEALL, 0, NULL, NULL, NULL);
+  sdep.sdep(SDEP_CMD_SFLASH_ERASEALL, 0, NULL, NULL, NULL);
 }
 
 /******************************************************************************/
