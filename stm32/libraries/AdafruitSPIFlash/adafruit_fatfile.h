@@ -67,6 +67,8 @@ public:
   virtual int       available  ( void );
   virtual int       peek       ( void );
   virtual void      flush      ( void );
+
+  using Print::write;
 };
 
 #endif /* _ADAFRUIT_FATFILE_H_ */

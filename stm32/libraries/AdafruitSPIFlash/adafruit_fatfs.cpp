@@ -36,7 +36,18 @@
 
 #include "adafruit_fatfs.h"
 
-#define DEFAULT_LABEL   "SPI FLASH"
+const char VOLUME_LABEL[] = "SPI FLASH";
+const char README_CONTENT[] =
+"This drive can be used to add or remove files to the on-board 16 Mbit (2 MB)\r\n"
+"SPI flash IC on the Adafruit WICED Feather.\r\n"
+"\r\n"
+"For information on how to use the WICED Feather, see the following links:\r\n"
+"\r\n"
+"Adafruit WICED Feather Learning Guide:\r\n"
+"https://learn.adafruit.com/introducing-the-adafruit-wiced-feather-wifi\r\n"
+"\r\n"
+"Adafruit WICED Feather Product Page:\r\n"
+"https://www.adafruit.com/product/3056\r\n";
 
 /******************************************************************************/
 /**
@@ -56,7 +67,23 @@ AdafruitFatfs::AdafruitFatfs()
 void AdafruitFatfs::eraseAll(void)
 {
   this->stop(); // stop any working, user have to call begin() again
-  FEATHERLIB->sflash_erase_chip();
+
+  AdafruitSDEP sdep;
+  sdep->sdep(SDEP_CMD_SFLASH_ERASEALL, 0, NULL, NULL, NULL);
+}
+
+/******************************************************************************/
+/**
+ * Make Filesystem a.k.a Format
+ */
+/******************************************************************************/
+bool AdafruitFatfs::mkfs(void)
+{
+  void* workbuf = malloc(_MAX_SS);
+  FRESULT result = f_mkfs("", FM_FAT | FM_SFD, _MAX_SS, workbuf, _MAX_SS);
+  free(workbuf);
+
+  return (FR_OK == result);
 }
 
 /******************************************************************************/
@@ -74,9 +101,13 @@ bool AdafruitFatfs::begin(void)
   // If FileSystem is not available, make one
   if ( FR_NO_FILESYSTEM == status )
   {
-    uint8_t workbuf[_MAX_SS];
-    VERIFY( FR_OK == f_mkfs("", FM_FAT | FM_SFD, _MAX_SS, workbuf, sizeof(workbuf)) );
-    setLabel(DEFAULT_LABEL);
+    VERIFY ( this->mkfs() );
+    setLabel(VOLUME_LABEL);
+
+    FatFile readme;
+    readme.open("readme.txt", FAT_FILE_WRITE | FAT_FILE_CREATE_ALWAYS);
+    readme.write(README_CONTENT);
+    readme.close();
   }else
   {
     return FR_OK == status;

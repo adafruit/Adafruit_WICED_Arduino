@@ -37,13 +37,13 @@
 #ifndef _ADAFRUIT_FATFS_H_
 #define _ADAFRUIT_FATFS_H_
 
-#define	FAT_FILE_OPEN_EXISTING  0x00
-#define	FAT_FILE_READ           0x01
-#define	FAT_FILE_WRITE          0x02
-#define	FAT_FILE_CREATE_NEW     0x04
-#define	FAT_FILE_CREATE_ALWAYS  0x08
-#define	FAT_FILE_OPEN_ALWAYS    0x10
-#define	FAT_FILE_OPEN_APPEND    0x30
+#define	FAT_FILE_OPEN_EXISTING  0x00 // Opens the file. The function fails if the file is not existing.
+#define	FAT_FILE_READ           0x01 // Specifies read access to the object. Data can be read from the file.
+#define	FAT_FILE_WRITE          0x02 // Specifies write access to the object. Data can be written to the file. Combine with FA_READ for read-write access.
+#define	FAT_FILE_CREATE_NEW     0x04 // Creates a new file. The function fails with FR_EXIST if the file is existing.
+#define	FAT_FILE_CREATE_ALWAYS  0x08 // Creates a new file. If the file is existing, it will be truncated and overwritten.
+#define	FAT_FILE_OPEN_ALWAYS    0x10 // Opens the file if it is existing. If not, a new file will be created.
+#define	FAT_FILE_OPEN_APPEND    0x30 // Same as FA_OPEN_ALWAYS except read/write pointer is set end of the file.
 
 #include <Arduino.h>
 #include <adafruit_feather.h>
@@ -65,6 +65,7 @@ public:
   bool stop(void);
 
   // Volume
+  bool mkfs    (void);
   bool setLabel(const char* label);
   bool getLabel(      char* label);
 

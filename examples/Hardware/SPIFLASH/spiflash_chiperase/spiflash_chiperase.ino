@@ -28,7 +28,7 @@ void setup()
     
   Serial.println("SPI Flash Chip Erase Example");
 
-  Serial.print("Erasing ....");
+  Serial.print("Erasing (~12s) ....");
   SpiFlash.eraseAll();
   Serial.println("Done");
 }

@@ -163,14 +163,11 @@ typedef enum {
   SDEP_CMD_NVM_RESET             = 0x0005,    ///< Reset DCT
   SDEP_CMD_ERROR_STRING          = 0x0006,    ///< Get descriptive error string
   SDEP_CMD_COMMAND_STRING        = 0x0007,    ///< Get descriptive SDEP command string
+  SDEP_CMD_SFLASH_ERASEALL       = 0x0008,    ///< Erase SPI flash memory
 
   // Hardware Command
   SDEP_CMD_GPIO                  = 0x0100,    ///< Set GPIO
   SDEP_CMD_RANDOMNUMBER          = 0x0101,    ///< Random number
-
-  // SPI Flash Commands
-  SDEP_CMD_SFLASHFORMAT          = 0x0200,    ///< Format SPI flash memory
-  SDEP_CMD_SFLASHLIST            = 0x0201,    ///< List SPI flash contents
 
   // DEBUG Commands
   SDEP_CMD_STACKDUMP             = 0x0300,    ///< Dump the stack
