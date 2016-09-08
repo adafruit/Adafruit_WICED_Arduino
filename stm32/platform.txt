@@ -9,8 +9,8 @@ version=0.6.0
 # ----------------------
 compiler.path={runtime.tools.arm-none-eabi-gcc.path}/bin/
 compiler.c.cmd=arm-none-eabi-gcc
-compiler.c.flags=-c -g -O1 -w -MMD -ffunction-sections -fdata-sections -nostdlib --param max-inline-insns-single=500 -DBOARD_{build.variant} -D{build.vect} -D{build.density} -DERROR_LED_PORT={build.error_led_port} -DERROR_LED_PIN={build.error_led_pin} {compiler.extra_includes}
-#compiler.c.flags=-c -g -O1 -w -MMD -ffunction-sections -fdata-sections -nostdlib --param max-inline-insns-single=500 -DBOARD_{build.variant} -D{build.vect} -D{build.density} -DERROR_LED_PORT={build.error_led_port} -DERROR_LED_PIN={build.error_led_pin} {compiler.extra_includes} -include "{runtime.platform.path}/platform_debug.h"
+compiler.c.flags=-std=gnu99 -c -g -O1 -w -MMD -ffunction-sections -fdata-sections -nostdlib --param max-inline-insns-single=500 -DBOARD_{build.variant} -D{build.vect} -D{build.density} -DERROR_LED_PORT={build.error_led_port} -DERROR_LED_PIN={build.error_led_pin} {compiler.extra_includes}
+#compiler.c.flags=-std=gnu99 -c -g -O1 -w -MMD -ffunction-sections -fdata-sections -nostdlib --param max-inline-insns-single=500 -DBOARD_{build.variant} -D{build.vect} -D{build.density} -DERROR_LED_PORT={build.error_led_port} -DERROR_LED_PIN={build.error_led_pin} {compiler.extra_includes} -include "{runtime.platform.path}/platform_debug.h"
 
 compiler.cpp.cmd=arm-none-eabi-g++
 compiler.cpp.flags=-c -g -O1 -w -MMD -ffunction-sections -fdata-sections -nostdlib --param max-inline-insns-single=500 -fno-rtti -fno-exceptions -DBOARD_{build.variant} -D{build.vect} -D{build.density} -DERROR_LED_PORT={build.error_led_port} -DERROR_LED_PIN={build.error_led_pin} {compiler.extra_includes}
