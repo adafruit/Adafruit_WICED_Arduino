@@ -50,6 +50,17 @@ AdafruitFatfs::AdafruitFatfs()
 
 /******************************************************************************/
 /**
+ * Erase Physical Disk to blank
+ */
+/******************************************************************************/
+void AdafruitFatfs::eraseAll(void)
+{
+  this->stop(); // stop any working, user have to call begin() again
+  FEATHERLIB->sflash_erase_chip();
+}
+
+/******************************************************************************/
+/**
  * Begin
  */
 /******************************************************************************/
@@ -79,7 +90,7 @@ bool AdafruitFatfs::begin(void)
 /******************************************************************************/
 bool AdafruitFatfs::stop(void)
 {
-  free_named("FATFS", _fs);
+  if (_fs) free_named("FATFS", _fs);
   _fs = NULL;
 }
 

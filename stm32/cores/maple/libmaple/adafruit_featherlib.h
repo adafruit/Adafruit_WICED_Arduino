@@ -130,9 +130,9 @@ typedef struct ATTR_ALIGNED(512)
   uint8_t  RESERVED_[76];
 
   // SDEP Command
-  err_t (*sdep_execute) (uint16_t  cmd_id     ,
-                         uint32_t  paylen    , void const* parameter,
-                         uint32_t* result_len , void* result_buffer);
+  err_t (*sdep_execute ) (uint16_t  cmd_id     ,
+                          uint32_t  paylen    , void const* parameter,
+                          uint32_t* result_len , void* result_buffer);
 
   err_t (*sdep_execute_n)(uint16_t  cmd_id       ,
                           uint8_t   para_count   , sdep_cmd_para_t const* para_arr,
@@ -154,8 +154,10 @@ typedef struct ATTR_ALIGNED(512)
   uint32_t (*sflash_read         )(uint32_t address, void* buf, uint32_t size);
   uint32_t (*sflash_write        )(uint32_t address, void const * buf, uint32_t size);
   uint32_t (*sflash_erase_sector )(uint32_t address);
+  uint32_t (*sflash_erase_chip   )(void);
+  uint32_t RESERVED_[3];
 
-  uint32_t RESERVED_[8];
+  uint32_t RESERVED_[4];
 
   // FILE Interface
   int (*file_write     ) (int file, char *ptr, int len);

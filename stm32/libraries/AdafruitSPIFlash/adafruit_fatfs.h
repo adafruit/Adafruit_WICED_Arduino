@@ -59,6 +59,8 @@ private:
 public:
   AdafruitFatfs();
 
+  void eraseAll(void);
+
   bool begin(void);
   bool stop(void);
 
