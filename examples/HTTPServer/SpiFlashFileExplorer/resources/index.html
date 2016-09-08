@@ -1,0 +1,224 @@
+<style type="text/css">
+  body {
+    font-size: 10px;
+    font-family: Verdana;
+    line-height: 18px;
+    margin: 0;
+  }
+  .header-container {
+    background-color: #000000;
+  }
+  .header {
+    width: 1000px;
+    margin: auto;
+    background-image: url(/spiflash/adafruit_logo.png);
+    background-repeat: no-repeat;
+    background-size: 172px 60px;
+    color: #00a7e9;
+    line-height: 30px;
+    font-size: 30px;
+    text-align: center;
+    padding: 30px 0 10px 0;
+  }
+  .tree-container {
+    width: 1000px;
+    margin: auto;
+    height: 450px;
+    border-radius: 5px;
+    box-shadow: 0 0 5px #CCCCCC;
+    padding: 10px;
+    margin-top: 10px;
+  }
+  .tree {
+    height: 450px;
+    width: 319px;
+    float: left;
+    border-right: 1px solid silver;
+    overflow: auto;
+    padding: 0;
+  }
+  .data {
+    height: 450px;
+    margin-left: 320px;
+    padding: 0 15px;
+    overflow: auto;
+  }
+  .file-url {
+    font-weight: bold;
+  }
+  ul {
+    padding: 0;
+    margin-left: 18px;
+    list-style-type: none;
+    list-style-image: none;
+  }
+  li {
+    background-position: -295px -7px;
+    background-repeat: repeat-y;
+    background-image: url(/spiflash/32px.png);
+  }
+  i {
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+    display: inline-block;
+    float: left;
+  }
+  a {
+    cursor: pointer;
+  }
+  .root-tree {
+    padding: 0;
+    margin: 0;
+    background-size: auto 36px;
+    min-width: 100%;
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAkCAMAAAB/qqA+AAAABlBMVEUAAAAAAAClZ7nPAAAAAnRSTlMNAMM9s3UAAAAXSURBVHjajcEBAQAAAIKg/H/aCQZ70AUBjAATb6YPDgAAAABJRU5ErkJggg==) left top repeat;
+  }
+  .root-icon {
+    -webkit-filter: grayscale(100%);
+  }
+  .root-tree > li {
+    background: none;
+  }
+  .tree-last {
+    background: none;
+  }
+  .tree-open {
+    background-position: -135px -7px;
+    background-image: url(/spiflash/32px.png);
+  }
+  .tree-close {
+    background-position: -103px -7px;
+    background-image: url(/spiflash/32px.png);
+  }
+  .tree-leaf {
+    background-position: -71px -7px;
+    background-image: url(/spiflash/32px.png);
+  }
+  .folder-icon {
+    background: url(/spiflash/file_sprite.png) right bottom no-repeat;
+    margin-right: 2px;
+  }
+  .file-icon {
+    background: url(/spiflash/file_sprite.png) no-repeat;
+    margin-right: 2px;
+  }
+</style>
+
+<script type="text/javascript">
+  function ajaxCall(path, success) {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function()
+    {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+        if (xhr.status === 200) {
+          if (success)
+            success(xhr.responseText);
+        } else {
+          alert('Can not load data')
+        }
+      }
+    };
+    xhr.open("GET", path, true);
+    xhr.send();
+  }
+
+  function viewTree(tree, path, jsonData) {
+    var arrayLength = jsonData.length;
+    var html = "";
+    var item;
+    var treeLastClass = "";
+    jsonData = jsonData.sort(function(a, b){
+      if(a.data_type < b.data_type) return 1;
+      if(a.data_type > b.data_type) return -1;
+      if(a.name < b.name) return -1;
+      if(a.name > b.name) return 1;
+      return 0;
+    })
+    for (var i = 0; i < arrayLength; i++) {
+      item = jsonData[i];
+      if(i == arrayLength - 1)
+        treeLastClass = " class='tree-last'"
+
+      if(item.data_type == "folder") {
+        treeClass = "tree-close";
+        icon = "folder-icon";
+      } else {
+        treeClass = "tree-leaf";
+        icon = "file-icon";
+      }
+      var itemPath = (path == "/" ? "/" : path + "/" ) + item.name;
+
+      html += "<li data_type='" + item.data_type + "' path='" + itemPath + "'" + treeLastClass + "><i class=\"tree-branch "+ treeClass +
+        "\"></i><a onclick=\"clickEntry(this);\"><i class=\"" +
+        icon + "\"></i>" + item.name + "</a></li>";
+    }
+
+    tree.innerHTML = html;
+  }
+
+  function getFolderData(entry) {
+    var treeBranch = entry.querySelector(".tree-branch");
+    if (treeBranch.className == "tree-branch tree-close") {
+      var path = entry.getAttribute("path");
+      var childTree = document.createElement("ul");
+      ajaxCall('/spiflash/filesystem.json?path=' + path,
+        function (data) {
+          console.log(data);
+          viewTree(childTree, path, JSON.parse(data));
+        }
+      );
+      entry.appendChild(childTree);
+      treeBranch.className = "tree-branch tree-open";
+    }
+    else {
+      treeBranch.className = "tree-branch tree-close";
+      var childTree = entry.querySelector("ul");
+      childTree.remove();
+    }
+  }
+
+  function getFileData(entry) {
+    var path = entry.getAttribute("path");
+    ajaxCall('/spiflash/filesystem.json?path=' + path,
+      function (data) {
+        data = data.replace(/(?:\r\n|\r|\n)/g, '<br />');
+        document.getElementById("data").innerHTML = "<div class='file-url'>" + path + "</div><div>" + data + "</div>";
+      }
+    );
+  }
+
+  function clickEntry(treeLink) {
+    var entry = treeLink.parentElement;
+    var dataType = entry.getAttribute("data_type");
+    if(dataType == "folder") {
+      getFolderData(entry);
+    } else {
+      getFileData(entry);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", function(event) {
+    var rootTreeLink = document.querySelector(".root-li a");
+    clickEntry(rootTreeLink);
+  });
+</script>
+
+<body>
+  <div class="header-container">
+    <div class="header">
+      SPI Flash File Browser
+    </div>
+  </div>
+  <div class="tree-container">
+    <div class="tree">
+      <ul class="root-tree">
+        <li class="root-li" data_type="folder" path="/">
+          <i class="tree-branch tree-close"></i>
+          <a onclick="clickEntry(this);"><i class="folder-icon root-icon"></i>Root</a>
+        </li>
+      </ul>
+    </div>
+    <div id="data" class="data"></div>
+  </div>
+</body>
