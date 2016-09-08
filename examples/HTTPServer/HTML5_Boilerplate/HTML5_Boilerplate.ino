@@ -79,8 +79,6 @@ uint8_t pagecount = sizeof(pages)/sizeof(HTTPPage);
 // Use the HTTP class
 AdafruitHTTPServer httpserver(pagecount);
 
-thread_info_t threadInfo[20];
-
 uint32_t visit_count = 0;
 
 /**************************************************************************/
