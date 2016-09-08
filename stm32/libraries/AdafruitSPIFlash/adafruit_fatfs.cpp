@@ -147,6 +147,31 @@ bool AdafruitFatfs::getLabel(char* label)
 
 /******************************************************************************/
 /**
+ * Check if path is existed. Root is also consider existed
+ */
+/******************************************************************************/
+bool AdafruitFatfs::exists(const char* path)
+{
+  // Root is considered as true
+  return !strcmp(path, "/") || (FR_OK == f_stat(path, NULL));
+}
+
+/******************************************************************************/
+/**
+ * Check if path is a folder
+ */
+/******************************************************************************/
+bool AdafruitFatfs::isDirectory(const char* path)
+{
+  if ( !strcmp(path, "/")  ) return true;
+
+  FileInfo finfo;
+  VERIFY( FR_OK == f_stat(path, &finfo._info) );
+  return finfo.isDirectory();
+}
+
+/******************************************************************************/
+/**
  * Open a directory in the filesystem
  */
 /******************************************************************************/

@@ -42,6 +42,7 @@
 
 #include <adafruit_feather.h>
 #include <adafruit_http_server.h>
+#include "adafruit_spiflash.h"
 #include "resources.h"
 
 #define WLAN_SSID            "yourSSID"
@@ -51,9 +52,8 @@
 #define MAX_CLIENTS          3
 
 int ledPin = PA15;
-int visit_count = 0;
 
-void info_html_generator (const char* url, const char* query, void* http_request);
+void filesystem_generator (const char* url, const char* query, void* http_request);
 void file_not_found_generator (const char* url, const char* query, void* http_request);
 
 HTTPPage pages[] = 
@@ -61,12 +61,15 @@ HTTPPage pages[] =
   HTTPPageRedirect("/", "/index.html"), // redirect root to index.html
   HTTPPage("/404.html"          , HTTP_MIME_TEXT_HTML       , file_not_found_generator ),
 
+  // Static Content
   HTTPPage("/32px.png"          , HTTP_MIME_IMAGE_PNG       , &_32px_png         ),
   HTTPPage("/adafruit_logo.png" , HTTP_MIME_IMAGE_PNG       , &adafruit_logo_png ),
   HTTPPage("/favicon.ico"       , HTTP_MIME_IMAGE_MICROSOFT , &favicon_ico       ),
   HTTPPage("/file_sprite.png"   , HTTP_MIME_IMAGE_PNG       , &file_sprite_png   ),
   HTTPPage("/index.html"        , HTTP_MIME_TEXT_HTML       , &index_html        ),
 
+  // Dynamic Content
+  HTTPPage("/filesystem.json"    , HTTP_MIME_JSON           , filesystem_generator),
 };
 
 uint8_t pagecount = sizeof(pages)/sizeof(HTTPPage);
@@ -74,57 +77,103 @@ uint8_t pagecount = sizeof(pages)/sizeof(HTTPPage);
 // Declare HTTPServer with max number of pages
 AdafruitHTTPServer httpserver(pagecount);
 
-void info_html_generator (const char* url, const char* query, void* http_request)
+/******************************************************************************/
+/**
+ * Filesytem contents such as Directory's listing or File contents.
+ *
+ * Note: When HTTP Server serving a link e.g
+ *    http://192.168.0.124/filesystem.json?path=readme.txt
+ *
+ * Link is seperated to url and query
+ *
+ * @param url           url of this page, should be "/filesystem.json"
+ * @param query         query string after '?' e.g "path=/readme.txt"
+ *
+ * @param http_request
+ */
+/******************************************************************************/
+void filesystem_generator (const char* url, const char* query, void* http_request)
 {
   (void) url;
-  (void) query;
   (void) http_request;
 
-  httpserver.print("<b>Bootloader</b> : ");
-  httpserver.print( Feather.bootloaderVersion() );
-  httpserver.print("<br>");
+  Serial.println(query);
 
-  httpserver.print("<b>WICED SDK</b> : ");
-  httpserver.print( Feather.sdkVersion() );
-  httpserver.print("<br>");
+  // JSON start bracket
+  httpserver.print("[");
 
-  httpserver.print("<b>FeatherLib</b> : ");
-  httpserver.print( Feather.firmwareVersion() );
-  httpserver.print("<br>");
+  // query must start with path=, e.g "path=myfolder/readme.txt"
+  const char* prefix = "path=";
+  if ( 0 == strncmp(query, prefix, strlen(prefix)) )
+  {   
+    const char* filepath = query + strlen(prefix);
 
-  httpserver.print("<b>Arduino API</b> : "); 
-  httpserver.print( Feather.arduinoVersion() );
-  httpserver.print("<br>");
-  httpserver.print("<br>");
+    DBG_LOCATION();
 
-  visit_count++;
-  httpserver.print("<b>visit count</b> : ");
-  httpserver.print(visit_count);
-}
+    // No path means Root
+    if(*filepath == 0) filepath = "/";
 
-void file_not_found_generator (const char* url, const char* query, void* http_request)
-{
-  (void) url;
-  (void) query;
-  (void) http_request;
+    // Check if file is existed
+    if ( SpiFlash.exists(filepath) )
+    {
+      DBG_LOCATION();
+      
+      // if directory, list its entry
+      if ( SpiFlash.isDirectory(filepath) )
+      {
+        DBG_LOCATION();
+        FatDir dir;
+        dir.open(filepath);
 
-  httpserver.print("<html><body>");
-  httpserver.print("<h1>Error 404 File Not Found!</h1>");
-  httpserver.print("<br>");
-  
-  httpserver.print("Available pages are:");
-  httpserver.print("<br>");
-  
-  httpserver.print("<ul>");
-  for(int i=0; i<pagecount; i++)
-  {
-    httpserver.print("<li>");
-    httpserver.print(pages[i].url);
-    httpserver.print("</li>");
+        bool is_first = true; // for print seperator
+
+        // Read directory's items in sequence (re-use finfo variable)
+        FileInfo finfo;
+        while( dir.read(&finfo) )
+        {
+          // Print seperator
+          if (!is_first) httpserver.print(",\r\n");
+          is_first = false;
+
+          // Send response in JSON format e.g {"name" : filename, "data_type": "folder" }
+          httpserver.print("{\"name\": \"");
+          httpserver.print(finfo.name());
+          httpserver.print("\", \"data_type\": \"");
+          httpserver.print( finfo.isDirectory() ? "folder" : "file" );
+          httpserver.print("\"}");
+        }
+
+        dir.close();
+      }
+      // if file, read its content
+      else
+      {
+        DBG_LOCATION();
+        FatFile file;
+        if ( file.open(filepath, FAT_FILE_READ) )
+        {
+          while( file.available() )
+          {
+            uint8_t buffer[64];
+            uint32_t count = file.read(buffer, 64);
+
+            // If not printable --> binary file, skip
+            if ( !isPrintable(buffer, count) )
+            {
+              httpserver.print("Binary file is currently not supported!");
+              break;
+            }
+
+            httpserver.write(buffer, count);
+          }
+        }
+        file.close();
+      }
+    }
   }
-  httpserver.print("</ul>");
-  
-  httpserver.print("</body></html>");
+
+  // JSON end bracket
+  httpserver.print("]");
 }
 
 /**************************************************************************/
@@ -139,7 +188,10 @@ void setup()
   // Wait for the USB serial to connect. Needed for native USB port only.
   while (!Serial) delay(1);
 
-  Serial.println("Simple HTTP Server Example\r\n");
+  Serial.println("HTTP Server SPI Flash File Browser Example\r\n");
+
+  // Initalize SPI Flash and FAT filesystem
+  SpiFlash.begin();
   
   // Print all software versions
   Feather.printVersions();
@@ -174,6 +226,52 @@ void loop()
 {
   togglePin(ledPin);
   delay(1000);
+}
+
+/**************************************************************************/
+/*!
+    @brief  HTTP Page 404 generator
+*/
+/**************************************************************************/
+void file_not_found_generator (const char* url, const char* query, void* http_request)
+{
+  (void) url;
+  (void) query;
+  (void) http_request;
+
+  httpserver.print("<html><body>");
+  httpserver.print("<h1>Error 404 File Not Found!</h1>");
+  httpserver.print("<br>");
+
+  httpserver.print("Available pages are:");
+  httpserver.print("<br>");
+
+  httpserver.print("<ul>");
+  for(int i=0; i<pagecount; i++)
+  {
+    httpserver.print("<li>");
+    httpserver.print(pages[i].url);
+    httpserver.print("</li>");
+  }
+  httpserver.print("</ul>");
+
+  httpserver.print("</body></html>");
+}
+
+/**************************************************************************/
+/*!
+    @brief  Check if a string is printable
+*/
+/**************************************************************************/
+bool isPrintable(uint8_t* buf, uint32_t count)
+{
+  for(uint32_t i=0; i<count; i++)
+  {
+    int ch = (int) buf[i];
+    if ( !isprint(ch) && !isspace(ch) ) return false;
+  }
+
+  return true;
 }
 
 /**************************************************************************/

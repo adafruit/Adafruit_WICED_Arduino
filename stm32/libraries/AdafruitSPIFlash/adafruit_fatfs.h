@@ -69,10 +69,14 @@ public:
   bool setLabel(const char* label);
   bool getLabel(      char* label);
 
+  bool exists   (const char* path);
+
   // Directory
   FatDir openDir(const char* path);
   bool   openDir(const char* path, FatDir* dir);
   bool   closeDir(FatDir* dir);
+
+  bool   isDirectory(const char* path);
 
   bool   cd(const char* path);
   bool   cwd(char* buffer, uint32_t bufsize);

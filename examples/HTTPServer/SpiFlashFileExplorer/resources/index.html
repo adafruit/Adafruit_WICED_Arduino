@@ -11,7 +11,7 @@
   .header {
     width: 1000px;
     margin: auto;
-    background-image: url(/spiflash/adafruit_logo.png);
+    background-image: url(/adafruit_logo.png);
     background-repeat: no-repeat;
     background-size: 172px 60px;
     color: #00a7e9;
@@ -55,7 +55,7 @@
   li {
     background-position: -295px -7px;
     background-repeat: repeat-y;
-    background-image: url(/spiflash/32px.png);
+    background-image: url(/32px.png);
   }
   i {
     width: 18px;
@@ -85,22 +85,22 @@
   }
   .tree-open {
     background-position: -135px -7px;
-    background-image: url(/spiflash/32px.png);
+    background-image: url(/32px.png);
   }
   .tree-close {
     background-position: -103px -7px;
-    background-image: url(/spiflash/32px.png);
+    background-image: url(/32px.png);
   }
   .tree-leaf {
     background-position: -71px -7px;
-    background-image: url(/spiflash/32px.png);
+    background-image: url(/32px.png);
   }
   .folder-icon {
-    background: url(/spiflash/file_sprite.png) right bottom no-repeat;
+    background: url(/file_sprite.png) right bottom no-repeat;
     margin-right: 2px;
   }
   .file-icon {
-    background: url(/spiflash/file_sprite.png) no-repeat;
+    background: url(/file_sprite.png) no-repeat;
     margin-right: 2px;
   }
 </style>
@@ -162,7 +162,7 @@
     if (treeBranch.className == "tree-branch tree-close") {
       var path = entry.getAttribute("path");
       var childTree = document.createElement("ul");
-      ajaxCall('/spiflash/filesystem.json?path=' + path,
+      ajaxCall('/filesystem.json?path=' + path,
         function (data) {
           console.log(data);
           viewTree(childTree, path, JSON.parse(data));
@@ -180,7 +180,7 @@
 
   function getFileData(entry) {
     var path = entry.getAttribute("path");
-    ajaxCall('/spiflash/filesystem.json?path=' + path,
+    ajaxCall('/filesystem.json?path=' + path,
       function (data) {
         data = data.replace(/(?:\r\n|\r|\n)/g, '<br />');
         document.getElementById("data").innerHTML = "<div class='file-url'>" + path + "</div><div>" + data + "</div>";
