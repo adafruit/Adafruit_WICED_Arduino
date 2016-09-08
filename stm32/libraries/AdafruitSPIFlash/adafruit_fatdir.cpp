@@ -123,6 +123,6 @@ FileInfo FatDir::read(void)
 /******************************************************************************/
 bool FatDir::rewind(void)
 {
-  return FR_OK == f_readdir(&_dir, NULL);
+  return FR_OK == f_rewinddir(&_dir);
 }
 

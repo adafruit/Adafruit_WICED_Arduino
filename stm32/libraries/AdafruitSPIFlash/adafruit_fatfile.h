@@ -54,6 +54,11 @@ public:
   bool open(const char* path, uint8_t mode = FAT_FILE_READ);
   bool close(void);
 
+  uint32_t tell       (void);
+  bool     seek       (uint32_t offset);
+  bool     seekForward(uint32_t offset);
+  bool     seekBackward(uint32_t offset);
+
   // Stream API
   virtual int       read       ( void );
   virtual int       read       ( uint8_t * buf, size_t size );

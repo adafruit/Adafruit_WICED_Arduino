@@ -83,12 +83,8 @@ bool FatFile::close(void)
 /******************************************************************************/
 int FatFile::read( void )
 {
-  UINT count = 0;
   uint8_t data;
-
-  (void) f_read(&_file, &data, 1, &count);
-
-  return (count == 1) ? data : EOF;
+  return (this->read(&data, 1) == 1) ? data : EOF;
 }
 
 /******************************************************************************/
@@ -103,26 +99,104 @@ int FatFile::read( uint8_t * buf, size_t size )
   return count;
 }
 
+/******************************************************************************/
+/**
+ * Write a byte to file
+ */
+/******************************************************************************/
 size_t FatFile::write( uint8_t b )
 {
-
+  return this->write(&b, 1);
 }
 
+/******************************************************************************/
+/**
+ * Write data to file
+ */
+/******************************************************************************/
 size_t FatFile::write( const uint8_t *content, size_t len )
 {
-
+  UINT count = 0;
+  (void) f_write(&_file, content, len, &count);
+  return count;
 }
 
+/******************************************************************************/
+/**
+ * Get remaining bytes
+ */
+/******************************************************************************/
 int FatFile::available( void )
 {
   return f_size(&_file) - f_tell(&_file);
 }
 
-int FatFile::peek( void )
+/******************************************************************************/
+/**
+ * Get the current read/write pointer
+ * @param offset  offset to current position
+ * @return true if successful
+ */
+/******************************************************************************/
+uint32_t FatFile::tell(void)
 {
-
+  return f_tell(&_file);
 }
 
+/******************************************************************************/
+/**
+ * Move read/write pointer to absolute offset
+ * @param offset  offset to top of the file
+ * @return true if successful
+ */
+/******************************************************************************/
+bool FatFile::seek(uint32_t offset)
+{
+  return FR_OK == f_lseek(&_file, offset);
+}
+
+/******************************************************************************/
+/**
+ * Move read/write pointer forward
+ * @param offset  offset to current position
+ * @return true if successful
+ */
+/******************************************************************************/
+bool FatFile::seekForward(uint32_t offset)
+{
+  return FR_OK == f_lseek(&_file, tell() + offset);
+}
+
+/******************************************************************************/
+/**
+ * Move read/write pointer backward
+ * @param offset  offset to current position
+ * @return true if successful
+ */
+/******************************************************************************/
+bool FatFile::seekBackward(uint32_t offset)
+{
+  return FR_OK == f_lseek(&_file, tell() - offset);
+}
+
+
+/******************************************************************************/
+/**
+ * Get a byte without removing it
+ */
+/******************************************************************************/
+int FatFile::peek( void )
+{
+  int ch = read();
+  seekBackward(1);
+  return ch;
+}
+
+/******************************************************************************/
+/**
+ * Flush any caching
+ */
+/******************************************************************************/
 void FatFile::flush( void )
 {
 
