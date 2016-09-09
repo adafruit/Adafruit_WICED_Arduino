@@ -32,7 +32,7 @@ RESOURCE_H_TEMPLATE = """\
 #include "http_common.h"
 {includes}
 
-/* HTTPPage collect from generated headers
+/* HTTPPage collection from generated headers
 
 {http_pages}
 
