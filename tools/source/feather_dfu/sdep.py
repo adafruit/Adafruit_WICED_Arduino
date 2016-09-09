@@ -65,6 +65,9 @@ else:
 
 
 class Sdep(object):
+    def __init__(self):
+        self.msc_available = False
+
     def enter_dfu(self):
         # skip if already in DFU mode
         if usb.core.find(idVendor=USB_VID, idProduct=USB_DFU_PID, backend=backend) is None:
@@ -77,8 +80,6 @@ class Sdep(object):
     def syscommand(self, cmd_id):
         if cmd_id > SDEP_CMD_SFLASH_ERASEALL:
             return
-
-        self.msc_available = False
 
         # sys command will try to run system command with normal mode USB_VID
         # if device is not found, it will try to run with dfu mode USB_DFU_PID
@@ -100,8 +101,6 @@ class Sdep(object):
             return self.get_response(cmd_id, usbdev)
 
     def execute(self, cmd_id, data=None):
-        self.msc_available = False
-
         # send SDEP command via Control Transfer
         # find our device
         usbdev = usb.core.find(idVendor=USB_VID, idProduct=USB_PID)
