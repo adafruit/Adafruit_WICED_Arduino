@@ -57,6 +57,8 @@ private:
   FATFS* _fs;
 
 public:
+  uint32_t error;
+
   AdafruitFatfs();
 
   void eraseAll(void);
@@ -69,21 +71,37 @@ public:
   bool setLabel(const char* label);
   bool getLabel(      char* label);
 
-  bool exists   (const char* path);
 
   // Directory
   FatDir openDir(const char* path);
   bool   openDir(const char* path, FatDir* dir);
   bool   closeDir(FatDir* dir);
 
+  // Test if a file/folder exists
+  bool   exists   (const char* path);
+
+  // Test if path is directory
   bool   isDirectory(const char* path);
 
-  bool   cd(const char* path);
-  bool   cwd(char* buffer, uint32_t bufsize);
+  // Get file Information
+  bool   fileInfo(const char* path, FileInfo* finfo);
 
-  // File
-  bool     fileInfo(const char* path, FileInfo* finfo);
-  FileInfo fileInfo(const char* path);
+  // Change current working directory
+  bool cd(const char* path);
+
+  // Get absolute path of current working directory
+  bool cwd(char* buffer, uint32_t bufsize);
+
+  // Make a directory (and its parents if not existed) a.k.a mkdir -p
+  bool mkdir(const char* path);
+
+  // Remove a non-readonly file or an empty directory
+  bool remove(const char* path);
+  bool rm(const char* path) { return remove(path); }
+
+  // Rename or Move a file/folder
+  bool rename(const char* path_old, const char* path_new);
+  bool mv(const char* path_old, const char* path_new) { return rename(path_old, path_new); }
 };
 
 class FileInfo

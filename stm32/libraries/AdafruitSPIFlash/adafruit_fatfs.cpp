@@ -147,6 +147,41 @@ bool AdafruitFatfs::getLabel(char* label)
 
 /******************************************************************************/
 /**
+ * Open a directory in the filesystem
+ */
+/******************************************************************************/
+FatDir AdafruitFatfs::openDir(const char *path)
+{
+  FatDir fd;
+  f_opendir(&fd._dir, path);
+
+  return fd;
+}
+
+/******************************************************************************/
+/**
+ * Open a directory in the filesystem
+ */
+/******************************************************************************/
+bool AdafruitFatfs::openDir(const char* path, FatDir* dir)
+{
+  error = f_opendir(&dir->_dir, path);
+  return FR_OK == error;
+}
+
+/******************************************************************************/
+/**
+ * Close a opened directory
+ */
+/******************************************************************************/
+bool AdafruitFatfs::closeDir(FatDir* dir)
+{
+  error = f_closedir(&dir->_dir);
+  return FR_OK == error;
+}
+
+/******************************************************************************/
+/**
  * Check if path is existed. Root is also consider existed
  */
 /******************************************************************************/
@@ -172,59 +207,6 @@ bool AdafruitFatfs::isDirectory(const char* path)
 
 /******************************************************************************/
 /**
- * Open a directory in the filesystem
- */
-/******************************************************************************/
-FatDir AdafruitFatfs::openDir(const char *path)
-{
-  FatDir fd;
-  f_opendir(&fd._dir, path);
-
-  return fd;
-}
-
-/******************************************************************************/
-/**
- * Open a directory in the filesystem
- */
-/******************************************************************************/
-bool AdafruitFatfs::openDir(const char* path, FatDir* dir)
-{
-  return FR_OK == f_opendir(&dir->_dir, path);
-}
-
-/******************************************************************************/
-/**
- * Close a opened directory
- */
-/******************************************************************************/
-bool AdafruitFatfs::closeDir(FatDir* dir)
-{
-  return FR_OK == f_closedir(&dir->_dir);
-}
-
-/******************************************************************************/
-/**
- * Change current directory in filesystem
- */
-/******************************************************************************/
-bool AdafruitFatfs::cd(const char* path)
-{
-  return FR_OK == f_chdir(path);
-}
-
-/******************************************************************************/
-/**
- * Get current working directory in absolute path
- */
-/******************************************************************************/
-bool AdafruitFatfs::cwd(char* buffer, uint32_t bufsize)
-{
-  return FR_OK == f_getcwd(buffer, (UINT) bufsize);
-}
-
-/******************************************************************************/
-/**
  * Get a File Information
  */
 /******************************************************************************/
@@ -235,12 +217,73 @@ bool AdafruitFatfs::fileInfo(const char* path, FileInfo* finfo)
 
 /******************************************************************************/
 /**
- * Get a File Information
+ * Change current directory in filesystem
  */
 /******************************************************************************/
-FileInfo AdafruitFatfs::fileInfo(const char* path)
+bool AdafruitFatfs::cd(const char* path)
 {
-  FileInfo finfo;
-  (void) f_stat(path, &finfo._info);
-  return finfo;
+  error = f_chdir(path);
+  return FR_OK == error;
 }
+
+/******************************************************************************/
+/**
+ * Get current working directory in absolute path
+ */
+/******************************************************************************/
+bool AdafruitFatfs::cwd(char* buffer, uint32_t bufsize)
+{
+  error = f_getcwd(buffer, (UINT) bufsize);
+  return FR_OK == error;
+}
+
+/******************************************************************************/
+/**
+ * Create specified directory, create parent directory if not existed, much like
+ *  mkdir -p path
+ * @param path  directory path
+ * @return true if successful
+ */
+/******************************************************************************/
+bool AdafruitFatfs::mkdir(const char* path)
+{
+  error = f_mkdir(path);
+  return FR_OK == error;
+}
+
+/******************************************************************************/
+/**
+ *
+ *  If condition of the object to be removed is applicable to the following terms,
+ *  the function will be rejected.
+ *    - The file/sub-directory must not have read-only attribute (AM_RDO),
+ *      or the function will be rejected with FR_DENIED.
+ *    - The sub-directory must be empty and must not be current directory,
+ *      or the function will be rejected with FR_DENIED.
+ *    - The file/sub-directory must not be opened, or the FAT volume can be
+ *    collapsed. It will be rejected safely when file lock function is enabled.
+ *
+ * @param path
+ * @return true if successful
+ */
+/******************************************************************************/
+bool AdafruitFatfs::remove(const char* path)
+{
+  error = f_unlink(path);
+  return (FR_OK == error);
+}
+
+/******************************************************************************/
+/**
+ * Rename or Move a file/folder
+ * @param path_old
+ * @param path_new
+ * @return true if successful
+ */
+/******************************************************************************/
+bool AdafruitFatfs::rename(const char* path_old, const char* path_new)
+{
+  error = f_rename(path_old, path_new);
+  return (FR_OK == error);
+}
+
