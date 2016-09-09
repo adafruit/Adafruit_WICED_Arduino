@@ -12,31 +12,30 @@
  any redistribution
 *********************************************************************/
 
-/* This example use the AdafruitHTTP class to create a file browser for
- * SPI Flash file system
- */
-/* This example use AdafruitHTTP to to create a file browser for
- * SPI Flash file system. Web's design are included in resources folder.
+/* This example uses the AdafruitHTTP class to create a file browser for
+ * the SPI flash file system. The sketch assumes the SPI flash is enabled
+ * by soldering the optional solder jumper for SPI flash 'closed'.
  *
- * - index.html: mainpage import data from thread.csv & heap.csv and use D3
- *               to draw charts.
- * - 32px.png:
- * - adafruit_logo.png :
- * - file_sprite.png:
- * - favicon.ico: favicon icon of Adafruit
+ * HTTP resources used in this example are included in resources folder.
  *
- * To convert web design files (html, jpg etc..) into C header, please use
- * included tools/pyresource. E.g command to convert all the files in resources
- * folder for this sketch is
+ * To convert static web files (html, jpg etc..) into C headers, use the
+ * included tools/pyresource utility. 
+ * 
+ * For example: To convert all the files in './resources' run:
+ *
  *    $ python ../../../tools/pyresource/pyresource.py resources
  *
- * pyresource will convert each file to a header file with '.' & '-' is
- * replaced by '_' . Each folder separation '/' is repalce by '_dir_'.
- *    images/logo.png --> images_dir_logo_png.h
- * The HTTPResource variable is images_dir_logo_png
+ * pyresource will convert each file to a header file where '.' & '-' are
+ * replaced by '_'. Each folder separator ('/') is repalce by '_dir_':
  *
- * For your convenience, a master header named resources.h is also generated
- * and include all of generated header file. Your sketch only need to
+ *    images/logo.png --> images_dir_logo_png.h
+ *
+ * The corresponding HTTPResource variable is 'images_dir_logo_png'
+ *
+ * For your convenience, a master header file named resources.h is also
+ * generated and includes all of the generated header files. You only
+ * need to include this one file via:
+ *
  *      #include "resources.h
  */
 
@@ -79,10 +78,9 @@ AdafruitHTTPServer httpserver(pagecount);
 
 /******************************************************************************/
 /**
- * Filesytem contents such as Directory's listing or File contents.
+ * Filesytem contents such as directory listings or file contents.
  *
- * Note: When HTTP Server serving a link e.g
- *    http://192.168.0.124/filesystem.json?path=readme.txt
+ * Ex use: http://192.168.0.124/filesystem.json?path=readme.txt
  *
  * Link is seperated to url and query
  *
@@ -106,21 +104,21 @@ void filesystem_generator (const char* url, const char* query, void* http_reques
   {   
     const char* filepath = query + strlen(prefix);
     
-    // No path means Root
+    // No path means root level access
     if(*filepath == 0) filepath = "/";
 
-    // Check if file is existed
+    // Check if the file exists
     if ( SpiFlash.exists(filepath) )
     { 
-      // if directory, list its entry
+      // If it's a directory, list the entry
       if ( SpiFlash.isDirectory(filepath) )
       {
         FatDir dir;
         dir.open(filepath);
 
-        bool is_first = true; // for print seperator
+        bool is_first = true; // Print a seperator
 
-        // Read directory's items in sequence (re-use finfo variable)
+        // Read directory items in sequence (re-use finfo variable)
         FileInfo finfo;
         while( dir.read(&finfo) )
         {
@@ -138,7 +136,7 @@ void filesystem_generator (const char* url, const char* query, void* http_reques
 
         dir.close();
       }
-      // if file, read its content
+      // if this is a file, read the content
       else
       {
         FatFile file;
@@ -169,7 +167,7 @@ void filesystem_generator (const char* url, const char* query, void* http_reques
 
 /**************************************************************************/
 /*!
-    @brief  The setup function runs once when the board comes out of reset
+    @brief  This setup function runs once when the board comes out of reset
 */
 /**************************************************************************/
 void setup()
