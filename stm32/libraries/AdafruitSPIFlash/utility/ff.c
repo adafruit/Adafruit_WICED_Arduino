@@ -861,6 +861,19 @@ void clear_lock (	/* Clear lock entries of the volume */
 #endif	/* _FS_LOCK != 0 */
 
 
+/******************************************************************************/
+/**
+ * ADAFRUIT MODIFICATION
+ * Callback automatically fired by featherlib when it detects the last read sector
+ * from Arduino Fatfs is written by USB MSC
+ * @param sector  the sector number that is changed
+ */
+/******************************************************************************/
+static int32_t _sflash_modified_sector = -1;
+void sflash_sector_modified_cb(uint32_t sector)
+{
+  _sflash_modified_sector = sector;
+}
 
 /*-----------------------------------------------------------------------*/
 /* Move/Flush disk access window in the file system object               */
@@ -916,10 +929,19 @@ FRESULT move_window (	/* Returns FR_OK or FR_DISK_ERROR */
 			fs->winsect = sector;
 		}
 	}
+	// ADAFRUIT Modification to reflect SPIFlash changed by USB MSC
+	else if (sector == _sflash_modified_sector)
+	{
+	  _sflash_modified_sector = -1; // invalidate modified sector
+
+	  // OOoppps, code duplicated, but who cares !!!!!
+	  if (disk_read(fs->drv, fs->win, sector, 1) != RES_OK) {
+	    fs->winsect = 0xFFFFFFFF;	/* Invalidate window if data is not reliable */
+	    res = FR_DISK_ERR;
+	  }
+	}
 	return res;
 }
-
-
 
 
 #if !_FS_READONLY

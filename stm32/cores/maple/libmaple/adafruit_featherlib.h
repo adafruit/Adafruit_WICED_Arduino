@@ -79,7 +79,8 @@ typedef struct ATTR_ALIGNED(512)
   // 128 - 191
   uint32_t RESERVED_;
   void     (*cdc_serial_event_cb)(uint32_t eid, void* p_data);
-  uint32_t RESERVED_[2];
+  void     (*sflash_sector_modified_cb)(uint32_t sector);
+  uint32_t RESERVED_;
 
   uint32_t RESERVED_[12];
 

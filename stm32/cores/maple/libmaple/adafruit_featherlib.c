@@ -45,6 +45,7 @@
 //--------------------------------------------------------------------+
 extern void __attribute__((noreturn)) start_c(void);
 extern void USBSerial_callback(uint32_t eid, void* p_data);
+extern void sflash_sector_modified_cb(uint32_t sector) ATTR_WEAK;
 
 //extern void adafruit_wifi_connect_callback(void);
 extern void adafruit_wifi_disconnect_callback(void);
@@ -69,6 +70,7 @@ ATTR_USED adafruit_arduino_t const adafruit_arduino =
     .startup             = start_c,
 
     .cdc_serial_event_cb = USBSerial_callback,
+    .sflash_sector_modified_cb = sflash_sector_modified_cb,
 
     // wifi
 //    .wifi_connect_callback    = adafruit_wifi_connect_callback,
