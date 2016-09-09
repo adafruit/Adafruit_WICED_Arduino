@@ -141,33 +141,31 @@ void filesystem_generator (const char* url, const char* query, void* http_reques
       // if file, read its content
       else
       {
-        httpserver.print("File viewer is not supported yet");
-//        DBG_LOCATION();
-//        FatFile file;
-//        if ( file.open(filepath, FAT_FILE_READ) )
-//        {
-//          DBG_LOCATION();
-//          uint8_t* buffer = (uint8_t*) malloc(1024);
-//          
-//          while( file.available() )
-//          {
-//            DBG_LOCATION();
-//            uint32_t count = file.read(buffer, 1024);
-//
-//            // If not printable --> binary file, skip
-//            if ( !isPrintable(buffer, count) )
-//            {
-//              DBG_LOCATION();
-//              httpserver.print("Binary file is currently not supported!");
-//              break;
-//            }
-//            Serial.write(buffer,count);
-//            httpserver.write(buffer, count);
-//          }
-//
-//          free(buffer);
-//        }
-//        file.close();
+        //httpserver.print("File viewer is not supported yet");
+
+        FatFile file;
+        if ( file.open(filepath, FAT_FILE_READ) )
+        {
+          // Avoid declare variable with large memory inside callback
+          // since it could overflow the stack. Use malloc and free instead
+          uint8_t* buffer = (uint8_t*) malloc(1024);
+          
+          while( file.available() )
+          {
+            uint32_t count = file.read(buffer, 1024);
+
+            // If not printable --> binary file, skip
+            if ( !isPrintable(buffer, count) )
+            {
+              httpserver.print("Binary file is currently not supported!");
+              break;
+            }
+            httpserver.write(buffer, count);
+          }
+
+          free(buffer);
+        }
+        file.close();
       }
     }
   }
