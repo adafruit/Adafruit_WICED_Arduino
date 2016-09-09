@@ -78,6 +78,8 @@ class Sdep(object):
         if cmd_id > SDEP_CMD_SFLASH_ERASEALL:
             return
 
+        self.msc_available = False
+
         # sys command will try to run system command with normal mode USB_VID
         # if device is not found, it will try to run with dfu mode USB_DFU_PID
         usbdev = usb.core.find(idVendor=USB_VID, idProduct=USB_PID, backend=backend)
@@ -89,6 +91,8 @@ class Sdep(object):
                 if usbdev is None:
                     print "Unable to connect to feather board"
                     sys.exit(1)
+            else:
+                self.msc_available = True
         usbdev.ctrl_transfer( 0x40, SDEP_MSGTYPE_COMMAND, cmd_id)
 
         # in system command, only info has response data
@@ -96,6 +100,8 @@ class Sdep(object):
             return self.get_response(cmd_id, usbdev)
 
     def execute(self, cmd_id, data=None):
+        self.msc_available = False
+
         # send SDEP command via Control Transfer
         # find our device
         usbdev = usb.core.find(idVendor=USB_VID, idProduct=USB_PID)
@@ -105,6 +111,8 @@ class Sdep(object):
             if usbdev is None:
                 print "Unable to connect to feather board"
                 sys.exit(1)
+            else:
+                self.msc_available = True
 
         # Send command phase
         if data is None:

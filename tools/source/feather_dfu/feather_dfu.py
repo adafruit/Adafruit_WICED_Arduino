@@ -17,6 +17,8 @@ featherlib_addr = 0x08010000
 # Global state:
 dfu_util_path = None
 
+msc_extra_delay = 2.5
+
 
 # Use dfu_util to download a .bin file to the hardware.
 # Must specify the path to dfu_util, the path to a .bin file to upload, and the
@@ -32,7 +34,8 @@ def dfu_download_bin(dfu_util, binfile, address):
                     '-s', '0x{0:08X}:leave'.format(address),
                     '-D', binfile])
     # delay a few seconds since WICED USB enumeration takes time with Dual CDC + MSC
-    time.sleep(2.5)
+    if sdep.msc_available:
+        time.sleep(msc_extra_delay)
 
 
 @click.group()
@@ -47,6 +50,8 @@ def cli(dfu_util):
 def reboot():
     """Perform a reboot/reset (ATZ) of the board."""
     sdep.reboot()
+    if sdep.msc_available:
+        time.sleep(msc_extra_delay)
 
 @cli.command()
 def enter_dfu():
@@ -57,6 +62,8 @@ def enter_dfu():
 def factory_reset():
     """Perform a factory reset of the board."""
     sdep.syscommand(SDEP_CMD_FACTORYRESET)
+    if sdep.msc_available:
+        time.sleep(msc_extra_delay)
 
 @cli.command()
 def nvm_reset():
@@ -81,6 +88,8 @@ def info():
 def featherlib_upgrade(binfile):
     """Program a .bin file to the Featherlib firmware location."""
     dfu_download_bin(dfu_util_path, binfile, featherlib_addr)
+    if sdep.msc_available:
+        time.sleep(msc_extra_delay)
 
 @cli.command()
 @click.argument('binfile',
