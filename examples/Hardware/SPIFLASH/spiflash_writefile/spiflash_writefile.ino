@@ -15,10 +15,10 @@
 #include <adafruit_feather.h>
 #include "adafruit_spiflash.h"
 
-/* This example use SpiFlash create and write to file
+/* This example uses Spi flash and creates/writes to a file
  */
 
-// the setup function runs once when you press reset or power the board
+// The setup function runs once when you press reset or power the board
 void setup() 
 {
   Serial.begin(115200);
@@ -41,7 +41,7 @@ void setup()
 // the loop function runs over and over again forever
 void loop() 
 {
-  // Waiting until there is any user input and echo
+  // Wait until there is some user input and then echo the data
   char* input = getUserInput();
   Serial.println(input);
 
@@ -53,7 +53,7 @@ void loop()
   {
     Serial.print(input);
     Serial.println(" file created");  
-    Serial.print("Enter file contents or 'exit' to close: ");
+    Serial.print("Enter the file contents or type 'exit' to close the file: ");
 
     // Get file contents
     input = getUserInput();
@@ -70,7 +70,8 @@ void loop()
 
       input = getUserInput();
     }
-    
+
+    Serial.println("Closing the file");
     file.close();
   }
 
@@ -78,7 +79,7 @@ void loop()
   printRootDir();
 
   Serial.println();
-  Serial.print("Enter Filename to create or append: ");
+  Serial.print("Enter filename to create or append to: ");
 }
 
 /**************************************************************************/
