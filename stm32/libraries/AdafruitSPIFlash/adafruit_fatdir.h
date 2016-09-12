@@ -49,6 +49,8 @@ private:
   DIR _dir;
 
 public:
+  uint32_t error;
+
   FatDir(void);
   FatDir(const char* path);
 
@@ -58,8 +60,6 @@ public:
   bool close(void);
 
   bool read(FileInfo* finfo);
-  FileInfo read(void);
-
   bool rewind(void);
 };
 

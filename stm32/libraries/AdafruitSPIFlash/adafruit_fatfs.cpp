@@ -70,6 +70,9 @@ void AdafruitFatfs::eraseAll(void)
 
   AdafruitSDEP sdep;
   sdep.sdep(SDEP_CMD_SFLASH_ERASEALL, 0, NULL, NULL, NULL);
+
+  // Notify PC Host that filesystem has changed
+  FEATHERLIB->sdep_execute(SDEP_CMD_USBMSC_FORCE_REFRESH, 0, NULL, NULL, NULL);
 }
 
 /******************************************************************************/
@@ -80,10 +83,15 @@ void AdafruitFatfs::eraseAll(void)
 bool AdafruitFatfs::mkfs(void)
 {
   void* workbuf = malloc(_MAX_SS);
-  FRESULT result = f_mkfs("", FM_FAT | FM_SFD, _MAX_SS, workbuf, _MAX_SS);
+  error = f_mkfs("", FM_FAT | FM_SFD, _MAX_SS, workbuf, _MAX_SS);
   free(workbuf);
 
-  return (FR_OK == result);
+  VERIFY(FR_OK == error);
+
+  // Notify PC Host that filesystem has changed
+  FEATHERLIB->sdep_execute(SDEP_CMD_USBMSC_FORCE_REFRESH, 0, NULL, NULL, NULL);
+
+  return true;
 }
 
 /******************************************************************************/
@@ -96,10 +104,10 @@ bool AdafruitFatfs::begin(void)
   _fs = malloc_type(FATFS);
 
   // Mount fat filessystem
-  FRESULT status = f_mount(_fs, "", 1);
+  error = f_mount(_fs, "", 1);
 
   // If FileSystem is not available, make one
-  if ( FR_NO_FILESYSTEM == status )
+  if ( FR_NO_FILESYSTEM == error )
   {
     VERIFY ( this->mkfs() );
     setLabel(VOLUME_LABEL);
@@ -110,7 +118,7 @@ bool AdafruitFatfs::begin(void)
     readme.close();
   }else
   {
-    return FR_OK == status;
+    return FR_OK == error;
   }
 }
 
@@ -132,7 +140,14 @@ bool AdafruitFatfs::stop(void)
 /******************************************************************************/
 bool AdafruitFatfs::setLabel(const char* label)
 {
-  return FR_OK == f_setlabel(label);
+  error = f_setlabel(label);
+
+  VERIFY(FR_OK == error);
+
+  // Notify PC Host that filesystem has changed
+  FEATHERLIB->sdep_execute(SDEP_CMD_USBMSC_FORCE_REFRESH, 0, NULL, NULL, NULL);
+
+  return true;
 }
 
 /******************************************************************************/
@@ -142,7 +157,8 @@ bool AdafruitFatfs::setLabel(const char* label)
 /******************************************************************************/
 bool AdafruitFatfs::getLabel(char* label)
 {
-  return FR_OK == f_getlabel(NULL, label, NULL);
+  error = f_getlabel(NULL, label, NULL);
+  return FR_OK == error;
 }
 
 /******************************************************************************/
@@ -153,7 +169,7 @@ bool AdafruitFatfs::getLabel(char* label)
 FatDir AdafruitFatfs::openDir(const char *path)
 {
   FatDir fd;
-  f_opendir(&fd._dir, path);
+  error = f_opendir(&fd._dir, path);
 
   return fd;
 }
@@ -188,7 +204,10 @@ bool AdafruitFatfs::closeDir(FatDir* dir)
 bool AdafruitFatfs::exists(const char* path)
 {
   // Root is considered as true
-  return !strcmp(path, "/") || (FR_OK == f_stat(path, NULL));
+  if ( !strcmp(path, "/") ) return true;
+
+  error = f_stat(path, NULL);
+  return FR_OK == error;
 }
 
 /******************************************************************************/
@@ -201,7 +220,8 @@ bool AdafruitFatfs::isDirectory(const char* path)
   if ( !strcmp(path, "/")  ) return true;
 
   FileInfo finfo;
-  VERIFY( FR_OK == f_stat(path, &finfo._info) );
+  error = f_stat(path, &finfo._info);
+  VERIFY( FR_OK == error );
   return finfo.isDirectory();
 }
 
@@ -212,7 +232,8 @@ bool AdafruitFatfs::isDirectory(const char* path)
 /******************************************************************************/
 bool AdafruitFatfs::fileInfo(const char* path, FileInfo* finfo)
 {
-  return FR_OK == f_stat(path, &finfo->_info);
+  error = f_stat(path, &finfo->_info);
+  return FR_OK == error;
 }
 
 /******************************************************************************/
@@ -248,7 +269,13 @@ bool AdafruitFatfs::cwd(char* buffer, uint32_t bufsize)
 bool AdafruitFatfs::mkdir(const char* path)
 {
   error = f_mkdir(path);
-  return FR_OK == error;
+
+  VERIFY(FR_OK == error);
+
+  // Notify PC Host that filesystem has changed
+  FEATHERLIB->sdep_execute(SDEP_CMD_USBMSC_FORCE_REFRESH, 0, NULL, NULL, NULL);
+
+  return true;
 }
 
 /******************************************************************************/
@@ -270,7 +297,13 @@ bool AdafruitFatfs::mkdir(const char* path)
 bool AdafruitFatfs::remove(const char* path)
 {
   error = f_unlink(path);
-  return (FR_OK == error);
+
+  VERIFY(FR_OK == error);
+
+  // Notify PC Host that filesystem has changed
+  FEATHERLIB->sdep_execute(SDEP_CMD_USBMSC_FORCE_REFRESH, 0, NULL, NULL, NULL);
+
+  return true;
 }
 
 /******************************************************************************/
@@ -284,6 +317,11 @@ bool AdafruitFatfs::remove(const char* path)
 bool AdafruitFatfs::rename(const char* path_old, const char* path_new)
 {
   error = f_rename(path_old, path_new);
-  return (FR_OK == error);
+  VERIFY(FR_OK == error);
+
+  // Notify PC Host that filesystem has changed
+  FEATHERLIB->sdep_execute(SDEP_CMD_USBMSC_FORCE_REFRESH, 0, NULL, NULL, NULL);
+
+  return true;
 }
 

@@ -43,6 +43,7 @@
 /******************************************************************************/
 FatDir::FatDir(void)
 {
+  error = FR_OK;
   varclr(_dir);
 }
 
@@ -53,6 +54,7 @@ FatDir::FatDir(void)
 /******************************************************************************/
 FatDir::FatDir(const char* path)
 {
+  error = FR_OK;
   this->open(path);
 }
 
@@ -64,7 +66,8 @@ FatDir::FatDir(const char* path)
 /******************************************************************************/
 bool FatDir::open(const char* path)
 {
-  return FR_OK == f_opendir(&_dir, path);
+  error = f_opendir(&_dir, path);
+  return FR_OK == error;
 }
 
 /******************************************************************************/
@@ -75,7 +78,8 @@ bool FatDir::open(const char* path)
 /******************************************************************************/
 bool FatDir::close(void)
 {
-  return FR_OK == f_closedir(&_dir);
+  error = f_closedir(&_dir);
+  return FR_OK == error;
 }
 
 /******************************************************************************/
@@ -99,20 +103,8 @@ bool FatDir::valid(void)
 /******************************************************************************/
 bool FatDir::read(FileInfo* finfo)
 {
-  return (FR_OK == f_readdir(&_dir, &finfo->_info)) && (finfo->name()[0] != 0);
-}
-
-/******************************************************************************/
-/**
- * Read File Entry Information in sequence
- * @return File Information object
- */
-/******************************************************************************/
-FileInfo FatDir::read(void)
-{
-  FileInfo entry;
-  f_readdir(&_dir, &entry._info);
-  return entry;
+  error = f_readdir(&_dir, &finfo->_info);
+  return (FR_OK == error) && (finfo->name()[0] != 0);
 }
 
 /******************************************************************************/
@@ -123,6 +115,7 @@ FileInfo FatDir::read(void)
 /******************************************************************************/
 bool FatDir::rewind(void)
 {
-  return FR_OK == f_rewinddir(&_dir);
+  error = f_rewinddir(&_dir);
+  return FR_OK == error;
 }
 
