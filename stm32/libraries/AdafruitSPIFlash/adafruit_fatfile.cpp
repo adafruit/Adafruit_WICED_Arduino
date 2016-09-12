@@ -43,6 +43,7 @@
 /******************************************************************************/
 FatFile::FatFile(void)
 {
+  error = FR_OK;
   varclr(_file);
 }
 
@@ -53,6 +54,7 @@ FatFile::FatFile(void)
 /******************************************************************************/
 FatFile::FatFile(const char* path, uint8_t mode)
 {
+  error = FR_OK;
   this->open(path, mode);
 }
 
@@ -63,7 +65,8 @@ FatFile::FatFile(const char* path, uint8_t mode)
 /******************************************************************************/
 bool FatFile::open(const char* path, uint8_t mode)
 {
-  return FR_OK == f_open(&_file, path, mode);
+  error = f_open(&_file, path, mode);
+  return FR_OK == error;
 }
 
 /******************************************************************************/
@@ -73,7 +76,11 @@ bool FatFile::open(const char* path, uint8_t mode)
 /******************************************************************************/
 bool FatFile::close(void)
 {
-  return FR_OK == f_close(&_file);
+  error = f_close(&_file);
+
+  // Notify PC Host that filesystem has changed
+  FEATHERLIB->sdep_execute(SDEP_CMD_USBMSC_FORCE_REFRESH, 0, NULL, NULL, NULL);
+  return FR_OK == error;
 }
 
 /******************************************************************************/
@@ -95,7 +102,7 @@ int FatFile::read( void )
 int FatFile::read( uint8_t * buf, size_t size )
 {
   UINT count = 0;
-  (void) f_read(&_file, buf, size, &count);
+  error = f_read(&_file, buf, size, &count);
   return count;
 }
 
@@ -117,7 +124,7 @@ size_t FatFile::write( uint8_t b )
 size_t FatFile::write( const uint8_t *content, size_t len )
 {
   UINT count = 0;
-  (void) f_write(&_file, content, len, &count);
+  error = f_write(&_file, content, len, &count);
   return count;
 }
 
@@ -152,7 +159,8 @@ uint32_t FatFile::tell(void)
 /******************************************************************************/
 bool FatFile::seek(uint32_t offset)
 {
-  return FR_OK == f_lseek(&_file, offset);
+  error = f_lseek(&_file, offset);
+  return FR_OK == error;
 }
 
 /******************************************************************************/
@@ -164,7 +172,8 @@ bool FatFile::seek(uint32_t offset)
 /******************************************************************************/
 bool FatFile::seekForward(uint32_t offset)
 {
-  return FR_OK == f_lseek(&_file, tell() + offset);
+  error = f_lseek(&_file, tell() + offset);
+  return FR_OK == error;
 }
 
 /******************************************************************************/
@@ -176,7 +185,8 @@ bool FatFile::seekForward(uint32_t offset)
 /******************************************************************************/
 bool FatFile::seekBackward(uint32_t offset)
 {
-  return FR_OK == f_lseek(&_file, tell() - offset);
+  error = f_lseek(&_file, tell() - offset);
+  return FR_OK == error;
 }
 
 

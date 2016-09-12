@@ -47,6 +47,8 @@ private:
   FIL _file;
 
 public:
+  uint32_t error;
+
   FatFile(void);
   FatFile(const char* path, uint8_t mode = FAT_FILE_READ);
 

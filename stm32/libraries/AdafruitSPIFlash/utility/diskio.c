@@ -153,23 +153,6 @@ DRESULT disk_ioctl (BYTE pdrv, BYTE cmd, void* buff)
   return RES_OK;
 }
 
-static inline uint8_t month2number(char* p_ch)
-{
-  char const * const month_str[] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
-
-  for(uint8_t i=0; i<12; i++)
-  {
-    if ( strncmp(p_ch, month_str[i], 3) == 0 ) return i+1;
-  }
-
-  return 1;
-}
-
-static inline uint8_t c2i(char ch)
-{
-  return ch - '0';
-}
-
 /******************************************************
  * UTC timestamp to FAT timestamp conversion
  ******************************************************/

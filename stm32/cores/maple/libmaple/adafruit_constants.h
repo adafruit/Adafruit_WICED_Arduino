@@ -168,6 +168,7 @@ typedef enum {
   // Hardware Command
   SDEP_CMD_GPIO                  = 0x0100,    ///< Set GPIO
   SDEP_CMD_RANDOMNUMBER          = 0x0101,    ///< Random number
+  SDEP_CMD_USBMSC_FORCE_REFRESH  = 0x0102,    ///< Force USB MSC host to refresh
 
   // DEBUG Commands
   SDEP_CMD_STACKDUMP             = 0x0300,    ///< Dump the stack
