@@ -57,8 +57,8 @@ void loop()
 
     // Get file contents
     input = getUserInput();
-    
-    while( strcmp("exit", input) )
+
+    while( strcmp("exit", input) && strcmp("exit\n", input) && strcmp("exit\r", input) && strcmp("exit\r\n", input))
     { 
       // echo   
       Serial.println();
