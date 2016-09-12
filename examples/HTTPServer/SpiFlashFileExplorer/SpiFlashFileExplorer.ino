@@ -12,7 +12,7 @@
  any redistribution
 *********************************************************************/
 
-/* This example uses the AdafruitHTTP class to create a file browser for
+/* This example uses the AdafruitHTTPServer class to create a file browser for
  * the SPI flash file system. The sketch assumes the SPI flash is enabled
  * by soldering the optional solder jumper for SPI flash 'closed'.
  *

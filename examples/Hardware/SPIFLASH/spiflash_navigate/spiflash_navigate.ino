@@ -136,7 +136,10 @@ void printDir(const char* path)
       Serial.print(' ');
 
       // Print size in KB
-      Serial.print( finfo.size() / 1024 );
+      uint32_t kb = finfo.size() < 1024;
+      if (kb == 0) kb = 1; // less than 1KB still counts as 1KB
+      
+      Serial.print( kb );
       Serial.println( " KB");
     }
   }

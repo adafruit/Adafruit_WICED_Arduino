@@ -12,9 +12,10 @@
  any redistribution
 *********************************************************************/
 
-/* This example use the AdafruitHTTP class to send requests and get
- * the response via a callback */
-
+/* This example uses the AdafruitHTTPServer class to create a simple 
+ * webserver
+ */
+ 
 #include <adafruit_feather.h>
 #include <adafruit_http_server.h>
 
