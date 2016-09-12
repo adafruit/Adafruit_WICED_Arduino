@@ -170,55 +170,135 @@ static inline uint8_t c2i(char ch)
   return ch - '0';
 }
 
+/******************************************************
+ * UTC timestamp to FAT timestamp conversion
+ ******************************************************/
+#define BASE_UTC_YEAR (1970)
+#define IS_LEAP_YEAR( year ) ( ( ( year ) % 400 == 0 ) || \
+                             ( ( ( year ) % 100 != 0 ) && ( ( year ) % 4 == 0 ) ) )
+
+
+#define SECONDS_IN_365_DAY_YEAR  (31536000)
+#define SECONDS_IN_A_DAY         (86400)
+#define SECONDS_IN_A_HOUR        (3600)
+#define SECONDS_IN_A_MINUTE      (60)
+static const uint32_t secondsPerMonth[ 12 ] =
+{
+    31*SECONDS_IN_A_DAY,
+    28*SECONDS_IN_A_DAY,
+    31*SECONDS_IN_A_DAY,
+    30*SECONDS_IN_A_DAY,
+    31*SECONDS_IN_A_DAY,
+    30*SECONDS_IN_A_DAY,
+    31*SECONDS_IN_A_DAY,
+    31*SECONDS_IN_A_DAY,
+    30*SECONDS_IN_A_DAY,
+    31*SECONDS_IN_A_DAY,
+    30*SECONDS_IN_A_DAY,
+    31*SECONDS_IN_A_DAY,
+};
+
 DWORD get_fattime (void)
 {
-  union {
+  typedef union {
     struct {
-      DWORD second       : 5;
-      DWORD minute       : 6;
-      DWORD hour         : 5;
-      DWORD day_in_month : 5;
-      DWORD month        : 4;
-      DWORD year         : 7;
+      DWORD second : 5;
+      DWORD minute : 6;
+      DWORD hour   : 5;
+      DWORD day    : 5;
+      DWORD month  : 4;
+      DWORD year   : 7;
     };
 
     DWORD value;
-  } timestamp;
+  } fat_timestamp_t;
 
-  //------------- Date is compiled date-------------//
-  char compile_date[] = __DATE__; // eg. "Sep 26 2013"
-  char* p_ch;
+  //------------- UTC timestamp to FAT timestamp conversion -------------//
+  uint16_t year;
+  uint16_t number_of_leap_years;
+  uint8_t  month;
+  uint8_t  day;
+  uint8_t  hour;
+  uint8_t  minute;
+  uint64_t second;
+  bool     is_a_leap_year;
 
-  p_ch = strtok (compile_date, " ");
-  timestamp.month = month2number(p_ch);
+  // Get UTC time in seconds
+  FEATHERLIB->sdep_execute(SDEP_CMD_GET_UTC_TIME, 0, NULL, NULL, &second);
 
-  p_ch = strtok (NULL, " ");
-  timestamp.day_in_month = 10*c2i(p_ch[0])+ c2i(p_ch[1]);
+  /* Calculate year */
+  year = (uint16_t)( BASE_UTC_YEAR + second / SECONDS_IN_365_DAY_YEAR );
+  number_of_leap_years = ( uint16_t )( ( ( year - ( BASE_UTC_YEAR - ( BASE_UTC_YEAR % 4 ) + 1 ) ) / 4 ) -
+      ( ( year - ( BASE_UTC_YEAR - ( BASE_UTC_YEAR % 100 ) + 1 ) ) / 100 ) +
+      ( ( year - ( BASE_UTC_YEAR - ( BASE_UTC_YEAR % 400 ) + 1 ) ) / 400 ) );
+  second -= (uint64_t)( (uint64_t)( year - BASE_UTC_YEAR ) * SECONDS_IN_365_DAY_YEAR );
 
-  p_ch = strtok (NULL, " ");
-  timestamp.year = 1000*c2i(p_ch[0]) + 100*c2i(p_ch[1]) + 10*c2i(p_ch[2]) + c2i(p_ch[3]) - 1980;
-
-  //------------- Time each time this function call --> sec ++ -------------//
-  static uint8_t sec = 0;
-  static uint8_t min = 0;
-  static uint8_t hour = 0;
-
-  if (++sec >= 60)
+  if ( second >= ( uint64_t )( number_of_leap_years * SECONDS_IN_A_DAY ) )
   {
-    sec = 0;
-    if (++min >= 60)
+    second -= (uint64_t) ( ( number_of_leap_years * SECONDS_IN_A_DAY ) );
+  }
+  else
+  {
+    do
     {
-      min = 0;
-      if (++hour >= 24)
+      second += SECONDS_IN_365_DAY_YEAR;
+      year--;
+      if ( IS_LEAP_YEAR( year ) )
       {
-        hour = 0; // assume demo wont call this function more than 24*60*60 times
+        second += SECONDS_IN_A_DAY;
       }
+    } while ( second < ( uint64_t )( number_of_leap_years * SECONDS_IN_A_DAY ) );
+
+    second -= ( uint64_t )( number_of_leap_years * SECONDS_IN_A_DAY );
+  }
+
+  /* Remember if the current year is a leap year */
+  is_a_leap_year = ( IS_LEAP_YEAR( year ) ) ? true : false;
+
+  /* Calculate month */
+  month = 1;
+
+  for (uint32_t a = 0; a < 12; ++a )
+  {
+    uint32_t seconds_per_month = secondsPerMonth[a];
+    /* Compensate for leap year */
+    if ( ( a == 1 ) && is_a_leap_year )
+    {
+      seconds_per_month += SECONDS_IN_A_DAY;
+    }
+    if ( second >= seconds_per_month )
+    {
+      second -= seconds_per_month;
+      month++;
+    }
+    else
+    {
+      break;
     }
   }
 
-  timestamp.hour   = hour;
-  timestamp.minute = min;
-  timestamp.second = sec;
+  /* Calculate day */
+  day    = (uint8_t) ( second / SECONDS_IN_A_DAY );
+  second -= (uint64_t) ( day * SECONDS_IN_A_DAY );
+  ++day;
+
+  /* Calculate hour */
+  hour   = (uint8_t) ( second / SECONDS_IN_A_HOUR );
+  second -= (uint64_t)  ( hour * SECONDS_IN_A_HOUR );
+
+  /* Calculate minute */
+  minute = (uint8_t) ( second / SECONDS_IN_A_MINUTE );
+  second -= (uint64_t) ( minute * SECONDS_IN_A_MINUTE );
+
+  fat_timestamp_t timestamp =
+  {
+      .second = second,
+      .minute = minute,
+      .hour   = hour,
+      .day = day,
+      .month = month,
+      .year = year - 1980 // FAT time origin is 1980
+  };
 
   return timestamp.value;
 }
