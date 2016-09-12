@@ -62,26 +62,6 @@ const char* const http_mime_string[] =
 };
 
 //--------------------------------------------------------------------+
-// HTTPResource Constructor
-//--------------------------------------------------------------------+
-HTTPResource::HTTPResource(uint8_t const* addr, uint32_t size)
-{
-  _location = RESOURCE_IN_MEMORY;
-
-  _size     = size;
-  _mem      = addr;
-}
-
-HTTPResource::HTTPResource(char const* filename, uint32_t size, uint32_t offset)
-{
-  _location = RESOURCE_IN_SFLASH;
-
-  _size     = size;
-  _offset   = offset;
-  _filename = filename;
-}
-
-//--------------------------------------------------------------------+
 // HTTPPage Constructor
 //--------------------------------------------------------------------+
 HTTPPage::HTTPPage(const char* page_url, const char* redirect_url)
@@ -104,9 +84,25 @@ HTTPPage::HTTPPage(const char* page_url, HTTPMimeType mime_type, const uint8_t* 
   _static.len  = len;
 }
 
-HTTPPage::HTTPPage(const char* page_url, HTTPMimeType mime_type, const char* static_page):
-  HTTPPage(page_url, mime_type, (const uint8_t*) static_page, strlen(static_page) )
+HTTPPage::HTTPPage(const char* page_url, HTTPMimeType mime_type, const char* static_or_filepath, uint32_t offset)
 {
+  url          = page_url;
+  _mime_type   = http_mime_string[mime_type];
+
+  // Starting with '/' is filepath to SFLASH
+  if ( static_or_filepath[0] == '/' )
+  {
+    _type = HTTPPAGE_TYPE_SFLASH_FILE;
+    _file.path   = static_or_filepath;
+    _file.offset = offset;
+  }else
+  {
+    (void) offset;
+
+    _type = HTTPPAGE_TYPE_STATIC;
+    _static.data = (const uint8_t*) static_or_filepath;
+    _static.len  = strlen(static_or_filepath);
+  }
 }
 
 HTTPPage::HTTPPage(const char* page_url, HTTPMimeType mime_type, httppage_generator_t page_generator)

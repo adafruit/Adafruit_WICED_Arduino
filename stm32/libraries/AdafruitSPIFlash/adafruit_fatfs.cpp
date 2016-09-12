@@ -325,3 +325,51 @@ bool AdafruitFatfs::rename(const char* path_old, const char* path_new)
   return true;
 }
 
+
+/******************************************************************************/
+/*!
+    @brief Callback, invoked by Featherlib when client accessing file stored in SFLASH
+*/
+/******************************************************************************/
+// Callback from Featherlib
+extern "C"
+{
+  void adafruit_httpserver_sflash_file_callback(void* response_stream, void* http_data, const char* filepath, uint32_t offset);
+}
+
+void adafruit_httpserver_sflash_file_callback(void* response_stream, void* http_data, const char* filepath, uint32_t offset)
+{
+  (void) http_data;
+
+  FatFile file;
+
+  if ( file.open(filepath) )
+  {
+    file.seek(offset);
+
+    uint8_t* buffer;
+    uint32_t bufsize = 1024;
+
+    // try to allocate as much buffer as possible
+    while ( (bufsize > 0) && !(buffer = (uint8_t*) malloc(bufsize)) )
+    {
+      bufsize = bufsize/2;
+    }
+
+    sdep_cmd_para_t para_arr[] =
+    {
+        { .len = 4, .p_value = response_stream },
+        { .len = 0, .p_value = buffer           },
+    };
+
+    while ( file.available() )
+    {
+      para_arr[1].len = file.read(buffer, bufsize);
+      FEATHERLIB->sdep_execute_n(SDEP_CMD_HTTPSERVER_RESP_WRITE, arrcount(para_arr), para_arr, NULL, NULL);
+    }
+
+    free(buffer);
+    file.close();
+  }
+}
+

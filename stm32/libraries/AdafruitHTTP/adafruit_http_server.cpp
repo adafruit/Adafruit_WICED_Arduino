@@ -105,8 +105,16 @@ void AdafruitHTTPServer::addPages(HTTPPage const * http_pages, uint8_t count)
  *****************************************************************************/
 bool AdafruitHTTPServer::begin(uint16_t port, uint8_t max_clients, uint32_t stacksize)
 {
-  DBG_HEAP();
+  // Check if there is SFLASH file and SpiFlash module is not included
+  for(uint8_t i=0; i<_page_count; i++)
+  {
+    if ( _pages[i]._type == HTTPPAGE_TYPE_SFLASH_FILE )
+    {
+      if (!adafruit_arduino.httpserver_sflash_file_callback) return false;
+    }
+  }
 
+  DBG_HEAP();
   _handle = malloc_named("HTTPServer Handle", HTTPSERVER_HANDLE_SIZE);
   VERIFY( _handle != NULL );
 
@@ -199,3 +207,4 @@ int32_t adafruit_httpserver_url_generator_callback(const char* url, const char* 
 
   return 0;
 }
+

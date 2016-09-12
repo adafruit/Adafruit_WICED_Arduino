@@ -104,6 +104,8 @@ typedef enum
   HTTPPAGE_TYPE_REDIRECT     , // Use HTTP 301 to redirect one page to another
   HTTPPAGE_TYPE_RAW_DYNAMIC  , // Same as DYNAMIC but HTTP headers must be included
   HTTPPAGE_TYPE_RAW_RESOURCE , // Same as RESOURCE but HTTP headers must be included
+
+  HTTPPAGE_TYPE_SFLASH_FILE  ,
 } HTTPPageType;
 
 typedef enum
@@ -133,7 +135,6 @@ typedef enum
 typedef enum
 {
   RESOURCE_IN_MEMORY = 0,
-  RESOURCE_IN_SFLASH,
 }HTTPResourceLocation;
 
 struct HTTPResource
@@ -144,7 +145,7 @@ struct HTTPResource
   {
     struct
     {
-      uint32_t _offset; // offset from the start of file in bytes
+      uint32_t _offset;
       const char* _filename;
     };
 
@@ -152,10 +153,13 @@ struct HTTPResource
   };
 
   // In Memory
-  HTTPResource(uint8_t const* addr, uint32_t size);
+  HTTPResource(uint8_t const* addr, uint32_t size)
+  {
+    _location = RESOURCE_IN_MEMORY;
 
-  // SFlash
-  HTTPResource(char const* filename, uint32_t size, uint32_t offset = 0);
+    _size     = size;
+    _mem      = addr;
+  }
 };
 
 //--------------------------------------------------------------------+
@@ -188,6 +192,11 @@ struct HTTPPage
     }_static;
 
     const HTTPResource* _resource;
+
+    struct {
+      const char* path;
+      uint32_t offset;
+    }_file;
   };
 
   // Redirect
@@ -195,7 +204,9 @@ struct HTTPPage
 
   // Static
   HTTPPage(const char* page_url, HTTPMimeType mime_type, const uint8_t* static_page, uint32_t len);
-  HTTPPage(const char* page_url, HTTPMimeType mime_type, const char* static_page);
+
+  // Static Page or Sflash file ( starting with '/' )
+  HTTPPage(const char* page_url, HTTPMimeType mime_type, const char* static_or_filepath, uint32_t offset = 0);
 
   // Dynamic
   HTTPPage(const char* page_url, HTTPMimeType mime_type, httppage_generator_t page_generator);

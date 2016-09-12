@@ -60,6 +60,8 @@ extern err_t adafruit_udp_receive_callback(void* socket, void* p_udp);
 void adafruit_mqtt_subscribed_callback(char* topic_data, size_t topic_len, uint8_t* mess_data, size_t len, void* callback_func, void* arg) ATTR_WEAK;
 void adafruit_mqtt_disconnect_callback(void* p_mqtt) ATTR_WEAK;
 
+void adafruit_httpserver_sflash_file_callback(void* response_stream, void* http_data, const char* filepath, uint32_t offset) ATTR_WEAK;
+
 //--------------------------------------------------------------------+
 // IMPLEMENTATION
 //--------------------------------------------------------------------+
@@ -72,7 +74,7 @@ ATTR_USED adafruit_arduino_t const adafruit_arduino =
     .cdc_serial_event_cb = USBSerial_callback,
     .sflash_sector_modified_cb = sflash_sector_modified_cb,
 
-    // wifi
+    // WIFI
 //    .wifi_connect_callback    = adafruit_wifi_connect_callback,
     .wifi_disconnect_callback   = adafruit_wifi_disconnect_callback,
     .softap_event_callback      = adafruit_softap_event_callback,
@@ -88,4 +90,7 @@ ATTR_USED adafruit_arduino_t const adafruit_arduino =
     // MQTT
     .mqtt_subscribed_callback   = adafruit_mqtt_subscribed_callback,
     .mqtt_disconnect_callback   = adafruit_mqtt_disconnect_callback,
+
+    // HTTP Server
+    .httpserver_sflash_file_callback = adafruit_httpserver_sflash_file_callback,
 };

@@ -103,7 +103,10 @@ typedef struct ATTR_ALIGNED(512)
   uint32_t RESERVED_[2];
 
   // 256 - 512
-  uint32_t RESERVED_[64];
+  void     (*httpserver_sflash_file_callback) (void* response_stream, void* http_data, const char* filepath, uint32_t offset);
+  uint32_t RESERVED_[3];
+
+  uint32_t RESERVED_[60];
 
 }adafruit_arduino_t;
 
@@ -180,6 +183,8 @@ ASSERT_STATIC( sizeof(adafruit_featherlib_t) == 512 );
 
 #define FEATHERLIB_API_EXISTS(func)  is_within(FEATHERLIB_BASE, (uint32_t) FEATHERLIB->func, 0x80DFFFF)
 
+
+extern adafruit_arduino_t const adafruit_arduino;
 //--------------------------------------------------------------------+
 // HELPER
 //--------------------------------------------------------------------+
