@@ -8,15 +8,38 @@ detailed below:
 
 ## Arduino Setup
 
-- Create a **hardware** folder in `~/Documents/Arduino` (OS X) or
+- Create a **hardware/adafruit** folder in `~/Documents/Arduino` (OS X) or
   `My Documents\Arduino` (Windows) if it doesn't already exist
-- Clone this repo to the root of the hardware folder, or download as a .zip and
-  unzip it in `hardware/Adafruit_WICED_Arduino`
+- Clone this repo to the root of the `hardware/adafruit` folder, or download as a .zip and
+  unzip it into `hardware/adafruit/wiced`
 
 	```
 	git clone https://github.com/adafruit/Adafruit_WICED_Arduino.git
 	```
+	
+- You should end up with a folder structure like this:
 
+	```
+        .
+        └── Arduino
+            ├── hardware
+            │   └── adafruit
+            │       └── wiced
+            │           ├── README.md
+            │           ├── boards.txt
+            │           ├── bootloader
+            │           ├── changelog.md
+            │           ├── cores
+            │           ├── drivers
+            │           ├── featherlib
+            │           ├── keywords.txt
+            │           ├── libraries
+            │           ├── platform.txt
+            │           ├── programmers.txt
+            │           ├── tools
+            │           └── variants
+	```
+	
 - Install the necessary GCC toolchain for ARM: Tools->Board->Board Manager --> Download **Arduino SAM Boards (32-bits ARM Cortex-M3)**
 - Restart the Arduino IDE
 - OSX or Linux only: Install [dfu-util](http://dfu-util.sourceforge.net/)
