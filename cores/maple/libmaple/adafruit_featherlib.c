@@ -47,6 +47,9 @@ extern void __attribute__((noreturn)) start_c(void);
 extern void USBSerial_callback(uint32_t eid, void* p_data);
 extern void sflash_sector_modified_cb(uint32_t sector) ATTR_WEAK;
 
+extern int heap_get_used_size(void);
+extern int heap_get_total_size(void);
+
 //extern void adafruit_wifi_connect_callback(void);
 extern void adafruit_wifi_disconnect_callback(void);
 extern void adafruit_softap_event_callback(uint32_t event, const uint8_t mac[6] );
@@ -73,6 +76,10 @@ ATTR_USED adafruit_arduino_t const adafruit_arduino =
 
     .cdc_serial_event_cb = USBSerial_callback,
     .sflash_sector_modified_cb = sflash_sector_modified_cb,
+
+    // Debug
+    .heap_get_used_size  = heap_get_used_size,
+    .heap_get_total_size = heap_get_total_size,
 
     // WIFI
 //    .wifi_connect_callback    = adafruit_wifi_connect_callback,

@@ -177,6 +177,7 @@ typedef enum {
   SDEP_CMD_HEAPSIZE              = 0x0303,    ///< Get heap size
   SDEP_CMD_THREADLIST_PRINT      = 0x0304,    ///< Print thread information
   SDEP_CMD_THREAD_INFO           = 0x0305,    ///< Get thread info
+  SDEP_CMD_ARDUINO_HEAPSIZE      = 0x0306,    ///< Get Arduino heap size
 
   // WiFi Commands
   SDEP_CMD_SCAN                  = 0x0400,    ///< AP scan

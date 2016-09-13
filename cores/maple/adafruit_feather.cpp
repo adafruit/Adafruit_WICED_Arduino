@@ -788,12 +788,12 @@ int AdafruitFeather::dbgFeatherlibHeapTotal(void)
 
 int AdafruitFeather::dbgFeatherlibHeapFree (void)
 {
-  return FEATHERLIB->heap_get_free_size();
+  return dbgFeatherlibHeapTotal() - dbgFeatherlibHeapUsed();
 }
 
 int AdafruitFeather::dbgFeatherlibHeapUsed (void)
 {
-  return dbgFeatherlibHeapTotal() - dbgFeatherlibHeapFree();
+  return FEATHERLIB->heap_get_used_size();
 }
 
 /******************************************************************************/

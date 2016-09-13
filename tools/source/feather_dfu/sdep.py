@@ -36,7 +36,9 @@ SDEP_CMD_STACKDUMP           = 0x0300    # Dump the stack
 SDEP_CMD_STACKSIZE           = 0x0301    # Get stack size                             
 SDEP_CMD_HEAPDUMP            = 0x0302    # Dump the heap                              
 SDEP_CMD_HEAPSIZE            = 0x0303    # Get heap size                              
-SDEP_CMD_THREADLIST_PRINT    = 0x0304    # Get thread information                     
+SDEP_CMD_THREADLIST_PRINT    = 0x0304    # Get thread information
+SDEP_CMD_THREAD_INFO         = 0x0305    # Get thread info
+SDEP_CMD_ARDUINO_HEAPSIZE    = 0x0306    # Get Arduino heap size
 
 #******************************************************************************
 # ERROR Constants

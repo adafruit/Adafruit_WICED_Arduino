@@ -82,7 +82,12 @@ typedef struct ATTR_ALIGNED(512)
   void     (*sflash_sector_modified_cb)(uint32_t sector);
   uint32_t RESERVED_;
 
-  uint32_t RESERVED_[12];
+  uint32_t RESERVED_[8];
+
+  // DEBUG
+  int32_t  (*heap_get_used_size)(void);
+  int32_t  (*heap_get_total_size)(void);
+  uint32_t RESERVED_[2];
 
   // 192 - 255 (16 functions)
   void     (*wifi_connect_callback    )(void); // not used for now
@@ -168,7 +173,7 @@ typedef struct ATTR_ALIGNED(512)
   int (*file_available ) (int file);
 
   // DEBUG
-  int32_t  (*heap_get_free_size)(void);
+  int32_t  (*heap_get_used_size)(void);
   int32_t  (*heap_get_total_size)(void);
   uint32_t RESERVED_[2];
 
