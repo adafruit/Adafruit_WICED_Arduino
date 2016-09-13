@@ -1,0 +1,83 @@
+#######################################
+# Syntax Coloring Map For Adafruit Feather WiFi
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+AdafruitFatfs	KEYWORD1
+FileInfo	KEYWORD1
+FatDir	KEYWORD1
+FatFile	KEYWORD1
+
+#######################################
+# AdafruitFatfs Methods and Functions (KEYWORD2)
+#######################################
+
+eraseAll	KEYWORD2
+mkfs	KEYWORD2
+setLabel	KEYWORD2
+getLabel	KEYWORD2
+
+openDir	KEYWORD2
+closeDir	KEYWORD2
+
+exists	KEYWORD2
+isDirectory	KEYWORD2
+fileInfo	KEYWORD2
+cd	KEYWORD2
+cwd	KEYWORD2
+
+mkdir	KEYWORD2
+remove	KEYWORD2
+rm	KEYWORD2
+rename	KEYWORD2
+mv	KEYWORD2
+
+#######################################
+# FileInfo Methods and Functions (KEYWORD2)
+#######################################
+fetch	KEYWORD2
+valid	KEYWORD2
+size	KEYWORD2
+attribute	KEYWORD2
+name	KEYWORD2
+
+isReadonly	KEYWORD2
+isHidden	KEYWORD2
+isSystemFile	KEYWORD2
+isDirectory	KEYWORD2
+isArchive	KEYWORD2
+
+#######################################
+# FatDir Methods and Functions (KEYWORD2)
+#######################################
+valid	KEYWORD2
+open	KEYWORD2
+close	KEYWORD2
+
+read	KEYWORD2
+rewind	KEYWORD2
+
+#######################################
+# FatFile Methods and Functions (KEYWORD2)
+#######################################
+open	KEYWORD2
+close	KEYWORD2
+
+tell	KEYWORD2
+seek	KEYWORD2
+seekForward	KEYWORD2
+seekBackward	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+FAT_FILE_OPEN_EXISTING	LITERAL1
+FAT_FILE_READ	LITERAL1
+FAT_FILE_WRITE	LITERAL1
+FAT_FILE_CREATE_NEW	LITERAL1
+FAT_FILE_CREATE_ALWAYS	LITERAL1
+FAT_FILE_OPEN_ALWAYS	LITERAL1
+FAT_FILE_OPEN_APPEND	LITERAL1
