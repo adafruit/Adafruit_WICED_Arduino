@@ -80,14 +80,22 @@ AdafruitHTTPServer httpserver(pagecount);
 /**
  * Filesytem contents such as directory listings or file contents.
  *
- * Ex use: http://192.168.0.124/filesystem.json?path=readme.txt
+ * Ex use: http://192.168.0.124/filesystem.json?path=/readme.txt
  *
  * Link is seperated to url and query
  *
  * @param url           url of this page, should be "/filesystem.json"
  * @param query         query string after '?' e.g "path=/readme.txt"
  *
- * @param http_request
+ * @param http_request  not used
+ * 
+ * Note: This generator will return
+ * - [] : empty json for incorrect syntax for file not existed
+ * - file's contents if query a file
+ * - json format with "name" & "data_type" attribute if querying directory .eg
+ *    [{"name": "readme.txt", "data_type": "file"},
+ *    {"name": "test.txt", "data_type": "file"},
+ *    {"name": "resources", "data_type": "folder"}]
  */
 /******************************************************************************/
 void filesystem_generator (const char* url, const char* query, void* http_request)
@@ -95,74 +103,82 @@ void filesystem_generator (const char* url, const char* query, void* http_reques
   (void) url;
   (void) http_request;
 
-  // JSON start bracket
-  httpserver.print("[");
-
   // query must start with path=, e.g "path=myfolder/readme.txt"
   const char* prefix = "path=";
-  if ( 0 == strncmp(query, prefix, strlen(prefix)) )
-  {   
-    const char* filepath = query + strlen(prefix);
-    
-    // No path means root level access
-    if(*filepath == 0) filepath = "/";
 
-    // Check if the file exists
-    if ( SpiFlash.exists(filepath) )
-    { 
-      // If it's a directory, list the entry
-      if ( SpiFlash.isDirectory(filepath) )
-      {
-        FatDir dir;
-        dir.open(filepath);
-
-        bool is_first = true; // Print a seperator
-
-        // Read directory items in sequence (re-use finfo variable)
-        FileInfo finfo;
-        while( dir.read(&finfo) )
-        {
-          // Print seperator
-          if (!is_first) httpserver.print(",\r\n");
-          is_first = false;
-
-          // Send response in JSON format e.g {"name" : filename, "data_type": "folder" }
-          httpserver.print("{\"name\": \"");
-          httpserver.print(finfo.name());
-          httpserver.print("\", \"data_type\": \"");
-          httpserver.print( finfo.isDirectory() ? "folder" : "file" );
-          httpserver.print("\"}");
-        }
-
-        dir.close();
-      }
-      // if this is a file, read the content
-      else
-      {
-        FatFile file;
-        if ( file.open(filepath, FAT_FILE_READ) )
-        {
-          while( file.available() )
-          {
-            uint8_t buffer[64];
-            uint32_t count = file.read(buffer, 64);
-
-            // If not printable --> binary file, skip
-            if ( !isPrintable(buffer, count) )
-            {
-              httpserver.print("Binary file is currently not supported!");
-              break;
-            }
-            httpserver.write(buffer, count);
-          }
-        }
-        file.close();
-      }
-    }
+  // failed if query does not start with "path="
+  if ( strncmp(query, prefix, strlen(prefix)) ) 
+  {
+    httpserver.print("[]");  // empty JSON data
+    return;
   }
 
-  // JSON end bracket
-  httpserver.print("]");
+  const char* filepath = query + strlen(prefix);
+  
+  // No path means root level access
+  if(*filepath == 0) filepath = "/";
+
+  // failed if file not existed
+  if ( !SpiFlash.exists(filepath) ) 
+  {
+    httpserver.print("[]");  // empty JSON data
+    return;
+  }
+  
+  // If it's a directory, list the entry
+  if ( SpiFlash.isDirectory(filepath) )
+  {
+    FatDir dir;
+    dir.open(filepath);
+
+    // JSON start bracket
+    httpserver.print("[");
+
+    bool is_first = true; // Print a seperator
+
+    // Read directory items in sequence (re-use finfo variable)
+    FileInfo finfo;
+    while( dir.read(&finfo) )
+    {
+      // Print seperator
+      if (!is_first) httpserver.print(",\r\n");
+      is_first = false;
+
+      // Send response in JSON format e.g {"name" : filename, "data_type": "folder" }
+      httpserver.print("{\"name\": \"");
+      httpserver.print(finfo.name());
+      httpserver.print("\", \"data_type\": \"");
+      httpserver.print( finfo.isDirectory() ? "folder" : "file" );
+      httpserver.print("\"}");
+    }
+
+    // JSON end bracket
+    httpserver.print("]");
+    
+    dir.close();
+  }
+  // if this is a file, response with the content
+  else
+  {
+    FatFile file;
+    if ( file.open(filepath, FAT_FILE_READ) )
+    {
+      while( file.available() )
+      {
+        uint8_t buffer[64];
+        uint32_t count = file.read(buffer, 64);
+
+        // If not printable --> binary file, skip
+        if ( !isPrintable(buffer, count) )
+        {
+          httpserver.print("Binary file is currently not supported!");
+          break;
+        }
+        httpserver.write(buffer, count);
+      }
+    }
+    file.close();
+  }
 }
 
 /**************************************************************************/
