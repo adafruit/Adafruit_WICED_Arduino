@@ -41,7 +41,7 @@
 #include <adafruit_feather.h>
 #include "http_common.h"
 
-#define HTPPSREVER_STACKSIZE_DEFAULT    (3*1024)
+#define HTTPSERVER_STACKSIZE_DEFAULT    (3*1024)
 
 class AdafruitHTTPServer : public AdafruitSDEP, public Print
 {
@@ -57,7 +57,7 @@ public:
 
   void addPages(HTTPPage const* http_pages, uint8_t count = 1);
 
-  bool begin(uint16_t port, uint8_t max_clients, uint32_t stacksize = HTPPSREVER_STACKSIZE_DEFAULT);
+  bool begin(uint16_t port, uint8_t max_clients, uint32_t stacksize = HTTPSERVER_STACKSIZE_DEFAULT);
   void stop(void);
 
   bool started(void);
