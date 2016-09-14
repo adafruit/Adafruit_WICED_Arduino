@@ -1,4 +1,4 @@
-# 0.6.0 (WIP)
+# 0.6.0
 
 - Increase Arduino code size from 128KB to 256KB
 - Increase Arduino SRAM from 16KB to 20KB
@@ -39,6 +39,8 @@
 	- Static, Dynamic Page support (SimpleHTTPServer example)
 	- Page resource generation with advance page design (D3Graphic example)
 	- add tools/pyresource to generate C header for HTTP Server
+	- support resource files in SPI Flash
+- Enable SPI Flash support with AdafruitFatfs, FatFile, FatDir, FileInfo 
 
 # 0.5.5
 
