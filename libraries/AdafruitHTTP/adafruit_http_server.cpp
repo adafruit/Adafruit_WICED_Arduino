@@ -158,7 +158,7 @@ void AdafruitHTTPServer::stop(void)
   }
 }
 
-void AdafruitHTTPServer::url_generator_callback(const char* url, const char* query, void* response_stream, httppage_generator_t generator_cb, void* http_data)
+void AdafruitHTTPServer::url_generator_callback(const char* url, const char* query, void* response_stream, httppage_generator_t generator_cb, httppage_request_t* http_data)
 {
   _resp_stream = response_stream;
 
@@ -202,7 +202,7 @@ int32_t adafruit_httpserver_url_generator_callback(const char* url, const char* 
 
   if ( p_server )
   {
-    p_server->url_generator_callback(url, query, response_stream, (httppage_generator_t) args[0], http_data);
+    p_server->url_generator_callback(url, query, response_stream, (httppage_generator_t) args[0], (httppage_request_t*) http_data);
   }
 
   return 0;

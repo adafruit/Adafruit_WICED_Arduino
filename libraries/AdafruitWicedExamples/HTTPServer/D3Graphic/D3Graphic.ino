@@ -50,9 +50,9 @@
 
 int ledPin = PA15;
 
-void heap_generator (const char* url, const char* query, void* http_request);
-void thread_generator (const char* url, const char* query, void* http_request);
-void file_not_found_generator (const char* url, const char* query, void* http_request);
+void heap_generator          (const char* url, const char* query, httppage_request_t* http_request);
+void thread_generator        (const char* url, const char* query, httppage_request_t* http_request);
+void file_not_found_generator(const char* url, const char* query, httppage_request_t* http_request);
 
 // Page database
 HTTPPage pages[] = 
@@ -75,7 +75,18 @@ AdafruitHTTPServer httpserver(pagecount);
 
 thread_info_t threadInfo[20];
 
-void heap_generator (const char* url, const char* query, void* http_request)
+/**************************************************************************/
+/*!
+ * @brief  Example of generating dynamic HTML content on demand
+ * Link is separated to url and query
+ *
+ * @param url           url of this page
+ * @param query         query string after '?' e.g "var=value"
+ *
+ * @param http_request  This request's information
+*/
+/**************************************************************************/
+void heap_generator (const char* url, const char* query, httppage_request_t* http_request)
 {
   (void) url;
   (void) query;
@@ -89,7 +100,18 @@ void heap_generator (const char* url, const char* query, void* http_request)
   httpserver.printf("Free %ld,%ld\r\n", free_size, free_size);
 }
 
-void thread_generator (const char* url, const char* query, void* http_request)
+/**************************************************************************/
+/*!
+ * @brief  Example of generating dynamic HTML content on demand
+ * Link is separated to url and query
+ *
+ * @param url           url of this page
+ * @param query         query string after '?' e.g "var=value"
+ *
+ * @param http_request  This request's information
+*/
+/**************************************************************************/
+void thread_generator (const char* url, const char* query, httppage_request_t* http_request)
 {
   (void) url;
   (void) query;
@@ -109,7 +131,20 @@ void thread_generator (const char* url, const char* query, void* http_request)
   }
 }
 
-void file_not_found_generator (const char* url, const char* query, void* http_request)
+/**************************************************************************/
+/*!
+ * @brief  HTTP Page 404 generator, HTTP Server will automatically response
+ * with page "/404.html" when it coulnd't found requested url in Registered Pages
+ *
+ * Link is separated to url and query
+ *
+ * @param url           url of this page
+ * @param query         query string after '?' e.g "var=value"
+ *
+ * @param http_request  This request's information
+*/
+/**************************************************************************/
+void file_not_found_generator (const char* url, const char* query, httppage_request_t* http_request)
 {
   (void) url;
   (void) query;

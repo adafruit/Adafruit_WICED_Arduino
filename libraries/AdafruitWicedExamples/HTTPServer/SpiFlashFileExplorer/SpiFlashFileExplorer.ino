@@ -52,8 +52,8 @@
 
 int ledPin = PA15;
 
-void filesystem_generator (const char* url, const char* query, void* http_request);
-void file_not_found_generator (const char* url, const char* query, void* http_request);
+void filesystem_generator     (const char* url, const char* query, httppage_request_t* http_request);
+void file_not_found_generator (const char* url, const char* query, httppage_request_t* http_request);
 
 HTTPPage pages[] = 
 {
@@ -82,12 +82,12 @@ AdafruitHTTPServer httpserver(pagecount);
  *
  * Ex use: http://192.168.0.124/filesystem.json?path=/readme.txt
  *
- * Link is seperated to url and query
+ * Link is separated to url and query
  *
  * @param url           url of this page, should be "/filesystem.json"
  * @param query         query string after '?' e.g "path=/readme.txt"
  *
- * @param http_request  not used
+ * @param http_request  This request's information
  * 
  * Note: This generator will return
  * - [] : empty json for incorrect syntax for file not existed
@@ -98,7 +98,7 @@ AdafruitHTTPServer httpserver(pagecount);
  *    {"name": "resources", "data_type": "folder"}]
  */
 /******************************************************************************/
-void filesystem_generator (const char* url, const char* query, void* http_request)
+void filesystem_generator (const char* url, const char* query, httppage_request_t* http_request)
 {
   (void) url;
   (void) http_request;
@@ -235,10 +235,18 @@ void loop()
 
 /**************************************************************************/
 /*!
-    @brief  HTTP Page 404 generator
+ * @brief  HTTP Page 404 generator, HTTP Server will automatically response
+ * with page "/404.html" when it coulnd't found requested url in Registered Pages
+ *
+ * Link is separated to url and query
+ *
+ * @param url           url of this page
+ * @param query         query string after '?' e.g "var=value"
+ *
+ * @param http_request  This request's information
 */
 /**************************************************************************/
-void file_not_found_generator (const char* url, const char* query, void* http_request)
+void file_not_found_generator (const char* url, const char* query, httppage_request_t* http_request)
 {
   (void) url;
   (void) query;

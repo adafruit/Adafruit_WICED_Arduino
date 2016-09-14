@@ -15,7 +15,9 @@
 #include <adafruit_feather.h>
 #include "adafruit_spiflash.h"
 
-/* This example use SpiFlash print out a file content
+/* This example use SpiFlash to navigate through the filesystem.
+ * User enters directory name to navigate to it ( ".." for parent folder).
+ * If file is enter, this sketch will dump its contents to serial.
  */
 
 char abs_cwd[256];

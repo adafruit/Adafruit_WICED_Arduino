@@ -15,10 +15,10 @@
 #include <adafruit_feather.h>
 #include "adafruit_spiflash.h"
 
-/* This example use SpiFlash print out a file content
+/* This example use SpiFlash print out a file content.
+ * Sketch print out the content of root directory, then
+ * ask user for filename to dump via Serial
  */
-
-char abs_cwd[256];
 
 // the setup function runs once when you press reset or power the board
 void setup() 

@@ -168,7 +168,17 @@ struct HTTPResource
 #define HTTPPageRedirect(_url, _redirect)   HTTPPage(_url, _redirect)
 #define PAGE404         "/404.html"
 
-typedef void (*httppage_generator_t) (const char* url, const char* query, void* http_request);
+typedef struct
+{
+    const uint8_t*  data;             /* packet data in message body      */
+    uint16_t        length;           /* data length in current packet    */
+    uint16_t        data_remaining;   /* data yet to be consumed          */
+    bool            chunked_transfer; /* chunked data format              */
+    uint8_t         mime_type;        /* mime type                        */
+    uint8_t         request_type;     /* GET, POST or PUT request         */
+} httppage_request_t;
+
+typedef void (*httppage_generator_t) (const char* url, const char* query, httppage_request_t* http_request);
 
 // This struct's layout must matches with wiced_http_page_t in Featherlib
 struct HTTPPage

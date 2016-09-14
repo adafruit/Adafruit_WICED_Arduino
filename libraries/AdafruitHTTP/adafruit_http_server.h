@@ -68,7 +68,7 @@ public:
   using Print::write;
 
   // call from featherlib only
-  void url_generator_callback(const char* url, const char* query, void* response_stream, httppage_generator_t generator_cb, void* http_data );
+  void url_generator_callback(const char* url, const char* query, void* response_stream, httppage_generator_t generator_cb, httppage_request_t* http_data );
 
 protected:
   void*         _handle;

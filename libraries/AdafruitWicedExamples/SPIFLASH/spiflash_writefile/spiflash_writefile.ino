@@ -15,7 +15,9 @@
 #include <adafruit_feather.h>
 #include "adafruit_spiflash.h"
 
-/* This example uses Spi flash and creates/writes to a file
+/* This example uses Spi flash and creates/writes to a file.
+ * User enter the filename to create, then enter its contents or type
+ * "exit" when done.
  */
 
 // The setup function runs once when you press reset or power the board

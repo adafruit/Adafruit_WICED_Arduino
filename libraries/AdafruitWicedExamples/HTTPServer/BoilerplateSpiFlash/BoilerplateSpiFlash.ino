@@ -32,7 +32,7 @@
 
 int ledPin = PA15;
 
-void about_generator (const char* url, const char* query, void* http_request);
+void about_generator (const char* url, const char* query, httppage_request_t* http_request);
 
 HTTPPage pages[] = 
 {
@@ -68,10 +68,16 @@ int visit_count = 0;
 
 /**************************************************************************/
 /*!
-    @brief  Example of generating dynamic HTML content on demand
+ * @brief  Example of generating dynamic HTML content on demand
+ * Link is separated to url and query
+ *
+ * @param url           url of this page
+ * @param query         query string after '?' e.g "var=value"
+ *
+ * @param http_request  This request's information
 */
 /**************************************************************************/
-void about_generator (const char* url, const char* query, void* http_request)
+void about_generator (const char* url, const char* query, httppage_request_t* http_request)
 {
   (void) url;
   (void) query;

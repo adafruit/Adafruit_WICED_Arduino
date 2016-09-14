@@ -11,6 +11,7 @@ AdafruitHTTPServer	KEYWORD1
 AdafruitUrlencode	KEYWORD1
 HTTPPage	KEYWORD1
 HTTPResource	KEYWORD1
+httppage_request_t	KEYWORD1
 
 #######################################
 # AdafruitHTTP Methods and Functions (KEYWORD2)

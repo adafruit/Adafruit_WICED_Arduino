@@ -38,7 +38,7 @@
 
 ASSERT_STATIC(sizeof(HTTPPage) == 24);
 ASSERT_STATIC(sizeof(HTTPResource) == 16);
-
+ASSERT_STATIC(sizeof(httppage_request_t) == 12 );
 
 const char* const http_mime_string[] =
 {

@@ -28,8 +28,8 @@
 int ledPin = PA15;
 int visit_count = 0;
 
-void info_html_generator (const char* url, const char* query, void* http_request);
-void file_not_found_generator (const char* url, const char* query, void* http_request);
+void info_html_generator      (const char* url, const char* query, httppage_request_t* http_request);
+void file_not_found_generator (const char* url, const char* query, httppage_request_t* http_request);
 
 const char hello_html[] = "<html><body> <h1>Hello World!</h1> </body></html>";
 
@@ -46,7 +46,19 @@ uint8_t pagecount = sizeof(pages)/sizeof(HTTPPage);
 // Declare HTTPServer with max number of pages
 AdafruitHTTPServer httpserver(pagecount);
 
-void info_html_generator (const char* url, const char* query, void* http_request)
+/**************************************************************************/
+/*!
+ * @brief  Example of generating dynamic HTML content on demand
+ *
+ * Link is separated to url and query
+ *
+ * @param url           url of this page
+ * @param query         query string after '?' e.g "var=value"
+ *
+ * @param http_request  This request's information
+*/
+/**************************************************************************/
+void info_html_generator (const char* url, const char* query, httppage_request_t* http_request)
 {
   (void) url;
   (void) query;
@@ -74,7 +86,20 @@ void info_html_generator (const char* url, const char* query, void* http_request
   httpserver.print(visit_count);
 }
 
-void file_not_found_generator (const char* url, const char* query, void* http_request)
+/**************************************************************************/
+/*!
+ * @brief  HTTP Page 404 generator, HTTP Server will automatically response
+ * with page "/404.html" when it coulnd't found requested url in Registered Pages
+ *
+ * Link is separated to url and query
+ *
+ * @param url           url of this page
+ * @param query         query string after '?' e.g "var=value"
+ *
+ * @param http_request  This request's information
+*/
+/**************************************************************************/
+void file_not_found_generator (const char* url, const char* query, httppage_request_t* http_request)
 {
   (void) url;
   (void) query;
