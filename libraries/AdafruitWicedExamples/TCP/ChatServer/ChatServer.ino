@@ -51,12 +51,12 @@ void connect_request_callback(void)
   for(int i=0; i<MAX_CLIENTS; i++)
   {
     // find a free slot in client list
-    if ( !clientList[i] )
+    if ( !clientList[i].valid() )
     {
       //get the new client
       clientList[i] = tcpserver.available();
 
-      if ( clientList[i] ) //was that successful?
+      if ( clientList[i].valid() ) //was that successful?
       {
         Serial.print("Client ");
         Serial.print(i);
@@ -84,7 +84,7 @@ void client_disconnect_callback(void)
   // Scan the list to find existed client but not connected to free it up
   for(int i=0; i<MAX_CLIENTS; i++)
   {
-    if ( clientList[i] && !clientList[i].connected() )
+    if ( clientList[i].valid() && !clientList[i].connected() )
     {
       clientList[i].stop();
 
@@ -149,7 +149,7 @@ void loop()
 
   for (int index = 0; index < MAX_CLIENTS; index++)  //scan clients for input
   {
-    if ( clientList[index] )  //is this a valid client?
+    if ( clientList[index].valid() )  //is this a valid client?
     {
       if (clientList[index].available())  //any data available?
       {

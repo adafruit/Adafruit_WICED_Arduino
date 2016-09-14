@@ -19,7 +19,7 @@
  * - Use a  TCP client on your PC such as netcast as follows
  *   'echo "your message" | nc IP port'. e.g your Feather's IP is 192.168.1.100
  *   and PORT is 8888 then
- *     > echo "Hello Feather" | nc 192.168.100 8888
+ *     > echo "Hello Feather" | nc 192.168.1.100 8888
  */
 
 #include <adafruit_feather.h>
@@ -77,7 +77,7 @@ void loop()
 
   AdafruitTCP client = tcpserver.available();
 
-  if ( client )
+  if ( client.valid() )
   {
     // read data
     len = client.read(buffer, 256);
