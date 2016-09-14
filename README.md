@@ -6,7 +6,9 @@ and allows the WICED Feather to be used within the Arduino IDE.
 These files should be placed in the `hardware` folder of the Arduino IDE, as
 detailed below:
 
-## Arduino Setup
+## Manual Arduino BSP Setup
+
+The preferred method of installing the WICED Feather BSP is to use the Adafruit WICED package from the Arduino Board Manager, but if you wish to maintain the git repo to contribute pull requests you can manually install this BSP with the following setup procedure:
 
 - Create a **hardware/adafruit** folder in `~/Documents/Arduino` (OS X) or
   `My Documents\Arduino` (Windows) if it doesn't already exist
