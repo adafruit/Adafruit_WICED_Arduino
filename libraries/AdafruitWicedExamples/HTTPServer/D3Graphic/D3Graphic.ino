@@ -181,7 +181,7 @@ void setup()
   // Wait for the USB serial to connect. Needed for native USB port only.
   while (!Serial) delay(1);
 
-  Serial.println("Simple HTTP Server Example\r\n");
+  Serial.println("D3 HTTP Server Example\r\n");
   
   // Print all software versions
   Feather.printVersions();

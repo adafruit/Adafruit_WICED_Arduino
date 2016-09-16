@@ -23,7 +23,7 @@
  * - Use a TCP client on your PC such as netcast as follows:
  *  'echo "your message" | nc IP port'. e.g your Feather's IP is 192.168.1.100
  *   and PORT is 8888 then
- *     > echo "Hello Feather" | nc 192.168.100 8888
+ *     > echo "Hello Feather" | nc 192.168.2.1 8888
  */
 
 #include <adafruit_feather.h>
@@ -92,13 +92,13 @@ void connect_request_callback(void)
   for(int i=0; i<MAX_CLIENTS; i++)
   {
     // find a free slot in client list
-    if ( !clientList[i] )
+    if ( !clientList[i].valid() )
     {
       //get the new client
       clientList[i] = tcpserver.available();
 
       // Successfully connected to client
-      if ( clientList[i] )
+      if ( clientList[i].valid() )
       {
         Serial.print("Client ");
         Serial.print(i);
@@ -127,7 +127,7 @@ void client_disconnect_callback(void)
   // Scan the list to find existed client but not connected to free it up
   for(int i=0; i<MAX_CLIENTS; i++)
   {
-    if ( clientList[i] && !clientList[i].connected() )
+    if ( clientList[i].valid() && !clientList[i].connected() )
     {
       clientList[i].stop();
 
@@ -150,7 +150,7 @@ void loop()
 
   for (int i=0; i < MAX_CLIENTS; i++)
   {
-    if ( clientList[i] && clientList[i].available() )
+    if ( clientList[i].valid() && clientList[i].available() )
     {
       len = clientList[i].read(buffer, 256);
 

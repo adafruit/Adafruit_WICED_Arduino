@@ -1,4 +1,6 @@
-# 0.6.0 (WIP)
+# 0.6.1 (WIP)
+
+# 0.6.0
 
 - Increase Arduino code size from 128KB to 256KB
 - Increase Arduino SRAM from 16KB to 20KB
