@@ -76,7 +76,7 @@ typedef struct systick_reg_map {
 #define SYSTICK_CVR_TENMS               0xFFFFFF
 
 /** System elapsed time, in milliseconds */
-extern volatile uint32 systick_uptime_millis;
+//extern volatile uint32 systick_uptime_millis;
 
 /**
  * @brief Returns the system uptime, in milliseconds.

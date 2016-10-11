@@ -38,7 +38,8 @@ void delay(uint32_t ms)
 
 void delayMicroseconds(uint32_t us)
 {
-  FEATHERLIB->rtos_delay_us(us);
+  // FEATHERLIB->rtos_delay_us(us);
+  delay_us(us);
 }
 
 void yield(void)
