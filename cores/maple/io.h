@@ -225,4 +225,8 @@ void shiftOut(uint8 dataPin, uint8 clockPin, uint8 bitOrder, uint8 value);
 
 uint8_t shiftIn(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder);
 
+uint32_t pulseIn( uint32_t ulPin, uint32_t ulState, uint32_t ulTimeout = 1000000L );
+
+#define pulseInLong pulseIn
+
 #endif
