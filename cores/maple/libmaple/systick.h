@@ -81,6 +81,7 @@ typedef struct systick_reg_map {
 /**
  * @brief Returns the system uptime, in milliseconds.
  */
+static inline uint32 systick_uptime(void) ATTR_ALWAYS_INLINE;
 static inline uint32 systick_uptime(void) {
   return FEATHERLIB->system_millis();
 //    return systick_uptime_millis;
