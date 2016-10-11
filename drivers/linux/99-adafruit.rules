@@ -1,6 +1,12 @@
-# This file is used to gain permission for ADAFIDEV module
-# Copy this file to /etc/udev/rules.d/
-
+# udev rules for Adafruit's WICED boards.
+#
+# Copy this file to the location of your distribution's udev rules, for example on Ubuntu:
+#   sudo cp adafruit-trinket.rules /etc/udev/rules.d/
+# Then reload udev configuration by executing:
+#   sudo reload udev
+# Or if that doesn't work try:
+#   sudo udevadm control --reload-rules
+#   sudo udevadm trigger
 ACTION!="add|change", GOTO="adafruit_rules_end"
 SUBSYSTEM!="usb|tty|hidraw", GOTO="adafruit_rules_end"
 
