@@ -102,6 +102,7 @@ bool AdafruitFatfs::mkfs(void)
 bool AdafruitFatfs::begin(void)
 {
   _fs = malloc_type(FATFS);
+  VERIFY(_fs != NULL);
 
   // Mount fat filessystem
   error = f_mount(_fs, "", 1);

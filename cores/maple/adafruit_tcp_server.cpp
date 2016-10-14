@@ -99,6 +99,7 @@ bool AdafruitTCPServer::listen(bool first_time)
   uint32_t this_value = (uint32_t) this;
 
   _tcp_handle = malloc_named("TCP Server", TCP_SOCKET_HANDLE_SIZE);
+  VERIFY( _tcp_handle != NULL );
 
   sdep_cmd_para_t para_arr[] =
   {

@@ -239,12 +239,16 @@ bool AdafruitTwitter::checkDirectMessage(uint64_t since_id, uint64_t max_id)
       if ( (dm.text == NULL) && !strcmp("text", key) )
       {
         dm.text = (char*) malloc_named("Twitter DM", strlen(value) + 1);
+        VERIFY(dm.text != NULL);
+
         strcpy(dm.text, value);
       }
 
       if ( (dm.sender == NULL) && !strcmp("screen_name", key) )
       {
         dm.sender = (char*) malloc_named("Twitter DM", strlen(value) + 1);
+        VERIFY( dm.sender != NULL );
+
         strcpy(dm.sender, value);
       }
 
@@ -254,6 +258,7 @@ bool AdafruitTwitter::checkDirectMessage(uint64_t since_id, uint64_t max_id)
         if ( dm.created_at == NULL )
         {
           dm.created_at = (char*) malloc_named("Twitter DM", strlen(value) + 10);
+          VERIFY( dm.created_at != NULL );
         }
 
         strcpy(dm.created_at, value);
