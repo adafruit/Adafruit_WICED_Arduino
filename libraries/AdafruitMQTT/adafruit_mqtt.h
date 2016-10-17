@@ -44,7 +44,7 @@
 #include <adafruit_sdep.h>
 
 #define MQTT_KEEPALIVE_DEFAULT    60  // in seconds
-#define MQTT_BUFSIZE_DEFAULT      128
+#define MQTT_BUFSIZE_DEFAULT      256
 
 enum
 {

@@ -40,6 +40,9 @@
 #define WLAN_SSID         "yourSSID"
 #define WLAN_PASS         "yourPass"
 
+#define MQTT_TX_BUFSIZE   1024
+#define MQTT_RX_BUFSIZE   1024
+
 int ledPin = PA15;
 
 AdafruitMQTT mqtt;
@@ -111,6 +114,8 @@ void setup()
 
   // Set ClientID
   mqtt.clientID(AWS_IOT_MQTT_CLIENT_ID);
+
+  mqtt.setBufferSize(MQTT_TX_BUFSIZE, MQTT_RX_BUFSIZE);
 
   // Set the disconnect callback handler
   mqtt.setDisconnectCallback(disconnect_callback);
