@@ -7,8 +7,9 @@
 - add flow-control for USB Serial
 - fix HTTPServer example issue due to modern browse's parallel loading
 - fix accessing failed malloc pointer
-- solve worst-case scenario for mqtt keepalive, causing AWS disconnection
-- add MQTT setBufferSize() to explicitly change the TX/RX for mqtt client. Default is 128 byte each
+- solve #59 worst-case scenario for mqtt keepalive, causing AWS disconnection
+- solve #59 AWS reconnection issue
+- add MQTT setBufferSize() to explicitly change the TX/RX for mqtt client. Default is 256 bytes each
 
 # 0.6.0
 
