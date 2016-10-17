@@ -40,13 +40,17 @@
 
 /******************************************************************************/
 /*!
-    @brief
+    @brief Class init
 */
 /******************************************************************************/
-void AdafruitTCP::reset()
+void AdafruitTCP::init()
 {
   _tcp_handle          = NULL;
   _connected           = false;
+
+  _bytesRead           = 0;
+  _remote_ip           = 0;
+  _remote_port         = 0;
 
   _tls_verification    = true;
   _tls_context         = NULL;
@@ -56,15 +60,25 @@ void AdafruitTCP::reset()
   _tls_local_cert      = NULL;
   _tls_local_certlen   = 0;
 
-  _bytesRead           = 0;
-  _remote_ip           = 0;
-  _remote_port         = 0;
   _packet_buffering    = false;
   _verbose             = false;
 
   _timeout             = ADAFRUIT_TCP_TIMEOUT;
   _rx_callback         = NULL;
   _disconnect_callback = NULL;
+}
+
+void AdafruitTCP::disconnect_cleanup( void )
+{
+  _tcp_handle          = NULL;
+  _connected           = false;
+
+  _bytesRead           = 0;
+  _remote_ip           = 0;
+  _remote_port         = 0;
+
+  _tls_context         = NULL;
+  _tls_identity        = NULL;
 }
 
 /******************************************************************************/
@@ -74,7 +88,7 @@ void AdafruitTCP::reset()
 /******************************************************************************/
 AdafruitTCP::AdafruitTCP(uint8_t interface)
 {
-  this->reset();
+  this->init();
 
   _interface = interface;
 }
@@ -86,7 +100,7 @@ AdafruitTCP::AdafruitTCP(uint8_t interface)
 /******************************************************************************/
 AdafruitTCP::AdafruitTCP ( uint8_t interface, tcp_handle_t handle )
 {
-  this->reset();
+  this->init();
 
   _tcp_handle = handle;
   _interface  = interface;
@@ -496,7 +510,9 @@ void AdafruitTCP::stop()
   if ( _tls_context ) free_named("TCP TLS Context" , _tls_context);
   if ( _tls_identity) free_named("TCP TLS Identity", _tls_identity);
 
-  this->reset();
+  // Don't invoke disconnect callback since callback normally call stop() --> recursive
+
+  this->disconnect_cleanup();
 
   DBG_HEAP();
 }

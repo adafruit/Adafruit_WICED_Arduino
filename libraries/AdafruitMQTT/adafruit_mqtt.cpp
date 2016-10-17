@@ -71,6 +71,18 @@ void AdafruitMQTT::init(void)
 
 /******************************************************************************/
 /*!
+    @brief Part of disconnect() that clean up previously allocated resource
+*/
+/******************************************************************************/
+void AdafruitMQTT::disconnect_cleanup(void)
+{
+  _mqtt_handle = 0;   // clean handle
+  tcp.stop();         // Disconnect TCP
+  _connected = false;
+}
+
+/******************************************************************************/
+/*!
     @brief
 */
 /******************************************************************************/
@@ -179,18 +191,6 @@ bool AdafruitMQTT::connectSSL ( const char* host, uint16_t port, bool cleanSessi
 
 /******************************************************************************/
 /*!
-    @brief Part of disconnect() that clean up previously allocated resource
-*/
-/******************************************************************************/
-void AdafruitMQTT::disconnect_cleanup(void)
-{
-  _mqtt_handle = 0;   // clean handle
-  tcp.stop();         // Disconnect TCP
-  _connected = false;
-}
-
-/******************************************************************************/
-/*!
     @brief
 */
 /******************************************************************************/
@@ -201,6 +201,8 @@ bool AdafruitMQTT::disconnect ( void )
 
   // Send Disconnect Packet to Broker
   VERIFY( sdep(SDEP_CMD_MQTTDISCONNECT, 4, &_mqtt_handle, NULL, NULL) );
+
+  // Don't invoke disconnect callback since callback normally call stop() --> recursive
 
   this->disconnect_cleanup();
   return true;

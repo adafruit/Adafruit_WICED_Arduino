@@ -73,12 +73,10 @@ void setup()
   // Print all software versions
   Feather.printVersions();
 
-#if 1
   while ( !connectAP() )
   {
     delay(500); // delay between each attempt
   }
-#endif  
 
   // Connected: Print network info
   Feather.printNetwork();
@@ -88,8 +86,6 @@ void setup()
 
   Serial.println("Set callback for New Direct Message");
   Twitter.setDirectMessageRecvCallback(direct_message_received);
-
-  Twitter.checkDirectMessage();
 }
 
 
@@ -113,9 +109,9 @@ void direct_message_received(TwitterDM dm)
 /**************************************************************************/
 void loop()
 {
-  //Twitter.checkDirectMessage();
-  //Serial.println("Wait 10 seconds before next check");
-  //delay(10000);
+  Twitter.checkDirectMessage();
+  Serial.println("Wait 10 seconds before next check");
+  delay(10000);
 }
 
 /**************************************************************************/

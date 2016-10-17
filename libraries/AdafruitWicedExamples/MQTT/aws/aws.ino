@@ -120,7 +120,7 @@ void setup()
   // Set the disconnect callback handler
   mqtt.setDisconnectCallback(disconnect_callback);
 
-  // default RootCA include certificate to verify AWS (
+  // default RootCA include certificate to verify AWS
   Feather.useDefaultRootCA(true);
 
   // Setting Indentity with AWS Private Key & Certificate

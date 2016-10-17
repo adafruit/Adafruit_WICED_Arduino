@@ -115,8 +115,13 @@ public:
 
 protected:
   tcp_handle_t   _tcp_handle;
-  bool           _connected;
   uint8_t        _interface;
+  bool           _connected;
+
+  uint32_t       _bytesRead;
+
+  uint32_t       _remote_ip;
+  uint16_t       _remote_port;
 
   bool           _tls_verification;
 
@@ -126,11 +131,6 @@ protected:
   char const*    _tls_private_key;
   const uint8_t* _tls_local_cert;
   uint16_t       _tls_local_certlen;
-
-  uint32_t     _bytesRead;
-
-  uint32_t     _remote_ip;
-  uint16_t     _remote_port;
 
   // If enabled, data is written to a buffer until the network packet is full
   // (~1500 bytes) or until .flush() is called
@@ -143,7 +143,8 @@ protected:
 
   bool connect_internal    ( uint32_t ipv4, uint16_t port, uint8_t is_tls);
   void install_callback    ( void );
-  void reset               ( void );
+  void init               ( void );
+  void disconnect_cleanup  ( void );
   void get_peer_info       ( void );
   bool interface_connected ( void );
 
