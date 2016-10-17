@@ -1,4 +1,14 @@
-# 0.6.1 (WIP)
+# 0.6.1
+
+- fix #46 : delayMicroseconds() and micros() are not correct
+- add #60 pulseIn() function
+- fix #61 : mqtt publish without requiring to subcribe
+- resolve #62 : make sure while(!Serial) have delay() and add comment to explain why
+- add flow-control for USB Serial
+- fix HTTPServer example issue due to modern browse's parallel loading
+- fix accessing failed malloc pointer
+- solve worst-case scenario for mqtt keepalive, causing AWS disconnection
+- add MQTT setBufferSize() to explicitly change the TX/RX for mqtt client. Default is 128 byte each
 
 # 0.6.0
 
