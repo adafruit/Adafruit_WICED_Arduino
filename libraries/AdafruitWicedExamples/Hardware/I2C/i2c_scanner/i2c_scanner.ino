@@ -32,7 +32,13 @@ void setup() {
   Serial.begin(115200);
   Wire.begin();
   
-  while(!Serial) delay(10);
+  // Wait for the Serial Monitor to open    
+  while (!Serial)
+  {
+    /* Delay required to avoid RTOS task switching problems */
+    delay(1);
+  }
+  
   Serial.println("\nI2C Scanner");
 }
 

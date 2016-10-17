@@ -38,8 +38,11 @@ void setup()
   Serial.begin(115200);
 
   // Wait for the Serial Monitor to open
-  // (Disable this check to run without Serial Monitor)
-  while (!Serial) { yield(); }
+  while (!Serial)
+  {
+    /* Delay required to avoid RTOS task switching problems */
+    delay(1);
+  }
 }
 
 void loop() 

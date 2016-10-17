@@ -23,8 +23,12 @@ void setup()
   //Initialize serial and wait for port to open:
   Serial.begin(115200);
 
-  // wait for serial port to connect. Needed for native USB port only
-  while (!Serial) delay(1);
+  // Wait for the Serial Monitor to open
+  while (!Serial)
+  {
+    /* Delay required to avoid RTOS task switching problems */
+    delay(1);
+  }
 }
 
 /**************************************************************************/

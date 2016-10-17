@@ -40,8 +40,11 @@ void setup()
   Serial.begin(115200); // Ignored by Maple. But needed by boards using Hardware serial via a USB to Serial Adaptor
 
   // Wait for the Serial Monitor to open
-  // (Disable this check to run without Serial Monitor)
-  while (!Serial) { yield(); }
+  while (!Serial)
+  {
+    /* Delay required to avoid RTOS task switching problems */
+    delay(1);
+  }
 }
 
 void loop() 
