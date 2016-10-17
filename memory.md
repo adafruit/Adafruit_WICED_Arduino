@@ -9,9 +9,11 @@
 - Config Data (32KB)
 - USB DFU Bootloader (32KB)
 
-## Usage
+## User SRAM Usage
 
-- Arduino core : 5664 bytes
+The following information is based on FeatherLib 0.6.1:
+
+- Arduino core : 5664 bytes (Based on [Arduino_STM32](https://github.com/rogerclarkmelbourne/Arduino_STM32))
 - AdafruitTCP (or Client) : 400 bytes
 - TLS support for AdafruitTCP : 2600 bytes
 - TLS Indentity : 200 bytes
