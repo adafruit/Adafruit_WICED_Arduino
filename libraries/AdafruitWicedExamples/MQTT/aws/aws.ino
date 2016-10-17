@@ -58,7 +58,7 @@ AdafruitMQTT mqtt;
 
 const char aws_private_key[] = 
 "-----BEGIN RSA PRIVATE KEY-----\n"
-"Your Key line 1 with\n"
+"Your Key contents line 1 with newline and quoted\n"
 "Quote each of your key's lines like this example\n"
 "-----END RSA PRIVATE KEY-----";
 

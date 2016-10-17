@@ -243,7 +243,12 @@ int AdafruitTCP::connectSSL(const char* host, uint16_t port)
 
 bool AdafruitTCP::tlsSetIdentity(char const* private_key, uint8_t const* local_cert, uint16_t local_certlen)
 {
+#ifdef DEBUG_AWS_PRIVATE_KEY
+  _tls_private_key    = DEBUG_AWS_PRIVATE_KEY;
+#else
   _tls_private_key    = private_key;
+#endif
+
   _tls_local_cert     = local_cert;
   _tls_local_certlen  = local_certlen;
 

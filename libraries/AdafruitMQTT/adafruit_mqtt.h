@@ -43,7 +43,9 @@
 #include <IPAddress.h>
 #include <adafruit_sdep.h>
 
-#define MQTT_KEEPALIVE_DEFAULT    60 // in seconds
+#define MQTT_KEEPALIVE_DEFAULT    60  // in seconds
+#define MQTT_BUFSIZE_DEFAULT      128
+
 enum
 {
   MQTT_QOS_AT_MOST_ONCE,
@@ -87,9 +89,10 @@ public:
     _will_retained = retained;
   }
 
-  void clientID(const char* client) { _clientID = client; }
-  void setDisconnectCallback  ( void (*fp) (void) ) { _disconnect_callback = fp; }
-  bool tlsSetIdentity         (char const* private_key, uint8_t const* local_cert, uint16_t local_certlen)
+  void clientID              (const char* client) { _clientID = client; }
+  void setBufferSize         (uint16_t tx_size, uint16_t rx_size);
+  void setDisconnectCallback ( void (*fp) (void) ) { _disconnect_callback = fp; }
+  bool tlsSetIdentity        (char const* private_key, uint8_t const* local_cert, uint16_t local_certlen)
   {
     return tcp.tlsSetIdentity(private_key, local_cert, local_certlen);
   }
@@ -123,6 +126,9 @@ protected:
   AdafruitTCP tcp;
   uint32_t  _mqtt_handle;
 
+  uint16_t _tx_bufsize;
+  uint16_t _rx_bufsize;
+
   bool _connected;
 
   // Connect Packet Data
@@ -138,17 +144,7 @@ protected:
   void (*_disconnect_callback) (void);
 
   bool connectBroker(bool cleanSession, uint16_t keepalive_sec);
-  bool init(void)
-  {
-    _mqtt_handle   = 0;
-    _connected     = 0;
-    tcp.usePacketBuffering(true);
-
-    _disconnect_callback = NULL;
-    _clientID = _username = _password = NULL;
-    _will_qos = _will_retained = 0;
-  }
-
+  void init(void);
   void randomClientID(char* clientid);
 
   bool subscribe_internal(const char* topicFilter, uint8_t qos, void* mh, bool copy_topic, void* arg=NULL);

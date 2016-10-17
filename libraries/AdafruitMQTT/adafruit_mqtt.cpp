@@ -38,12 +38,35 @@
 #include "adafruit_mqtt.h"
 #include "rng.h"
 
+/******************************************************************************/
+/*!
+    @brief Generate a random client
+*/
+/******************************************************************************/
 void AdafruitMQTT::randomClientID(char* clientid)
 {
   // length is from 10 to 23
   uint8_t length = 10+(rng_u32()%13);
   rng_base64(clientid, length);
   clientid[length] = 0;
+}
+
+/******************************************************************************/
+/*!
+    @brief Class init
+*/
+/******************************************************************************/
+void AdafruitMQTT::init(void)
+{
+  _mqtt_handle   = 0;
+  _connected     = 0;
+  _tx_bufsize = _rx_bufsize = MQTT_BUFSIZE_DEFAULT;
+
+  tcp.usePacketBuffering(true);
+
+  _disconnect_callback = NULL;
+  _clientID = _username = _password = NULL;
+  _will_qos = _will_retained = 0;
 }
 
 /******************************************************************************/
@@ -70,18 +93,23 @@ bool AdafruitMQTT::connectBroker(bool cleanSession, uint16_t keepalive_sec)
       { .len = 4                   , .p_value = &tcp_handle        },
       { .len = 2                   , .p_value = &keepalive_sec     },
       { .len = 1                   , .p_value = &cleanSession      },
-      // ID                        , user, pass
+
+      // ID, user, pass
       { .len = strlen(_clientID)   , .p_value = _clientID          },
       { .len = strlen(_username)   , .p_value = _username          },
       { .len = strlen(_password)   , .p_value = _password          },
+
       // will para
       { .len = strlen(_will_topic) , .p_value = _will_topic        },
       { .len = _will_message.len   , .p_value = _will_message.data },
       { .len = 1                   , .p_value = &_will_qos         },
       { .len = 1                   , .p_value = &_will_retained    },
+
+      // this pointer (for callback), tx bufsize, rx bufsize
       { .len = 0                   , .p_value = NULL               },
+      { .len = 2                   , .p_value = &_tx_bufsize       },
+      { .len = 2                   , .p_value = &_rx_bufsize       },
   };
-  uint8_t para_count = sizeof(para_arr)/sizeof(sdep_cmd_para_t);
 
   if ( _disconnect_callback )
   {
@@ -89,7 +117,7 @@ bool AdafruitMQTT::connectBroker(bool cleanSession, uint16_t keepalive_sec)
     para_arr[10].p_value = &this_value;
   }
 
-  return sdep_n(SDEP_CMD_MQTTCONNECT, para_count, para_arr, NULL, &_mqtt_handle);
+  return sdep_n(SDEP_CMD_MQTTCONNECT, arrcount(para_arr), para_arr, NULL, &_mqtt_handle);
 }
 
 /******************************************************************************/
@@ -262,6 +290,17 @@ bool AdafruitMQTT::unsubscribe( const char* topicFilter )
   return sdep_n(SDEP_CMD_MQTTUNSUBSCRIBE, para_count, para_arr, NULL, NULL);
 }
 
+/******************************************************************************/
+/*!
+    @brief Configure buffer size for TX and RX. Default is MQTT_BUFSIZE_DEFAULT.
+    This function must be called before connect() to take effect.
+*/
+/******************************************************************************/
+void AdafruitMQTT::setBufferSize(uint16_t tx_size, uint16_t rx_size)
+{
+  _tx_bufsize = tx_size;
+  _rx_bufsize = rx_size;
+}
 
 //--------------------------------------------------------------------+
 // Callback
