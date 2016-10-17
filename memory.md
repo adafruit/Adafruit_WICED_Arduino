@@ -12,14 +12,11 @@ USB DFU Bootloader (32KB)
 ## Usage
 
 Arduino core : 5664 bytes
-
 AdafruitTCP (or Client) : 400 bytes
 TLS support for AdafruitTCP : 2600 bytes
 TLS Indentity : 200 bytes
-
 AdafruitUDP : 180 bytes
 AdafruitHTTPServer : 568 bytes
-
 SPIFlash Fatfs : 4152 byts
 FatFile : 40 bytes
 FatDir : 50 bytes
