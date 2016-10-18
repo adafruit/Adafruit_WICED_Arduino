@@ -61,20 +61,22 @@ void setup()
 {
   Serial.begin(115200);
 
-  // wait for serial port to connect. Needed for native USB port only
-  while (!Serial) delay(1);
+  // Wait for the Serial Monitor to open
+  while (!Serial)
+  {
+    /* Delay required to avoid RTOS task switching problems */
+    delay(1);
+  }
 
   Serial.println("Twitter Check Direct Message Example\r\n");
 
   // Print all software versions
   Feather.printVersions();
 
-#if 1
   while ( !connectAP() )
   {
     delay(500); // delay between each attempt
   }
-#endif  
 
   // Connected: Print network info
   Feather.printNetwork();
@@ -84,8 +86,6 @@ void setup()
 
   Serial.println("Set callback for New Direct Message");
   Twitter.setDirectMessageRecvCallback(direct_message_received);
-
-  Twitter.checkDirectMessage();
 }
 
 
@@ -109,9 +109,9 @@ void direct_message_received(TwitterDM dm)
 /**************************************************************************/
 void loop()
 {
-  //Twitter.checkDirectMessage();
-  //Serial.println("Wait 10 seconds before next check");
-  //delay(10000);
+  Twitter.checkDirectMessage();
+  Serial.println("Wait 10 seconds before next check");
+  delay(10000);
 }
 
 /**************************************************************************/

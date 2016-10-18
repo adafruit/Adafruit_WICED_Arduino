@@ -61,7 +61,6 @@ AdafruitMQTTTopic::AdafruitMQTTTopic(AdafruitMQTT* mqtt, const char* topic, uint
 /******************************************************************************/
 size_t AdafruitMQTTTopic::write(const uint8_t *buf, size_t len)
 {
-  if ( !_subscribed ) return 0;
   return _mqtt->publish(_topic, UTF8String(buf, len), _qos, _retained) ? len : 0;
 }
 
@@ -102,15 +101,21 @@ void AdafruitMQTTTopic::subscribed_callback(UTF8String topic, UTF8String message
   }
 }
 
-//--------------------------------------------------------------------+
-// Callback
-//--------------------------------------------------------------------+
+/**
+ * Callback fired by featherlib when there is new mess
+ * @param topic_data
+ * @param topic_len
+ * @param mess_data
+ * @param len
+ * @param callback_func
+ * @param arg
+ */
 void  adafruit_mqtt_subscribed_callback(char* topic_data, size_t topic_len, uint8_t* mess_data, size_t len, void* callback_func, void* arg)
 {
-  // no AdafruitMQTTTopic's this pointer, use default message handler signature in MQTT
   UTF8String topic(topic_data, topic_len);
   UTF8String message(mess_data, len);
 
+  // no AdafruitMQTTTopic's this pointer, use default message handler signature in MQTT
   if ( arg == NULL )
   {
     if ( callback_func )

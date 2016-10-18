@@ -45,6 +45,7 @@
  * execution. On overflow, restarts at 0.
  * @see micros()
  */
+static inline uint32 millis(void) ATTR_ALWAYS_INLINE;
 static inline uint32 millis(void) {
     return systick_uptime();
 }
@@ -57,26 +58,32 @@ static inline uint32 millis(void) {
 static inline uint32 micros(void) {
     uint32 ms;
     uint32 cycle_cnt;
-    uint32 res;
+    //uint32 res;
 
     do {
         ms = millis();
         cycle_cnt = systick_get_count();
+        #if 0
         asm volatile("nop"); //allow interrupt to fire
         asm volatile("nop");
+        #endif
+
     } while (ms != millis());
 
+    #if 0
     if(systick_check_underflow()) {
-    	ms++;
-    	cycle_cnt = systick_get_count();
+      ms++;
+      cycle_cnt = systick_get_count();
     }
+    #endif
+
 
     /* SYSTICK_RELOAD_VAL is 1 less than the number of cycles it
        actually takes to complete a SysTick reload */
-    res = (ms * US_PER_MS) +
-        (SYSTICK_RELOAD_VAL + 1 - cycle_cnt) / CYCLES_PER_MICROSECOND;
+    return (ms * US_PER_MS) +
+           (SYSTICK_RELOAD_VAL + 1 - cycle_cnt) / CYCLES_PER_MICROSECOND;
 
-    return res;
+    //return res;
 }
 
 /**

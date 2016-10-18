@@ -761,11 +761,6 @@ void adafruit_wifi_disconnect_callback(void)
 //--------------------------------------------------------------------+
 // Debug
 //--------------------------------------------------------------------+
-void AdafruitFeather::printThreadlist(void)
-{
-  sdep(SDEP_CMD_THREADLIST_PRINT, 0, NULL, NULL, NULL);
-}
-
 int AdafruitFeather::dbgHeapTotal(void)
 {
   return heap_get_total_size();

@@ -17,7 +17,7 @@
  * the SPI flash is enabled by soldering the optional solder jumper for 
  * SPI flash 'closed'.
  * 
- * To run the demo copy the resources folder into SPI Flash
+ * To run the demo copy the resources folder into SPI Flash's root directory
  */
 
 #include <adafruit_feather.h>
@@ -27,8 +27,14 @@
 #define WLAN_SSID            "yourSSID"
 #define WLAN_PASS            "yourPassword"
 
-#define PORT                 80            // The TCP port to use
-#define MAX_CLIENTS          3
+// The TCP port to use
+#define PORT                 80
+
+/* Modern browsers uses parallel loading technique which could
+ * open up to 6 or 8 connections to render an html page.
+ * Increase the MAX_CLIENTS if you often got the httpserver timeout
+ */
+#define MAX_CLIENTS          8
 
 int ledPin = PA15;
 
@@ -155,8 +161,12 @@ void setup()
 {
   Serial.begin(115200);
 
-  // Wait for the USB serial to connect. Needed for native USB port only.
-  while (!Serial) delay(1);
+  // Wait for the Serial Monitor to open
+  while (!Serial)
+  {
+    /* Delay required to avoid RTOS task switching problems */
+    delay(1);
+  }
 
   Serial.println("HTTP Server Boilerplat on SPI Flash Example\r\n");
   

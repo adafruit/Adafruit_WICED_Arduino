@@ -213,7 +213,6 @@ public:
   void      printVersions   (Print& p = Serial);
   void      printNetwork    (Print& p = Serial);
   void      printEncryption (int32_t enc, Print& p = Serial);
-  void      printThreadlist (void);
 
   // Debug functions
   int  dbgHeapTotal    (void);

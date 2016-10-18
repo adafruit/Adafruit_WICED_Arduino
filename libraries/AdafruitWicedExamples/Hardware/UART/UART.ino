@@ -31,9 +31,13 @@ void setup()
   Serial1.begin(baudrate);  // HW UART1
   Serial2.begin(baudrate);  // HW UART2
   
-  // wait for the serial port to connect. Needed for native USB port only.
-  while (!Serial) delay(1);
-
+  // Wait for the Serial Monitor to open
+  while (!Serial)
+  {
+    /* Delay required to avoid RTOS task switching problems */
+    delay(1);
+  }
+  
   Serial.println ("UART demo: Serial Monitor");
   Serial.printf  ("Badurate : %d\r\n", baudrate);
   

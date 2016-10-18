@@ -108,8 +108,12 @@ void setup()
 {
   Serial.begin(115200);
 
-  // Wait for the serial port to connect. Only needed for native USB CDC.
-  while (!Serial) delay(1);
+  // Wait for the Serial Monitor to open
+  while (!Serial)
+  {
+    /* Delay required to avoid RTOS task switching problems */
+    delay(1);
+  }
   
   Serial.println("HTTPS Custom Root CA Example");
 

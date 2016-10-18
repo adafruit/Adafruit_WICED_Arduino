@@ -12,78 +12,51 @@
  any redistribution
 *********************************************************************/
 
-/* This example use D3 javascript on the HTTP Server to to illustrate 
- * running Threads (with highest stack) and Arduino Heap usage. Web's 
- * design are included in resources folder.
- * 
- * - d3.min.js : javascript to draw graphic for more details https://d3js.org/
- * - index.html: mainpage import data from thread.csv & heap.csv and use D3
- *               to draw charts.
- * - thread.csv, heap.csv : dynamic data of running Thread and Heap memory
- *               provided by function generator.
- * - favicon.ico: optional icon of Adafruit
- * 
- * NOTE: Javascript skill help !!!!!
- * 
- * To convert web design files (html, jpg etc..) into C header, please use
- * included tools/pyresource. E.g command to convert all the files in resources 
- * folder for this sketch is
- *    $ python ../../../tools/pyresource/pyresource resources
- * 
- * pyresource will convert each file to a header file with '.' is
- * replaced by '_' e.g
- *    index.html --> index_html.h with HTTPResource variable is index_html
- * For your convenience, a master header named resources.h is also generated 
- * and include all of generated header file. Your sketch only need to
- *      #include "resources.h
+/* This example uses the AdafruitHTTPServer class to create a simple 
+ * webserver
  */
-
+ 
 #include <adafruit_feather.h>
+#include <adafruit_featherap.h>
 #include <adafruit_http_server.h>
-#include "resources.h"
 
 #define WLAN_SSID            "yourSSID"
 #define WLAN_PASS            "yourPassword"
+#define WLAN_ENCRYPTION       ENC_TYPE_WPA2_AES
+#define WLAN_CHANNEL          1
 
-// The TCP port to use
-#define PORT                 80
+#define PORT                 80            // The TCP port to use
+#define MAX_CLIENTS          3
 
-/* Modern browsers uses parallel loading technique which could
- * open up to 6 or 8 connections to render an html page.
- * Increase the MAX_CLIENTS if you often got the httpserver timeout
- */
-#define MAX_CLIENTS          8
+IPAddress apIP     (192, 168, 2, 1);
+IPAddress apGateway(192, 168, 2, 1);
+IPAddress apNetmask(255, 255, 255, 0);
 
 int ledPin = PA15;
+int visit_count = 0;
 
-void heap_generator          (const char* url, const char* query, httppage_request_t* http_request);
-void thread_generator        (const char* url, const char* query, httppage_request_t* http_request);
-void file_not_found_generator(const char* url, const char* query, httppage_request_t* http_request);
+void info_html_generator      (const char* url, const char* query, httppage_request_t* http_request);
+void file_not_found_generator (const char* url, const char* query, httppage_request_t* http_request);
 
-// Page database
+const char hello_html[] = "<html><body> <h1>Hello World!</h1> </body></html>";
+
 HTTPPage pages[] = 
 {
-  HTTPPageRedirect("/", "/index.html"), // redirect root
-
-  HTTPPage("/d3.min.js"  , HTTP_MIME_JAVASCRIPT, &d3_min_js),
-  HTTPPage("/index.html" , HTTP_MIME_TEXT_HTML , &index_html),
-  HTTPPage("/heap.csv"   , HTTP_MIME_TEXT_PLAIN, heap_generator),
-  HTTPPage("/thread.csv" , HTTP_MIME_TEXT_PLAIN, thread_generator),
-
-  HTTPPage("/favicon.ico", HTTP_MIME_IMAGE_MICROSOFT, &favicon_ico),
-  HTTPPage("/404.html"   , HTTP_MIME_TEXT_HTML      , file_not_found_generator),
+  HTTPPageRedirect("/", "/hello.html"), // redirect root to hello page
+  HTTPPage("/hello.html", HTTP_MIME_TEXT_HTML, hello_html),
+  HTTPPage("/info.html" , HTTP_MIME_TEXT_HTML, info_html_generator),
+  HTTPPage("/404.html" , HTTP_MIME_TEXT_HTML, file_not_found_generator),
 };
 
 uint8_t pagecount = sizeof(pages)/sizeof(HTTPPage);
 
-// Use the HTTP class
-AdafruitHTTPServer httpserver(pagecount);
-
-thread_info_t threadInfo[20];
+// Declare HTTPServer with max number of pages
+AdafruitHTTPServer httpserver(pagecount, WIFI_INTERFACE_SOFTAP);
 
 /**************************************************************************/
 /*!
  * @brief  Example of generating dynamic HTML content on demand
+ *
  * Link is separated to url and query
  *
  * @param url           url of this page
@@ -92,49 +65,32 @@ thread_info_t threadInfo[20];
  * @param http_request  This request's information
 */
 /**************************************************************************/
-void heap_generator (const char* url, const char* query, httppage_request_t* http_request)
+void info_html_generator (const char* url, const char* query, httppage_request_t* http_request)
 {
   (void) url;
   (void) query;
   (void) http_request;
 
-  int used_size = Feather.dbgHeapUsed();
-  int free_size = Feather.dbgHeapFree();
+  httpserver.print("<b>Bootloader</b> : ");
+  httpserver.print( Feather.bootloaderVersion() );
+  httpserver.print("<br>");
 
-  httpserver.println("label,count");
-  httpserver.printf("Used %ld,%ld\r\n", used_size, used_size);
-  httpserver.printf("Free %ld,%ld\r\n", free_size, free_size);
-}
+  httpserver.print("<b>WICED SDK</b> : ");
+  httpserver.print( Feather.sdkVersion() );
+  httpserver.print("<br>");
 
-/**************************************************************************/
-/*!
- * @brief  Example of generating dynamic HTML content on demand
- * Link is separated to url and query
- *
- * @param url           url of this page
- * @param query         query string after '?' e.g "var=value"
- *
- * @param http_request  This request's information
-*/
-/**************************************************************************/
-void thread_generator (const char* url, const char* query, httppage_request_t* http_request)
-{
-  (void) url;
-  (void) query;
-  (void) http_request;
+  httpserver.print("<b>FeatherLib</b> : ");
+  httpserver.print( Feather.firmwareVersion() );
+  httpserver.print("<br>");
 
-  httpserver.println("Name,Used,Free");
-  
-  // Get Thread Info
-  int count = Feather.dbgThreadInfo(threadInfo, 20);
-  //DBG_INT(count);
-  
-  for(int i=0; i<count; i++)
-  {
-    httpserver.printf("%s (%u),%ld,%ld\r\n", 
-                      threadInfo[i].name, threadInfo[i].prio,
-                      threadInfo[i].stack_highest, threadInfo[i].stack_total-threadInfo[i].stack_highest);
-  }
+  httpserver.print("<b>Arduino API</b> : "); 
+  httpserver.print( Feather.arduinoVersion() );
+  httpserver.print("<br>");
+  httpserver.print("<br>");
+
+  visit_count++;
+  httpserver.print("<b>visit count</b> : ");
+  httpserver.print(visit_count);
 }
 
 /**************************************************************************/
@@ -191,19 +147,18 @@ void setup()
     delay(1);
   }
 
-  Serial.println("D3 HTTP Server Example\r\n");
+  Serial.println("SoftAP Simple HTTP Server Example\r\n");
   
   // Print all software versions
   Feather.printVersions();
 
-  // Try to connect to an AP
-  while ( !connectAP() )
-  {
-    delay(500); // delay between each attempt
-  }
+  Serial.println("Configuring SoftAP\r\n");
+  FeatherAP.err_actions(true, true);
+  FeatherAP.begin(apIP, apGateway, apNetmask, WLAN_CHANNEL);
 
-  // Connected: Print network info
-  Feather.printNetwork();
+  Serial.println("Starting SoftAP\r\n");
+  FeatherAP.start(WLAN_SSID, WLAN_PASS, WLAN_ENCRYPTION);
+  FeatherAP.printNetwork();
 
   // Tell the HTTP client to auto print error codes and halt on errors
   httpserver.err_actions(true, true);

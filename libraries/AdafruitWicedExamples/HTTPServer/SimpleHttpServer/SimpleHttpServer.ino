@@ -22,8 +22,14 @@
 #define WLAN_SSID            "yourSSID"
 #define WLAN_PASS            "yourPassword"
 
-#define PORT                 80            // The TCP port to use
-#define MAX_CLIENTS          3
+// The TCP port to use
+#define PORT                 80
+
+/* Modern browsers uses parallel loading technique which could
+ * open up to 6 or 8 connections to render an html page.
+ * Increase the MAX_CLIENTS if you often got the httpserver timeout
+ */
+#define MAX_CLIENTS          8
 
 int ledPin = PA15;
 int visit_count = 0;
@@ -133,8 +139,12 @@ void setup()
 {
   Serial.begin(115200);
 
-  // Wait for the USB serial to connect. Needed for native USB port only.
-  while (!Serial) delay(1);
+  // Wait for the Serial Monitor to open
+  while (!Serial)
+  {
+    /* Delay required to avoid RTOS task switching problems */
+    delay(1);
+  }
 
   Serial.println("Simple HTTP Server Example\r\n");
   

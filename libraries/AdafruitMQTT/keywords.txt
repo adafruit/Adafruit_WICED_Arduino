@@ -12,17 +12,21 @@ AdafruitMQTT	KEYWORD1
 # Methods and Functions (KEYWORD2)
 #######################################
 
+clientID	KEYWORD2
+setBufferSize	KEYWORD2
+setDisconnectCallback	KEYWORD2
+tlsSetIdentity	KEYWORD2
+
 will	KEYWORD2
 connect	KEYWORD2
 connectSSL	KEYWORD2
 connected	KEYWORD2
 disconnect	KEYWORD2
+
 publish	KEYWORD2
 subscribe	KEYWORD2
 subscribe_copy	KEYWORD2
 unsubscribe	KEYWORD2
-
-adafruit_mqtt_disconnect_callback	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

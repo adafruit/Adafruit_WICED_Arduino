@@ -71,8 +71,12 @@ void setup()
 {
   Serial.begin(115200);
 
-  // wait for the serial port to connect. Needed for native USB port only.
-  while (!Serial) delay(1);
+  // Wait for the Serial Monitor to open
+  while (!Serial)
+  {
+    /* Delay required to avoid RTOS task switching problems */
+    delay(1);
+  }
 
   Serial.println("UDP Echo Server Callback Example\r\n");
 

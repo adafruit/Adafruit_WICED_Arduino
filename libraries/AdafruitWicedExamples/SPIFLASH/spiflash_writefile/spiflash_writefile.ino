@@ -25,8 +25,12 @@ void setup()
 {
   Serial.begin(115200);
 
-  // Wait for the USB serial to connect. Needed for native USB port only.
-  while (!Serial) delay(1);
+  // Wait for the Serial Monitor to open
+  while (!Serial)
+  {
+    /* Delay required to avoid RTOS task switching problems */
+    delay(1);
+  }
     
   Serial.println("SPI Flash Write File Example");
 

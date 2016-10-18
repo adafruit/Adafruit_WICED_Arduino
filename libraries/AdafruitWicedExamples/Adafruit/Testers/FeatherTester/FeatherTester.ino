@@ -24,7 +24,11 @@ void setup()
   Serial.begin(115200);
 
   // Wait for the Serial Monitor to open
-  while (!Serial) { yield(); }
+  while (!Serial)
+  {
+    /* Delay required to avoid RTOS task switching problems */
+    delay(1);
+  } 
 
   // Display the test suite selection menu
   display_menu();

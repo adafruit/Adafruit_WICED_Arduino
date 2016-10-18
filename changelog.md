@@ -1,3 +1,16 @@
+# 0.6.1
+
+- fix #46 : delayMicroseconds() and micros() are not correct
+- add #60 pulseIn() function
+- fix #61 : mqtt publish without requiring to subcribe
+- resolve #62 : make sure while(!Serial) have delay() and add comment to explain why
+- add flow-control for USB Serial
+- fix HTTPServer example issue due to modern browse's parallel loading
+- fix accessing failed malloc pointer
+- solve #59 worst-case scenario for mqtt keepalive, causing AWS disconnection
+- solve #59 AWS reconnection issue
+- add MQTT setBufferSize() to explicitly change the TX/RX for mqtt client. Default is 256 bytes each
+
 # 0.6.0
 
 - Increase Arduino code size from 128KB to 256KB

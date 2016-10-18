@@ -40,6 +40,9 @@
 #define WLAN_SSID         "yourSSID"
 #define WLAN_PASS         "yourPass"
 
+#define MQTT_TX_BUFSIZE   1024
+#define MQTT_RX_BUFSIZE   1024
+
 int ledPin = PA15;
 
 AdafruitMQTT mqtt;
@@ -58,7 +61,7 @@ AdafruitMQTT mqtt;
 
 const char aws_private_key[] = 
 "-----BEGIN RSA PRIVATE KEY-----\n"
-"Your Key line 1 with\n"
+"Your Key contents line 1 with newline and quoted\n"
 "Quote each of your key's lines like this example\n"
 "-----END RSA PRIVATE KEY-----";
 
@@ -86,8 +89,12 @@ void setup()
   pinMode(ledPin, OUTPUT);
   Serial.begin(115200);
 
-  // Wait for the USB serial port to connect. Needed for native USB port only
-  while (!Serial) delay(1);
+  // Wait for the Serial Monitor to open
+  while (!Serial)
+  {
+    /* Delay required to avoid RTOS task switching problems */
+    delay(1);
+  }
 
   Serial.println("AWS IOT Example\r\n");
 
@@ -108,10 +115,12 @@ void setup()
   // Set ClientID
   mqtt.clientID(AWS_IOT_MQTT_CLIENT_ID);
 
+  mqtt.setBufferSize(MQTT_TX_BUFSIZE, MQTT_RX_BUFSIZE);
+
   // Set the disconnect callback handler
   mqtt.setDisconnectCallback(disconnect_callback);
 
-  // default RootCA include certificate to verify AWS (
+  // default RootCA include certificate to verify AWS
   Feather.useDefaultRootCA(true);
 
   // Setting Indentity with AWS Private Key & Certificate
