@@ -29,7 +29,7 @@ void setup()
   }
   
   Serial.println("PWM Duty Cycle Example");
-  Serial.print("Enter duty value from 0-100: ");
+  Serial.print("Enter Duty Cycle value [0-100]: ");
 }
 
 void loop() 
@@ -48,7 +48,7 @@ void loop()
     // Set the brightness of the LED:
     pwmWrite(ledPin, brightness);
 
-    Serial.print("Enter duty value from 0-100: ");
+    Serial.print("Enter Duty Cycle value [0-100]: ");
   }
 }
 

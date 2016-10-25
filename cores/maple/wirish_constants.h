@@ -5,7 +5,7 @@
 extern "C"{
 #endif
 
-enum {
+enum BitOrder {
 	LSBFIRST = 0,
 	MSBFIRST = 1
 };

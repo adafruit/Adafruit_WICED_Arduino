@@ -458,7 +458,6 @@ void i2c_master_enable(i2c_dev *dev, uint32 flags) {
     } else {
         /* Tlow/Thigh = 1 */
         ccr = STM32_PCLK1/(100000 * 2);
-//      ccr = 0x090;
         trise = I2C_CLK + 1;
     }
 
@@ -589,6 +588,7 @@ static inline int32 wait_for_state_change(i2c_dev *dev,
 //            }
 //        }
 
+	// Adafruit modification
         if (timeout && time_left == 0) return I2C_ERROR_TIMEOUT;
 
         FEATHERLIB->rtos_delay_ms(1);

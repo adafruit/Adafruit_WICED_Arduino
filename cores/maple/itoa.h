@@ -23,7 +23,6 @@
 extern "C"{
 #endif // __cplusplus
 
-#ifndef __CROSSWORKS_ARM
 #if 0
 
 extern void itoa( int n, char s[] ) ;
@@ -35,7 +34,6 @@ extern char* ltoa( long value, char *string, int radix ) ;
 extern char* utoa( unsigned long value, char *string, int radix ) ;
 extern char* ultoa( unsigned long value, char *string, int radix ) ;
 #endif /* 0 */
-#endif
 
 #ifdef __cplusplus
 } // extern "C"
