@@ -50,7 +50,7 @@ private:
     volatile bool  isConnected;
 
 public:
-    USBSerial() { isConnected = false; }
+    USBSerial() { isConnected = false; _timeout=200; }
 
     /* Set up/tear down */
     void begin(uint32 baud) {} // do nothing

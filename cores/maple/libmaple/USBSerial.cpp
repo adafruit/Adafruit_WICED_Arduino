@@ -54,8 +54,7 @@ int USBSerial::peek(void)
 int USBSerial::read(void)
 {
   char ch;
-  FEATHERLIB->file_read(FILENO_USB_SERIAL, (char*)&ch, 1);
-  return (int) ch;
+  return ( 0 < FEATHERLIB->file_read(FILENO_USB_SERIAL, (char*)&ch, 1) ) ? ((int) ch) : (-1);
 }
 
 // DEBUGGING with SWO

@@ -19,6 +19,11 @@ iso8601_time_t	KEYWORD1
 thread_info_t	KEYWORD1
 
 #######################################
+# Core Function (KEYWORD2)
+#######################################
+pwmWrite	KEYWORD2
+
+#######################################
 # AdafruitSDEP Methods and Functions (KEYWORD2)
 #######################################
 
