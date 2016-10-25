@@ -16,7 +16,7 @@ int ledPin = PA15;
 
 void setup() 
 {
-  // Declare ledPin as an OUTPUT:
+  // Configure ledPin in PWM mode: (optional)
   pinMode(ledPin, PWM);
   
 	Serial.begin(115200);
@@ -41,12 +41,12 @@ void loop()
     Serial.println(input);
 
     uint8_t n = atoi(input);
-    
-    // convert user input [0-100] to [0-65,535]
-    int brightness = map(n, 0, 100, 0, 65535);
+
+    // convert user input [0-100] to [0-255]
+    int brightness = map(n, 0, 100, 0, 255);
     
     // Set the brightness of the LED:
-    pwmWrite(ledPin, brightness);
+    analogWrite(ledPin, brightness);
 
     Serial.print("Enter Duty Cycle value [0-100]: ");
   }

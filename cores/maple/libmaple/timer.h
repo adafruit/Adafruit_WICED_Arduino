@@ -1048,6 +1048,19 @@ static inline void timer_oc_set_mode(timer_dev *dev,
     *ccmr = tmp;
 }
 
+static inline timer_oc_mode timer_oc_get_mode(timer_dev *dev, uint8 channel)
+{
+    uint8 bit0 = channel & 1;
+    //uint8 bit1 = (channel >> 1) & 1;  // original
+    uint8 bit1 = ((channel-1) >> 1) & 1;  // fixed
+    /* channel == 1,2 -> CCMR1; channel == 3,4 -> CCMR2 */
+    uint32 ccmr = *(&(dev->regs).gen->CCMR1 + bit1);
+    /* channel == 1,3 -> shift = 0, channel == 2,4 -> shift = 8 */
+    uint8 shift = 8 * (1 - bit0);
+
+    return (timer_oc_mode) ((ccmr >> shift) &  0x70UL);
+}
+
 #ifdef __cplusplus
 } // extern "C"
 #endif

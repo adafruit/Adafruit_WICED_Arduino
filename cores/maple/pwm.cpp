@@ -34,11 +34,67 @@
 #include "boards.h"
 #include "pwm.h"
 
-void pwmWrite(uint8 pin, uint16 duty_cycle) {
-    timer_dev *dev = PIN_MAP[pin].timer_device;
-    if (pin >= BOARD_NR_GPIO_PINS || dev == NULL || dev->type == TIMER_BASIC) {
-        return;
-    }
+// debug
+#include "adafruit_feather.h"
 
-    timer_set_compare(dev, PIN_MAP[pin].timer_channel, duty_cycle);
+#include "wirish_math.h"
+
+void analogWrite(uint8 pin, int val)
+{
+  if (pin >= BOARD_NR_GPIO_PINS) return;
+  timer_dev *dev = PIN_MAP[pin].timer_device;
+  if (dev == NULL || dev->type == TIMER_BASIC) return;
+
+  // configure as PWM if not
+  if ( TIMER_OC_MODE_PWM_1 != timer_oc_get_mode(dev, PIN_MAP[pin].timer_channel) )
+  {
+    pinMode(pin, PWM);
+  }
+
+  // map compare according to the current reload
+  uint16 compare = map(val, 0, 255, 0, timer_get_reload(dev));
+
+  timer_set_compare(dev, PIN_MAP[pin].timer_channel, compare);
+}
+
+void pwmWrite(uint8 pin, uint16 duty_cycle)
+{
+  if (pin >= BOARD_NR_GPIO_PINS) return;
+  timer_dev *dev = PIN_MAP[pin].timer_device;
+  if (dev == NULL || dev->type == TIMER_BASIC) return;
+
+  timer_set_compare(dev, PIN_MAP[pin].timer_channel, duty_cycle);
+}
+
+// Adafruit Modification
+//void pwmFrequency(uint8 pin, uint32 hz)
+//{
+//
+//}
+
+/**
+ *
+ * @param pin
+ * @param us
+ *
+ * from HardwareTimer::setPeriod()
+ */
+void pwmPeriod(uint8 pin, uint32 us)
+{
+  if (pin >= BOARD_NR_GPIO_PINS) return;
+  timer_dev *dev = PIN_MAP[pin].timer_device;
+  if (dev == NULL || dev->type == TIMER_BASIC) return;
+
+  // Use 16-bit for simple Timer management
+  const uint16 full_overflow = 0xFFFF;
+
+  uint32 cycle = us * CYCLES_PER_MICROSECOND;
+  uint16 prescaler = (uint16)(cycle / full_overflow);
+  uint16 reload = (uint16) round(cycle / prescaler);
+
+  DBG_INT(prescaler);
+  DBG_INT(reload);
+
+  timer_set_prescaler(dev, prescaler);
+  timer_set_reload(dev, reload);
 }

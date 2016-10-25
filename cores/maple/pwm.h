@@ -33,12 +33,21 @@
 #ifndef _PWM_H_
 #define _PWM_H_
 
+#if 0
 /**
  * As a convenience, analogWrite is an alias of pwmWrite to ease
  * porting Arduino code.  However, period and duty will have to be
  * recalibrated.
  */
 #define analogWrite pwmWrite
+#endif
+
+/**
+ * Implement Arduino compatible analogWrite() function
+ * @param pin pin number of IO
+ * @param val from 0 to 255
+ */
+void analogWrite(uint8 pin, int val);
 
 /**
  * Set the PWM duty on the given pin.
@@ -50,6 +59,9 @@
  * @param duty_cycle Duty cycle to set.
  */
 void pwmWrite(uint8 pin, uint16 duty_cycle);
+
+//void pwmFrequency(uint8 pin, uint32 hz);
+void pwmPeriod(uint8 pin, uint32 us);
 
 #endif
 
