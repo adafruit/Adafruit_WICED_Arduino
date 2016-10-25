@@ -96,10 +96,9 @@ static void timerDefaultConfig(timer_dev *dev) {
     timer_pause(dev);
 
     regs->CR1 = TIMER_CR1_ARPE;
-    regs->PSC = 1;
+    regs->PSC = 0;
     regs->SR = 0;
     regs->DIER = 0;
-//    regs->EGR = TIMER_EGR_UG;
 
     switch (dev->type) {
     case TIMER_ADVANCED:
@@ -118,7 +117,6 @@ static void timerDefaultConfig(timer_dev *dev) {
         break;
     }
 
-    // UG must be placed after reload to take affect
     regs->EGR = TIMER_EGR_UG;
     timer_resume(dev);
 }
