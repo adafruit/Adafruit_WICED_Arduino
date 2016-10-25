@@ -16,7 +16,7 @@ int ledPin = PA15;
 
 void setup() 
 {
-  // Configure ledPin in PWM mode: (optional)
+  // Configure ledPin in PWM mode (optional)
   pinMode(ledPin, PWM);
   
 	Serial.begin(115200);
@@ -28,8 +28,8 @@ void setup()
     delay(1);
   }
   
-  Serial.println("PWM Duty Cycle Example");
-  Serial.print("Enter Duty Cycle value [0-100]: ");
+  Serial.println("PWM Period Example (duty cycle = 50%)");
+  Serial.print("Enter Period value in microseconds: ");
 }
 
 void loop() 
@@ -39,16 +39,12 @@ void loop()
   {
     char* input = getUserInput();
     Serial.println(input);
+    int n = atoi(input);
 
-    uint8_t n = atoi(input);
+    pwmPeriod(ledPin, n);    
+    analogWrite(ledPin, 127); // need to re-write after Period changes
 
-    // convert user input [0-100] to [0-255]
-    int brightness = map(n, 0, 100, 0, 255);
-    
-    // Set the brightness of the LED:
-    analogWrite(ledPin, brightness);
-
-    Serial.print("Enter Duty Cycle value [0-100]: ");
+    Serial.print("Enter Period value in microseconds: ");
   }
 }
 
