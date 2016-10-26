@@ -29,7 +29,10 @@ void setup()
     /* Delay required to avoid RTOS task switching problems */
     delay(1);
   }
-  
+
+  // Duty cycle is 50%
+  analogWrite(ledPin, 127); 
+    
   Serial.println("PWM Period Example (duty cycle = 50%)");
   Serial.print("Enter Period value in microseconds: ");
 }
@@ -44,10 +47,8 @@ void loop()
     
     int n = atoi(input);
 
+    // Change the period. Note: duty cycle is unchanged
     pwmPeriod(ledPin, n);
-
-    // need to re-write after Period changes
-    analogWrite(ledPin, 127); 
 
     Serial.println();
     Serial.print("Enter Period value in microseconds: ");

@@ -86,6 +86,12 @@ void pwmPeriod(uint8 pin, uint32 us)
   uint16 prescaler = (uint16) (cycle / TIMER_MAX_RELOAD);
   uint16 reload    = (uint16) round(cycle / (prescaler+1));
 
+  // Re-map compare to preserve duty cycle
+  uint16 compare   =  timer_get_compare(dev, PIN_MAP[pin].timer_channel);
+
+  compare = map(compare, 0, timer_get_reload(dev), 0, reload);
+
   timer_set_prescaler(dev, prescaler);
   timer_set_reload(dev, reload);
+  timer_set_compare(dev, PIN_MAP[pin].timer_channel, compare);
 }
