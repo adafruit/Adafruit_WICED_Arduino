@@ -52,7 +52,7 @@ void setup()
   }
   
   Serial.println("PWM RGB Example");
-  Serial.print("Enter space separated RGB value e.g '500 100 200' : ");
+  Serial.print("Enter space separated RGB value e.g '50 100 200' : ");
 }
 
 void loop() 
@@ -72,7 +72,7 @@ void loop()
     analogWrite(bluePin , b);
 
     Serial.println();
-    Serial.print("Enter space separated RGB value e.g '500 100 200' : ");
+    Serial.print("Enter space separated RGB value e.g '50 100 200' : ");
   }
 }
 
