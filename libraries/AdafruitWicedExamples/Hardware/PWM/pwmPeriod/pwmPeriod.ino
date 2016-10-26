@@ -12,6 +12,8 @@
   any redistribution
 *********************************************************************/
 
+#include <adafruit_feather.h>
+
 int ledPin = PA15;
 
 void setup() 
@@ -19,7 +21,7 @@ void setup()
   // Configure ledPin in PWM mode (optional)
   pinMode(ledPin, PWM);
   
-	Serial.begin(115200);
+  Serial.begin(115200);
   
   // Wait for the Serial Monitor to open
   while (!Serial)
@@ -39,11 +41,15 @@ void loop()
   {
     char* input = getUserInput();
     Serial.println(input);
+    
     int n = atoi(input);
 
-    pwmPeriod(ledPin, n);    
-    analogWrite(ledPin, 127); // need to re-write after Period changes
+    pwmPeriod(ledPin, n);
 
+    // need to re-write after Period changes
+    analogWrite(ledPin, 127); 
+
+    Serial.println();
     Serial.print("Enter Period value in microseconds: ");
   }
 }

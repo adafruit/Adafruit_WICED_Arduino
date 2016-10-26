@@ -39,6 +39,8 @@
 
 #include "wirish_math.h"
 
+#define TIMER_MAX_RELOAD    0xFFFF
+
 void analogWrite(uint8 pin, int val)
 {
   if (pin >= BOARD_NR_GPIO_PINS) return;
@@ -50,6 +52,8 @@ void analogWrite(uint8 pin, int val)
   {
     pinMode(pin, PWM);
   }
+
+  if (val > 255) val = 255;
 
   // map compare according to the current reload
   uint16 compare = map(val, 0, 255, 0, timer_get_reload(dev));
@@ -66,34 +70,21 @@ void pwmWrite(uint8 pin, uint16 duty_cycle)
   timer_set_compare(dev, PIN_MAP[pin].timer_channel, duty_cycle);
 }
 
-// Adafruit Modification
-//void pwmFrequency(uint8 pin, uint32 hz)
-//{
-//
-//}
-
-/**
- *
- * @param pin
- * @param us
- *
- * from HardwareTimer::setPeriod()
- */
+// Adafruit Modification to change PWM Period/Frequency
 void pwmPeriod(uint8 pin, uint32 us)
 {
   if (pin >= BOARD_NR_GPIO_PINS) return;
   timer_dev *dev = PIN_MAP[pin].timer_device;
   if (dev == NULL || dev->type == TIMER_BASIC) return;
 
-  // Use 16-bit for simple Timer management
-  const uint16 full_overflow = 0xFFFF;
+  // Get timer's max speed in hz
+  uint32 max_speed = rcc_dev_timer_clk_speed(dev->clk_id);
 
-  uint32 cycle = us * CYCLES_PER_MICROSECOND;
-  uint16 prescaler = (uint16)(cycle / full_overflow);
-  uint16 reload = (uint16) round(cycle / prescaler);
+  // period in cpu cycles
+  uint32 cycle = us * (max_speed / 1000000UL);
 
-  DBG_INT(prescaler);
-  DBG_INT(reload);
+  uint16 prescaler = (uint16) (cycle / TIMER_MAX_RELOAD);
+  uint16 reload    = (uint16) round(cycle / (prescaler+1));
 
   timer_set_prescaler(dev, prescaler);
   timer_set_reload(dev, reload);
