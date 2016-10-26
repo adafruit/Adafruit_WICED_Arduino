@@ -1,5 +1,11 @@
 # 0.6.2
 
+- Fix Serial incorrect Read() behavior
+- PWM enhancement
+	- Make analogWrite() compatible with existing Arduino core (duty cycle 0-255)
+	- add pwmPeriod(pin, us) pwmFrequency(pin, hz) to change the PWM period/frequency
+	- add Dimmer, pwmPeriod, pwmRGB example sketches
+
 # 0.6.1
 
 - fix #46 : delayMicroseconds() and micros() are not correct
