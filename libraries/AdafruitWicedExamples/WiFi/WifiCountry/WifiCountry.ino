@@ -35,7 +35,7 @@
 #define WLAN_SSID            "yourSSID"
 #define WLAN_PASS            "yourPassword"
 
-#define WLAN_COUNTRY          WIFI_COUNTRY_FRANCE
+#define WLAN_COUNTRY          WIFI_COUNTRY_UNITED_STATES // See adafruit_constants.h for country list
 
 /**************************************************************************/
 /*!
