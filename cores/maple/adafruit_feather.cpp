@@ -618,6 +618,30 @@ uint32_t AdafruitFeather::getUtcTime(void)
 
 /******************************************************************************/
 /*!
+    @brief  Get the current WiFi country code
+*/
+/******************************************************************************/
+uint32_t AdafruitFeather::getWifiCountry(void)
+{
+  uint32_t country = 0;
+  VERIFY( sdep(SDEP_CMD_WIFI_COUNTRY, 0, NULL, NULL, &country) );
+
+  return country;
+}
+
+/******************************************************************************/
+/*!
+    @brief  Set the WiFi country code
+*/
+/******************************************************************************/
+bool AdafruitFeather::setWifiCountry(uint32_t country_code)
+{
+  return sdep(SDEP_CMD_WIFI_COUNTRY, 4, &country_code, NULL, NULL);
+}
+
+
+/******************************************************************************/
+/*!
     @brief  Helper to print out all the software versions
 */
 /******************************************************************************/
@@ -725,6 +749,8 @@ void AdafruitFeather::printEncryption(int32_t enc, Print& p)
   // IBSS
   if ( enc & ENC_IBSS_ENABLED  )  p.print("IBSS_OPEN");
 }
+
+
 
 //--------------------------------------------------------------------+
 // Callbacks

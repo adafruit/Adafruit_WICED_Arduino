@@ -141,6 +141,9 @@ public:
   char const* firmwareVersion   ( void );
   char const* arduinoVersion    ( void );
 
+  uint32_t    getWifiCountry(void);
+  bool        setWifiCountry(uint32_t country_code);
+
   // Connect to a WiFi
   bool connect   ( void );
   bool connect   ( const char *ssid );
