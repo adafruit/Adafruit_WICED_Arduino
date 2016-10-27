@@ -14,9 +14,22 @@
 
 #include "adafruit_feather.h"
 
-/* This example demonstrates how to use the getHostByName function
- * to lookup an IP for a hostname. A string representation
- * of an IP can also be used directly.
+/* This example demonstrates how to use get and set WiFi country domain.
+ *  
+ * - Sketch will get the current country and print out its abbreviation 
+ * (2 last bytes of the country code)
+ * - If not the same as WLAN_COUNTRY, attempt to change the country 
+ * 
+ * Note:
+ * - Complete list of country code is in adafruit_constnats.h file.
+ * - setWifiCountry() will save the country in the NVM, i.e it will
+ * last through an power lost or reset
+ * 
+ * WiFi Regulation
+ * - US : channel 1-11
+ * - EU : channel 1-13
+ * - JP : channel 1-13
+ * - Rest of the world mostly allow channel 1-13
  */
 
 #define WLAN_SSID            "yourSSID"

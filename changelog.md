@@ -5,6 +5,8 @@
 	- Make analogWrite() compatible with existing Arduino core (duty cycle 0-255)
 	- add pwmPeriod(pin, us) pwmFrequency(pin, hz) to change the PWM period/frequency
 	- add Dimmer, pwmPeriod, pwmRGB example sketches
+- Add WiFi country get/set support getWifiCountry(), setWifiCountry()
+	- setWifiCountry() will save the country code to NVM section which will last through power lost or reset
 
 # 0.6.1
 
