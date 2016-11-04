@@ -140,7 +140,7 @@ bool AdafruitADC::start(uint8_t mode)
 {
   // callback & buffer are mandatory
   VERIFY(_callback != NULL);
-  //VERIFY( _buffer && _bufsize );
+  VERIFY( _buffer && _bufsize );
 
   adc_reg_map *regs = ADC1->regs;
 
@@ -151,44 +151,34 @@ bool AdafruitADC::start(uint8_t mode)
     pinMode(_pin[pin_count], INPUT_ANALOG);
   }
 
-#if 0
-  if ( !_buffer )
+  // Setup DMA & set callback as DMA transfer complete
+
+  // DMA2 is already enabled by featherlib for using SDIO with radio chip
+  // dma_init(DMA2);
+
+  __io uint32* adc_dr = &regs->DR;
+  uint32_t cr = DMA_CR_CH0 | DMA_CR_PL_HIGH | DMA_CR_DIR_P2M | DMA_CR_CIRC | DMA_CR_TCIE /*| DMA_CR_TEIE | DMA_CR_DMEIE*/;
+
+  if (_bufsize > 1) cr |= DMA_CR_MINC;
+
+  if ( pin_count == 1)
   {
-
-  }
-  else
-#endif
-  {
-    // Setup DMA & set callback as DMA transfer complete
-
-    // DMA2 is already enabled by featherlib for using SDIO with radio chip
-    // dma_init(DMA2);
-
-    __io uint32* adc_dr = &regs->DR;
-    uint32_t cr = DMA_CR_CH0 | DMA_CR_PL_HIGH | DMA_CR_DIR_P2M | DMA_CR_CIRC |
-        DMA_CR_TCIE /*| DMA_CR_TEIE | DMA_CR_DMEIE*/;
-
-    if (_bufsize > 1) cr |= DMA_CR_MINC;
-
-    if ( pin_count == 1)
+    if ( mode == ADC_MODE_NORMAL )
     {
-      if ( mode == ADC_MODE_NORMAL )
-      {
-        cr |= DMA_CR_PBURST0 | DMA_CR_PSIZE_16BITS | DMA_CR_MBURST0 | DMA_CR_MSIZE_16BITS;
+      cr |= DMA_CR_PBURST0 | DMA_CR_PSIZE_16BITS | DMA_CR_MBURST0 | DMA_CR_MSIZE_16BITS;
 
-        adc_dr = &regs->DR;
-      }
+      adc_dr = &regs->DR;
     }
-
-    dma_clear_isr_bits(DMA2, DMA_STREAM0);
-    dma_setup_transfer(DMA2, DMA_STREAM0,
-                       &regs->DR, _buffer, 0,
-                       cr, 0);
-    dma_set_num_transfers(DMA2, DMA_STREAM0, _bufsize);
-    dma_attach_interrupt(DMA2, DMA_STREAM0, _callback);
-//    dma_attach_interrupt(DMA2, DMA_STREAM0, adafruit_adc_dma_isr);
-    dma_enable(DMA2, DMA_STREAM0);
   }
+
+  dma_clear_isr_bits(DMA2, DMA_STREAM0);
+  dma_setup_transfer(DMA2, DMA_STREAM0,
+                     &regs->DR, _buffer, 0,
+                     cr, 0);
+  dma_set_num_transfers(DMA2, DMA_STREAM0, _bufsize);
+  dma_attach_interrupt(DMA2, DMA_STREAM0, _callback);
+  //    dma_attach_interrupt(DMA2, DMA_STREAM0, adafruit_adc_dma_isr);
+  dma_enable(DMA2, DMA_STREAM0);
 
   // Set up overrun interrupt, it occurred quite often with DMA + Continuos mode
   adc_attach_interrupt(adafruit_adc_overrun_isr);
@@ -209,7 +199,15 @@ bool AdafruitADC::start(uint8_t mode)
 
 void AdafruitADC::stop(void)
 {
+  // ADC
+  adc_reg_map *regs = ADC1->regs;
 
+  regs->CR2 &= ~(ADC_CR2_CONT | ADC_CR2_DMA);
+  nvic_irq_disable(NVIC_ADC_1_2);
+
+  // DMA
+  dma_disable(DMA2, DMA_STREAM0);
+  dma_detach_interrupt(DMA2, DMA_STREAM0);
 }
 
 // callback isr from irq

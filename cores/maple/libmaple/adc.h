@@ -400,16 +400,6 @@ void setupADC_F2();
 
 void adc_attach_interrupt(void (*cb) (void) );
 
-static inline void adc_dma_enable(const adc_dev *dev)
-{
-  *bb_perip(&dev->regs->CR2, ADC_CR2_DMA_BIT) = 1;
-}
-
-static inline void adc_dma_disable(const adc_dev *dev)
-{
-  *bb_perip(&dev->regs->CR2, ADC_CR2_DMA_BIT) = 0;
-}
-
 #ifdef __cplusplus
 } // extern "C"
 #endif
