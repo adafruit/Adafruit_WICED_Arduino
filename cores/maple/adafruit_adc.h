@@ -63,6 +63,9 @@ private:
   uint16_t* _buffer;
   uint32_t  _bufsize;
 
+  uint16_t _low_threshold;
+  uint16_t _high_threshold;
+
 public:
   AdafruitADC(void);
 
@@ -72,7 +75,7 @@ public:
   void setBuffer(uint16_t* buffer, uint32_t size);
   void attachInterrupt( void (*fp) (void) );
 
-  void setThreshold();
+  void setThreshold(uint16_t low, uint16_t high);
 
   void setSampleRate(adc_smp_rate rate)
   {

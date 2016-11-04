@@ -399,6 +399,7 @@ static inline void adc_disable_all(void) {
 void setupADC_F2();
 
 void adc_attach_interrupt(void (*cb) (void) );
+void adc_detach_interrupt(void);
 
 #ifdef __cplusplus
 } // extern "C"

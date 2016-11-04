@@ -13,7 +13,7 @@
 *********************************************************************/
 
 /*
- * This sketch uses AdafruitADCto test the speed of WICED ADC which is up to
+ * This sketch uses AdafruitADC to test the speed of WICED ADC which is up to
  * 2 MSPS for single channel or 4 MSPS for dual, 6 MSPS for triple channel.
  * 
  * To run this example we need an oscilloscope to accurately measure the

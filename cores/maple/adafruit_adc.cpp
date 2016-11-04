@@ -66,6 +66,8 @@ AdafruitADC::AdafruitADC(void)
 
   _buffer  = NULL;
   _bufsize = 0;
+
+  _low_threshold = _high_threshold = 0;
 }
 
 /**
@@ -131,18 +133,68 @@ void AdafruitADC::attachInterrupt(void (*fp) (void) )
   _callback = fp;
 }
 
-void AdafruitADC::setThreshold()
+void AdafruitADC::setThreshold(uint16_t low, uint16_t high)
 {
-
+  _low_threshold = low;
+  _high_threshold = high;
 }
 
 bool AdafruitADC::start(uint8_t mode)
 {
-  // callback & buffer are mandatory
-  VERIFY(_callback != NULL);
-  VERIFY( _buffer && _bufsize );
-
   adc_reg_map *regs = ADC1->regs;
+
+  if ( mode == ADC_MODE_WATCHDOG )
+  {
+    regs->LTR = _low_threshold;
+    regs->HTR = _high_threshold;
+
+    regs->SR &= ~( ADC_SR_OVR | ADC_SR_EOC | ADC_SR_AWD);
+
+    // Enable watchdog on specified channel + AWD intterupt
+    regs->CR1 = (ADC_CR1_AWDEN | ADC_CR1_AWDSGL | ADC_CR1_AWDIE | PIN_MAP[_pin[0]].adc_channel);
+
+    adc_attach_interrupt(_callback);
+  }
+  else
+  {
+    // callback & buffer are mandatory
+    VERIFY(_callback != NULL);
+    VERIFY( _buffer && _bufsize );
+
+    // Setup DMA & set callback as DMA transfer complete
+    // DMA2 RCC clock is already enabled by featherlib for using SDIO with radio chip
+
+    __io uint32* adc_dr = &regs->DR;
+    uint32_t dma_cr = DMA_CR_CH0 | DMA_CR_PL_HIGH | DMA_CR_DIR_P2M | DMA_CR_CIRC | DMA_CR_TCIE /*| DMA_CR_TEIE | DMA_CR_DMEIE*/;
+
+    if (_bufsize > 1) dma_cr |= DMA_CR_MINC;
+
+    //if ( pin_count == 1)
+    {
+      if ( mode == ADC_MODE_NORMAL )
+      {
+        dma_cr |= DMA_CR_PBURST0 | DMA_CR_PSIZE_16BITS | DMA_CR_MBURST0 | DMA_CR_MSIZE_16BITS;
+
+        adc_dr = &regs->DR;
+      }
+    }
+
+    dma_clear_isr_bits(DMA2, DMA_STREAM0);
+    dma_setup_transfer(DMA2, DMA_STREAM0,
+                       &regs->DR, _buffer, 0,
+                       dma_cr, 0);
+    dma_set_num_transfers(DMA2, DMA_STREAM0, _bufsize);
+    dma_attach_interrupt(DMA2, DMA_STREAM0, _callback);
+    //    dma_attach_interrupt(DMA2, DMA_STREAM0, adafruit_adc_dma_isr);
+    dma_enable(DMA2, DMA_STREAM0);
+
+    // Set up overrun interrupt, it occurred quite often with DMA + Continuos mode
+    regs->CR1 = ADC_CR1_OVRIE;
+    adc_attach_interrupt(adafruit_adc_overrun_isr);
+
+    // Continuous & DMA mode
+    regs->CR2 |= ADC_CR2_DMA;
+  }
 
   // configure as input analog
   uint8_t pin_count;
@@ -151,42 +203,7 @@ bool AdafruitADC::start(uint8_t mode)
     pinMode(_pin[pin_count], INPUT_ANALOG);
   }
 
-  // Setup DMA & set callback as DMA transfer complete
-
-  // DMA2 is already enabled by featherlib for using SDIO with radio chip
-  // dma_init(DMA2);
-
-  __io uint32* adc_dr = &regs->DR;
-  uint32_t cr = DMA_CR_CH0 | DMA_CR_PL_HIGH | DMA_CR_DIR_P2M | DMA_CR_CIRC | DMA_CR_TCIE /*| DMA_CR_TEIE | DMA_CR_DMEIE*/;
-
-  if (_bufsize > 1) cr |= DMA_CR_MINC;
-
-  if ( pin_count == 1)
-  {
-    if ( mode == ADC_MODE_NORMAL )
-    {
-      cr |= DMA_CR_PBURST0 | DMA_CR_PSIZE_16BITS | DMA_CR_MBURST0 | DMA_CR_MSIZE_16BITS;
-
-      adc_dr = &regs->DR;
-    }
-  }
-
-  dma_clear_isr_bits(DMA2, DMA_STREAM0);
-  dma_setup_transfer(DMA2, DMA_STREAM0,
-                     &regs->DR, _buffer, 0,
-                     cr, 0);
-  dma_set_num_transfers(DMA2, DMA_STREAM0, _bufsize);
-  dma_attach_interrupt(DMA2, DMA_STREAM0, _callback);
-  //    dma_attach_interrupt(DMA2, DMA_STREAM0, adafruit_adc_dma_isr);
-  dma_enable(DMA2, DMA_STREAM0);
-
-  // Set up overrun interrupt, it occurred quite often with DMA + Continuos mode
-  adc_attach_interrupt(adafruit_adc_overrun_isr);
-  nvic_irq_enable(NVIC_ADC_1_2);
-  regs->CR1 |= ADC_CR1_OVRIE;
-
-  // Continuous & DMA mode
-  regs->CR2 |= (ADC_CR2_CONT | ADC_CR2_DMA);
+  regs->CR2 |= ADC_CR2_CONT;
 
   // Start ADC conversion
   adc_set_reg_seqlen(ADC1, 1);
@@ -203,7 +220,9 @@ void AdafruitADC::stop(void)
   adc_reg_map *regs = ADC1->regs;
 
   regs->CR2 &= ~(ADC_CR2_CONT | ADC_CR2_DMA);
-  nvic_irq_disable(NVIC_ADC_1_2);
+  regs->CR1 &= ~ADC_CR1_OVRIE;
+
+  adc_detach_interrupt();
 
   // DMA
   dma_disable(DMA2, DMA_STREAM0);

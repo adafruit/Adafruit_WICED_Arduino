@@ -42,6 +42,7 @@
 #include "adc.h"
 
 #include "gpio.h"
+#include "nvic.h"
 
 void (*_callback) (void);
 
@@ -208,6 +209,13 @@ void setupADC_F2() {
 void adc_attach_interrupt(void (*cb) (void))
 {
   _callback = cb;
+  nvic_irq_enable(NVIC_ADC_1_2);
+}
+
+void adc_detach_interrupt(void)
+{
+  _callback = NULL;
+  nvic_irq_disable(NVIC_ADC_1_2);
 }
 
 void __irq_adc(void)
@@ -216,6 +224,6 @@ void __irq_adc(void)
   if ( _callback )  _callback();
 
   // clear all interrupt
-  ADC1->regs->SR &= ~( ADC_SR_OVR | ADC_SR_EOC | ADC_SR_AWD);
+  ADC1->regs->SR &= ~( ADC_SR_OVR /*| ADC_SR_EOC */ | ADC_SR_AWD);
 }
 
