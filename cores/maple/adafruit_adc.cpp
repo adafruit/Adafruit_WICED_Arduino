@@ -54,7 +54,6 @@ AdafruitADC ADC;
  * Though user can overwrite it later by setSampleRate() if needed
  */
 
-
 /**
  * Constructor
  */
@@ -109,7 +108,18 @@ void AdafruitADC::setBuffer(uint16_t* buffer, uint32_t size)
   _buffer   = buffer;
   _bufsize  = size;
 
+  adc_smp_rate max_rate;
 
+  if      ( _bufsize < 4  ) max_rate = ADC_SMPR_239_5; // wont' work though
+  else if ( _bufsize < 8  ) max_rate = ADC_SMPR_239_5;
+  else if ( _bufsize < 16 ) max_rate = ADC_SMPR_71_5;
+  else if ( _bufsize < 32 ) max_rate = ADC_SMPR_28_5;
+  else if ( _bufsize < 64 ) max_rate = ADC_SMPR_13_5;
+  else if ( _bufsize < 128) max_rate = ADC_SMPR_7_5;
+  else
+    max_rate = ADC_SMPR_1_5;
+
+  setSampleRate(max_rate);
 }
 
 /**
@@ -212,7 +222,7 @@ void adafruit_adc_overrun_isr(void)
   {
     // re-init DMA
     dma_disable(DMA2, DMA_STREAM0);
-//    dma_clear_isr_bits(DMA2, DMA_STREAM0);
+    dma_clear_isr_bits(DMA2, DMA_STREAM0);
     dma_set_m0addr(DMA2, DMA_STREAM0, ADC._buffer);
     dma_set_num_transfers(DMA2, DMA_STREAM0, ADC._bufsize);
     dma_enable(DMA2, DMA_STREAM0);
