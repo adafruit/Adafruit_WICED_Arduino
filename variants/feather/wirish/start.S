@@ -48,8 +48,8 @@
         .type __start__, %function
 __start__:
         .fnstart
-        ldr r1,=__msp_init
-        mov sp,r1
+        //ldr r1,=__msp_init
+        //mov sp,r1
         ldr r1,=start_c
         bx r1
         .pool

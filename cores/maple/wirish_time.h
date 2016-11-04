@@ -37,6 +37,7 @@
 #include "systick.h"
 #include "boards.h"
 #include "adafruit_featherlib.h"
+#include "adafruit_scheduler.h"
 
 #define US_PER_MS               1000
 
@@ -110,6 +111,6 @@ void delay(uint32_t ms);
  */
 void delayMicroseconds(uint32_t us);
 
-void yield(void);
+
 
 #endif

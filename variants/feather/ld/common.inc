@@ -59,7 +59,7 @@ SECTIONS
         /*
          * STM32 vector table.  Leave this here.  Yes, really.
          */
-        *(.stm32.interrupt_vector)
+        KEEP(*(.stm32.interrupt_vector))
         
         . = ORIGIN( rom ) + FIRMWARE_MAGIC_OFFSET;
         KEEP(*(.rodata.*adafruit_arduino))
@@ -158,17 +158,6 @@ SECTIONS
         . = ALIGN(4);
         _lm_rom_img_cfgp = .;
         LONG(LOADADDR(.data));
-        /*
-         * Heap: Linker scripts may choose a custom heap by overriding
-         * _lm_heap_start and _lm_heap_end. Otherwise, the heap is in
-         * internal SRAM, beginning after .bss, and growing towards
-         * the stack.
-         *
-         * I'm shoving these here naively; there's probably a cleaner way
-         * to go about this. [mbolivar]
-         */
-        /*_lm_heap_start = DEFINED(_lm_heap_start) ? _lm_heap_start : _end;*/
-        /*_lm_heap_end   = DEFINED(_lm_heap_end) ? _lm_heap_end : __msp_init;*/
       } > REGION_RODATA
 
     /*
@@ -221,5 +210,14 @@ SECTIONS
     /DISCARD/ : { *(.note.GNU-stack) }
 }
 
+/*
+ * Heap: Linker scripts may choose a custom heap by overriding
+ * _lm_heap_start and _lm_heap_end. Otherwise, the heap is in
+ * internal SRAM, beginning after .bss, and growing towards
+ * the stack.
+ *
+ * I'm shoving these here naively; there's probably a cleaner way
+ * to go about this. [mbolivar]
+ */
 PROVIDE(_lm_heap_start = _end);
-PROVIDE(_lm_heap_end   = __msp_init); 
+PROVIDE(_lm_heap_end   = ORIGIN(ram) + LENGTH(ram)); 

@@ -79,12 +79,12 @@ static void setupTimers() {
 static void adcDefaultConfig(const adc_dev *dev) {
     adc_init(dev);
 
-    adc_set_extsel(dev, ADC_SWSTART);
-    adc_set_exttrig(dev, true);
+//    adc_set_extsel(dev, ADC_SWSTART);
+//    adc_set_exttrig(dev, true);
 
     adc_enable(dev);
     adc_calibrate(dev);
-    adc_set_sample_rate(dev, ADC_SMPR_55_5);
+    adc_set_sample_rate(dev, ADC_SMPR_1_5);
 }
 
 static void timerDefaultConfig(timer_dev *dev) {

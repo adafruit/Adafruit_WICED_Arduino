@@ -150,10 +150,13 @@ typedef struct ATTR_ALIGNED(512)
   uint32_t RESERVED_[6];
 
   // RTOS API
-  uint32_t (*rtos_delay_ms) (uint32_t ms);
-  uint32_t (*rtos_delay_us) (uint32_t us);
-  void     (*rtos_yield) (void);
-  uint32_t RESERVED_[13];
+  uint32_t (*rtos_delay_ms)  (uint32_t ms);
+  uint32_t (*rtos_delay_us)  (uint32_t us);
+  void     (*rtos_yield)     (void);
+  void     (*rtos_schedule)  ( int (*func) (void*), void* arg);
+  void     (*rtos_schedule_arg) ( int (*func) (void*), void* arg );
+
+  uint32_t RESERVED_[11];
 
   // Peripheral API
   uint32_t (*system_millis) (void);

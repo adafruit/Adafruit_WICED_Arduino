@@ -112,7 +112,7 @@ extern const adc_dev *ADC3;
   #endif
 #endif
 
-/*
+/*void adc_set_callback();
  * Register bit definitions
  */
 
@@ -123,12 +123,14 @@ extern const adc_dev *ADC3;
 #define ADC_SR_JEOC_BIT                 2
 #define ADC_SR_JSTRT_BIT                3
 #define ADC_SR_STRT_BIT                 4
+#define ADC_SR_OVR_BIT                  5
 
 #define ADC_SR_AWD                      BIT(ADC_SR_AWD_BIT)
 #define ADC_SR_EOC                      BIT(ADC_SR_EOC_BIT)
 #define ADC_SR_JEOC                     BIT(ADC_SR_JEOC_BIT)
 #define ADC_SR_JSTRT                    BIT(ADC_SR_JSTRT_BIT)
 #define ADC_SR_STRT                     BIT(ADC_SR_STRT_BIT)
+#define ADC_SR_OVR                      BIT(ADC_SR_OVR_BIT)
 
 /* Control register 1 */
 
@@ -142,6 +144,7 @@ extern const adc_dev *ADC3;
 #define ADC_CR1_JDISCEN_BIT             12
 #define ADC_CR1_JAWDEN_BIT              22
 #define ADC_CR1_AWDEN_BIT               23
+#define ADC_CR1_OVRIE_BIT               26
 
 #define ADC_CR1_AWDCH                   (0x1F)
 #define ADC_CR1_EOCIE                   BIT(ADC_CR1_EOCIE_BIT)
@@ -155,6 +158,7 @@ extern const adc_dev *ADC3;
 #define ADC_CR1_DISCNUM                 (0xE000)
 #define ADC_CR1_JAWDEN                  BIT(ADC_CR1_JAWDEN_BIT)
 #define ADC_CR1_AWDEN                   BIT(ADC_CR1_AWDEN_BIT)
+#define ADC_CR1_OVRIE                   BIT(ADC_CR1_OVRIE_BIT)
 
 /* Control register 2 */
 
@@ -163,6 +167,7 @@ extern const adc_dev *ADC3;
 #define ADC_CR2_CAL_BIT                 2
 #define ADC_CR2_RSTCAL_BIT              3
 #define ADC_CR2_DMA_BIT                 8
+#define ADC_CR2_DDS_BIT                 9
 #define ADC_CR2_ALIGN_BIT               11
 #define ADC_CR2_JEXTTRIG_BIT            15
 #define ADC_CR2_EXTTRIG_BIT             20
@@ -186,6 +191,7 @@ extern const adc_dev *ADC3;
 #define ADC_CR2_CAL                     BIT(ADC_CR2_CAL_BIT)
 #define ADC_CR2_RSTCAL                  BIT(ADC_CR2_RSTCAL_BIT)
 #define ADC_CR2_DMA                     BIT(ADC_CR2_DMA_BIT)
+#define ADC_CR2_DDS                     BIT(ADC_CR2_DDS_BIT)
 #define ADC_CR2_ALIGN                   BIT(ADC_CR2_ALIGN_BIT)
 #define ADC_CR2_JEXTTRIG                BIT(ADC_CR2_JEXTTRIG_BIT)
 #define ADC_CR2_EXTTRIG                 BIT(ADC_CR2_EXTTRIG_BIT)
@@ -335,6 +341,8 @@ typedef enum {
     ADC_SMPR_239_5              /**< 239.5 ADC cycles */
 } adc_smp_rate;
 
+typedef void (*adc_callback_t) (uint32_t);
+
 void adc_set_sample_rate(const adc_dev *dev, adc_smp_rate smp_rate);
 void adc_calibrate(const adc_dev *dev);
 uint16 adc_read(const adc_dev *dev, uint8 channel);
@@ -389,6 +397,18 @@ static inline void adc_disable_all(void) {
 }
 
 void setupADC_F2();
+
+void adc_attach_interrupt(void (*cb) (void) );
+
+static inline void adc_dma_enable(const adc_dev *dev)
+{
+  *bb_perip(&dev->regs->CR2, ADC_CR2_DMA_BIT) = 1;
+}
+
+static inline void adc_dma_disable(const adc_dev *dev)
+{
+  *bb_perip(&dev->regs->CR2, ADC_CR2_DMA_BIT) = 0;
+}
 
 #ifdef __cplusplus
 } // extern "C"

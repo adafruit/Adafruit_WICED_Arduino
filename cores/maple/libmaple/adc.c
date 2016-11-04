@@ -41,6 +41,10 @@
 #include "rcc.h"
 #include "adc.h"
 
+#include "gpio.h"
+
+void (*_callback) (void);
+
 static adc_dev adc1 = {
     .regs   = ADC1_BASE,
     .clk_id = RCC_ADC1
@@ -81,6 +85,8 @@ void adc_init(const adc_dev *dev) {
 #else
     rcc_reset_dev(dev->clk_id);
 #endif
+
+    _callback = NULL;
 }
 
 /**
@@ -198,3 +204,18 @@ void setupADC_F2() {
 		  ADC_COMMON->CCR = tmpreg1;
 #endif
 }
+
+void adc_attach_interrupt(void (*cb) (void))
+{
+  _callback = cb;
+}
+
+void __irq_adc(void)
+{
+  // invoke callback if available
+  if ( _callback )  _callback();
+
+  // clear all interrupt
+  ADC1->regs->SR &= ~( ADC_SR_OVR | ADC_SR_EOC | ADC_SR_AWD);
+}
+

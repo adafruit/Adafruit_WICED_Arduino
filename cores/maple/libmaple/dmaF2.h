@@ -213,7 +213,14 @@ static inline void dma_setup_transfer(dma_dev       *dev,
     dev->regs->STREAM[stream].FCR = fifo_flags & 0x87; // mask out reserved bits
     dev->regs->STREAM[stream].CR = flags & 0x0feffffe; // mask out reserved and enable
 }
-    
+
+static inline void dma_set_m0addr(dma_dev *dev,
+                                 dma_stream stream,
+                                 void     *memory_address0)
+{
+    dev->regs->STREAM[stream].M0AR = (uint32) memory_address0;
+}
+
 static inline void dma_set_num_transfers(dma_dev *dev,
                                          dma_stream stream,
                                          uint16 num_transfers) {

@@ -20,7 +20,7 @@ compiler.c.elf.cmd=arm-none-eabi-g++
 compiler.c.elf.flags=-O1 -Wl,--gc-sections -Wl,--defsym,FIRMWARE_MAGIC_OFFSET=512
 
 compiler.S.cmd=arm-none-eabi-gcc
-compiler.S.flags=-c -g -x assembler-with-cpp -MMD {compiler.extra_includes}
+compiler.S.flags=-c -g -x assembler-with-cpp -MMD {compiler.extra_includes} -D{build.density}
 
 
 compiler.ar.cmd=arm-none-eabi-ar

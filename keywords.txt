@@ -13,10 +13,12 @@ AdafruitTCP	KEYWORD1
 AdafruitTCPServer	KEYWORD1
 AdafruitUDP	KEYWORD1
 UTF8String	KEYWORD1
+AdafruitADC	KEYWORD1
 
 wl_ap_info_t	KEYWORD1
 iso8601_time_t	KEYWORD1
 thread_info_t	KEYWORD1
+
 
 #######################################
 # Core Function (KEYWORD2)
@@ -24,6 +26,14 @@ thread_info_t	KEYWORD1
 pwmWrite	KEYWORD2
 pwmFrequency	KEYWORD2
 pwmPeriod	KEYWORD2
+togglePin	KEYWORD2
+
+# AdafruitADC
+setBuffer	KEYWORD2
+setThreshold	KEYWORD2
+setSampleRate	KEYWORD2
+start	KEYWORD2
+resume	KEYWORD2
 
 #######################################
 # AdafruitSDEP Methods and Functions (KEYWORD2)
@@ -171,6 +181,17 @@ ADAFRUIT_TCP_TIMEOUT	LITERAL1
 WIFI_INTERFACE_STATION	LITERAL1
 WIFI_INTERFACE_SOFTAP	LITERAL1
 WIFI_INTERFACE_P2P	LITERAL1
+
+# ADC Sample Rate
+
+ADC_SMPR_1_5	LITERAL1
+ADC_SMPR_7_5	LITERAL1
+ADC_SMPR_13_5	LITERAL1
+ADC_SMPR_28_5	LITERAL1
+ADC_SMPR_41_5	LITERAL1
+ADC_SMPR_55_5	LITERAL1
+ADC_SMPR_71_5	LITERAL1
+ADC_SMPR_239_5	LITERAL1
 
 # Encryption
 
