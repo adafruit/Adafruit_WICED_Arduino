@@ -7,6 +7,7 @@
 	- add Dimmer, pwmPeriod, pwmRGB example sketches
 - Add WiFi country get/set support getWifiCountry(), setWifiCountry()
 	- setWifiCountry() will save the country code to NVM section which will last through power lost or reset
+- Add AdafruitADC (ADC) to support highspeed sampling (up to 2MSPS) and analog watchdog
 
 # 0.6.1
 
