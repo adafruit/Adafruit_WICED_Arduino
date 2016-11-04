@@ -84,6 +84,7 @@ bool AdafruitADC::begin(uint8_t pin1)
   return true;
 }
 
+#if 0
 /**
  * Begin with dual analog pins
  * @param pin1
@@ -99,6 +100,7 @@ bool AdafruitADC::begin(uint8_t pin1, uint8_t pin2)
 
   return true;
 }
+#endif
 
 /**
  * Configure the buffer to hold samples

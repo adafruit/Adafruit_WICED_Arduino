@@ -70,7 +70,7 @@ public:
   AdafruitADC(void);
 
   bool begin(uint8_t pin1);
-  bool begin(uint8_t pin1, uint8_t pin2);
+//  bool begin(uint8_t pin1, uint8_t pin2);
 
   void setBuffer(uint16_t* buffer, uint32_t size);
   void attachInterrupt( void (*fp) (void) );
