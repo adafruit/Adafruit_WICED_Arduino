@@ -205,6 +205,8 @@ public:
   uint32_t   ping                  (IPAddress ip);
   bool       getISO8601Time        (iso8601_time_t* iso8601_time);
   uint32_t   getUtcTime            (void);
+  bool       setNtpServer          (const char* hostname);
+  bool       setNtpServer          (IPAddress ip);
 
   // TLS Root Certification Chain
   bool       useDefaultRootCA      (bool enabled) { _rootca_default_en = enabled; }

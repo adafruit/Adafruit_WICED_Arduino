@@ -617,6 +617,34 @@ uint32_t AdafruitFeather::getUtcTime(void)
 }
 
 /******************************************************************************/
+/**
+ * Set the NTP Server using hostname
+ * @param hostname  hostname of NTP Server, IP of server will be resolved
+ * each time WICED try to get network time. A NULL value will disable the
+ * NTP time sync.
+ *
+ * @return true if succeeded, false otherwise.
+ */
+/******************************************************************************/
+bool AdafruitFeather::setNtpServer(const char* hostname)
+{
+  return sdep(SDEP_CMD_SET_NTP_SERVER, stringlen(hostname), hostname, NULL, NULL);
+}
+
+/******************************************************************************/
+/**
+ * Set the NTP Server using specific IP
+ * @param ip  IP of NTP Server
+ * @return true if succeeded, false otherwise.
+ */
+/******************************************************************************/
+bool AdafruitFeather::setNtpServer(IPAddress ip)
+{
+  uint32_t u32 = (uint32_t) ip;
+  return sdep(SDEP_CMD_SET_NTP_SERVER, 4, &u32, NULL, NULL);
+}
+
+/******************************************************************************/
 /*!
     @brief  Get the current WiFi country code
 */

@@ -208,6 +208,7 @@ typedef enum {
   SDEP_CMD_DNSLOOKUP             = 0x0601,    ///< DNS lookup
   SDEP_CMD_GET_ISO8601_TIME      = 0x0602,    ///< Get time
   SDEP_CMD_GET_UTC_TIME          = 0x0603,    ///< Get UTC time in seconds
+  SDEP_CMD_SET_NTP_SERVER        = 0x0604,    ///< Set NTP Server, NULL to disable
 
   // TCP Commands
   SDEP_CMD_TCP_CONNECT           = 0x0700,    ///< Create TCP stream socket and connect

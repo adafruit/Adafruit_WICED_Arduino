@@ -118,7 +118,7 @@ tools.adafruit_upload.dfu_util.windows=-u "{path}/dfu-util/dfu-util-static.exe"
 # -------------------
 tools.adalink.cmd=adalink
 tools.adalink.cmd.windows=adalink
-tools.adalink.path.linux=adalink
+tools.adalink.cmd.linux=adalink
 tools.adalink.cmd.macosx=/usr/local/bin/adalink
 
 # Programmer bootloader
