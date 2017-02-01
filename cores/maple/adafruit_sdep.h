@@ -43,7 +43,7 @@
 class AdafruitSDEP
 {
 protected:
-  err_t _errno;
+  err_t _errnum;
   bool  _err_print;
   bool  _err_halt;
 
@@ -54,7 +54,7 @@ protected:
   void  skip_next_error(err_t skip_err);
 
 public:
-  AdafruitSDEP() { _errno = ERROR_NONE; _err_print = _err_halt = false; }
+  AdafruitSDEP() { _errnum = ERROR_NONE; _err_print = _err_halt = false; }
 
   bool sdep  (uint16_t  cmd_id       ,
               uint32_t  param_len    , void const* p_param,
@@ -64,7 +64,7 @@ public:
               uint8_t   para_count   , sdep_cmd_para_t const* para_arr,
               uint32_t* p_result_len , void* p_result);
 
-  err_t        errno       (void ) { return _errno; }
+  err_t        errnum       (void ) { return _errnum; }
   char const*  errstr      (void );
   char const*  cmdstr      (uint16_t cmd_id);
   virtual void err_actions (bool print, bool halt ) { _err_print = print; _err_halt = halt; }

@@ -86,7 +86,7 @@ void loop()
       Serial.printf("time = %d ms", resp_ms);
     }else
     {
-      Serial.printf("error = 0x%04X", Feather.errno());
+      Serial.printf("error = 0x%04X", Feather.errnum());
     }
     Serial.println();
 
@@ -98,7 +98,7 @@ void loop()
       Serial.printf("time = %d ms", resp_ms);
     }else
     {
-      Serial.printf("error = 0x%04X", Feather.errno());
+      Serial.printf("error = 0x%04X", Feather.errnum());
     }
     Serial.println();
 
@@ -110,7 +110,7 @@ void loop()
       Serial.printf("time = %d ms", resp_ms);
     }else
     {
-      Serial.printf("error = 0x%04X", Feather.errno());
+      Serial.printf("error = 0x%04X", Feather.errnum());
     }
     Serial.println();
 
@@ -137,7 +137,7 @@ bool connectAP(void)
   }
   else
   {
-    Serial.printf("Failed! %s (%d)", Feather.errstr(), Feather.errno());
+    Serial.printf("Failed! %s (%d)", Feather.errstr(), Feather.errnum());
     Serial.println();
   }
   Serial.println();

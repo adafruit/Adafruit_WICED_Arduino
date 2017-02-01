@@ -44,7 +44,7 @@ printBuffer	KEYWORD2
 
 sdep	KEYWORD2
 sdep_n	KEYWORD2
-errno	KEYWORD2
+errnum	KEYWORD2
 errstr	KEYWORD2
 err_actions	KEYWORD2
 

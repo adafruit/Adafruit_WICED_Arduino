@@ -50,9 +50,9 @@ bool AdafruitSDEP::sdep(uint16_t  cmd_id       ,
           uint32_t  param_len    , void const* p_param,
           uint32_t* p_result_len , void* p_result)
 {
-  _errno = FEATHERLIB->sdep_execute(cmd_id, param_len, p_param, p_result_len, p_result);
+  _errnum = FEATHERLIB->sdep_execute(cmd_id, param_len, p_param, p_result_len, p_result);
   handle_error(cmd_id);
-  return (ERROR_NONE == _errno);
+  return (ERROR_NONE == _errnum);
 }
 
 /******************************************************************************/
@@ -64,9 +64,9 @@ bool AdafruitSDEP::sdep_n(uint16_t  cmd_id       ,
             uint8_t   para_count   , sdep_cmd_para_t const* para_arr,
             uint32_t* p_result_len , void* p_result)
 {
-  _errno = FEATHERLIB->sdep_execute_n(cmd_id, para_count, para_arr, p_result_len, p_result);
+  _errnum = FEATHERLIB->sdep_execute_n(cmd_id, para_count, para_arr, p_result_len, p_result);
   handle_error(cmd_id);
-  return (ERROR_NONE == _errno);
+  return (ERROR_NONE == _errnum);
 }
 
 /******************************************************************************/
@@ -77,7 +77,7 @@ bool AdafruitSDEP::sdep_n(uint16_t  cmd_id       ,
 char const* AdafruitSDEP::errstr (void)
 {
   char const* p_str = NULL;
-  FEATHERLIB->sdep_execute(SDEP_CMD_ERROR_STRING, sizeof(err_t), &_errno, NULL, &p_str);
+  FEATHERLIB->sdep_execute(SDEP_CMD_ERROR_STRING, sizeof(err_t), &_errnum, NULL, &p_str);
   return p_str ? p_str : "Unknown Error";
 }
 
@@ -100,7 +100,7 @@ char const* AdafruitSDEP::cmdstr (uint16_t cmd_id)
 /******************************************************************************/
 void AdafruitSDEP::handle_error(uint16_t cmd_id)
 {
-  if (_err_print && (ERROR_NONE != _errno) && (_skip_err != _errno) )
+  if (_err_print && (ERROR_NONE != _errnum) && (_skip_err != _errnum) )
   {
     char const* cmd_str = this->cmdstr(cmd_id);
     if ( cmd_str )
@@ -110,10 +110,10 @@ void AdafruitSDEP::handle_error(uint16_t cmd_id)
     {
       Serial.printf("\r\nSDEP Command ID 0x%04X failed", cmd_id);
     }
-    Serial.printf(", Error: %s (%d)\r\n", errstr(), errno());
+    Serial.printf(", Error: %s (%d)\r\n", errstr(), errnum());
   }
 
-  if ( _err_halt && (ERROR_NONE != _errno) && (_skip_err != _errno) )
+  if ( _err_halt && (ERROR_NONE != _errnum) && (_skip_err != _errnum) )
   {
     Serial.println("\r\n--- FEATHER HALTED ---\r\n");
     while(1) delay(1);

@@ -62,7 +62,7 @@ bool connectAP()
   else
   {
     // Display the error message
-    err_t err = Feather.errno();
+    err_t err = Feather.errnum();
     oled.setConnected(false);
     oled.refreshIcons();
     oled.clearMsgArea();
@@ -80,14 +80,14 @@ bool connectAP()
       default:
         // The most likely cause of errors at this point is that
         // you are just out of the device/AP operating range
-        oled.print(Feather.errno());
+        oled.print(Feather.errnum());
         oled.print(":");
         oled.println(Feather.errstr());
         oled.refreshIcons(); // Refresh icons in case the text ran over
         break;
     }    
     oled.display();
-    // Return false to indicate that we received an error (available in feather.errno)
+    // Return false to indicate that we received an error (available in feather.errnum)
     return false;
   }
 
@@ -185,7 +185,7 @@ void setup()
   }else
   {
     oled.print("Failed! Error: ");
-    oled.println(aio.errno(), HEX);
+    oled.println(aio.errnum(), HEX);
     oled.display();
     delay(3000);
   }
