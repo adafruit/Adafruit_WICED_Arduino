@@ -6,6 +6,7 @@ BINDIR = _build
 
 ifeq ($(OS),Windows_NT)
 BINFILE=feather_dfu.exe
+LIBS += -L.
 else
 BINFILE=feather_dfu
 endif
@@ -21,7 +22,7 @@ $(BINDIR)/%.o: %.c
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 feather_dfu: $(BINDIR)/feather_dfu.o
-	$(LD) -o $(BINFILE) $^ $(CFLAGS) -L. $(LIBS)
+	$(LD) -o $(BINFILE) $^ $(CFLAGS) $(LIBS)
 	
 #gcc -o feather_dfu.exe $^ $(CFLAGS) $(LIBS)
   

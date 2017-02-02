@@ -38,6 +38,7 @@
 #include <assert.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <string.h>
 #include "libusb-1.0/libusb.h"
 
 /*------------------------------------------------------------------*/
@@ -90,19 +91,41 @@ enum
 /*------------------------------------------------------------------*/
 /* VARIABLE DECLARATION
  *------------------------------------------------------------------*/
-const int IFNUM = 4;
 libusb_device_handle* udev = NULL;
-
-bool _dfu_mode = false;
 
 /*------------------------------------------------------------------*/
 /* FUNCTION DECLARATION
  *------------------------------------------------------------------*/
-bool enter_dfu(void);
-bool sdep_syscmd(uint16_t cmd);
+void print_help(void);
+void sdep_syscmd(uint16_t cmd);
 
+struct {
+  const char* command;
+  uint16_t sdep_cmdid;
+}cmd_table[] =
+{
+  { "enter_dfu"      , SDEP_CMD_DFU             },
+  { "erase_spiflash" , SDEP_CMD_SFLASH_ERASEALL },
+  { "factory_reset"  , SDEP_CMD_FACTORYRESET    },
+  { "info"           , SDEP_CMD_INFO            },
+  { "nvm_reset"      , SDEP_CMD_NVM_RESET       },
+  { "reboot"         , SDEP_CMD_RESET           },
+};
+
+/*------------------------------------------------------------------*/
+/* IMPLEMENTATION
+ *------------------------------------------------------------------*/
 int main(int argc, char *argv[])
 {
+  bool _dfu_mode = false;
+  char* command = argv[1];
+
+  if ( /*argc <= 1 ||*/ (!strcmp("--help", command)) )
+  {
+    print_help();
+    return 0;
+  }
+
   ASSERT( libusb_init(NULL) );
 
   // Open device, try with all PIDs
@@ -118,24 +141,33 @@ int main(int argc, char *argv[])
     udev = libusb_open_device_with_vid_pid(NULL, USB_VID, USB_DFU_PID);
     _dfu_mode = true;
   }
-  assert(udev);
 
-  // Only needed for Linux System
-  (void) libusb_detach_kernel_driver(udev, IFNUM);
+  if (!udev)
+  {
+    printf("WICED Feather Board is not detected !!!\n");
+    return 0;
+  }
 
-  // Claim the control interface
-  ASSERT( libusb_claim_interface(udev, IFNUM) );
+  for(int i=0; i<sizeof(cmd_table)/sizeof(cmd_table[0]); i++)
+  {
+    if (!strcmp(cmd_table[i].command, command))
+    {
+      // skip if command is ENTER_DFU and we are already in dfu mode
+      if ( !((cmd_table[i].sdep_cmdid == SDEP_CMD_DFU) && _dfu_mode) )
+      {
+        sdep_syscmd(cmd_table[i].sdep_cmdid);
+      }
 
-  enter_dfu();
+      break;
+    }
+  }
 
-  (void) libusb_attach_kernel_driver(udev, IFNUM);
-  libusb_release_interface(udev, IFNUM);
   libusb_close(udev);
   libusb_exit(NULL);
   return 0;
 }
 
-bool sdep_syscmd(uint16_t cmd)
+void sdep_syscmd(uint16_t cmd)
 {
   assert( cmd <= SDEP_CMD_SFLASH_ERASEALL);
 
@@ -144,23 +176,27 @@ bool sdep_syscmd(uint16_t cmd)
   // For system commands, only INFO has response data
   if ( cmd == SDEP_CMD_INFO )
   {
-    char info[4096] = { 0 };
-    int len = libusb_control_transfer(udev, 0xC0, SDEP_MSGTYPE_RESPONSE, cmd, 0, (unsigned char*) info, sizeof(info), 0);
+    char cmd_info[4096] = { 0 };
+    int len = libusb_control_transfer(udev, 0xC0, SDEP_MSGTYPE_RESPONSE, cmd, 0, (unsigned char*) cmd_info, sizeof(cmd_info), 0);
     (void) len;
 
-    printf("%s", info+4);
+    printf("%s\n", cmd_info+4);
   }
-
-  return true;
 }
 
-bool enter_dfu(void)
+void print_help(void)
 {
-  if ( _dfu_mode) return true;
+  printf("Usage: feather_dfu.py [OPTIONS] COMMAND [ARGS]...\n\n");
+  printf("Options:\n");
+  printf("  --help               Show this message and exit.\n\n");
 
-  sdep_syscmd(SDEP_CMD_DFU);
-
-
-  return true;
+  printf("Commands:\n");
+  printf("  arduino_upgrade     Program a .bin file to the Arduino firmware...\n");
+  printf("  enter_dfu           Force board into DFU mode.\n");
+  printf("  erase_spiflash      Erase the whole SPI Flash, normally take 12...\n");
+  printf("  factory_reset       Perform a factory reset of the board.\n");
+  printf("  featherlib_upgrade  Program a .bin file to the Featherlib...\n");
+  printf("  info                Print information about the connected board.\n");
+  printf("  nvm_reset           Perform a non-volatile memory reset of the...\n");
+  printf("  reboot              Perform a reboot/reset (ATZ) of the board.\n");
 }
-
