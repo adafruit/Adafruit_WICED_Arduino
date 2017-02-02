@@ -1,0 +1,166 @@
+/**************************************************************************/
+/*!
+    @file     feather_dfu.c
+    @author   hathach
+
+    @section LICENSE
+
+    Software License Agreement (BSD License)
+
+    Copyright (c) 2017, Adafruit Industries (adafruit.com)
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are met:
+    1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+    2. Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+    3. Neither the name of the copyright holders nor the
+    names of its contributors may be used to endorse or promote products
+    derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS ''AS IS'' AND ANY
+    EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY
+    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+    (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+    ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+/**************************************************************************/
+
+#include <stdio.h>
+#include <assert.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include "libusb-1.0/libusb.h"
+
+/*------------------------------------------------------------------*/
+/* MACRO TYPEDEF CONSTANT ENUM
+ *------------------------------------------------------------------*/
+#define ASSERT(x)   assert( (x) == LIBUSB_SUCCESS )
+
+enum
+{
+  USB_VID     = 0x239A,
+
+  USB_PID     = 0x0010,
+  USB_PID_MSC = 0x8010,
+  USB_DFU_PID = 0x0008,
+};
+
+// SDEP Command Type
+enum
+{
+  SDEP_MSGTYPE_COMMAND     = 0x10,
+  SDEP_MSGTYPE_RESPONSE    = 0x20,
+  SDEP_MSGTYPE_ALERT       = 0x40,
+  SDEP_MSGTYPE_ERROR       = 0x80,
+};
+
+// SDEP Command Constant
+enum
+{
+  // General Purpose
+  SDEP_CMD_RESET               = 0x0001,    // HW reset
+  SDEP_CMD_FACTORYRESET        = 0x0002,    // Factory reset
+  SDEP_CMD_DFU                 = 0x0003,    // Enter DFU mode
+  SDEP_CMD_INFO                = 0x0004,    // System information
+  SDEP_CMD_NVM_RESET           = 0x0005,    // Reset DCT
+  SDEP_CMD_ERROR_STRING        = 0x0006,    // Get descriptive error string
+  SDEP_CMD_COMMAND_STRING      = 0x0007,    // Get descriptive SDEP command string
+  SDEP_CMD_SFLASH_ERASEALL     = 0x0008,    // Erase SPI flash memory
+
+  // DEBUG Commands
+  SDEP_CMD_STACKDUMP           = 0x0300,    // Dump the stack
+  SDEP_CMD_STACKSIZE           = 0x0301,    // Get stack size
+  SDEP_CMD_HEAPDUMP            = 0x0302,    // Dump the heap
+  SDEP_CMD_HEAPSIZE            = 0x0303,    // Get heap size
+  SDEP_CMD_THREADLIST_PRINT    = 0x0304,    // Get thread information
+  SDEP_CMD_THREAD_INFO         = 0x0305,    // Get thread info
+  SDEP_CMD_ARDUINO_HEAPSIZE    = 0x0306,    // Get Arduino heap size
+};
+
+
+/*------------------------------------------------------------------*/
+/* VARIABLE DECLARATION
+ *------------------------------------------------------------------*/
+const int IFNUM = 4;
+libusb_device_handle* udev = NULL;
+
+bool _dfu_mode = false;
+
+/*------------------------------------------------------------------*/
+/* FUNCTION DECLARATION
+ *------------------------------------------------------------------*/
+bool enter_dfu(void);
+bool sdep_syscmd(uint16_t cmd);
+
+int main(int argc, char *argv[])
+{
+  ASSERT( libusb_init(NULL) );
+
+  // Open device, try with all PIDs
+  udev = libusb_open_device_with_vid_pid(NULL, USB_VID, USB_PID);
+
+  if (!udev)
+  {
+    udev = libusb_open_device_with_vid_pid(NULL, USB_VID, USB_PID_MSC);
+  }
+
+  if (!udev)
+  {
+    udev = libusb_open_device_with_vid_pid(NULL, USB_VID, USB_DFU_PID);
+    _dfu_mode = true;
+  }
+  assert(udev);
+
+  // Only needed for Linux System
+  (void) libusb_detach_kernel_driver(udev, IFNUM);
+
+  // Claim the control interface
+  ASSERT( libusb_claim_interface(udev, IFNUM) );
+
+  enter_dfu();
+
+  (void) libusb_attach_kernel_driver(udev, IFNUM);
+  libusb_release_interface(udev, IFNUM);
+  libusb_close(udev);
+  libusb_exit(NULL);
+  return 0;
+}
+
+bool sdep_syscmd(uint16_t cmd)
+{
+  assert( cmd <= SDEP_CMD_SFLASH_ERASEALL);
+
+  ASSERT( libusb_control_transfer(udev, 0x40, SDEP_MSGTYPE_COMMAND, cmd, 0, NULL, 0, 0) );
+
+  // For system commands, only INFO has response data
+  if ( cmd == SDEP_CMD_INFO )
+  {
+    char info[4096] = { 0 };
+    int len = libusb_control_transfer(udev, 0xC0, SDEP_MSGTYPE_RESPONSE, cmd, 0, (unsigned char*) info, sizeof(info), 0);
+    (void) len;
+
+    printf("%s", info+4);
+  }
+
+  return true;
+}
+
+bool enter_dfu(void)
+{
+  if ( _dfu_mode) return true;
+
+  sdep_syscmd(SDEP_CMD_DFU);
+
+
+  return true;
+}
+
