@@ -2,30 +2,37 @@ CC     = gcc
 LD		 = gcc
 CFLAGS = -O0 -g3 -Wall -std=gnu99
 LIBS   += -lusb-1.0
-BINDIR = _build
+OBJDIR = _build
 
 ifeq ($(OS),Windows_NT)
-BINFILE=feather_dfu.exe
-LIBS += -L.
+	LIBS   += -Llibusb-1.0
+	BINFILE = feather_dfu.exe
+	BINDIR  = win32
 else
-BINFILE=feather_dfu
+	BINFILE = feather_dfu
+	
+	OS := $(shell uname -s)
+	ifeq ($(OS),Linux)
+		BINDIR = linux
+	endif
+	ifeq ($(OS),Darwin)
+		BINDIR  = osx
+  endif 
 endif
 
-# -I. -L./mingw32
-all: $(BINDIR) feather_dfu
+all: clean $(OBJDIR) feather_dfu
 
-.PHONY: $(BINDIR)
-$(BINDIR):
+.PHONY: $(OBJDIR)
+$(OBJDIR):
+	@mkdir -p $(OBJDIR)
 	@mkdir -p $(BINDIR)
 	
-$(BINDIR)/%.o: %.c
+$(OBJDIR)/%.o: %.c
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-feather_dfu: $(BINDIR)/feather_dfu.o
-	$(LD) -o $(BINFILE) $^ $(CFLAGS) $(LIBS)
-	
-#gcc -o feather_dfu.exe $^ $(CFLAGS) $(LIBS)
+feather_dfu: $(OBJDIR)/feather_dfu.o
+	$(LD) -o $(BINDIR)/$(BINFILE) $^ $(CFLAGS) $(LIBS)
   
 clean: 
-	@rm -rf $(BINDIR)
-	@rm $(BINFILE)
+	@rm -rf $(OBJDIR)
+	@rm -f $(BINDIR)/$(BINFILE)

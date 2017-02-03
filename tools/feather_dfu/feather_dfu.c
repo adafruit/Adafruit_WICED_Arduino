@@ -120,7 +120,7 @@ int main(int argc, char *argv[])
   bool _dfu_mode = false;
   char* command = argv[1];
 
-  if ( /*argc <= 1 ||*/ (!strcmp("--help", command)) )
+  if ( argc <= 1 || (!strcmp("--help", command)) )
   {
     print_help();
     return 0;
@@ -176,11 +176,19 @@ void sdep_syscmd(uint16_t cmd)
   // For system commands, only INFO has response data
   if ( cmd == SDEP_CMD_INFO )
   {
-    char cmd_info[4096] = { 0 };
-    int len = libusb_control_transfer(udev, 0xC0, SDEP_MSGTYPE_RESPONSE, cmd, 0, (unsigned char*) cmd_info, sizeof(cmd_info), 0);
-    (void) len;
+    char info[255] = {  0 };
+    int len;
 
-    printf("%s\n", cmd_info+4);
+    // Sleep(100);
+    len = libusb_control_transfer(udev, 0xC0, SDEP_MSGTYPE_RESPONSE, cmd, 0, (unsigned char*) info, sizeof(info), 0);
+
+    if ( len <= 0 )
+    {
+      printf("error = %d\n", len);
+    }else
+    {
+      printf("%s\n", info+4);
+    }
   }
 }
 
