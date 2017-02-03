@@ -41,6 +41,24 @@
 #include <string.h>
 #include "libusb-1.0/libusb.h"
 
+#if defined(_WIN32)
+#include <windows.h>
+
+static inline void sleep_ms(int ms)
+{
+  Sleep(ms);
+}
+
+#else
+#include <unistd.h>
+
+static inline void sleep_ms(int ms)
+{
+  usleep(ms*1000);
+}
+
+#endif
+
 /*------------------------------------------------------------------*/
 /* MACRO TYPEDEF CONSTANT ENUM
  *------------------------------------------------------------------*/
@@ -176,10 +194,10 @@ void sdep_syscmd(uint16_t cmd)
   // For system commands, only INFO has response data
   if ( cmd == SDEP_CMD_INFO )
   {
-    char info[255] = {  0 };
+    char info[512] = {  0 };
     int len;
 
-    // Sleep(100);
+    sleep_ms(100);
     len = libusb_control_transfer(udev, 0xC0, SDEP_MSGTYPE_RESPONSE, cmd, 0, (unsigned char*) info, sizeof(info), 0);
 
     if ( len <= 0 )
