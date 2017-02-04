@@ -34,14 +34,19 @@
 */
 /**************************************************************************/
 
-#include <stdio.h>
-#include <assert.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#include <assert.h>
 #include <string.h>
+
 #include "libusb-1.0/libusb.h"
 
 #if defined(_WIN32)
+#define DFU_UTIL  "dfu-util\\dfu-util-static.exe"
+
 #include <windows.h>
 
 static inline void sleep_ms(int ms)
@@ -49,7 +54,10 @@ static inline void sleep_ms(int ms)
   Sleep(ms);
 }
 
+
 #else
+#define DFU_UTIL  "dfu-util"
+
 #include <unistd.h>
 
 static inline void sleep_ms(int ms)
@@ -63,6 +71,18 @@ static inline void sleep_ms(int ms)
 /* MACRO TYPEDEF CONSTANT ENUM
  *------------------------------------------------------------------*/
 #define ASSERT(x)   assert( (x) == LIBUSB_SUCCESS )
+
+enum
+{
+  RESET_DELAY     = 1000, // 1 second delay
+  RESET_MSC_DELAY = 1500, // MSC available require more time for USB to enumerate
+};
+
+enum
+{
+  ARDUINO_ADDR    = 0x080C0000,
+  FEATHERLIB_ADDR = 0x08010000
+};
 
 enum
 {
@@ -111,23 +131,33 @@ enum
  *------------------------------------------------------------------*/
 libusb_device_handle* udev = NULL;
 
+bool _dfu_mode = false;
+bool _msc_enbled = false;
+
 /*------------------------------------------------------------------*/
 /* FUNCTION DECLARATION
  *------------------------------------------------------------------*/
 void print_help(void);
 void sdep_syscmd(uint16_t cmd);
 
+char* get_dfu_util_path(char* arg0);
+void arduino_upgrade(char* dfu_util, char* binfile);
+void featherlib_upgrade(char* dfu_util, char* binfile);
+
 struct {
   const char* command;
   uint16_t sdep_cmdid;
+  void (*func) (char*, char*);
 }cmd_table[] =
 {
-  { "enter_dfu"      , SDEP_CMD_DFU             },
-  { "erase_spiflash" , SDEP_CMD_SFLASH_ERASEALL },
-  { "factory_reset"  , SDEP_CMD_FACTORYRESET    },
-  { "info"           , SDEP_CMD_INFO            },
-  { "nvm_reset"      , SDEP_CMD_NVM_RESET       },
-  { "reboot"         , SDEP_CMD_RESET           },
+  { "arduino_upgrade"    , 0                        , arduino_upgrade    },
+  { "enter_dfu"          , SDEP_CMD_DFU             , NULL               },
+  { "erase_spiflash"     , SDEP_CMD_SFLASH_ERASEALL , NULL               },
+  { "factory_reset"      , SDEP_CMD_FACTORYRESET    , NULL               },
+  { "featherlib_upgrade" , 0                        , featherlib_upgrade },
+  { "info"               , SDEP_CMD_INFO            , NULL               },
+  { "nvm_reset"          , SDEP_CMD_NVM_RESET       , NULL               },
+  { "reboot"             , SDEP_CMD_RESET           , NULL               },
 };
 
 /*------------------------------------------------------------------*/
@@ -135,7 +165,6 @@ struct {
  *------------------------------------------------------------------*/
 int main(int argc, char *argv[])
 {
-  bool _dfu_mode = false;
   char* command = argv[1];
 
   if ( argc <= 1 || (!strcmp("--help", command)) )
@@ -152,12 +181,13 @@ int main(int argc, char *argv[])
   if (!udev)
   {
     udev = libusb_open_device_with_vid_pid(NULL, USB_VID, USB_PID_MSC);
+    if (udev) _msc_enbled = true;
   }
 
   if (!udev)
   {
     udev = libusb_open_device_with_vid_pid(NULL, USB_VID, USB_DFU_PID);
-    _dfu_mode = true;
+    if(udev) _dfu_mode = true;
   }
 
   if (!udev)
@@ -170,18 +200,35 @@ int main(int argc, char *argv[])
   {
     if (!strcmp(cmd_table[i].command, command))
     {
-      // skip if command is ENTER_DFU and we are already in dfu mode
-      if ( !((cmd_table[i].sdep_cmdid == SDEP_CMD_DFU) && _dfu_mode) )
+      // Execute SDEP commnad by ID
+      if ( cmd_table[i].sdep_cmdid )
       {
-        sdep_syscmd(cmd_table[i].sdep_cmdid);
+        // skip if command is ENTER_DFU and we are already in dfu mode
+        if ( !((cmd_table[i].sdep_cmdid == SDEP_CMD_DFU) && _dfu_mode) )
+        {
+          sdep_syscmd(cmd_table[i].sdep_cmdid);
+        }
+      }
+      // Execute function by pointer
+      else if ( cmd_table[i].func )
+      {
+        cmd_table[i].func(get_dfu_util_path(argv[0]), argv[2]);
+      }else
+      {
+        assert(0);
       }
 
       break;
     }
   }
 
-  libusb_close(udev);
-  libusb_exit(NULL);
+  // close usb if not closed already
+  if (udev)
+  {
+    libusb_close(udev);
+    libusb_exit(NULL);
+  }
+
   return 0;
 }
 
@@ -209,6 +256,75 @@ void sdep_syscmd(uint16_t cmd)
     }
   }
 }
+
+char* get_dfu_util_path(char* arg0)
+{
+  static char dfu_util_path[512];
+
+  memset(dfu_util_path, 0, sizeof(dfu_util_path));
+
+  // Need to get full path to pre-built dfu-util exe
+  #if defined(_WIN32)
+  char* cdir = arg0; 
+  char* sep = strrchr(cdir, '\\');
+  
+  // Could not find backward slash, try our luck with forward slash
+  if (!sep) sep = strrchr(cdir, '/');
+  
+  // Place null terminator if found separator, 
+  // otherwise it is run inside directory with bare command i.e "feather_dfu.exe arg"
+  if (sep) 
+  {
+    *sep = 0;
+    strcpy(dfu_util_path, cdir);
+    strcat(dfu_util_path, "\\");
+  }
+  #endif
+  
+  strcat(dfu_util_path, DFU_UTIL);
+  
+  return dfu_util_path;
+}
+
+void arduino_upgrade(char* dfu_util, char* binfile)
+{
+  // Enter DFU mode first
+  if (!_dfu_mode)
+  {
+    sdep_syscmd(SDEP_CMD_DFU);
+
+    // Close libusb since dfu-util need to access to upload
+    libusb_close(udev);
+    libusb_exit(NULL);
+    udev = NULL;
+
+    sleep_ms(RESET_DELAY);
+  }
+
+  char cmd[1024];
+  sprintf(cmd, "%s -d 0x239A:0x0008 -a 0 -s 0x%08X:leave -D \"%s\"", dfu_util, ARDUINO_ADDR, binfile);
+  system(cmd);
+
+  // Delay a bit before return, otherwise enumeration time will cause
+  // Arduino IDE fails to re-open Serial
+  sleep_ms ( _msc_enbled ? RESET_MSC_DELAY : RESET_DELAY );
+}
+
+void featherlib_upgrade(char* dfu_util, char* binfile)
+{
+  // Enter DFU mode first
+  if (!_dfu_mode)
+  {
+    sdep_syscmd(SDEP_CMD_DFU);
+    sleep_ms(RESET_DELAY);
+
+    // Close libusb since dfu-util need to access to upload
+    libusb_close(udev);
+    libusb_exit(NULL);
+    udev = NULL;
+  }
+}
+
 
 void print_help(void)
 {
