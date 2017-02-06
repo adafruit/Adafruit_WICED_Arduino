@@ -1,7 +1,7 @@
 # 0.6.5
 
 - setNtpServer
-- Write feather_dfu using C + libusb instead of using python due to version conflict/confusion
+- Close #69 Write feather_dfu using C + libusb instead of using python due to version conflict/confusion
 
 # 0.6.2
 
