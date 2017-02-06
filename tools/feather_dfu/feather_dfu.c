@@ -279,6 +279,10 @@ char* get_dfu_util_path(char* arg0)
     strcpy(dfu_util_path, cdir);
     strcat(dfu_util_path, "\\");
   }
+  #elif defined __APPLE__
+    // OSX often than not, system() does not include /usr/local/bin
+    // in shell's PATH which is where fu-util is installed.
+    strcpy(dfu_util_path, "/usr/local/bin/");
   #endif
   
   strcat(dfu_util_path, DFU_UTIL);
@@ -286,7 +290,7 @@ char* get_dfu_util_path(char* arg0)
   return dfu_util_path;
 }
 
-void arduino_upgrade(char* dfu_util, char* binfile)
+void download_bin(char* dfu_util, char* binfile, uint32_t addr)
 {
   // Enter DFU mode first
   if (!_dfu_mode)
@@ -302,27 +306,27 @@ void arduino_upgrade(char* dfu_util, char* binfile)
   }
 
   char cmd[1024];
-  sprintf(cmd, "%s -d 0x239A:0x0008 -a 0 -s 0x%08X:leave -D \"%s\"", dfu_util, ARDUINO_ADDR, binfile);
+  sprintf(cmd, "%s -d 0x239A:0x0008 -a 0 -s 0x%08X:leave -D \"%s\"", dfu_util, addr, binfile);
+
   system(cmd);
+
+  // Also print out the dfu-util command for debug purpose
+  puts("Flash command");
+  puts(cmd);
 
   // Delay a bit before return, otherwise enumeration time will cause
   // Arduino IDE fails to re-open Serial
   sleep_ms ( _msc_enbled ? RESET_MSC_DELAY : RESET_DELAY );
 }
 
+void arduino_upgrade(char* dfu_util, char* binfile)
+{
+  download_bin(dfu_util, binfile, ARDUINO_ADDR);
+}
+
 void featherlib_upgrade(char* dfu_util, char* binfile)
 {
-  // Enter DFU mode first
-  if (!_dfu_mode)
-  {
-    sdep_syscmd(SDEP_CMD_DFU);
-    sleep_ms(RESET_DELAY);
-
-    // Close libusb since dfu-util need to access to upload
-    libusb_close(udev);
-    libusb_exit(NULL);
-    udev = NULL;
-  }
+  download_bin(dfu_util, binfile, FEATHERLIB_ADDR);
 }
 
 
