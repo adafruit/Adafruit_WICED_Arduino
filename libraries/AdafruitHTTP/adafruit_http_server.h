@@ -46,9 +46,9 @@
 class AdafruitHTTPServer : public AdafruitSDEP, public Print
 {
 public:
-  enum {
-    HTTPSERVER_HANDLE_SIZE = 568, // sizeof(wiced_http_server_t)
-  };
+  typedef void (*httpserver_callback_t)(uint32_t ip, uint16_t port);
+
+  enum { HTTPSERVER_HANDLE_SIZE = 576 }; // sizeof(wiced_http_server_t)
 
   AdafruitHTTPServer(uint8_t max_pages, uint8_t interface = WIFI_INTERFACE_STATION);
   virtual ~AdafruitHTTPServer();
@@ -59,6 +59,9 @@ public:
 
   bool begin(uint16_t port, uint8_t max_clients, uint32_t stacksize = HTTPSERVER_STACKSIZE_DEFAULT);
   void stop(void);
+
+  void setConnectCallback(httpserver_callback_t fp);
+  void setDisconnectCallback(httpserver_callback_t fp);
 
   bool started(void);
 
@@ -80,6 +83,9 @@ protected:
   uint8_t       _interface;
 
   void*         _resp_stream;
+
+  httpserver_callback_t _connect_cb;
+  httpserver_callback_t _disconnect_cb;
 
   void clear(void);
 };

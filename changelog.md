@@ -5,6 +5,7 @@
 - Add IP Address to FeatherAP SoftAP's join/leave callback
 	- change signature (const uint8_t mac[6]) --> (const uint8_t mac[6], uint32_t ipv4)
 	- Add clientIP(id) to FeatherAP
+- Add connect/disconnect callback to HTTP Server 
 
 # 0.6.2
 

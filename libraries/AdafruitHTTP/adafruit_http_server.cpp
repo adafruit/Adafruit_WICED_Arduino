@@ -120,14 +120,17 @@ bool AdafruitHTTPServer::begin(uint16_t port, uint8_t max_clients, uint32_t stac
 
   sdep_cmd_para_t para_arr[] =
   {
-      { .len = HTTPSERVER_HANDLE_SIZE, .p_value = _handle      },
+      { .len = HTTPSERVER_HANDLE_SIZE, .p_value = _handle        },
 
-      { .len = 1, .p_value = &_interface  },
-      { .len = 2, .p_value = &port        },
-      { .len = 1, .p_value = &max_clients },
-      { .len = 4, .p_value = &stacksize   },
+      { .len = 1, .p_value = &_interface    },
+      { .len = 2, .p_value = &port          },
+      { .len = 1, .p_value = &max_clients   },
+      { .len = 4, .p_value = &stacksize     },
 
       { .len = (_page_max+1)*sizeof(HTTPPage), .p_value = _pages },
+
+      { .len = 4, .p_value = (void*) _connect_cb   },
+      { .len = 4, .p_value = (void*)_disconnect_cb },
   };
 
   if ( !sdep_n(SDEP_CMD_HTTPSERVER_START, arrcount(para_arr), para_arr, NULL, NULL) )
@@ -139,6 +142,16 @@ bool AdafruitHTTPServer::begin(uint16_t port, uint8_t max_clients, uint32_t stac
   DBG_HEAP();
 
   return true;
+}
+
+void AdafruitHTTPServer::setConnectCallback(httpserver_callback_t fp)
+{
+  _connect_cb = fp;
+}
+
+void AdafruitHTTPServer::setDisconnectCallback(httpserver_callback_t fp)
+{
+  _disconnect_cb = fp;
 }
 
 bool AdafruitHTTPServer::started(void)
