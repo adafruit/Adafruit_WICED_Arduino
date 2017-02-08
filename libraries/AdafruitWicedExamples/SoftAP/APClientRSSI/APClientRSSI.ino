@@ -49,8 +49,8 @@ void setup()
 
   Serial.println("Configuring SoftAP\r\n");
   FeatherAP.err_actions(true, true);
-  FeatherAP.setJoinCallback(client_join_callback);
-  FeatherAP.setLeaveCallback(client_leave_callback);
+  FeatherAP.setJoinCallback(softap_join_callback);
+  FeatherAP.setLeaveCallback(softap_leave_callback);
   
   FeatherAP.begin(apIP, apGateway, apNetmask, WLAN_CHANNEL);
 
@@ -59,18 +59,20 @@ void setup()
   FeatherAP.printNetwork();
 }
 
-void client_join_callback(const uint8_t mac[6])
+void softap_join_callback(const uint8_t mac[6], uint32_t ipv4)
 {
   Serial.print("Client Joined: Mac = ");
   printMAC(mac);
-  Serial.println();
+  Serial.print(", IP = ");
+  Serial.println( IPAddress(ipv4) );
 }
 
-void client_leave_callback(const uint8_t mac[6])
+void softap_leave_callback(const uint8_t mac[6], uint32_t ipv4)
 {
   Serial.print("Client Left  : Mac = ");
   printMAC(mac);
-  Serial.println();
+  Serial.print(", IP = ");
+  Serial.println( IPAddress(ipv4) );
 }
 
 void printMAC(const uint8_t mac[6])
@@ -89,7 +91,7 @@ void printMAC(const uint8_t mac[6])
 /**************************************************************************/
 void loop()
 {
-  Serial.println("ID MAC               RSSI");
+  Serial.println("ID MAC               IPaddr      RSSI");
   for(int i=0; i<FeatherAP.clientNum(); i++)
   {
     Serial.print(i);
@@ -97,7 +99,10 @@ void loop()
     
     printMAC( FeatherAP.clientMAC(i) );
     Serial.print(' ');
-
+    
+    Serial.print(FeatherAP.clientIP(i));
+    Serial.print(' ');
+    
     Serial.println(FeatherAP.clientRSSI(i));  
   }
   Serial.println();

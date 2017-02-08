@@ -59,7 +59,7 @@ void AdafruitFeatherAP::clear(void)
   _enc_type = ENC_TYPE_AUTO;
 
   _client_count = 0;
-  memclr(_client_maclist, sizeof(_client_maclist));
+  varclr(&_clients);
 
   _join_callback = _leave_callback = NULL;
 }
@@ -153,7 +153,12 @@ void AdafruitFeatherAP::stop(void)
 
 const uint8_t* AdafruitFeatherAP::clientMAC(uint8_t id)
 {
-  return  ( id < _client_count) ? _client_maclist[id] : NULL;
+  return  ( id < _client_count) ? _clients[id].mac : NULL;
+}
+
+IPAddress AdafruitFeatherAP::clientIP(uint8_t id)
+{
+  return IPAddress(( id < _client_count) ? _clients[id].ip : 0);
 }
 
 /******************************************************************************/
@@ -174,7 +179,7 @@ int32_t AdafruitFeatherAP::clientRSSI(uint8_t id)
 
   int32_t rssi = 0;
 
-  (void) sdep(SDEP_CMD_SOFTAP_CLIENT_RSSI, 6, _client_maclist[id], NULL, &rssi);
+  (void) sdep(SDEP_CMD_SOFTAP_CLIENT_RSSI, 6, _clients[id].mac, NULL, &rssi);
 
   return rssi;
 }
@@ -184,33 +189,40 @@ int32_t AdafruitFeatherAP::clientRSSI(uint8_t id)
  * @param event
  * @param mac
  */
-void AdafruitFeatherAP::featherlib_event_callback(uint32_t event, const uint8_t mac[6] )
+void AdafruitFeatherAP::featherlib_event_callback(uint32_t event, const uint8_t mac[6], uint32_t ipv4)
 {
   if ( SOFTAP_EVENT_JOINED == event && _client_count < SOFTAP_MAX_CLIENT)
   {
-    memcpy(_client_maclist[_client_count++], mac, 6);
-    if(_join_callback) _join_callback(mac);
+    memcpy(&_clients[_client_count].mac, mac, 6);
+    _clients[_client_count].ip = ipv4;
+    _client_count++;
+
+    if(_join_callback) _join_callback(mac, ipv4);
   }
 
   if ( SOFTAP_EVENT_LEAVE == event)
   {
-    // Find the corresponding client and shift the maclist
+    // Find the corresponding client and shift the data
+    uint32_t client_ip = 0;
+
     for(int i=0; i<_client_count; i++)
     {
-      if ( 0 == memcmp(mac, _client_maclist[i], 6) )
+      if ( 0 == memcmp(mac, _clients[i].mac, 6) )
       {
+        client_ip = _clients[i].ip;
+
         if ( i < _client_count-1)
         {
-          memmove(_client_maclist[i], _client_maclist[i+1], 6*(_client_count-1-i) );
+          memmove(&_clients[i], &_clients[i+1], sizeof(_clients[0])*(_client_count-1-i) );
         }
-        memclr(_client_maclist[_client_count-1], 6);
+        memclr(&_clients[_client_count-1], sizeof(_clients[0]));
 
         break;
       }
     }
 
     _client_count--;
-    if (_leave_callback) _leave_callback(mac);
+    if (_leave_callback) _leave_callback(mac, client_ip);
   }
 }
 
@@ -218,7 +230,7 @@ void AdafruitFeatherAP::featherlib_event_callback(uint32_t event, const uint8_t 
  *
  * @param fp
  */
-void AdafruitFeatherAP::setJoinCallback( void(*fp)(const uint8_t[6]))
+void AdafruitFeatherAP::setJoinCallback( softap_callback_t fp)
 {
   _join_callback = fp;
 }
@@ -227,7 +239,7 @@ void AdafruitFeatherAP::setJoinCallback( void(*fp)(const uint8_t[6]))
  *
  * @param fp
  */
-void AdafruitFeatherAP::setLeaveCallback( void(*fp)(const uint8_t[6]))
+void AdafruitFeatherAP::setLeaveCallback( softap_callback_t fp)
 {
   _leave_callback = fp;
 }
@@ -239,7 +251,16 @@ void AdafruitFeatherAP::setLeaveCallback( void(*fp)(const uint8_t[6]))
  */
 void adafruit_softap_event_callback(uint32_t event, const uint8_t mac[6] )
 {
-  FeatherAP.featherlib_event_callback(event, mac);
+  // SOFTAP_EVENT_JOINED will only be invoked when DHCP Server give IP to client
+  if ( event == SOFTAP_EVENT_LEAVE )
+  {
+    FeatherAP.featherlib_event_callback(event, mac, 0);
+  }
+}
+
+void adafruit_dhcpd_give_ip_callback(const uint8_t mac[6], uint32_t ipv4)
+{
+  FeatherAP.featherlib_event_callback(SOFTAP_EVENT_JOINED, mac, ipv4);
 }
 
 uint8_t* AdafruitFeatherAP::macAddress( uint8_t *mac )

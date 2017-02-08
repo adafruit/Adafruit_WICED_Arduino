@@ -93,7 +93,7 @@ typedef struct ATTR_ALIGNED(512)
   void     (*wifi_connect_callback    )(void); // not used for now
   void     (*wifi_disconnect_callback )(void);
   void     (*softap_event_callback    )(uint32_t event, const uint8_t mac[6] );
-  uint32_t RESERVED_;
+  void     (*dhcpd_give_ip_callback   )(const uint8_t  mac[6], uint32_t ipv4);
 
   err_t    (*tcpserver_connect_callback    )(void* socket, void* p_tcpserver);
   err_t    (*tcp_receive_callback          )(void* socket, void* p_tcp);

@@ -57,10 +57,14 @@
 extern "C"
 {
   void adafruit_softap_event_callback(uint32_t event, const uint8_t mac[6] );
+  void adafruit_dhcpd_give_ip_callback(const uint8_t mac[6], uint32_t ipv4);
 }
 
 class AdafruitFeatherAP : public AdafruitSDEP
 {
+public:
+  typedef void (*softap_callback_t)(const uint8_t mac[6], uint32_t ipv4);
+
 private:
   uint32_t _ip;
   uint32_t _gateway;
@@ -73,14 +77,15 @@ private:
   bool    _started;
 
   uint8_t  _client_count;
-  uint8_t  _client_maclist[SOFTAP_MAX_CLIENT][6];
+  struct {
+    uint8_t  mac[6];
+    uint32_t ip;
+  }_clients[SOFTAP_MAX_CLIENT];
 
-  void (*_join_callback)(const uint8_t mac[6]);
-  void (*_leave_callback)(const uint8_t mac[6]);
+  softap_callback_t _join_callback;
+  softap_callback_t _leave_callback;
 
-  void featherlib_event_callback(uint32_t event, const uint8_t mac[6] );
-
-
+  void featherlib_event_callback(uint32_t event, const uint8_t mac[6], uint32_t ipv4);
   void clear(void);
 
 public:
@@ -98,15 +103,17 @@ public:
   uint8_t        clientNum  (void) { return _client_count; }
   const uint8_t* clientMAC  (uint8_t id);
   int32_t        clientRSSI (uint8_t id);
+  IPAddress      clientIP   (uint8_t id);
 
-  void setJoinCallback( void(*fp)(const uint8_t[6]));
-  void setLeaveCallback( void(*fp)(const uint8_t[6]));
+  void setJoinCallback ( softap_callback_t fp);
+  void setLeaveCallback( softap_callback_t fp);
 
   // Helper functions
   void      printNetwork    (Print& p = Serial);
 
   /* callback from featherlib */
   friend void adafruit_softap_event_callback(uint32_t event, const uint8_t mac[6] );
+  friend void adafruit_dhcpd_give_ip_callback(const uint8_t mac[6], uint32_t ipv4);
 };
 
 extern AdafruitFeatherAP FeatherAP;

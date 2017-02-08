@@ -114,7 +114,7 @@ private:
   FILINFO _info;
 
 public:
-  FileInfo(void) { varclr(_info); }
+  FileInfo(void) { varclr(&_info); }
   FileInfo(const char* path) { fetch(path); }
 
   bool fetch(const char* path)

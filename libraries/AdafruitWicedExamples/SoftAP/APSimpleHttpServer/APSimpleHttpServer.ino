@@ -154,6 +154,8 @@ void setup()
 
   Serial.println("Configuring SoftAP\r\n");
   FeatherAP.err_actions(true, true);
+  FeatherAP.setJoinCallback(softap_join_callback);
+  FeatherAP.setLeaveCallback(softap_leave_callback);
   FeatherAP.begin(apIP, apGateway, apNetmask, WLAN_CHANNEL);
 
   Serial.println("Starting SoftAP\r\n");
@@ -166,6 +168,8 @@ void setup()
   // Configure HTTP Server Pages
   Serial.println("Adding Pages to HTTP Server");
   httpserver.addPages(pages, pagecount);
+  httpserver.setConnectCallback(httpd_connect_callback);
+  httpserver.setDisconnectCallback(httpd_disconnect_callback);
 
   Serial.print("Starting HTTP Server ... ");
   httpserver.begin(PORT, MAX_CLIENTS);
@@ -185,40 +189,55 @@ void loop()
 
 /**************************************************************************/
 /*!
-    @brief  Connect to the defined access point (AP)
+    @brief  HTTP Server connect callback
 */
 /**************************************************************************/
-bool connectAP(void)
+void httpd_connect_callback(uint32_t remote_ip, uint16_t remote_port)
 {
-  // Attempt to connect to an AP
-  Serial.print("Please wait while connecting to: '" WLAN_SSID "' ... ");
-
-  if ( Feather.connect(WLAN_SSID, WLAN_PASS) )
-  {
-    Serial.println("Connected!");
-  }
-  else
-  {
-    Serial.printf("Failed! %s (%d)", Feather.errstr(), Feather.errnum());
-    Serial.println();
-  }
-  Serial.println();
-
-  return Feather.connected();
+  IPAddress ipaddr(remote_ip);
+  Serial.print("HTTPD Connect   : client IP = ");
+  Serial.print(ipaddr);
+  Serial.print(" port = ");
+  Serial.println(remote_port);
 }
 
 /**************************************************************************/
 /*!
-    @brief  TCP/HTTP disconnect callback
+    @brief  HTTP Server disconnect callback
 */
 /**************************************************************************/
-void disconnect_callback(void)
+void httpd_disconnect_callback(uint32_t remote_ip, uint16_t remote_port)
 {
-  Serial.println();
-  Serial.println("---------------------");
-  Serial.println("DISCONNECTED CALLBACK");
-  Serial.println("---------------------");
-  Serial.println();
-
-  httpserver.stop();
+  IPAddress ipaddr(remote_ip);
+  Serial.print("HTTPD Disconnect: client IP = ");
+  Serial.print(ipaddr);
+  Serial.print(" port = ");
+  Serial.println(remote_port);;    
 }
+
+/**************************************************************************/
+/*!
+    @brief  SoftAP Join callback
+*/
+/**************************************************************************/
+void softap_join_callback(const uint8_t mac[6], uint32_t ipv4)
+{
+  IPAddress ipaddr(ipv4);
+  Serial.print("SoftAP joined: ");
+  Serial.println(ipaddr);
+}
+
+/**************************************************************************/
+/*!
+    @brief  SoftAP Leave callback
+*/
+/**************************************************************************/
+void softap_leave_callback(const uint8_t mac[6], uint32_t ipv4)
+{
+  IPAddress ipaddr(ipv4);
+  Serial.print("SoftAP left  : ");
+  Serial.println(ipaddr);
+}
+
+
+

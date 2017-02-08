@@ -53,6 +53,7 @@ extern int heap_get_total_size(void);
 //extern void adafruit_wifi_connect_callback(void);
 extern void adafruit_wifi_disconnect_callback(void);
 extern void adafruit_softap_event_callback(uint32_t event, const uint8_t mac[6] );
+extern void adafruit_dhcpd_give_ip_callback(const uint8_t mac[6], uint32_t ipv4);
 
 extern err_t adafruit_tcpserver_connect_callback    (void* socket, void* p_tcpserver);
 extern err_t adafruit_tcp_receive_callback    (void* socket, void* p_tcp);
@@ -85,6 +86,7 @@ ATTR_USED adafruit_arduino_t const adafruit_arduino =
 //    .wifi_connect_callback    = adafruit_wifi_connect_callback,
     .wifi_disconnect_callback   = adafruit_wifi_disconnect_callback,
     .softap_event_callback      = adafruit_softap_event_callback,
+    .dhcpd_give_ip_callback     = adafruit_dhcpd_give_ip_callback,
 
     // TCP
     .tcpserver_connect_callback = adafruit_tcpserver_connect_callback,
