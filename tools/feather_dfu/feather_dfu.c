@@ -75,7 +75,7 @@ static inline void sleep_ms(int ms)
 enum
 {
   RESET_DELAY     = 1000, // 1 second delay
-  RESET_MSC_DELAY = 1500, // MSC available require more time for USB to enumerate
+  RESET_MSC_DELAY = 2000, // MSC available require more time for USB to enumerate
 };
 
 enum
