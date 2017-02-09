@@ -64,6 +64,7 @@ public:
   void setDisconnectCallback(httpserver_callback_t fp);
 
   bool started(void);
+  int  clientNum(void);
 
   // Print Interface
   virtual size_t write(uint8_t);

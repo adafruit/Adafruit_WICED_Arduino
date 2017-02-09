@@ -139,8 +139,8 @@ typedef struct ATTR_ALIGNED(512)
   uint8_t  RESERVED_[76];
 
   // SDEP Command
-  err_t (*sdep_execute ) (uint16_t  cmd_id     ,
-                          uint32_t  paylen    , void const* parameter,
+  err_t (*sdep_execute  )(uint16_t  cmd_id     ,
+                          uint32_t  paylen     , void const* parameter,
                           uint32_t* result_len , void* result_buffer);
 
   err_t (*sdep_execute_n)(uint16_t  cmd_id       ,
@@ -150,13 +150,14 @@ typedef struct ATTR_ALIGNED(512)
   uint32_t RESERVED_[6];
 
   // RTOS API
-  uint32_t (*rtos_delay_ms)  (uint32_t ms);
-  uint32_t (*rtos_delay_us)  (uint32_t us);
-  void     (*rtos_yield)     (void);
-  void     (*rtos_schedule)  ( int (*func) (void*), void* arg);
-  void     (*rtos_schedule_arg) ( int (*func) (void*), void* arg );
+  uint32_t (*rtos_delay_ms    ) (uint32_t ms);
+  uint32_t (*rtos_delay_us    ) (uint32_t us);
+  void     (*rtos_yield       ) (void);
+  void     (*rtos_schedule    ) (int (*func) (void*), void* arg);
+  void     (*rtos_schedule_arg) (int (*func) (void*), void* arg );
 
   uint32_t RESERVED_[11];
+
 
   // Peripheral API
   uint32_t (*system_millis) (void);

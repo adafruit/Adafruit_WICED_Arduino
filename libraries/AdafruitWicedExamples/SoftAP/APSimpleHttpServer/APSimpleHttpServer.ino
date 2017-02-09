@@ -212,7 +212,7 @@ void httpd_disconnect_callback(uint32_t remote_ip, uint16_t remote_port)
   Serial.print("HTTPD Disconnect: client IP = ");
   Serial.print(ipaddr);
   Serial.print(" port = ");
-  Serial.println(remote_port);;    
+  Serial.println(remote_port);
 }
 
 /**************************************************************************/

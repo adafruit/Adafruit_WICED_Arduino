@@ -1,11 +1,15 @@
 # 0.6.5
 
 - setNtpServer
+- fix #66 rename errno() to errnum()
 - Close #69 Write feather_dfu using C + libusb instead of using python due to version conflict/confusion
-- Add IP Address to FeatherAP SoftAP's join/leave callback
-	- change signature (const uint8_t mac[6]) --> (const uint8_t mac[6], uint32_t ipv4)
+- SoftAP
+	- Add IP Address to join/leave callback. Signature changed from (const uint8_t mac[6]) --> (const uint8_t mac[6], uint32_t ipv4)
 	- Add clientIP(id) to FeatherAP
-- Add connect/disconnect callback to HTTP Server 
+- HTTP Server
+	- Add connect/disconnect callback support
+	- Fix bug when device left our SoftAP without cleaning up opened sockets
+	- Add clientNum() to get active client number 
 
 # 0.6.2
 

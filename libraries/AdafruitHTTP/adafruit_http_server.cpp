@@ -159,6 +159,14 @@ bool AdafruitHTTPServer::started(void)
   return _handle != NULL;
 }
 
+int AdafruitHTTPServer::clientNum(void)
+{
+  uint32_t count = 0;
+  sdep(SDEP_CMD_HTTPSERVER_CLIENTNUM, 4, &_handle, NULL, &count);
+
+  return (int) count;
+}
+
 
 void AdafruitHTTPServer::stop(void)
 {
