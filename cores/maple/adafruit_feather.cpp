@@ -401,6 +401,21 @@ char* AdafruitFeather::profileSSID (uint8_t pos)
   return (len > 0) ? profile_ssid : NULL;
 }
 
+uint8_t AdafruitFeather::profileCount( void )
+{
+  uint8_t count = 0;
+
+  for(uint8_t i=0; i<WIFI_MAX_PROFILE; i++)
+  {
+    if ( profileSSID(i) )
+    {
+      count++;
+    }
+  }
+
+  return count;
+}
+
 int32_t AdafruitFeather::profileEncryptionType(uint8_t pos)
 {
   uint8_t option = 2; // requesting Encryption Type

@@ -169,6 +169,7 @@ public:
   void      clearProfiles         ( void );
   char*     profileSSID           ( uint8_t pos);
   int32_t   profileEncryptionType ( uint8_t pos);
+  uint8_t   profileCount          ( void );
 
   // Info functions
   uint8_t*    macAddress      ( uint8_t *mac );

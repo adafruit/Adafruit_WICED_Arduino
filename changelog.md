@@ -1,5 +1,6 @@
 # 0.6.5
 
+- Add profileCount() to get the number of profiles
 - fix #71 incorrect sub-second ISO8601 timestamp 
 - setNtpServer
 - fix #66 rename errno() to errnum()
