@@ -1,5 +1,6 @@
 # 0.6.5
 
+- fix #71 incorrect sub-second ISO8601 timestamp 
 - setNtpServer
 - fix #66 rename errno() to errnum()
 - Close #69 Write feather_dfu using C + libusb instead of using python due to version conflict/confusion
