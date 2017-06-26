@@ -1,17 +1,23 @@
 # 0.6.5
 
+## Arduino
+
 - Add profileCount() to get the number of profiles
-- fix #71 incorrect sub-second ISO8601 timestamp 
-- setNtpServer
 - fix #66 rename errno() to errnum()
-- Close #69 Write feather_dfu using C + libusb instead of using python due to version conflict/confusion
+- add setNtpServer()
+- - Close #69 Write feather_dfu using C + libusb instead of using python due to version conflict/confusion
 - SoftAP
 	- Add IP Address to join/leave callback. Signature changed from (const uint8_t mac[6]) --> (const uint8_t mac[6], uint32_t ipv4)
 	- Add clientIP(id) to FeatherAP
 - HTTP Server
 	- Add connect/disconnect callback support
 	- Fix bug when device left our SoftAP without cleaning up opened sockets
-	- Add clientNum() to get active client number 
+	- Add clientNum() to get active client number
+
+## Featherlib
+
+- fix #71 incorrect sub-second ISO8601 timestamp
+- fix ntpserver bug
 
 # 0.6.2
 
