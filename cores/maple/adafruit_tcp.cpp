@@ -68,17 +68,21 @@ void AdafruitTCP::init()
   _disconnect_callback = NULL;
 }
 
+/**
+ * Clean up connection states but leave user configured such as
+ * callback as it is.
+ */
 void AdafruitTCP::disconnect_cleanup( void )
 {
-  _tcp_handle          = NULL;
-  _connected           = false;
+  _tcp_handle   = NULL;
+  _connected    = false;
 
-  _bytesRead           = 0;
-  _remote_ip           = 0;
-  _remote_port         = 0;
+  _bytesRead    = 0;
+  _remote_ip    = 0;
+  _remote_port  = 0;
 
-  _tls_context         = NULL;
-  _tls_identity        = NULL;
+  _tls_context  = NULL;
+  _tls_identity = NULL;
 }
 
 /******************************************************************************/
@@ -104,7 +108,7 @@ AdafruitTCP::AdafruitTCP ( uint8_t interface, tcp_handle_t handle )
 
   _tcp_handle = handle;
   _interface  = interface;
-  _connected  = true; // connection is already estiablished by accept()
+  _connected  = (_tcp_handle != NULL); // connection is already estiablished by accept()
 }
 
 /******************************************************************************/
@@ -495,6 +499,7 @@ void AdafruitTCP::setDisconnectCallback( tcpcallback_t fp )
 /******************************************************************************/
 /*!
     @brief  Closes the TCP socket and resets any counters
+    @note   Call automatically if socket disconnect is triggered, or by user call
 */
 /******************************************************************************/
 void AdafruitTCP::stop()
@@ -509,8 +514,6 @@ void AdafruitTCP::stop()
 
   if ( _tls_context ) free_named("TCP TLS Context" , _tls_context);
   if ( _tls_identity) free_named("TCP TLS Identity", _tls_identity);
-
-  // Don't invoke disconnect callback since callback normally call stop() --> recursive
 
   this->disconnect_cleanup();
 
