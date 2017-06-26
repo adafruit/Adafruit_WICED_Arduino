@@ -118,16 +118,10 @@ bool AdafruitMQTT::connectBroker(bool cleanSession, uint16_t keepalive_sec)
       { .len = 1                   , .p_value = &_will_retained    },
 
       // this pointer (for callback), tx bufsize, rx bufsize
-      { .len = 0                   , .p_value = NULL               },
+      { .len = 4                   , .p_value = &this_value        },
       { .len = 2                   , .p_value = &_tx_bufsize       },
       { .len = 2                   , .p_value = &_rx_bufsize       },
   };
-
-  if ( _disconnect_callback )
-  {
-    para_arr[10].len     = 4;
-    para_arr[10].p_value = &this_value;
-  }
 
   return sdep_n(SDEP_CMD_MQTTCONNECT, arrcount(para_arr), para_arr, NULL, &_mqtt_handle);
 }
