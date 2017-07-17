@@ -1,6 +1,6 @@
 CC     = gcc
 LD		 = gcc
-CFLAGS = -O0 -g3 -Wall -std=gnu99
+CFLAGS += -O0 -g3 -Wall -std=gnu99
 LIBS   += -lusb-1.0
 OBJDIR = _build
 
@@ -13,7 +13,17 @@ else
 	
 	OS := $(shell uname -s)
 	ifeq ($(OS),Linux)
-		BINDIR = linux
+	  ifeq ($(MBIT),32)
+	    BINDIR = linux32
+	    CFLAGS += -m32
+	  else
+	    LBITS := $(shell getconf LONG_BIT)
+      ifeq ($(LBITS),64)
+        BINDIR = linux64
+      else
+        BINDIR = linux32
+      endif
+    endif
 	endif
 	ifeq ($(OS),Darwin)
 		BINDIR  = osx
