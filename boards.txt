@@ -44,21 +44,13 @@ feather.menu.section.usercode.upload.binfile={build.path}/{build.project_name}.b
 feather.menu.section.usercode.upload.address=0x080C0000
 feather.menu.section.usercode.upload.maximum_size=262144
 
-## Feather Lib (Release) section
+## Feather Lib section
 ## -------------------------
-feather.menu.section.featherlib=Feather Lib (Release)
+feather.menu.section.featherlib=Feather Lib
 feather.menu.section.featherlib.upload.subcommand=featherlib_upgrade
 feather.menu.section.featherlib.upload.binfile={runtime.platform.path}/featherlib/featherlib.bin
 feather.menu.section.featherlib.upload.address=0x08010000
 feather.menu.section.featherlib.upload.maximum_size=720896
-
-## Feather Lib (Debug) section
-## -------------------------
-feather.menu.section.featherlib_beta=Feather Lib (Debug)
-feather.menu.section.featherlib_beta.upload.subcommand=featherlib_upgrade
-feather.menu.section.featherlib_beta.upload.binfile={runtime.platform.path}/featherlib/debug/featherlib.bin
-feather.menu.section.featherlib_beta.upload.address=0x08010000
-feather.menu.section.featherlib_beta.upload.maximum_size=720896
 
 ## Factory reset section
 ## -------------------------
