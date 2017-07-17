@@ -6,10 +6,10 @@ OBJDIR = _build
 
 ifeq ($(OS),Windows_NT)
 	LIBS   += -Llibusb-1.0
-	BINFILE = feather_dfu.exe
+	BINFILE = wiced_dfu.exe
 	BINDIR  = win32
 else
-	BINFILE = feather_dfu
+	BINFILE = wiced_dfu
 	
 	OS := $(shell uname -s)
 	ifeq ($(OS),Linux)
@@ -20,7 +20,7 @@ else
   endif 
 endif
 
-all: clean $(OBJDIR) feather_dfu
+all: clean $(OBJDIR) wiced_dfu
 
 .PHONY: $(OBJDIR)
 $(OBJDIR):
@@ -30,7 +30,7 @@ $(OBJDIR):
 $(OBJDIR)/%.o: %.c
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-feather_dfu: $(OBJDIR)/feather_dfu.o
+wiced_dfu: $(OBJDIR)/wiced_dfu.o
 	$(LD) -o $(BINDIR)/$(BINFILE) $^ $(CFLAGS) $(LIBS)
   
 clean: 
