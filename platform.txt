@@ -97,15 +97,14 @@ recipe.size.regex.data=^(?:\.data|\.bss|\.noinit)\s+([0-9]+).*
 # Uploader tools
 # -------------------
 
-# Upload using wiced_dfu, OSX/Linux require to install libusb-1.0 and dfu-util  
-tools.adafruit_upload.path={runtime.platform.path}/tools
-tools.adafruit_upload.wiced_dfu.windows={path}/wiced_dfu/win32/wiced_dfu.exe
-tools.adafruit_upload.wiced_dfu.linux={path}/wiced_dfu/linux64/wiced_dfu
-tools.adafruit_upload.wiced_dfu.macosx={path}/wiced_dfu/osx/wiced_dfu
+# Upload using wiced_dfu, Macos/Linux require to install libusb-1.0 and dfu-util  
+tools.adafruit_upload.path={runtime.tools.wiced_dfu.path}
+tools.adafruit_upload.cmd=wiced_dfu
+tools.adafruit_upload.cmd.windows=wiced_dfu.exe
 
 tools.adafruit_upload.upload.params.verbose=-v
 tools.adafruit_upload.upload.params.quiet=
-tools.adafruit_upload.upload.pattern="{wiced_dfu}" {upload.subcommand} "{upload.binfile}"
+tools.adafruit_upload.upload.pattern="{path}/{cmd}" {upload.subcommand} "{upload.binfile}"
 
 # Obsolete tool (for reference)
 # Upload using Adafruit bootloader over DFU.
