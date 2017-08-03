@@ -1,3 +1,7 @@
+# 0.6.6
+
+- Fix issue uploading with windows 10 by using good-old feather_dfu
+
 # 0.6.5
 
 ## Arduino

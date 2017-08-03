@@ -3,7 +3,7 @@
 # https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5-3rd-party-Hardware-specification
 
 name=Adafruit WICED (STM32F2 ARM Cortex M3) Boards
-version=0.6.5
+version=0.6.6
 
 # compiler variables
 # ----------------------
@@ -97,33 +97,25 @@ recipe.size.regex.data=^(?:\.data|\.bss|\.noinit)\s+([0-9]+).*
 # Uploader tools
 # -------------------
 
-# Upload using wiced_dfu, Macos/Linux require to install libusb-1.0 and dfu-util  
+# Upload using wiced_dfu, Macos/Linux require to install libusb-1.0 and dfu-util
+
 tools.adafruit_upload.path={runtime.tools.wiced_dfu.path}
 tools.adafruit_upload.cmd=wiced_dfu
-tools.adafruit_upload.cmd.windows=wiced_dfu.exe
+tools.adafruit_upload.dfu_util=
+
+# feather_dfu (obsolete) Still used by windows, since wiced_dfu has driver 
+# issue with window 10. Will be removed when figuring out the issue
+
+tools.adafruit_upload.path.windows={runtime.platform.path}/tools/win32-x86
+tools.adafruit_upload.cmd.windows=feather_dfu/feather_dfu.exe
+tools.adafruit_upload.dfu_util.windows=-u "{path}/dfu-util/dfu-util-static.exe"
 
 tools.adafruit_upload.upload.params.verbose=-v
 tools.adafruit_upload.upload.params.quiet=
-tools.adafruit_upload.upload.pattern="{path}/{cmd}" {upload.subcommand} "{upload.binfile}"
+tools.adafruit_upload.upload.pattern="{path}/{cmd}" {dfu_util} {upload.subcommand} "{upload.binfile}"
 
-# Obsolete tool (for reference)
-# Upload using Adafruit bootloader over DFU.
-# Default values require python, dfu-util, and all script dependencies to be
-# installed and in the path.
-#tools.adafruit_upload.python=python
-#tools.adafruit_upload.cmd=feather_dfu/feather_dfu.py
-#tools.adafruit_upload.path={runtime.platform.path}/tools/obsolete/source
-#tools.adafruit_upload.dfu_util=
-#tools.adafruit_upload.upload.params.verbose=-v
-#tools.adafruit_upload.upload.params.quiet=
-#tools.adafruit_upload.upload.pattern={python} "{path}/{cmd}" {dfu_util} {upload.subcommand} "{upload.binfile}"
-
-# Windows overrides to use a pre-built feather_dfu.exe & dfu-util.exe that
-# bundle in python and all dependencies.
-#tools.adafruit_upload.python.windows=
-#tools.adafruit_upload.cmd.windows=feather_dfu/feather_dfu.exe
-#tools.adafruit_upload.path.windows={runtime.platform.path}/tools/obsolete/win32-x86
-#tools.adafruit_upload.dfu_util.windows=-u "{path}/dfu-util/dfu-util-static.exe"
+# Manual Git core development may need to uncomment this, and make alias to wiced_dfu to your /username/bin
+#tools.adafruit_upload.upload.pattern="{cmd}" {dfu_util} {upload.subcommand} "{upload.binfile}"
 
 # Adalink Programmer/Uploader tools
 # -------------------
