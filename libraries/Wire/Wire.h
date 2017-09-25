@@ -60,6 +60,8 @@ public:
      */
     TwoWire(uint8_t, uint8_t = 0);
 
+    void setClock(uint32_t frequencyHz);
+
     /*
      * Disables the I2C device and remove the device address.
      */

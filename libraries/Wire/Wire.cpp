@@ -81,4 +81,22 @@ void TwoWire::begin(uint8_t self_addr) {
   }
 }
 
+void TwoWire::setClock(uint32_t frequencyHz)
+{
+	switch(frequencyHz)
+	{
+		case 400000:
+			dev_flags |= I2C_FAST_MODE;// set FAST_MODE bit
+			break;
+		case 100000:
+		default:
+			dev_flags &= ~I2C_FAST_MODE;// clear FAST_MODE bit
+			break;
+	}
+	if (sel_hard->regs->CR1 & I2C_CR1_PE){
+	    i2c_disable(sel_hard);
+	    i2c_master_enable(sel_hard, dev_flags);
+	}
+}
+
 TwoWire Wire(1, 0); // I2c1
