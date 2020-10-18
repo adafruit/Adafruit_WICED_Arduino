@@ -144,6 +144,15 @@ public:
 
 extern HardwareSPI SPI;
 
+// Fix an issue related to SPI class naming, defined above as `HardwareSPI`, and defined,
+// by the Arduino Core as `SPIClass`. This fix resolves the issue by aliasing the two names.
+// See https://forums.adafruit.com/viewtopic.php?f=24&t=161264 for more information and the
+// inspiration for this bugfix. Credit to `adafruit_support_mike` who on Fri Jan 24, 2020 in
+// the forum noted that the issue should be resolvable by including a #define mapping between
+// the two names. By placing the define here, we obviate the need to include the define in
+// other libraries or user code that depend upon `SPIClass` when building code for the WICED.
+#define SPIClass HardwareSPI;
+
 // Fix Compiler issue with sensor library
 extern uint8_t SPCR;
 
