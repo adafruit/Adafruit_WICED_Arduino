@@ -1,3 +1,7 @@
+# 0.6.7
+
+- Fixes an issue related to the SPI class name, which prevents the compilation of WICED targeted user code that requires SPI support via `SPIClass`. Under WICED, the SPI class is named as `HardwareSPI` in `cores/maple/libmaple/SPI.h` in contrast to the Arduino Core, which as noted, defines the class as `SPIClass`. It is the latter that is most commonly referenced by many other libraries. By providing an alias between the `HardwareSPI` and `SPIClass` names via a `#define`, any previously encountered `'SPIClass' has not been declared` compilation errors should be resolved.
+
 # 0.6.6
 
 - Fix issue uploading with windows 10 by using good-old feather_dfu
